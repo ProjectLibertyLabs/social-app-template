@@ -21,6 +21,7 @@ jobs:
           node-version: 20
           cache: "npm"
           registry-url: "https://registry.npmjs.org"
+          cache-dependency-path: frontend/package-lock.json
 
       - name: Install
         run: npm ci
