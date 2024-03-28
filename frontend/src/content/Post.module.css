@@ -1,0 +1,28 @@
+.root {
+  max-width: 1000px;
+}
+
+.metaBlock {
+  cursor: pointer;
+}
+
+.metaInnerBlock {
+  display: flex;
+  align-items: center;
+}
+
+.caption {
+  margin: 16px 0;
+  word-wrap: break-word;
+  overflow-wrap: break-word;
+  hyphens: auto;
+}
+
+.time {
+  display: flex;
+  align-items: flex-end;
+  flex-direction: column;
+  position: absolute;
+  top: 24px;
+  right: 24px;
+}

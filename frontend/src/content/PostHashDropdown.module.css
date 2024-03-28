@@ -1,0 +1,42 @@
+:root {
+  --hash-bg: white;
+  --border: black;
+  --border-hover: #999;
+}
+
+.root {
+  display: block;
+}
+
+.replyRoot {
+  position: absolute;
+  top: 4px;
+  right: 4px;
+}
+
+.menu {
+  max-width: 200px;
+  overflow-wrap: break-word;
+  white-space: pre-wrap;
+
+  /* background-color: var(--hash-bg); */
+  padding: 12px;
+}
+
+.title {
+  font-weight: bold;
+  line-height: 1;
+}
+
+.button {
+  background-color: var(--hash-bg);
+  border: 2px solid var(--border);
+  border-radius: 5px;
+  cursor: pointer;
+  font-size: 11px;
+  transition: 0.25s linear all;
+}
+
+.button:hover {
+  border-color: var(--border-hover);
+}
