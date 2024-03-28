@@ -1,0 +1,11 @@
+.root {
+  display: flex;
+  justify-content: center;
+  flex-direction: column;
+  background-color: transparent;
+}
+
+.content {
+  padding: 10px;
+  justify-content: center;
+}

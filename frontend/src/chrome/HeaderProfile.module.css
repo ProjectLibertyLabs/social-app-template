@@ -1,0 +1,23 @@
+:root {
+  --profile-bg: white;
+}
+
+.root {
+  background-color: var(--profile-bg);
+  border-radius: 10px;
+  padding: 16px;
+  display: flex;
+  flex-direction: column;
+  height: fit-content;
+  margin-right: 15px;
+  margin-bottom: 15px;
+}
+
+.profile {
+  margin: 15px 0;
+}
+
+.metaInnerBlock {
+  display: flex;
+  align-items: center;
+}

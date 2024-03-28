@@ -1,0 +1,8 @@
+# package.json is formatted by package managers, so we ignore it here
+package.json
+package-lock.json
+**/*.map
+# Generated file
+src/dsnpLink.ts
+dist
+build
