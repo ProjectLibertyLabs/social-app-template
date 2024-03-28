@@ -3,4 +3,6 @@ package.json
 package-lock.json
 **/*.map
 # Generated file
-dsnpLink.ts
+src/dsnpLink.ts
+dist
+build
