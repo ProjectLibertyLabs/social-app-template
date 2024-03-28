@@ -17,7 +17,7 @@ export default tseslint.config(
     },
   },
   {
-    ignores: ["src/dsnpLink.ts"],
+    ignores: ["src/dsnpLink.ts", "build/**"],
   },
   {
     // enable jest rules on test files
