@@ -10,6 +10,48 @@
     "version": "1.0.0"
   },
   "paths": {
+    "/v2/assets": {
+      "post": {
+        "operationId": "postAssetsHandler",
+        "summary": "Upload and register new assets",
+        "description": "Allows clients to upload new assets. This endpoint accepts multipart file uploads and returns the identifiers for the newly uploaded assets.",
+        "requestBody": {
+          "description": "Payload containing the file(s) to upload. Each file must be in binary format.",
+          "required": true,
+          "content": {
+            "multipart/form-data": {
+              "schema": {
+                "$ref": "#/components/schemas/UploadAssetRequest"
+              }
+            }
+          }
+        },
+        "responses": {
+          "202": {
+            "description": "Assets uploaded successfully. Returns identifiers for each uploaded asset.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/UploadAssetResponse"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Bad Request. The request was invalid or cannot be served. Check the error message for details."
+          },
+          "401": {
+            "description": "Unauthorized. The request requires user authentication."
+          },
+          "503": {
+            "description": "Service Unavailable. The server is currently unable to handle the request due to a temporary overloading or maintenance of the server."
+          },
+          "500": {
+            "description": "Internal Server Error. An unexpected condition was encountered."
+          }
+        }
+      }
+    },
     "/v1/auth/provider": {
       "get": {
         "operationId": "authProvider",
@@ -575,6 +617,36 @@
       }
     },
     "schemas": {
+      "UploadAssetRequest": {
+        "description": "Schema defining the request payload for uploading assets. Requires a list of files to upload.",
+        "type": "object",
+        "properties": {
+          "files": {
+            "description": "Array of files to be uploaded. Each file must be encoded in binary format.",
+            "type": "array",
+            "items": {
+              "type": "string",
+              "format": "binary"
+            },
+            "minItems": 1
+          }
+        },
+        "required": ["files"]
+      },
+      "UploadAssetResponse": {
+        "description": "Schema defining the response for a successful asset upload operation. Contains identifiers for all uploaded assets.",
+        "type": "object",
+        "properties": {
+          "assetIds": {
+            "description": "Array of unique identifiers assigned to the uploaded assets.",
+            "type": "array",
+            "items": {
+              "type": "string"
+            }
+          }
+        },
+        "required": ["assetIds"]
+      },
       "ProviderResponse": {
         "type": "object",
         "properties": {

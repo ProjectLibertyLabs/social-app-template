@@ -3,13 +3,18 @@ import "dotenv/config";
 // Augment Polkadot Types First
 import "@frequency-chain/api-augment";
 import * as openapiBackend from "openapi-backend";
-import Express from "express";
+import express, { Request, Response, NextFunction } from "express";
 import morgan from "morgan";
 import swaggerUi from "swagger-ui-express";
 import cors from "cors";
 
-import type { Request } from "openapi-backend";
+import multer, { MulterError } from "multer";
+const storage = multer.memoryStorage();
+const upload = multer({ storage: storage });
 
+import type { Request as OpenApiRequest } from "openapi-backend";
+
+import * as assets from "./handlers/assets.js";
 import * as auth from "./handlers/auth.js";
 import * as content from "./handlers/content.js";
 import * as graph from "./handlers/graph.js";
@@ -24,35 +29,29 @@ import { getAccountFromAuth } from "./services/auth.js";
   return this.toString();
 };
 
-const app = Express();
-app.use(Express.json());
+const app = express();
+app.use(express.json());
 
 // TODO: See if we want to generate the OpenAPI doc instead of spec first
 const api = new openapiBackend.OpenAPIBackend({
   definition: "openapi.json",
   handlers: {
+    ...assets,
     ...auth,
     ...content,
     ...graph,
     ...profile,
 
-    validationFail: async (c, req: Express.Request, res: Express.Response) =>
+    validationFail: async (c, req: Request, res: Response) =>
       res.status(400).json({ err: c.validation.errors }),
-    notFound: async (c, req: Express.Request, res: Express.Response) =>
+    notFound: async (c, req: Request, res: Response) =>
       res.status(404).json({ err: "not found" }),
   },
 });
 
-api.init();
-
-// cors
-app.use(cors());
-
-// logging
-app.use(morgan("combined"));
-
-// Swagger UI
-app.use("/docs", swaggerUi.serve, swaggerUi.setup(openapiJson));
+api.register("unauthorizedHandler", (_c, _req, res) => {
+  return res.status(401).send();
+});
 
 // Simple Token Auth
 api.registerSecurityHandler("tokenAuth", async (c) => {
@@ -67,22 +66,64 @@ api.registerSecurityHandler("tokenAuth", async (c) => {
   return account;
 });
 
-api.register("unauthorizedHandler", (_c, _req, res) => {
-  return res.status(401).send();
+api.init();
+
+// cors
+app.use(cors());
+
+// logging
+app.use(morgan("combined"));
+
+// Swagger UI
+app.use("/docs", swaggerUi.serve, swaggerUi.setup(openapiJson));
+
+app.post(
+  "/v2/assets",
+  upload.array("files"),
+  (req: Request, res: Response, next: NextFunction) => {
+    if (!req.files || req.files.length === 0) {
+      return res.status(400).json({ error: "No files uploaded." });
+    }
+
+    next();
+  },
+);
+
+app.use((req: Request, res: Response) => {
+  return api.handleRequest(req as OpenApiRequest, req, res);
 });
 
-// use as express middleware
-app.use((req, res) => api.handleRequest(req as Request, req, res));
+app.use((err: any, req: Request, res: Response, next: NextFunction) => {
+  if (res.headersSent) {
+    return next(err);
+  }
+
+  console.error(err);
+
+  if (err instanceof MulterError) {
+    return res.status(400).json({ error: err.message });
+  } else if (
+    err.message &&
+    err.message.includes("Multipart: Boundary not found")
+  ) {
+    return res
+      .status(400)
+      .json({ error: "Invalid multipart/form-data header or boundary" });
+  }
+
+  return res.status(500).json({ error: "An internal server error occurred." });
+});
 
 const port = parseInt(process.env.PORT || "0") || "5005";
-// start server
-app.listen(port, () => {
-  getApi().catch((e) => {
-    console.error("Error connecting to Frequency Node!!", e.message);
+if (process.env.NODE_ENV != "test") {
+  // start server
+  app.listen(port, () => {
+    getApi().catch((e) => {
+      console.error("Error connecting to Frequency Node!!", e.message);
+    });
+    console.info(
+      `api listening at http://localhost:${port}\nOpenAPI Docs at http://localhost:${port}/docs`,
+    );
   });
-  console.info(
-    `api listening at http://localhost:${port}\nOpenAPI Docs at http://localhost:${port}/docs`,
-  );
-});
-
-export default app;
+}
+export { app };
