@@ -16,11 +16,12 @@ export interface FilePin {
 
 const CID_PLACEHOLDER = "[CID]";
 // IPFS Kubo API Information
-const ipfsEndpoint = process.env.IPFS_ENDPOINT;
+const ipfsEndpoint = process.env.IPFS_ENDPOINT || "http://127.0.0.1:5001";
 const ipfsAuthUser = process.env.IPFS_BASIC_AUTH_USER;
 const ipfsAuthSecret = process.env.IPFS_BASIC_AUTH_SECRET;
 // IPFS Gateway
-const ipfsGateway = process.env.IPFS_GATEWAY;
+const ipfsGateway =
+  process.env.IPFS_GATEWAY || "http://127.0.0.1:8080/ipfs/[CID]";
 
 if (!ipfsEndpoint) {
   throw new Error("IPFS_ENDPOINT env variable is required");

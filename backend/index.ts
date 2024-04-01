@@ -84,3 +84,5 @@ app.listen(port, () => {
     `api listening at http://localhost:${port}\nOpenAPI Docs at http://localhost:${port}/docs`,
   );
 });
+
+export default app;

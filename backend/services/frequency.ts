@@ -2,12 +2,13 @@ import { options } from "@frequency-chain/api-augment";
 import { WsProvider, ApiPromise, Keyring } from "@polkadot/api";
 
 // Environment Variables
-const providerUri = process.env.FREQUENCY_NODE;
-const publicNodeHttp = process.env.FREQUENCY_PUBLIC_ENDPOINT;
-const providerKeyUri = process.env.PROVIDER_KEY_URI;
-const frequencyNetwork = process.env.FREQUENCY_NETWORK;
-const siwfUrl = process.env.SIWF_URL;
-const siwfDomain = process.env.SIWF_DOMAIN;
+const providerUri = process.env.FREQUENCY_NODE || "ws://127.0.0.1:9944";
+const publicNodeHttp =
+  process.env.FREQUENCY_PUBLIC_ENDPOINT || "http://127.0.0.1:9944";
+const providerKeyUri = process.env.PROVIDER_KEY_URI || "//Alice";
+const frequencyNetwork = process.env.FREQUENCY_NETWORK || "local";
+const siwfUrl = process.env.SIWF_URL || "https://amplicalabs.github.io/siwf/ui";
+const siwfDomain = process.env.SIWF_DOMAIN || "amplicalabs.github.io";
 
 if (!providerKeyUri) {
   throw new Error("PROVIDER_KEY_URI env variable is required");
