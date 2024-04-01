@@ -16,7 +16,7 @@ import { getIpfsGateway } from "../services/ipfs.js";
 import { validateSignup, validateSignin } from "@amplica-labs/siwf";
 
 // Environment Variables
-const providerId = process.env.PROVIDER_ID;
+const providerId = process.env.PROVIDER_ID || "1";
 if (!providerId) {
   throw new Error("PROVIDER_ID env variable is required");
 }

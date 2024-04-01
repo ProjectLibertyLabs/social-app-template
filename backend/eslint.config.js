@@ -2,7 +2,6 @@
 
 import globals from "globals";
 import eslint from "@eslint/js";
-import jestPlugin from "eslint-plugin-jest";
 import tseslint from "typescript-eslint";
 
 export default tseslint.config(
@@ -15,11 +14,6 @@ export default tseslint.config(
       "no-unused-vars": "off",
       "@typescript-eslint/no-unused-vars": "off",
     },
-  },
-  {
-    // enable jest rules on test files
-    files: ["**/*.test.ts", "**/*.spec.ts"],
-    ...jestPlugin.configs["flat/recommended"],
   },
   {
     languageOptions: {
