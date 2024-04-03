@@ -131,6 +131,24 @@ declare namespace Components {
        */
       replies?: ReplyExtended[];
     }
+    /**
+     * Schema defining the request payload for uploading assets. Requires a list of files to upload.
+     */
+    export interface UploadAssetRequest {
+      /**
+       * Array of files to be uploaded. Each file must be encoded in binary format.
+       */
+      files: [string, ...string[]];
+    }
+    /**
+     * Schema defining the response for a successful asset upload operation. Contains identifiers for all uploaded assets.
+     */
+    export interface UploadAssetResponse {
+      /**
+       * Array of unique identifiers assigned to the uploaded assets.
+       */
+      assetIds: string[];
+    }
     export interface WalletLoginRequest {
       signIn?: {
         siwsPayload?: {
@@ -317,6 +335,18 @@ declare namespace Paths {
       export type $401 = Components.Responses.UnauthorizedError;
     }
   }
+  namespace PostAssetsHandler {
+    export type RequestBody =
+      /* Schema defining the request payload for uploading assets. Requires a list of files to upload. */ Components.Schemas.UploadAssetRequest;
+    namespace Responses {
+      export type $202 =
+        /* Schema defining the response for a successful asset upload operation. Contains identifiers for all uploaded assets. */ Components.Schemas.UploadAssetResponse;
+      export interface $400 {}
+      export interface $401 {}
+      export interface $500 {}
+      export interface $503 {}
+    }
+  }
   namespace UserFollowing {
     namespace Parameters {
       export type DsnpId = string;
@@ -332,6 +362,16 @@ declare namespace Paths {
 }
 
 export interface OperationMethods {
+  /**
+   * postAssetsHandler - Upload and register new assets
+   *
+   * Allows clients to upload new assets. This endpoint accepts multipart file uploads and returns the identifiers for the newly uploaded assets.
+   */
+  "postAssetsHandler"(
+    parameters?: Parameters<UnknownParamsObject> | null,
+    data?: Paths.PostAssetsHandler.RequestBody,
+    config?: AxiosRequestConfig,
+  ): OperationResponse<Paths.PostAssetsHandler.Responses.$202>;
   /**
    * authProvider - Return the delegation and provider information
    */
@@ -459,6 +499,18 @@ export interface OperationMethods {
 }
 
 export interface PathsDictionary {
+  ["/v2/assets"]: {
+    /**
+     * postAssetsHandler - Upload and register new assets
+     *
+     * Allows clients to upload new assets. This endpoint accepts multipart file uploads and returns the identifiers for the newly uploaded assets.
+     */
+    "post"(
+      parameters?: Parameters<UnknownParamsObject> | null,
+      data?: Paths.PostAssetsHandler.RequestBody,
+      config?: AxiosRequestConfig,
+    ): OperationResponse<Paths.PostAssetsHandler.Responses.$202>;
+  };
   ["/v1/auth/provider"]: {
     /**
      * authProvider - Return the delegation and provider information
