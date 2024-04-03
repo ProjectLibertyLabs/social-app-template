@@ -2,6 +2,8 @@
   "$schema": "https://json.schemastore.org/tsconfig",
   "display": "Base",
   "compilerOptions": {
+    "emitDecoratorMetadata": true,
+    "experimentalDecorators": true,
     "allowSyntheticDefaultImports": true,
     "esModuleInterop": true,
     "moduleResolution": "node",
@@ -10,6 +12,7 @@
     "outDir": "dist",
     "resolveJsonModule": true,
     "sourceMap": false,
+    "strictPropertyInitialization": false,
     "strict": true,
     "skipLibCheck": true,
     "target": "ESNext",

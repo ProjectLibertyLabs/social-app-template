@@ -15,6 +15,21 @@ declare namespace Components {
       dsnpId: string;
       displayHandle?: string;
     }
+    export interface Broadcast {
+      fromId: string;
+      /**
+       * JSON-encoded Activity Content Note
+       */
+      content: string;
+      /**
+       * Timestamp of the post
+       */
+      timestamp: string;
+      /**
+       * Array of ReplyExtended objects
+       */
+      replies?: ReplyExtended[];
+    }
     export interface BroadcastExtended {
       fromId: string;
       contentHash: string;
@@ -90,6 +105,21 @@ declare namespace Components {
       newestBlockNumber: number;
       oldestBlockNumber: number;
       posts: BroadcastExtended[];
+    }
+    export interface PostBroadcastRequest {
+      content: string;
+      inReplyTo?: string;
+      assets?: string[];
+    }
+    export interface PostBroadcastResponse {
+      /**
+       * JSON-encoded Activity Content Note
+       */
+      content: string;
+      /**
+       * Timestamp of the post
+       */
+      published: string;
     }
     export interface Profile {
       fromId: string;
@@ -347,6 +377,13 @@ declare namespace Paths {
       export interface $503 {}
     }
   }
+  namespace PostBroadcastHandler {
+    export type RequestBody = Components.Schemas.PostBroadcastRequest;
+    namespace Responses {
+      export type $202 = Components.Schemas.PostBroadcastResponse;
+      export type $401 = Components.Responses.UnauthorizedError;
+    }
+  }
   namespace UserFollowing {
     namespace Parameters {
       export type DsnpId = string;
@@ -372,6 +409,14 @@ export interface OperationMethods {
     data?: Paths.PostAssetsHandler.RequestBody,
     config?: AxiosRequestConfig,
   ): OperationResponse<Paths.PostAssetsHandler.Responses.$202>;
+  /**
+   * postBroadcastHandler - Create a new post
+   */
+  "postBroadcastHandler"(
+    parameters?: Parameters<UnknownParamsObject> | null,
+    data?: Paths.PostBroadcastHandler.RequestBody,
+    config?: AxiosRequestConfig,
+  ): OperationResponse<Paths.PostBroadcastHandler.Responses.$202>;
   /**
    * authProvider - Return the delegation and provider information
    */
@@ -510,6 +555,16 @@ export interface PathsDictionary {
       data?: Paths.PostAssetsHandler.RequestBody,
       config?: AxiosRequestConfig,
     ): OperationResponse<Paths.PostAssetsHandler.Responses.$202>;
+  };
+  ["/v2/broadcasts"]: {
+    /**
+     * postBroadcastHandler - Create a new post
+     */
+    "post"(
+      parameters?: Parameters<UnknownParamsObject> | null,
+      data?: Paths.PostBroadcastHandler.RequestBody,
+      config?: AxiosRequestConfig,
+    ): OperationResponse<Paths.PostBroadcastHandler.Responses.$202>;
   };
   ["/v1/auth/provider"]: {
     /**
