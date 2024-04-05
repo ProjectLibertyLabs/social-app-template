@@ -1,6 +1,6 @@
 import axios from "axios";
 import FormData from "form-data";
-import { FileUploader } from "./FileUploader";
+import { AssetsService } from "./AssetsService.js";
 import { describe, vi, expect, test, afterEach, MockedFunction } from "vitest";
 import { ContentPublisherRepository } from "../repositories/ContentPublisherRepository.js";
 
@@ -48,7 +48,7 @@ describe("FileUploader", () => {
       }),
     } as any);
 
-    const result = await FileUploader.call(files);
+    const result = await AssetsService.create(files);
 
     expect(result).toEqual(responseData);
   });
@@ -83,7 +83,7 @@ describe("FileUploader", () => {
         ),
     } as any);
 
-    await expect(FileUploader.call(files)).rejects.toThrowError(
+    await expect(AssetsService.create(files)).rejects.toThrowError(
       "Request failed with status code 500",
     );
   });

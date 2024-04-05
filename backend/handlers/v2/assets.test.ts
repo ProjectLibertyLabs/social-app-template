@@ -1,17 +1,17 @@
 import request from "supertest";
 import axios from "axios";
 import { it, describe, expect, MockedFunction, vi } from "vitest";
-import { app } from "../index.js";
-import { FileUploader } from "../services/FileUploader.js";
+import { app } from "../../index.js";
+import { AssetsService } from "../../services/AssetsService.js";
 
-vi.mock("../services/FileUploader.js");
+vi.mock("../../services/AssetsService.js");
 vi.mock("axios");
 
 describe("POST /v2/assets/", () => {
   it("returns 202 with matched operation", async () => {
     const responseData = ["asset1"];
     (
-      FileUploader.call as MockedFunction<typeof FileUploader.call>
+      AssetsService.create as MockedFunction<typeof AssetsService.create>
     ).mockResolvedValueOnce(responseData);
 
     const res = await request(app)
@@ -24,7 +24,7 @@ describe("POST /v2/assets/", () => {
 
   it("returns 503 when getting an error from content-publisher", async () => {
     (
-      FileUploader.call as MockedFunction<typeof FileUploader.call>
+      AssetsService.create as MockedFunction<typeof AssetsService.create>
     ).mockRejectedValueOnce(new Error("error"));
     const res = await request(app)
       .post("/v2/assets")

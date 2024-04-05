@@ -72,7 +72,6 @@ export class ContentPublisherRepository {
 
   public async uploadAsset(data: FormData): Promise<UploadResponseDto> {
     try {
-      const uri = this.client.getUri();
       const response = await this.client.put("/api/asset/upload", data, {
         headers: {
           ...data.getHeaders(),

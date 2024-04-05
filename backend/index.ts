@@ -14,7 +14,7 @@ const upload = multer({ storage: storage });
 
 import type { Request as OpenApiRequest } from "openapi-backend";
 
-import * as assets from "./handlers/assets.js";
+import * as assets from "./handlers/v2/assets.js";
 import * as auth from "./handlers/auth.js";
 import * as content from "./handlers/content.js";
 import * as graph from "./handlers/graph.js";
