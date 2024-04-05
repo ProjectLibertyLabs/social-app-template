@@ -1,11 +1,9 @@
-import axios from "axios";
 import FormData from "form-data";
+import { ContentPublisherRepository } from "../repositories/ContentPublisherRepository.js";
+
+type File = Express.Multer.File;
 export class FileUploader {
-  static async call(
-    files: Express.Multer.File[],
-    uploadUrl: string = process.env.UPLOAD_ENDPOINT ||
-      "http://localhost:3000/api/asset/upload",
-  ): Promise<string[]> {
+  static async call(files: File[]): Promise<string[]> {
     const formData = files.reduce((acc, file) => {
       acc.append(file.fieldname, file.buffer, {
         filename: file.originalname,
@@ -15,17 +13,9 @@ export class FileUploader {
     }, new FormData());
 
     try {
-      const response = await axios.put(uploadUrl, formData, {
-        headers: {
-          ...formData.getHeaders(),
-        },
-      });
-
-      if (response.status >= 200 && response.status < 300) {
-        return response.data;
-      } else {
-        throw new Error(`Request failed with status code ${response.status}`);
-      }
+      const repository = await ContentPublisherRepository.getInstance();
+      const assetIds = (await repository.uploadAsset(formData)).assetIds;
+      return assetIds;
     } catch (error) {
       console.error(error);
       throw error;
