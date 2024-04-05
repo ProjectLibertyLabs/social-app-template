@@ -1,10 +1,13 @@
 import { Client as ContentPublisherClient } from "../types/openapi-content-publisher.js";
 import type { Components } from "../types/openapi-content-publisher.js";
-import OpenAPIClientAxios from "openapi-client-axios";
+import openapiJson from "../openapi-content-publisher.json" assert { type: "json" };
+import { OpenAPIClientAxios, type Document } from "openapi-client-axios";
+import FormData from "form-data";
 
 type AnnouncementResponseDto = Components.Schemas.AnnouncementResponseDto;
 type BroadcastDto = Components.Schemas.BroadcastDto;
 type ReplyDto = Components.Schemas.ReplyDto;
+type UploadResponseDto = Components.Schemas.UploadResponseDto;
 
 export class ContentPublisherRepository {
   private static instance: ContentPublisherRepository;
@@ -23,7 +26,7 @@ export class ContentPublisherRepository {
   private async connect() {
     if (this._client === undefined) {
       const api = new OpenAPIClientAxios({
-        definition: "../../openapi-content-publisher.json",
+        definition: openapiJson as Document,
       });
 
       this.client = await api.init<ContentPublisherClient>();
@@ -63,6 +66,20 @@ export class ContentPublisherRepository {
       return res.data;
     } catch (e) {
       console.error("Failed to post broadcast reply:", e);
+      throw e;
+    }
+  }
+
+  public async uploadAsset(data: FormData): Promise<UploadResponseDto> {
+    try {
+      const response = await this.client.put("/api/asset/upload", data, {
+        headers: {
+          ...data.getHeaders(),
+        },
+      });
+      return response.data;
+    } catch (e) {
+      console.error("Failed to upload asset:", e);
       throw e;
     }
   }
