@@ -52,6 +52,42 @@
         }
       }
     },
+    "/v2/broadcasts": {
+      "post": {
+        "operationId": "postBroadcastHandler",
+        "summary": "Create a new post",
+        "security": [
+          {
+            "tokenAuth": []
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/PostBroadcastRequest"
+              }
+            }
+          }
+        },
+        "responses": {
+          "401": {
+            "$ref": "#/components/responses/UnauthorizedError"
+          },
+          "202": {
+            "description": "Successful response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/PostBroadcastResponse"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
     "/v1/auth/provider": {
       "get": {
         "operationId": "authProvider",
@@ -936,6 +972,44 @@
         },
         "required": ["newestBlockNumber", "oldestBlockNumber", "posts"]
       },
+      "Broadcast": {
+        "type": "object",
+        "properties": {
+          "fromId": {
+            "type": "string"
+          },
+          "content": {
+            "description": "JSON-encoded Activity Content Note",
+            "type": "string"
+          },
+          "timestamp": {
+            "type": "string",
+            "description": "Timestamp of the post"
+          },
+          "replies": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/ReplyExtended"
+            },
+            "description": "Array of ReplyExtended objects"
+          }
+        },
+        "required": ["fromId", "contentHash", "content", "timestamp"]
+      },
+      "PostBroadcastResponse": {
+        "type": "object",
+        "properties": {
+          "content": {
+            "description": "JSON-encoded Activity Content Note",
+            "type": "string"
+          },
+          "published": {
+            "type": "string",
+            "description": "Timestamp of the post"
+          }
+        },
+        "required": ["content", "published"]
+      },
       "BroadcastExtended": {
         "type": "object",
         "properties": {
@@ -989,6 +1063,24 @@
           }
         },
         "required": ["fromId", "contentHash", "content", "timestamp"]
+      },
+      "PostBroadcastRequest": {
+        "type": "object",
+        "properties": {
+          "content": {
+            "type": "string"
+          },
+          "inReplyTo": {
+            "type": "string"
+          },
+          "assets": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            }
+          }
+        },
+        "required": ["content"]
       },
       "CreatePostRequest": {
         "type": "object",

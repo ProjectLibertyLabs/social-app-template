@@ -19,6 +19,7 @@ import * as auth from "./handlers/auth.js";
 import * as content from "./handlers/content.js";
 import * as graph from "./handlers/graph.js";
 import * as profile from "./handlers/profile.js";
+import * as broadcasts from "./handlers/v2/broadcasts.js";
 
 import openapiJson from "./openapi.json" assert { type: "json" };
 import { getApi } from "./services/frequency.js";
@@ -39,11 +40,13 @@ const api = new openapiBackend.OpenAPIBackend({
     ...assets,
     ...auth,
     ...content,
+    ...broadcasts,
     ...graph,
     ...profile,
 
-    validationFail: async (c, req: Request, res: Response) =>
-      res.status(400).json({ err: c.validation.errors }),
+    validationFail: async (c, req: Request, res: Response) => {
+      return res.status(400).json({ err: c.validation.errors });
+    },
     notFound: async (c, req: Request, res: Response) =>
       res.status(404).json({ err: "not found" }),
   },

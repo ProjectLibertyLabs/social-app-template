@@ -11,6 +11,7 @@
     "test": "vitest run",
     "format": "eslint --fix . && prettier --write .",
     "lint": "eslint . && prettier --check .",
+    "generate-types-content-publisher": "npx openapi-client-axios-typegen ./openapi-content-publisher.json > types/openapi-content-publisher.d.ts",
     "gen:types": "npx openapi-client-axios-typegen ./openapi.json > types/openapi.d.ts",
     "local:init": "node scripts/local-init.cjs"
   },

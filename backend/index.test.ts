@@ -1,7 +1,6 @@
 import request from "supertest";
 import { describe, expect, it } from "vitest";
 import { app } from "./index.js";
-import { beforeEach } from "node:test";
 
 describe("API", () => {
   it("GET /v1/auth/challenge returns 200 with matched operation", async () => {
