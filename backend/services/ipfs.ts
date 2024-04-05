@@ -21,19 +21,19 @@ const ipfsAuthUser = process.env.IPFS_BASIC_AUTH_USER;
 const ipfsAuthSecret = process.env.IPFS_BASIC_AUTH_SECRET;
 // IPFS Gateway
 const ipfsGateway =
-  process.env.IPFS_GATEWAY || "http://127.0.0.1:8080/ipfs/[CID]";
+  process.env.IPFS_GATEWAY_URL || "http://127.0.0.1:8080/ipfs/[CID]";
 
 if (!ipfsEndpoint) {
   throw new Error("IPFS_ENDPOINT env variable is required");
 }
 
 if (!ipfsGateway) {
-  throw new Error("IPFS_GATEWAY env variable is required");
+  throw new Error("IPFS_GATEWAY_URL env variable is required");
 }
 
 if (!ipfsGateway.includes("[CID]")) {
   throw new Error(
-    "IPFS_GATEWAY env variable must have the '[CID]' positioning string.",
+    "IPFS_GATEWAY_URL env variable must have the '[CID]' positioning string.",
   );
 }
 

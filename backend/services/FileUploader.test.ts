@@ -63,7 +63,7 @@ describe("FileUploader", () => {
       } as Express.Multer.File,
     ];
 
-    const uploadUrl = "http://localhost:3000/api/asset/upload";
+    const uploadUrl = "http://localhost:5010/api/asset/upload";
 
     const formData = new FormData();
     formData.append("file1", files[0].fieldname, {
