@@ -11,10 +11,10 @@ Environment variables can be setup by creating a `.env` file in the root folder.
     > `cp .env.example .env`
 
 - `IPFS_ENDPOINT` (Required): The endpoint for the IPFS API.
-- `IPFS_GATEWAY` (Required): IPFS Gateway. Use `[CID]` to position the CID correctly in the URL. e.g. `https://ipfs.io/ipfs/[CID]`
+- `IPFS_GATEWAY_URL` (Required): IPFS Gateway. Use `[CID]` to position the CID correctly in the URL. e.g. `https://ipfs.io/ipfs/[CID]`
 - `IPFS_BASIC_AUTH_USER`: The Basic Auth for the IPFS connection
 - `IPFS_BASIC_AUTH_SECRET`: The Basic Auth for the IPFS connection
-- `FREQUENCY_NODE` (Required): The WebSocket address for a Frequency Node e.g. `ws://127.0.0.1:9944` (Note: Use `172.0.0.1` over `localhost`)
+- `FREQUENCY_URL` (Required): The WebSocket address for a Frequency Node e.g. `ws://127.0.0.1:9944` (Note: Use `172.0.0.1` over `localhost`)
 - `FREQUENCY_PUBLIC_ENDPOINT`: The HTTP(S) endpoint so the website can interact with the bare minimum of node interactions. (Required for the Social Web Example Client)
 - `PROVIDER_KEY_URI`: The URI or seed phrase for the provider key. e.g. `//Alice`
 - `PROVIDER_ID`: The ID of the Provider that will be used.
@@ -36,7 +36,7 @@ This is best for Testnet interactions.
    - `IPFS_ENDPOINT="https://ipfs.infura.io:5001"`
    - `IPFS_BASIC_AUTH_USER="Infura Project ID"`
    - `IPFS_BASIC_AUTH_SECRET="Infura Secret Here"`
-   - `IPFS_GATEWAY="https://ipfs.io/ipfs/[CID]"`
+   - `IPFS_GATEWAY_URL="https://ipfs.io/ipfs/[CID]"`
 
 #### Option 2: IPFS Kubo Node
 
@@ -48,7 +48,7 @@ This uses a local IPFS node with the [Kubo API](https://docs.ipfs.tech/reference
 2. Run `ipfs daemon`
 3. Setup the Environment Variables
    - `IPFS_ENDPOINT="http://127.0.0.1:5001"`
-   - `IPFS_GATEWAY="http://127.0.0.1:8080/ipfs/[CID]"`
+   - `IPFS_GATEWAY_URL="http://127.0.0.1:8080/ipfs/[CID]"`
 
 _Warning_: Never expose the RPC API to the public internet.
 
@@ -61,7 +61,7 @@ Note: There are other options, but these are simplest to get started with.
 This is best for Testnet interactions.
 
 1. Setup the Environment Variables
-   - `FREQUENCY_NODE="wss://rpc.rococo.frequency.xyz"`
+   - `FREQUENCY_URL="wss://rpc.rococo.frequency.xyz"`
    - `FREQUENCY_PUBLIC_ENDPOINT="https://rpc.rococo.frequency.xyz"`
 
 #### Option 2: Local Network from Source
@@ -71,7 +71,7 @@ This is for simple local development work.
 1. Follow the development setup for [Frequency](https://github.com/LibertyDSNP/frequency#build)
 2. Run the Node in local "Instant Sealing" mode `make start` OR "Interval Sealing" mode for more realistic delay `make start-interval`
 3. Setup the Environment Variables
-   - `FREQUENCY_NODE="ws://127.0.0.1:9944"`
+   - `FREQUENCY_URL="ws://127.0.0.1:9944"`
    - `FREQUENCY_PUBLIC_ENDPOINT="http://127.0.0.1:9944"`
 
 ### Provider Setup

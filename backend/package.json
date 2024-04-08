@@ -11,6 +11,10 @@
     "test": "vitest run",
     "format": "eslint --fix . && prettier --write .",
     "lint": "eslint . && prettier --check .",
+    "docker-build": "docker build -t social-app-template-backend .",
+    "docker-build:dev": "docker-compose -f docker-compose.dev.yaml build",
+    "docker-run:dev": "docker-compose -f docker-compose.dev.yaml up -d ; docker-compose -f docker-compose.dev.yaml logs",
+    "docker-stop:dev": "docker-compose -f docker-compose.dev.yaml stop",
     "generate-types-content-publisher": "npx openapi-client-axios-typegen ./openapi-content-publisher.json > types/openapi-content-publisher.d.ts",
     "gen:types": "npx openapi-client-axios-typegen ./openapi.json > types/openapi.d.ts",
     "local:init": "node scripts/local-init.cjs"

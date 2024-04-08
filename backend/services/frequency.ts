@@ -2,7 +2,7 @@ import { options } from "@frequency-chain/api-augment";
 import { WsProvider, ApiPromise, Keyring } from "@polkadot/api";
 
 // Environment Variables
-const providerUri = process.env.FREQUENCY_NODE || "ws://127.0.0.1:9944";
+const providerUri = process.env.FREQUENCY_URL || "ws://127.0.0.1:9944";
 const publicNodeHttp =
   process.env.FREQUENCY_PUBLIC_ENDPOINT || "http://127.0.0.1:9944";
 const providerKeyUri = process.env.PROVIDER_KEY_URI || "//Alice";
@@ -15,7 +15,7 @@ if (!providerKeyUri) {
 }
 
 if (!providerUri) {
-  throw new Error("FREQUENCY_NODE env variable is required");
+  throw new Error("FREQUENCY_URL env variable is required");
 }
 
 if (!publicNodeHttp) {
@@ -69,7 +69,7 @@ export const getApi = (): Promise<ApiPromise> => {
   }
 
   if (!providerUri) {
-    throw new Error("FREQUENCY_NODE env variable is required");
+    throw new Error("FREQUENCY_URL env variable is required");
   }
 
   const provider = new WsProvider(providerUri);
