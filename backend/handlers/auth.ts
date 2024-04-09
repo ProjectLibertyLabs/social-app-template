@@ -76,7 +76,11 @@ export const authLogin2: Handler<T.Paths.AuthLogin2.RequestBody> = async (
     }
   } else if (signIn) {
     try {
-      const parsedSignin = await validateSignin(api, signIn, "localhost");
+      const parsedSignin = await validateSignin(
+        api,
+        signIn,
+        "amplicalabs.github.io",
+      );
       const response: T.Paths.AuthLogin2.Responses.$200 = {
         accessToken: await createAuthToken(parsedSignin.publicKey),
         expires: Date.now() + 60 * 60 * 24,

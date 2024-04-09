@@ -37,10 +37,25 @@ const NewPost = ({
       const body = new FormData();
       body.append("content", formValues.message);
       (formValues.images || []).forEach((upload) => {
-        if (upload.originFileObj) body.append("images", upload.originFileObj);
+        if (upload.originFileObj) body.append("files", upload.originFileObj);
       });
-      const resp = await dsnpLink.createBroadcast(getContext(), {}, body);
-      console.log("postActivityContentCreated", { resp });
+
+      const { assetIds } = await dsnpLink.postAssetsHandler(
+        getContext(),
+        {},
+        body,
+      );
+      console.log("postAssets", { assetIds });
+      const response = await dsnpLink.postBroadcastHandler(
+        getContext(),
+        {},
+        {
+          content: formValues.message,
+          assets: assetIds,
+        },
+      );
+
+      console.log("postBroadcastHandler", { response });
       success();
     } catch (e) {
       console.error(e);
