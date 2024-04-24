@@ -150,7 +150,11 @@ export const createBroadcast: Handler<
         .map(async (image) => {
           const { cid, hash } = await ipfsPin(image.info.mimeType, image.file);
           return createImageAttachment([
-            createImageLink(Config.instance().getIpfsContentUrl(cid), image.info.mimeType, [hash]),
+            createImageLink(
+              Config.instance().getIpfsContentUrl(cid),
+              image.info.mimeType,
+              [hash],
+            ),
           ]);
         }),
     );
@@ -163,8 +167,17 @@ export const createBroadcast: Handler<
     );
 
     const announcement = fields.inReplyTo
-      ? dsnp.createReply(msaId!, Config.instance().getIpfsContentUrl(cid), contentHash, fields.inReplyTo)
-      : dsnp.createBroadcast(msaId!, Config.instance().getIpfsContentUrl(cid), contentHash);
+      ? dsnp.createReply(
+          msaId!,
+          Config.instance().getIpfsContentUrl(cid),
+          contentHash,
+          fields.inReplyTo,
+        )
+      : dsnp.createBroadcast(
+          msaId!,
+          Config.instance().getIpfsContentUrl(cid),
+          contentHash,
+        );
 
     // Add it to the batch and publish
     await publish([announcement]);

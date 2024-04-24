@@ -1,11 +1,7 @@
 import { Handler } from "openapi-backend";
 // TODO: Figure out a better way to handle the type checking of the OpenAPI
 import type * as T from "../types/openapi.js";
-import {
-  getApi,
-  getNonce,
-  getProviderKey,
-} from "../services/frequency.js";
+import { getApi, getNonce, getProviderKey } from "../services/frequency.js";
 import { createAuthToken } from "../services/auth.js";
 import { AnnouncementType } from "../services/dsnp.js";
 import { getSchemaId } from "../services/announce.js";
@@ -104,7 +100,7 @@ export const authProvider: Handler<object> = async (_c, _req, res) => {
     ipfsGateway: getIpfsGateway(),
     providerId,
     schemas: addProviderSchemas,
-    network: Config.instance().chainType
+    network: Config.instance().chainType,
   };
   return res.status(200).json(response);
 };

@@ -124,7 +124,7 @@ app.use((err: any, req: Request, res: Response, next: NextFunction) => {
 
 let port = parseInt(process.env.API_PORT || DEFAULT_PORT.toString());
 if (isNaN(port)) {
-  port = DEFAULT_PORT
+  port = DEFAULT_PORT;
 }
 if (process.env.NODE_ENV != "test") {
   // start server
