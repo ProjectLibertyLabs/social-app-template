@@ -24,11 +24,16 @@ import * as broadcasts from "./handlers/v2/broadcasts.js";
 import openapiJson from "./openapi.json" assert { type: "json" };
 import { getApi } from "./services/frequency.js";
 import { getAccountFromAuth } from "./services/auth.js";
+import { Config } from "./config/config.js";
 
 // Support BigInt JSON
 (BigInt.prototype as any).toJSON = function () {
   return this.toString();
 };
+
+const DEFAULT_PORT = 3000;
+
+Config.init(process.env);
 
 const app = express();
 app.use(express.json());
@@ -117,7 +122,10 @@ app.use((err: any, req: Request, res: Response, next: NextFunction) => {
   return res.status(500).json({ error: "An internal server error occurred." });
 });
 
-const port = parseInt(process.env.PORT || "0") || "5005";
+let port = parseInt(process.env.API_PORT || DEFAULT_PORT.toString());
+if (isNaN(port)) {
+  port = DEFAULT_PORT
+}
 if (process.env.NODE_ENV != "test") {
   // start server
   app.listen(port, () => {
@@ -129,4 +137,5 @@ if (process.env.NODE_ENV != "test") {
     );
   });
 }
+
 export { app };

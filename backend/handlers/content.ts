@@ -1,7 +1,7 @@
 import { Context, Handler } from "openapi-backend";
 import Busboy from "busboy";
 import type * as T from "../types/openapi.js";
-import { ipfsPin, ipfsUrl } from "../services/ipfs.js";
+import { ipfsPin } from "../services/ipfs.js";
 import * as dsnp from "../services/dsnp.js";
 import {
   createImageAttachment,
@@ -13,6 +13,7 @@ import { getPostsInRange } from "../services/feed.js";
 import { getCurrentBlockNumber } from "../services/frequency.js";
 import { getMsaByPublicKey } from "../services/auth.js";
 import { getPublicFollows } from "../services/graph.js";
+import { Config } from "../config/config.js";
 
 type Fields = Record<string, string>;
 type File = {
@@ -149,7 +150,7 @@ export const createBroadcast: Handler<
         .map(async (image) => {
           const { cid, hash } = await ipfsPin(image.info.mimeType, image.file);
           return createImageAttachment([
-            createImageLink(ipfsUrl(cid), image.info.mimeType, [hash]),
+            createImageLink(Config.instance().getIpfsContentUrl(cid), image.info.mimeType, [hash]),
           ]);
         }),
     );
@@ -162,8 +163,8 @@ export const createBroadcast: Handler<
     );
 
     const announcement = fields.inReplyTo
-      ? dsnp.createReply(msaId!, ipfsUrl(cid), contentHash, fields.inReplyTo)
-      : dsnp.createBroadcast(msaId!, ipfsUrl(cid), contentHash);
+      ? dsnp.createReply(msaId!, Config.instance().getIpfsContentUrl(cid), contentHash, fields.inReplyTo)
+      : dsnp.createBroadcast(msaId!, Config.instance().getIpfsContentUrl(cid), contentHash);
 
     // Add it to the batch and publish
     await publish([announcement]);
