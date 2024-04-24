@@ -7,7 +7,7 @@ import { hexToString } from "@polkadot/util";
 import axios from "axios";
 import { ParquetReader } from "@dsnp/parquetjs";
 import { MessageResponse } from "@frequency-chain/api-augment/interfaces";
-import { Config } from "../config/config.js";
+import * as Config from "../config/config.js";
 
 type Post = T.Components.Schemas.BroadcastExtended;
 interface CachedPosts {

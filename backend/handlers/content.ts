@@ -13,7 +13,7 @@ import { getPostsInRange } from "../services/feed.js";
 import { getCurrentBlockNumber } from "../services/frequency.js";
 import { getMsaByPublicKey } from "../services/auth.js";
 import { getPublicFollows } from "../services/graph.js";
-import { Config } from "../config/config.js";
+import * as Config from "../config/config.js";
 
 type Fields = Record<string, string>;
 type File = {

@@ -11,7 +11,7 @@ import { AnnouncementType } from "../services/dsnp.js";
 import { getSchemaId } from "../services/announce.js";
 import { getIpfsGateway } from "../services/ipfs.js";
 import { validateSignup, validateSignin } from "@amplica-labs/siwf";
-import { Config } from "../config/config.js";
+import * as Config from "../config/config.js";
 
 // Environment Variables
 const providerId = Config.instance().providerId;

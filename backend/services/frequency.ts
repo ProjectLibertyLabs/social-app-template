@@ -1,6 +1,6 @@
 import { options } from "@frequency-chain/api-augment";
 import { WsProvider, ApiPromise, Keyring } from "@polkadot/api";
-import { Config } from "../config/config";
+import * as Config from "../config/config";
 
 // Environment Variables
 const frequencyUri = Config.instance().frequencyUrl.toString();

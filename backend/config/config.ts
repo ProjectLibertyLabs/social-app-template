@@ -97,20 +97,18 @@ export class Config {
   }
 }
 
-export namespace Config {
-  let configInstance: Config;
+let configInstance: Config;
 
-  export function init(environment: Record<string, any>) {
-    if (!configInstance) {
-      configInstance = new Config(environment);
-    }
+export function init(environment: Record<string, any>) {
+  if (!configInstance) {
+    configInstance = new Config(environment);
+  }
+}
+
+export function instance() {
+  if (!configInstance) {
+    init(process.env);
   }
 
-  export function instance() {
-    if (!configInstance) {
-      init(process.env);
-    }
-
-    return configInstance;
-  }
+  return configInstance;
 }

@@ -24,7 +24,7 @@ import * as broadcasts from "./handlers/v2/broadcasts.js";
 import openapiJson from "./openapi.json" assert { type: "json" };
 import { getApi } from "./services/frequency.js";
 import { getAccountFromAuth } from "./services/auth.js";
-import { Config } from "./config/config.js";
+import * as Config from "./config/config.js";
 
 // Support BigInt JSON
 (BigInt.prototype as any).toJSON = function () {

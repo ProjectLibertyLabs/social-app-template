@@ -5,7 +5,7 @@ import axios from "axios";
 import FormData from "form-data";
 import { extension as getExtension } from "mime-types";
 import { toMultibase } from "@dsnp/activity-content/hash";
-import { Config } from "../config/config";
+import * as Config from "../config/config";
 
 export interface FilePin {
   cid: string;
