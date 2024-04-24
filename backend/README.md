@@ -6,21 +6,16 @@ This is a prototype for a DSNP Gateway to allow for simple provider setup.
 
 ### Environment Variables
 
-Environment variables can be setup by creating a `.env` file in the root folder.
+The application is configured by way of environment variables. A complete list of available environment variables is [here](./ENVIRONMENT.md). Environment variables are supplied to the application through _environment files_.
 
-    > `cp .env.example .env`
+The default scripts and images for this app are configured in a slightly different way from the usual method. Because this Gateway app is a template meant to be used with other services and built upon,
+the supplied scripts enable launching a full environment of all Frequency Gateway services needed by this Gateway application. To that end, each service has its own environment file, as well as a "common" environment file where shared config values can be specified for all services without the need to duplicate entries. The environment files are named as follows; use the _[.docker]_ variants for running the main Gateway app under docker (the other Gateway services are set up to run under Docker by default).
 
-- `IPFS_ENDPOINT` (Required): The endpoint for the IPFS API.
-- `IPFS_GATEWAY_URL` (Required): IPFS Gateway. Use `[CID]` to position the CID correctly in the URL. e.g. `https://ipfs.io/ipfs/[CID]`
-- `IPFS_BASIC_AUTH_USER`: The Basic Auth for the IPFS connection
-- `IPFS_BASIC_AUTH_SECRET`: The Basic Auth for the IPFS connection
-- `FREQUENCY_URL` (Required): The WebSocket address for a Frequency Node e.g. `ws://127.0.0.1:9944` (Note: Use `172.0.0.1` over `localhost`)
-- `FREQUENCY_PUBLIC_ENDPOINT`: The HTTP(S) endpoint so the website can interact with the bare minimum of node interactions. (Required for the Social Web Example Client)
-- `PROVIDER_KEY_URI`: The URI or seed phrase for the provider key. e.g. `//Alice`
-- `PROVIDER_ID`: The ID of the Provider that will be used.
-- `PORT`: The port to launch the service on. Defaults to `5005`
-- `SIWF_URL`: The current Sign-In With Frequency UI deployment. Current Deployed Version: `https://amplicalabs.github.io/siwf/ui`
-- `SIWF_DOMAIN`: The raw domain that the user is logging in through. Example: `localhost`, `amplica.io`
+- .env.common[.docker]
+- .env.service[.docker]
+  - where <service> is one of: account-service, content-publishing-service, content-watcher-service, graph-service, social-app-backend
+
+Sample configuration files can be found [here](./environment/)
 
 ### IPFS Endpoint
 
@@ -62,7 +57,7 @@ This is best for Testnet interactions.
 
 1. Setup the Environment Variables
    - `FREQUENCY_URL="wss://rpc.rococo.frequency.xyz"`
-   - `FREQUENCY_PUBLIC_ENDPOINT="https://rpc.rococo.frequency.xyz"`
+   - `FREQUENCY_HTTP_URL="https://rpc.rococo.frequency.xyz"`
 
 #### Option 2: Local Network from Source
 
@@ -72,7 +67,7 @@ This is for simple local development work.
 2. Run the Node in local "Instant Sealing" mode `make start` OR "Interval Sealing" mode for more realistic delay `make start-interval`
 3. Setup the Environment Variables
    - `FREQUENCY_URL="ws://127.0.0.1:9944"`
-   - `FREQUENCY_PUBLIC_ENDPOINT="http://127.0.0.1:9944"`
+   - `FREQUENCY_HTTP_URL="http://127.0.0.1:9944"`
 
 ### Provider Setup
 
@@ -87,13 +82,13 @@ Note: There are other options, but these are simplest to get started with.
 1. Start the Frequency Node
 2. `npm run local:init`
 3. Setup the Environment Variables
-   - `PROVIDER_KEY_URI="//Alice"`
+   - `PROVIDER_ACCOUNT_SEED_PHRASE="//Alice"`
    - `PROVIDER_ID="1"`
 
 ## Run DSNP Gateway Prototype
 
 1. `npm install`
-2. `npm run watch` OR `npm run start`
+2. `npm run start:dev`
 
 ### Development Commands
 

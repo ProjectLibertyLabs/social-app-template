@@ -7,7 +7,7 @@ import { hexToString } from "@polkadot/util";
 import axios from "axios";
 import { ParquetReader } from "@dsnp/parquetjs";
 import { MessageResponse } from "@frequency-chain/api-augment/interfaces";
-import { ipfsUrl } from "./ipfs.js";
+import * as Config from "../config/config.js";
 
 type Post = T.Components.Schemas.BroadcastExtended;
 interface CachedPosts {
@@ -54,7 +54,7 @@ const getPostsForBlockRange = async ({
   // Fetch the parquet files
   for await (const msg of messages) {
     try {
-      const parquetFileUrl = ipfsUrl(msg.cid);
+      const parquetFileUrl = Config.instance().getIpfsContentUrl(msg.cid);
       const resp = await axios.get(parquetFileUrl, {
         responseType: "arraybuffer",
         timeout: 10_000,

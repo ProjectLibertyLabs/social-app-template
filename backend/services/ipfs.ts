@@ -5,6 +5,7 @@ import axios from "axios";
 import FormData from "form-data";
 import { extension as getExtension } from "mime-types";
 import { toMultibase } from "@dsnp/activity-content/hash";
+import * as Config from "../config/config";
 
 export interface FilePin {
   cid: string;
@@ -14,28 +15,12 @@ export interface FilePin {
   hash: string;
 }
 
-const CID_PLACEHOLDER = "[CID]";
 // IPFS Kubo API Information
-const ipfsEndpoint = process.env.IPFS_ENDPOINT || "http://127.0.0.1:5001";
-const ipfsAuthUser = process.env.IPFS_BASIC_AUTH_USER;
-const ipfsAuthSecret = process.env.IPFS_BASIC_AUTH_SECRET;
+const ipfsEndpoint = Config.instance().ipfsEndpoint;
+const ipfsAuthUser = Config.instance().ipfsBasicAuthUser;
+const ipfsAuthSecret = Config.instance().ipfsBasicAuthSecret;
 // IPFS Gateway
-const ipfsGateway =
-  process.env.IPFS_GATEWAY_URL || "http://127.0.0.1:8080/ipfs/[CID]";
-
-if (!ipfsEndpoint) {
-  throw new Error("IPFS_ENDPOINT env variable is required");
-}
-
-if (!ipfsGateway) {
-  throw new Error("IPFS_GATEWAY_URL env variable is required");
-}
-
-if (!ipfsGateway.includes("[CID]")) {
-  throw new Error(
-    "IPFS_GATEWAY_URL env variable must have the '[CID]' positioning string.",
-  );
-}
+const ipfsGateway = Config.instance().ipfsGatewayUrl;
 
 // Returns the root of the path style IPFS Gateway
 export const getIpfsGateway = (): string | undefined => {
@@ -103,11 +88,4 @@ export const ipfsPin = async (
   }
   const ipfs = await ipfsPinBuffer(`${hash}.${extension}`, mimeType, file);
   return { ...ipfs, hash };
-};
-
-export const ipfsUrl = (cid: string): string => {
-  if (ipfsGateway.includes(CID_PLACEHOLDER)) {
-    return ipfsGateway.replace(CID_PLACEHOLDER, cid);
-  }
-  return `https://ipfs.io/ipfs/${cid}`;
 };

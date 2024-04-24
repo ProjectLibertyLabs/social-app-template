@@ -1,0 +1,5 @@
+{
+    "description": "Dummy package to suppress EBADENGINE error from npm due to @azns/resolver-core@1.6.0 having a bad 'engines:' restriction to Node.js <= 18. Can be removed once the offending package updates. This is a transitive dependency of @amplicalabs/siwf -> @talismn/siws that we don't use",
+    "name": "@azns/resolver-core",
+    "version": "1.6.0"
+}

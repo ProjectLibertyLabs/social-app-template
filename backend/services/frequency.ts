@@ -1,51 +1,10 @@
 import { options } from "@frequency-chain/api-augment";
 import { WsProvider, ApiPromise, Keyring } from "@polkadot/api";
+import * as Config from "../config/config";
 
 // Environment Variables
-const providerUri = process.env.FREQUENCY_URL || "ws://127.0.0.1:9944";
-const publicNodeHttp =
-  process.env.FREQUENCY_PUBLIC_ENDPOINT || "http://127.0.0.1:9944";
-const providerKeyUri = process.env.PROVIDER_KEY_URI || "//Alice";
-const frequencyNetwork = process.env.FREQUENCY_NETWORK || "local";
-const siwfUrl = process.env.SIWF_URL || "https://amplicalabs.github.io/siwf/ui";
-const siwfDomain = process.env.SIWF_DOMAIN || "amplicalabs.github.io";
-
-if (!providerKeyUri) {
-  throw new Error("PROVIDER_KEY_URI env variable is required");
-}
-
-if (!providerUri) {
-  throw new Error("FREQUENCY_URL env variable is required");
-}
-
-if (!publicNodeHttp) {
-  throw new Error("FREQUENCY_PUBLIC_ENDPOINT env variable is required");
-}
-
-if (
-  !frequencyNetwork ||
-  !["local", "testnet", "mainnet"].includes(frequencyNetwork)
-) {
-  throw new Error(
-    'FREQUENCY_NETWORK env variable must be one of: "local", "testnet", "mainnet"',
-  );
-}
-
-if (!siwfUrl) {
-  throw new Error("SIWF_URL env variable is required");
-}
-
-if (!siwfDomain) {
-  throw new Error("SIWF_DOMAIN env variable is required");
-}
-
-export const getSiwfUrl = () => siwfUrl;
-export const getSiwfDomain = () => siwfDomain;
-
-export const getProviderHttp = () => publicNodeHttp;
-
-export const getNetwork = () =>
-  frequencyNetwork as "local" | "testnet" | "mainnet";
+const frequencyUri = Config.instance().frequencyUrl.toString();
+const providerKeyUri = Config.instance().providerSeedPhrase;
 
 export const getProviderKey = () => {
   return new Keyring().addFromUri(providerKeyUri, {}, "sr25519");
@@ -68,11 +27,7 @@ export const getApi = (): Promise<ApiPromise> => {
     return _singletonApi;
   }
 
-  if (!providerUri) {
-    throw new Error("FREQUENCY_URL env variable is required");
-  }
-
-  const provider = new WsProvider(providerUri);
+  const provider = new WsProvider(Config.instance().frequencyUrl.toString());
   _singletonApi = ApiPromise.create({
     provider: provider,
     throwOnConnect: true,
@@ -83,19 +38,20 @@ export const getApi = (): Promise<ApiPromise> => {
 };
 
 export enum ChainType {
-  Local,
+  Dev,
+  Rococo,
   Testnet,
   Mainnet,
 }
 
 export const getChainType = (): ChainType => {
-  if (providerUri?.includes("rococo")) return ChainType.Testnet;
+  if (frequencyUri?.includes("rococo")) return ChainType.Testnet;
   if (
-    providerUri?.includes("localhost") ||
-    providerUri?.includes("127.0.0.1") ||
-    providerUri?.includes("::1")
+    frequencyUri?.includes("localhost") ||
+    frequencyUri?.includes("127.0.0.1") ||
+    frequencyUri?.includes("::1")
   )
-    return ChainType.Local;
+    return ChainType.Dev;
   return ChainType.Mainnet;
 };
 

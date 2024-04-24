@@ -1,25 +1,16 @@
 import { Handler } from "openapi-backend";
 // TODO: Figure out a better way to handle the type checking of the OpenAPI
 import type * as T from "../types/openapi.js";
-import {
-  getApi,
-  getNetwork,
-  getNonce,
-  getProviderHttp,
-  getProviderKey,
-  getSiwfUrl,
-} from "../services/frequency.js";
+import { getApi, getNonce, getProviderKey } from "../services/frequency.js";
 import { createAuthToken } from "../services/auth.js";
 import { AnnouncementType } from "../services/dsnp.js";
 import { getSchemaId } from "../services/announce.js";
 import { getIpfsGateway } from "../services/ipfs.js";
 import { validateSignup, validateSignin } from "@amplica-labs/siwf";
+import * as Config from "../config/config.js";
 
 // Environment Variables
-const providerId = process.env.PROVIDER_ID || "1";
-if (!providerId) {
-  throw new Error("PROVIDER_ID env variable is required");
-}
+const providerId = Config.instance().providerId;
 
 // Constants
 const addProviderSchemas = [
@@ -104,12 +95,12 @@ export const authLogout: Handler<object> = async (_c, _req, res) => {
 // It provides to the frontend the various direct conenctions it might need
 export const authProvider: Handler<object> = async (_c, _req, res) => {
   const response: T.Paths.AuthProvider.Responses.$200 = {
-    siwfUrl: getSiwfUrl(),
-    nodeUrl: getProviderHttp(),
+    siwfUrl: Config.instance().siwfUrl.toString(),
+    nodeUrl: Config.instance().frequencyHttpUrl,
     ipfsGateway: getIpfsGateway(),
     providerId,
     schemas: addProviderSchemas,
-    network: getNetwork(),
+    network: Config.instance().chainType,
   };
   return res.status(200).json(response);
 };
