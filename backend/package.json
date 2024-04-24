@@ -9,7 +9,7 @@
     "start": "npm run build && node dist/index.js",
     "start:watch": "npx tsx index.ts",
     "start:dev": "set -a ; . .env.common ; . .env.social-app-backend ; npx tsx index.ts --watch",
-    "test": "set -a ; . env.template ; vitest run",
+    "test": "set -a ; . ./env.template ; vitest run",
     "format": "eslint --fix . && prettier --write .",
     "lint": "eslint . && prettier --check .",
     "container-run:dev": "npm install && npm run start:watch",

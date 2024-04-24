@@ -9,7 +9,7 @@ defaults:
   run:
     working-directory: "./backend"
 jobs:
-  frontend-build:
+  backend-build:
     runs-on: ubuntu-latest
     steps:
       - name: Checkout
