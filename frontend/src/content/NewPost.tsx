@@ -1,11 +1,12 @@
-import React from "react";
-import { Button, Modal, Input, Form } from "antd";
-import UserAvatar from "../chrome/UserAvatar";
-import NewPostImageUpload from "./NewPostImageUpload";
-import type { User } from "../types";
-import type { UploadFile } from "antd/es/upload/interface";
-import * as dsnpLink from "../dsnpLink";
-import { getContext } from "../service/AuthService";
+import React from 'react';
+import { Button, Modal, Input, Form } from 'antd';
+import UserAvatar from '../chrome/UserAvatar';
+import NewPostImageUpload from './NewPostImageUpload';
+import type { User } from '../types';
+import type { UploadFile } from 'antd/es/upload/interface';
+import * as dsnpLink from '../dsnpLink';
+import { getContext } from '../service/AuthService';
+import FormData from 'form-data';
 
 interface NewPostProps {
   onSuccess: () => void;
@@ -15,15 +16,11 @@ interface NewPostProps {
 
 type NewPostValues = {
   message: string;
-  test: string;
+  test?: string;
   images: UploadFile[];
 };
 
-const NewPost = ({
-  onSuccess,
-  onCancel,
-  account,
-}: NewPostProps): JSX.Element => {
+const NewPost = ({ onSuccess, onCancel, account }: NewPostProps): JSX.Element => {
   const [form] = Form.useForm();
   const [saving, setSaving] = React.useState<boolean>(false);
 
@@ -35,27 +32,23 @@ const NewPost = ({
   const createPost = async (formValues: NewPostValues) => {
     try {
       const body = new FormData();
-      body.append("content", formValues.message);
+      body.append('content', formValues.message);
       (formValues.images || []).forEach((upload) => {
-        if (upload.originFileObj) body.append("files", upload.originFileObj);
+        if (upload.originFileObj) body.append('files', upload.originFileObj);
       });
 
-      const { assetIds } = await dsnpLink.postAssetsHandler(
-        getContext(),
-        {},
-        body,
-      );
-      console.log("postAssets", { assetIds });
+      const { assetIds } = await dsnpLink.postAssetsHandler(getContext(), {}, body);
+      console.log('postAssets', { assetIds });
       const response = await dsnpLink.postBroadcastHandler(
         getContext(),
         {},
         {
           content: formValues.message,
           assets: assetIds,
-        },
+        }
       );
 
-      console.log("postBroadcastHandler", { response });
+      console.log('postBroadcastHandler', { response });
       success();
     } catch (e) {
       console.error(e);
@@ -64,16 +57,10 @@ const NewPost = ({
   };
 
   return (
-    <Modal
-      title="New Post"
-      open={true}
-      onCancel={onCancel}
-      footer={null}
-      centered={true}
-    >
+    <Modal title="New Post" open={true} onCancel={onCancel} footer={null} centered={true}>
       <Form form={form} onFinish={createPost}>
         <Form.Item>
-          <UserAvatar user={account} avatarSize={"medium"} />
+          <UserAvatar user={account} avatarSize={'medium'} />
           Posting as @{account.handle}
         </Form.Item>
         <Form.Item name="message" required={true}>
@@ -82,7 +69,7 @@ const NewPost = ({
         <NewPostImageUpload
           onChange={(fileList) => {
             form.setFieldsValue({ images: fileList });
-            form.validateFields(["images"]);
+            form.validateFields(['images']);
           }}
         />
         <Form.Item>

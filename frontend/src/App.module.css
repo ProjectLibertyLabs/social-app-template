@@ -8,4 +8,7 @@
 .content {
   padding: 10px;
   justify-content: center;
+  max-width: 1300px !important;
+  width: 100%;
+  margin: 0 auto;
 }

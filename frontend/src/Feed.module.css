@@ -2,7 +2,7 @@
   --feed-bg: white;
   --feed-fg: #111;
   --nav-fg: gray;
-  --nav-spacer: #4473ec;
+  --nav-spacer: #5E69FF;
 }
 
 .root {
@@ -30,10 +30,10 @@
   border-radius: 5px;
   padding: 0 2px;
   transition: background-color 0.3s;
+}
 
-  &:hover {
-    background-color: var(--nav-fg);
-  }
+.backArrow:hover {
+  background-color: var(--nav-fg);
 }
 
 .navigation {
