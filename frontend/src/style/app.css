@@ -1,0 +1,92 @@
+@import url('https://fonts.googleapis.com/css2?family=Poppins:ital,wght@0,400;0,500;0,600;0,700;0,900;1,400;1,500');
+@font-face {
+  font-family: 'Newake';
+  src: url('../style/indieground-newakefont-web/Newake-Font-Regular.eot');
+  src:
+    url('../style/indieground-newakefont-web/Newake-Font-Regular.woff') format('woff'),
+    url('../style/indieground-newakefont-web/Newake-Font-Regular.otf') format('opentype'),
+    url('../style/indieground-newakefont-web/Newake-Font-Regular.svg#filename') format('svg');
+}
+
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@layer components {
+  /* Typeography */
+  .title-75 {
+    @apply font-title leading-[1] tracking-wide sm:text-[40px] md:text-[55px] lg:text-75;
+  }
+  .title-100 {
+    @apply font-title leading-[1] tracking-wide sm:text-[55px] md:text-75 lg:text-100;
+  }
+  .subtitle {
+    @apply font-semibold sm:text-lg md:text-lg lg:text-xl;
+  }
+  .body {
+    @apply sm:text-xs md:text-sm lg:text-base;
+  }
+
+  /* Layout */
+  .freq-container {
+    @apply w-full sm:px-[30px] md:px-[40px] lg:max-w-[100vw] lg:px-[80px] xl:max-w-page;
+  }
+
+  .paragraph-spacing-right {
+    @apply sm:pl-[90px] md:pl-[140px] lg:pl-[140px] lg:pr-0;
+  }
+
+  .paragraph-spacing-left {
+    @apply sm:pr-[100px] md:pr-[140px] lg:pl-0 lg:pr-[140px];
+  }
+
+  /* Underline on hover animation */
+  .underline-on-hover {
+    @apply relative block cursor-pointer overflow-hidden px-0 py-1;
+  }
+
+  .underline-on-hover::after {
+    @apply absolute bottom-0 left-0 h-[0.1em] w-full opacity-0 transition-opacity content-[''];
+    transition:
+      opacity 300ms,
+      transform 300ms;
+    transform: translate3d(-100%, 0, 0);
+  }
+
+  .underline-on-hover:hover::after,
+  .underline-on-hover:focus::after {
+    @apply opacity-100;
+    transform: translate3d(0, 0, 0);
+  }
+
+  @keyframes slide-from-right {
+    0% {
+      opacity: 0;
+      transform: translateX(10%);
+      -webkit-transform: translateX(10%);
+    }
+    100% {
+      transform: translateX(0%);
+      opacity: 1;
+    }
+  }
+
+  .slide-from-right {
+    animation: slide-from-right 1s ease-out;
+    -webkit-animation: slide-from-right 1s ease-out;
+  }
+}
+
+@layer base {
+  body {
+    @apply flex flex-col items-center bg-cream text-base text-black;
+  }
+
+  button {
+    @apply select-none;
+  }
+
+  ::placeholder {
+    @apply text-disabled !important;
+  }
+}
