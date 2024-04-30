@@ -6,6 +6,7 @@ import { User, FeedTypes, Network } from '../types';
 import { getContext } from '../service/AuthService';
 import styles from './Post.module.css';
 import { Button, Space, Spin } from 'antd';
+import { useNavigate } from 'react-router-dom';
 
 const OLDEST_BLOCK_TO_GO_TO: Record<Network, number> = {
   local: 1,
@@ -15,23 +16,24 @@ const OLDEST_BLOCK_TO_GO_TO: Record<Network, number> = {
 
 type PostListProps = {
   feedType: FeedTypes;
-  user: User | undefined;
+  profile: User | undefined;
   // Uses Date.now to trigger an update
   refreshTrigger: number;
-  goToProfile: (msaId?: string) => void;
-  resetFeed: () => void;
   network: Network;
 };
 
 type FeedItem = dsnpLink.BroadcastExtended;
 
-const PostList = ({ feedType, user, refreshTrigger, goToProfile, resetFeed, network }: PostListProps): ReactElement => {
+const PostList = ({ feedType, profile, refreshTrigger, network }: PostListProps): ReactElement => {
   const [priorTrigger, setPriorTrigger] = React.useState<number>(refreshTrigger);
   const [priorFeedType, setPriorFeedType] = React.useState<number>(feedType);
+  const [priorFeed, setPriorFeed] = React.useState<FeedItem[]>([]);
   const [newestBlockNumber, setNewestBlockNumber] = React.useState<number | null>(null);
   const [oldestBlockNumber, setOldestBlockNumber] = React.useState<number | null>(null);
   const [isLoading, setIsLoading] = React.useState(true);
   const [currentFeed, setCurrentFeed] = React.useState<FeedItem[]>([]);
+
+  const navigate = useNavigate();
 
   const postGetPosts = (
     result: dsnpLink.PaginatedBroadcast,
@@ -42,6 +44,8 @@ const PostList = ({ feedType, user, refreshTrigger, goToProfile, resetFeed, netw
     const posts = Array.isArray(result.posts) ? result.posts : [];
     setOldestBlockNumber(Math.min(oldestBlockNumber || result.oldestBlockNumber, result.oldestBlockNumber));
     setNewestBlockNumber(Math.max(newestBlockNumber || result.newestBlockNumber, result.newestBlockNumber));
+    console.log('POSTS: ', posts);
+    console.log('PRIOR FEED: ', priorFeed);
     if (appendOrPrepend === 'append') {
       // Older stuff
       setCurrentFeed([...priorFeed, ...posts]);
@@ -65,8 +69,14 @@ const PostList = ({ feedType, user, refreshTrigger, goToProfile, resetFeed, netw
 
   useEffect(() => {
     const getOlder = refreshTrigger === priorTrigger;
+    console.log('fetchData');
     fetchData(getOlder);
-  }, [feedType, user, refreshTrigger, priorTrigger, network]);
+  }, [feedType, profile, refreshTrigger, priorTrigger, network]);
+
+  useEffect(() => {
+    console.log('setPriorFeed');
+    setPriorFeed([]);
+  }, [profile]);
 
   const fetchData = async (getOlder: boolean) => {
     const isAddingMore = priorFeedType === feedType;
@@ -80,7 +90,7 @@ const PostList = ({ feedType, user, refreshTrigger, goToProfile, resetFeed, netw
           newestBlockNumber: getOlder ? (oldestBlockNumber ? oldestBlockNumber - 1 : undefined) : undefined,
         };
 
-    const priorFeed = priorFeedType === feedType ? currentFeed : [];
+    setPriorFeed(priorFeedType === feedType ? currentFeed : []);
     setPriorTrigger(refreshTrigger);
     setPriorFeedType(feedType);
     setIsLoading(true);
@@ -92,12 +102,17 @@ const PostList = ({ feedType, user, refreshTrigger, goToProfile, resetFeed, netw
       case FeedTypes.DISCOVER:
         postGetPosts(await dsnpLink.getDiscover(getContext(), params), appendOrPrepend, priorFeed);
         return;
-      case FeedTypes.DISPLAY_ID_POSTS:
-      case FeedTypes.MY_POSTS:
-        if (!user) return resetFeed();
+      case FeedTypes.MY_PROFILE:
+      case FeedTypes.OTHER_PROFILE:
+        if (!profile) {
+          navigate('/');
+          return;
+        }
+        console.log('GETTING POSTS FOR:', profile.msaId);
+
         postGetPosts(
           await dsnpLink.getUserFeed(getContext(), {
-            dsnpId: user.msaId,
+            dsnpId: profile.msaId,
             ...params,
           }),
           appendOrPrepend,
@@ -115,7 +130,7 @@ const PostList = ({ feedType, user, refreshTrigger, goToProfile, resetFeed, netw
       {oldestBlockNumber !== undefined && (
         <>
           {currentFeed.map((feedItem, index) => (
-            <Post key={index} feedItem={feedItem} showReplyInput={true} goToProfile={goToProfile} />
+            <Post key={index} feedItem={feedItem} showReplyInput={true} />
           ))}
           <Space />
           {hasMore && (

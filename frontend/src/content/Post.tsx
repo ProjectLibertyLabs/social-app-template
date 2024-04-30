@@ -12,16 +12,17 @@ import * as dsnpLink from '../dsnpLink';
 import { useGetUser } from '../service/UserProfileService';
 import { buildDSNPContentURI } from '../helpers/dsnp';
 import styles from './Post.module.css';
+import { useNavigate } from 'react-router-dom';
 
 type FeedItem = dsnpLink.BroadcastExtended;
 
 type PostProps = {
   feedItem: FeedItem;
-  goToProfile: (msaId?: string) => void;
   showReplyInput: boolean;
 };
 
-const Post = ({ feedItem, goToProfile, showReplyInput }: PostProps): ReactElement => {
+const Post = ({ feedItem, showReplyInput }: PostProps): ReactElement => {
+  const navigate = useNavigate();
   const { user, isLoading } = useGetUser(feedItem.fromId);
 
   const content = JSON.parse(feedItem?.content) as ActivityContentNote;
@@ -31,13 +32,13 @@ const Post = ({ feedItem, goToProfile, showReplyInput }: PostProps): ReactElemen
   const attachments: ActivityContentAttachment[] = content.attachment || [];
 
   return (
-    <Card key={feedItem.contentHash} className={styles.root} bordered={false}>
+    <Card key={feedItem.contentHash} className={styles.root} bordered={true}>
       <Spin tip="Loading" size="large" spinning={isLoading}>
-        <div onClick={() => goToProfile(feedItem.fromId)} className={styles.metaBlock}>
+        <div onClick={() => navigate(`/profile/${feedItem.fromId}`)} className={styles.metaBlock}>
           <Card.Meta
             className={styles.metaInnerBlock}
             avatar={<UserAvatar user={user} avatarSize={'medium'} />}
-            title={<FromTitle user={user} goToProfile={goToProfile} />}
+            title={<FromTitle user={user} />}
           />
         </div>
         <div className={styles.time}>
@@ -57,7 +58,6 @@ const Post = ({ feedItem, goToProfile, showReplyInput }: PostProps): ReactElemen
         <ReplyBlock
           parentURI={buildDSNPContentURI(BigInt(feedItem.fromId), feedItem.contentHash)}
           showReplyInput={showReplyInput}
-          goToProfile={goToProfile}
           replies={feedItem.replies || []}
         />
       </Spin>

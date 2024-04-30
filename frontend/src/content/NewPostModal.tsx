@@ -12,7 +12,7 @@ import { makeDisplayHandle } from '../helpers/DisplayHandle';
 interface NewPostProps {
   onSuccess: () => void;
   onCancel: () => void;
-  account: User;
+  loggedInAccount: User;
 }
 
 type NewPostValues = {
@@ -21,7 +21,7 @@ type NewPostValues = {
   images: UploadFile[];
 };
 
-const NewPost = ({ onSuccess, onCancel, account }: NewPostProps): ReactElement => {
+const NewPostModal = ({ onSuccess, onCancel, loggedInAccount }: NewPostProps): ReactElement => {
   const [form] = Form.useForm();
   const [saving, setSaving] = React.useState<boolean>(false);
 
@@ -61,8 +61,8 @@ const NewPost = ({ onSuccess, onCancel, account }: NewPostProps): ReactElement =
     <Modal title="New Post" open={true} onCancel={onCancel} footer={null} centered={true}>
       <Form form={form} onFinish={createPost}>
         <Form.Item>
-          <UserAvatar user={account} avatarSize={'medium'} />
-          Posting as @{makeDisplayHandle(account.handle)}
+          <UserAvatar user={loggedInAccount} avatarSize={'medium'} />
+          Posting as @{makeDisplayHandle(loggedInAccount.handle)}
         </Form.Item>
         <Form.Item name="message" required={true}>
           <Input.TextArea rows={4} placeholder="Enter your message" />
@@ -83,4 +83,4 @@ const NewPost = ({ onSuccess, onCancel, account }: NewPostProps): ReactElement =
   );
 };
 
-export default NewPost;
+export default NewPostModal;

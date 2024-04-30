@@ -1,0 +1,9 @@
+.header {
+  display: flex;
+  justify-content: space-between;
+}
+
+.newPostButton {
+  font-weight: bold;
+  width: 100%;
+}

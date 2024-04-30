@@ -313,6 +313,7 @@ export async function getUserFeed<FetcherData>(ctx: r.Context<AuthMethods, Fetch
     newestBlockNumber?: number;
     oldestBlockNumber?: number;
 }, opts?: FetcherData): Promise<PaginatedBroadcast> {
+    console.log('DSNPID: ', params.dsnpId);
     const req = await ctx.createRequest({
         path: '/content/{dsnpId}',
         params,
@@ -347,7 +348,7 @@ export async function getFeed<FetcherData>(ctx: r.Context<AuthMethods, FetcherDa
     return ctx.handleResponse(res, {});
 }
 /**
- * Get the Discovery Feed for the current user, paginated
+ * Get the Discovery Feed, paginated
  */
 export async function getDiscover<FetcherData>(ctx: r.Context<AuthMethods, FetcherData>, params: {
     newestBlockNumber?: number;
@@ -361,7 +362,6 @@ export async function getDiscover<FetcherData>(ctx: r.Context<AuthMethods, Fetch
             "newestBlockNumber",
             "oldestBlockNumber"
         ],
-        auth: ["tokenAuth"]
     });
     const res = await ctx.sendRequest(req, opts);
     return ctx.handleResponse(res, {});

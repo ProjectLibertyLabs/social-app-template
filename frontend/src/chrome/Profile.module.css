@@ -4,13 +4,14 @@
 
 .root {
   background-color: var(--profile-bg);
-  border-radius: 10px;
+  /*border-radius: 10px;*/
   padding: 16px;
   display: flex;
   flex-direction: column;
   height: fit-content;
   margin-right: 15px;
   margin-bottom: 15px;
+  border-bottom: 2px solid;
 }
 
 .profile {

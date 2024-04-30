@@ -4,13 +4,13 @@ import GraphChangeButton from './GraphChangeButton';
 import { FromTitle } from '../content/FromTitle';
 import UserAvatar from '../chrome/UserAvatar';
 import styles from './ConnectionsListProfiles.module.css';
+import { useNavigate } from 'react-router-dom';
 
 interface ConnectionsListProfilesProps {
   account: UserAccount;
   connectionsList: User[];
   accountFollowing: string[];
   triggerGraphRefresh: () => void;
-  goToProfile: (msaId?: string) => void;
 }
 
 const ConnectionsListProfiles = ({
@@ -18,14 +18,15 @@ const ConnectionsListProfiles = ({
   connectionsList,
   accountFollowing,
   triggerGraphRefresh,
-  goToProfile,
 }: ConnectionsListProfilesProps): ReactElement => {
+  const navigate = useNavigate();
+
   return (
     <>
       {connectionsList.map((user, index) => (
         <div className={styles.profile} key={user.msaId}>
           <UserAvatar user={user} avatarSize="small" />
-          <div className={styles.name} onClick={() => goToProfile(user.msaId)}>
+          <div className={styles.name} onClick={() => navigate(`/profile/${user.msaId}`)}>
             <FromTitle user={user} />
           </div>
           {/* Skip change button for self */}

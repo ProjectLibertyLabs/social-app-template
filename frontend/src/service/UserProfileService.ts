@@ -51,7 +51,7 @@ const unknownUser: User = {
 type UseGetUserResp = { user: User; isLoading: boolean; error: string };
 export const useGetUser = (msaId: string): UseGetUserResp => {
   const [user, setUser] = useState<User>(loadingUser);
-  const [isLoading, setIsLoading] = useState(true);
+  const [isLoading, setIsLoading] = useState<boolean>(false);
   const [error, setError] = useState('');
 
   useEffect(() => {

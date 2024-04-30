@@ -14,7 +14,7 @@ export class ContentController extends BaseController {
 
   protected initializeRoutes(): void {
     this.router.get('/feed', validateAuthToken, validateMsaAuth, this.getFeed.bind(this));
-    this.router.get('/discover', validateAuthToken, validateMsaAuth, this.getDiscover.bind(this));
+    this.router.get('/discover', this.getDiscover.bind(this));
     this.router.get('/:msaId', this.getContent.bind(this));
 
     this.router.get('/:msaId/:contentHash', validateAuthToken, validateMsaAuth, this.getSpecificUserContent.bind(this));
