@@ -7,7 +7,7 @@ import { validateAuthToken } from '../services/TokenAuth';
 
 export class GraphController extends BaseController {
   constructor(app: Express) {
-    super(app, '/v1/graph');
+    super(app, '/graph');
   }
 
   protected initializeRoutes(): void {

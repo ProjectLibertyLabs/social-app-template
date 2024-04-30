@@ -2,7 +2,6 @@ import React, { ReactElement, useEffect, useState } from 'react';
 import NewPost from './content/NewPost';
 import PostList from './content/PostList';
 import { Button, Spin } from 'antd';
-import { ArrowLeftOutlined } from '@ant-design/icons';
 import { UserAccount, FeedTypes, User, Network } from './types';
 import styles from './Feed.module.css';
 import FeedNav from './content/FeedNav';

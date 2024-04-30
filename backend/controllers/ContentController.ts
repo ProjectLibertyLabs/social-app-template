@@ -7,7 +7,7 @@ import { RequestAccount, validateAuthToken, validateMsaAuth } from '../services/
 
 export class ContentController extends BaseController {
   constructor(app: Express) {
-    super(app, '/v1/content');
+    super(app, '/content');
     this.initializeRoutes();
   }
 

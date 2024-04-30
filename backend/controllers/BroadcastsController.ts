@@ -9,7 +9,7 @@ import { RequestAccount, validateAuthToken, validateMsaAuth } from '../services/
 
 export class BroadcastsController extends BaseController {
   constructor(app: Express) {
-    super(app, '/v2/broadcasts');
+    super(app, '/broadcasts');
     this.initializeRoutes();
   }
 

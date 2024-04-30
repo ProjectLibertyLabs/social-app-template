@@ -1,7 +1,7 @@
 import request from 'supertest';
 import { describe, expect, it, vi, MockedFunction, beforeEach } from 'vitest';
 import { app } from '../index.js';
-import * as auth from '../../services/auth.js';
+import * as auth from '../services/auth.js';
 import { BroadcastService } from '../services/BroadcastService.js';
 
 vi.mock('../../services/BroadcastService.js');
@@ -26,7 +26,7 @@ describe('POST /broadcasts', () => {
     };
 
     const res = await request(app)
-      .post('/v2/broadcasts')
+      .post('/broadcasts')
       .auth('username', 'password')
       .send(content)
       .set('Accept', 'application/json');
@@ -46,7 +46,7 @@ describe('POST /broadcasts', () => {
     };
 
     const res = await request(app)
-      .post('/v2/broadcasts')
+      .post('/broadcasts')
       .auth('username', 'password')
       .send(content)
       .set('Accept', 'application/json');
@@ -56,7 +56,7 @@ describe('POST /broadcasts', () => {
 
   it('returns 400 when missing fields property', async () => {
     const res = await request(app)
-      .post('/v2/broadcasts')
+      .post('/broadcasts')
       .auth('username', 'password')
       .send({})
       .set('Accept', 'application/json');
@@ -67,11 +67,7 @@ describe('POST /broadcasts', () => {
   });
 
   it('returns 400 when invalid content-type', async () => {
-    const res = await request(app)
-      .post('/v2/broadcasts')
-      .auth('username', 'password')
-      .send({})
-      .set('Accept', 'text/html');
+    const res = await request(app).post('/broadcasts').auth('username', 'password').send({}).set('Accept', 'text/html');
 
     expect(res.status).toBe(400);
     expect(res.body).toHaveProperty('err');

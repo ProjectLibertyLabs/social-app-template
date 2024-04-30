@@ -9,7 +9,7 @@ export class AssestsController extends BaseController {
   private upload: multer.Multer;
 
   constructor(app: Express) {
-    super(app, '/v2/assets');
+    super(app, '/assets');
   }
 
   protected initializeRoutes(): void {

@@ -10,7 +10,7 @@
     "version": "1.0.0"
   },
   "paths": {
-    "/v2/assets": {
+    "/assets": {
       "post": {
         "operationId": "postAssetsHandler",
         "summary": "Upload and register new assets",
@@ -52,7 +52,7 @@
         }
       }
     },
-    "/v2/broadcasts": {
+    "/broadcasts": {
       "post": {
         "operationId": "postBroadcastHandler",
         "summary": "Create a new post",
@@ -88,7 +88,7 @@
         }
       }
     },
-    "/v1/auth/provider": {
+    "/auth/provider": {
       "get": {
         "operationId": "authProvider",
         "summary": "Return the delegation and provider information",
@@ -106,7 +106,7 @@
         }
       }
     },
-    "/v2/auth/login": {
+    "/auth/login": {
       "post": {
         "operationId": "authLogin2",
         "summary": "Use Wallet Proxy to login",
@@ -134,7 +134,7 @@
         }
       }
     },
-    "/v1/auth/logout": {
+    "/auth/logout": {
       "post": {
         "operationId": "authLogout",
         "summary": "Logout and invalidate the access token",
@@ -153,7 +153,7 @@
         }
       }
     },
-    "/v1/auth/account": {
+    "/auth/account": {
       "get": {
         "operationId": "authAccount",
         "summary": "For polling to get the created account as authCreate can take time",
@@ -182,7 +182,7 @@
         }
       }
     },
-    "/v1/content/{dsnpId}": {
+    "/content/{dsnpId}": {
       "get": {
         "operationId": "getUserFeed",
         "summary": "Get recent posts from a user, paginated",
@@ -234,7 +234,7 @@
         }
       }
     },
-    "/v1/content/feed": {
+    "/content/feed": {
       "get": {
         "operationId": "getFeed",
         "summary": "Get the Feed for the current user, paginated",
@@ -278,7 +278,7 @@
         }
       }
     },
-    "/v1/content/discover": {
+    "/content/discover": {
       "get": {
         "operationId": "getDiscover",
         "summary": "Get the Discovery Feed for the current user, paginated",
@@ -322,7 +322,7 @@
         }
       }
     },
-    "/v1/content/create": {
+    "/content/create": {
       "post": {
         "operationId": "createBroadcast",
         "summary": "Create a new post",
@@ -358,7 +358,7 @@
         }
       }
     },
-    "/v1/content/{dsnpId}/{contentHash}": {
+    "/content/{dsnpId}/{contentHash}": {
       "get": {
         "operationId": "getContent",
         "summary": "Get details of a specific post",
@@ -405,7 +405,7 @@
         }
       }
     },
-    "/v1/content/{type}/{contentHash}": {
+    "/content/{type}/{contentHash}": {
       "put": {
         "operationId": "editContent",
         "security": [
@@ -460,7 +460,7 @@
         }
       }
     },
-    "/v1/graph/{dsnpId}/following": {
+    "/graph/{dsnpId}/following": {
       "get": {
         "operationId": "userFollowing",
         "summary": "Get a list of users that a specific user follows",
@@ -500,7 +500,7 @@
         }
       }
     },
-    "/v1/graph/{dsnpId}/follow": {
+    "/graph/{dsnpId}/follow": {
       "post": {
         "operationId": "graphFollow",
         "summary": "Follow a user",
@@ -529,7 +529,7 @@
         }
       }
     },
-    "/v1/graph/{dsnpId}/unfollow": {
+    "/graph/{dsnpId}/unfollow": {
       "post": {
         "operationId": "graphUnfollow",
         "summary": "Unfollow a user",
@@ -558,7 +558,7 @@
         }
       }
     },
-    "/v1/profiles/{dsnpId}": {
+    "/profiles/{dsnpId}": {
       "get": {
         "operationId": "getProfile",
         "summary": "Get profile information for a specific user",

@@ -34,3 +34,7 @@ frontend/build/*
 
 ### VS Code ###
 .vscode
+
+## Idea ##
+.idea/
+.idea

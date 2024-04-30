@@ -1,4 +1,4 @@
-import React, { ReactElement, useState } from 'react';
+import React, { ReactElement } from 'react';
 import { Card, Spin } from 'antd';
 import UserAvatar from '../chrome/UserAvatar';
 import PostMedia from './PostMedia';
