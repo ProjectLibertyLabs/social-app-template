@@ -9,7 +9,7 @@ This application recognizes the following environment variables:
 | `FREQUENCY_URL`                | Blockchain node address                                                              |    http(s): or ws(s): URL     |     Y     |         |
 | `PROVIDER_ACCOUNT_SEED_PHRASE` | Seed phrase for provider MSA control key                                             |            string             |     Y     |         |
 | `PROVIDER_ID`                  | Provider MSA ID                                                                      |            integer            |     Y     |         |
-| `CHAIN_ENVIRONMENT`            | Environment for mapping announcement type to schema ID (use 'dev' for e2e tests)     | dev\|rococo\|testnet\|mainnet |     Y     |         |
+| `CHAIN_ENVIRONMENT`            | What type of chain we're connected to                                                | dev\|rococo\|testnet\|mainnet |     Y     |         |
 | `IPFS_BASIC_AUTH_SECRET`       | If using Infura, put auth token here, or leave blank for Kubo RPC                    |            string             |     N     |  blank  |
 | `IPFS_BASIC_AUTH_USER`         | If using Infura, put Project ID here, or leave blank for Kubo RPC                    |            string             |     N     |  blank  |
 | `IPFS_ENDPOINT`                | URL to IPFS endpoint                                                                 |              URL              |     Y     |         |
