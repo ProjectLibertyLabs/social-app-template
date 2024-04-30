@@ -108,7 +108,8 @@ const main = async () => {
   });
 
   // Deploy Schemas
-  await deploy();
+  // Uncomment if not using the 'dsnp/instant-seal-node-with-deployed-schemas' image
+  // await deploy();
 
   console.log("Setup Complete!");
 };
