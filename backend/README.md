@@ -2,6 +2,16 @@
 
 This is a prototype for a DSNP Gateway to allow for simple provider setup.
 
+## Quick Start
+To quickly start up a set of preconfigured services, including this sample backend Gateway, simply run the following:
+```sh
+npm run env:init
+docker up -d
+npm run local:init
+```
+
+For more detailed instructions on configuring individual services, and running the Gateway backend locally, read on.
+
 ## Setup
 
 ### Environment Variables
@@ -35,15 +45,19 @@ This is best for Testnet interactions.
 
 #### Option 2: IPFS Kubo Node
 
-This is best for local only testing.
+This is best for local only testing, and is the default provided in the included Docker Compose script.
 
 This uses a local IPFS node with the [Kubo API](https://docs.ipfs.tech/reference/kubo/rpc/).
 
-1. Install [IPFS Kubo](https://docs.ipfs.tech/install/command-line/)
-2. Run `ipfs daemon`
-3. Setup the Environment Variables
-   - `IPFS_ENDPOINT="http://127.0.0.1:5001"`
-   - `IPFS_GATEWAY_URL="http://127.0.0.1:8080/ipfs/[CID]"`
+1. Launch the Kubo IPFS container
+```sh
+docker compose up -d kubo_ipfs
+```
+2. Setup the Environment Variables
+   - `IPFS_ENDPOINT="http://kubo_ipfs:5001"`
+   - `IPFS_GATEWAY_URL="http://kubo_ipfs:8080/ipfs/[CID]"`
+
+   Note, the `env.*.template` files are pre-configured for this setup.
 
 _Warning_: Never expose the RPC API to the public internet.
 
@@ -63,11 +77,16 @@ This is best for Testnet interactions.
 
 This is for simple local development work.
 
-1. Follow the development setup for [Frequency](https://github.com/LibertyDSNP/frequency#build)
-2. Run the Node in local "Instant Sealing" mode `make start` OR "Interval Sealing" mode for more realistic delay `make start-interval`
+1. Run the provided Docker Compose script to launch a local Frequency node
+```
+docker compose up -d frequency
+```
+2. For more realistic scenario testing, run the node in Interval Sealing mode (see comments in [docker-compose.yaml](./docker-compose.yaml)
 3. Setup the Environment Variables
-   - `FREQUENCY_URL="ws://127.0.0.1:9944"`
+   - `FREQUENCY_URL="ws://frequency:9944"`
    - `FREQUENCY_HTTP_URL="http://127.0.0.1:9944"`
+
+   Note, the pre-configured `env.*.template` files are pre-configured for this scenario
 
 ### Provider Setup
 
@@ -87,8 +106,12 @@ Note: There are other options, but these are simplest to get started with.
 
 ## Run DSNP Gateway Prototype
 
+### Bare Metal (best for local backend development)
 1. `npm install`
 2. `npm run start:dev`
+
+### Dockerized (best for running only to support frontend development)
+`docker compose up -d social-app-template-backend`
 
 ### Development Commands
 
@@ -98,6 +121,7 @@ Note: There are other options, but these are simplest to get started with.
 - `npm run lint`: Lint code and styles
 - `npm run gen:types`: Generate types from `openapi.json`
 - `npm run local:init`: Create Provider for `//Alice` on localhost Frequency node.
+- `npm run env:init`: Initialize a set of local environment files from the included environment templates
 
 ## References
 
