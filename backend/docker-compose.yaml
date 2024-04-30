@@ -47,7 +47,7 @@ services:
     ports:
       - 3001:3000
     env_file:
-      - path: .env.common.docker.docker
+      - path: .env.common.docker
         required: true
       - path: .env.content-publishing-service
         required: false
@@ -64,7 +64,7 @@ services:
     image: amplicalabs/content-publishing-service:latest
     platform: linux/amd64
     env_file:
-      - path: .env.common.docker.docker
+      - path: .env.common.docker
         required: true
       - path: .env.content-publishing-service
         required: false
@@ -83,7 +83,7 @@ services:
     ports:
       - 3002:3000
     env_file:
-      - path: .env.common.docker.docker
+      - path: .env.common.docker
         required: true
       - path: .env.graph-service
         required: false
@@ -100,7 +100,7 @@ services:
       - 3003:3000
     command: api
     env_file:
-      - path: .env.common.docker.docker
+      - path: .env.common.docker
         required: true
       - path: .env.account-service
         required: false
@@ -115,7 +115,7 @@ services:
     platform: linux/amd64
     command: worker
     env_file:
-      - path: .env.common.docker.docker
+      - path: .env.common.docker
         required: true
       - path: .env.account-service
         required: false
@@ -137,9 +137,9 @@ services:
     ports:
       - 3000:3000
     env_file:
-      - path: .env.common.docker.docker
+      - path: .env.common.docker
         required: true
-      - path: .env.social-app-backend.docker.docker
+      - path: .env.social-app-backend.docker
         required: true
     environment:
       - NODE_ENV=development
