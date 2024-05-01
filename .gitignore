@@ -25,4 +25,4 @@ backend/dist/*
 frontend/build/*
 
 ### ENV ###
-.env
+.env*

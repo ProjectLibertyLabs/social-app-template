@@ -7,9 +7,9 @@
     "build": "tsc",
     "build:watch": "tsc -w",
     "start": "npm run build && node dist/index.js",
-    "start:watch": "npx tsx index.ts",
+    "start:watch": "npx tsx index.ts --watch",
     "start:dev": "set -a ; . .env.common ; . .env.social-app-backend ; npx tsx index.ts --watch",
-    "test": "set -a ; . ./env.template ; vitest run",
+    "test": "set -a ; . ./environment/env.common.template ; . ./environment/env.social-app-backend.template ; vitest run",
     "format": "eslint --fix . && prettier --write .",
     "lint": "eslint . && prettier --check .",
     "container-run:dev": "npm install && npm run start:watch",
@@ -19,7 +19,8 @@
     "docker-stop:dev": "docker-compose stop",
     "generate-types-content-publisher": "npx openapi-client-axios-typegen ./openapi-content-publisher.json > types/openapi-content-publisher.d.ts",
     "gen:types": "npx openapi-client-axios-typegen ./openapi.json > types/openapi.d.ts",
-    "local:init": "node scripts/local-init.cjs"
+    "local:init": "node scripts/local-init.cjs",
+    "env:init": "sh scripts/init-environment.sh"
   },
   "repository": {
     "type": "git",
