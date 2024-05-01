@@ -3,7 +3,9 @@
 This is a prototype for a DSNP Gateway to allow for simple provider setup.
 
 ## Quick Start
+
 To quickly start up a set of preconfigured services, including this sample backend Gateway, simply run the following:
+
 ```sh
 npm run env:init
 docker up -d
@@ -50,10 +52,13 @@ This is best for local only testing, and is the default provided in the included
 This uses a local IPFS node with the [Kubo API](https://docs.ipfs.tech/reference/kubo/rpc/).
 
 1. Launch the Kubo IPFS container
+
 ```sh
 docker compose up -d kubo_ipfs
 ```
+
 2. Setup the Environment Variables
+
    - `IPFS_ENDPOINT="http://kubo_ipfs:5001"`
    - `IPFS_GATEWAY_URL="http://kubo_ipfs:8080/ipfs/[CID]"`
 
@@ -78,11 +83,14 @@ This is best for Testnet interactions.
 This is for simple local development work.
 
 1. Run the provided Docker Compose script to launch a local Frequency node
+
 ```
 docker compose up -d frequency
 ```
+
 2. For more realistic scenario testing, run the node in Interval Sealing mode (see comments in [docker-compose.yaml](./docker-compose.yaml)
 3. Setup the Environment Variables
+
    - `FREQUENCY_URL="ws://frequency:9944"`
    - `FREQUENCY_HTTP_URL="http://127.0.0.1:9944"`
 
@@ -107,10 +115,12 @@ Note: There are other options, but these are simplest to get started with.
 ## Run DSNP Gateway Prototype
 
 ### Bare Metal (best for local backend development)
+
 1. `npm install`
 2. `npm run start:dev`
 
 ### Dockerized (best for running only to support frontend development)
+
 `docker compose up -d social-app-template-backend`
 
 ### Development Commands
