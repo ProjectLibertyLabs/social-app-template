@@ -8,7 +8,7 @@
     "build:watch": "tsc -w",
     "start": "npm run build && node dist/index.js",
     "start:watch": "npx tsx --watch index.ts",
-    "start:dev": "set -a ; . .env.common ; . .env.social-app-backend ; npx tsx index.ts --watch",
+    "start:dev": "set -a ; . .env.common ; . .env.social-app-backend ; npx tsx --watch index.ts",
     "test": "set -a ; . ./env.template ; vitest run",
     "format": "eslint --fix . && prettier --write .",
     "lint": "eslint . && prettier --check .",

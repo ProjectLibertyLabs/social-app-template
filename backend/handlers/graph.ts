@@ -1,6 +1,6 @@
 import { Handler } from "openapi-backend";
 import type * as T from "../types/openapi.js";
-import { getMsaByPublicKey } from "../services/auth.js";
+import { getMsaByPublicKey } from "../services/TokenAuth.js";
 import { follow, getPublicFollows, unfollow } from "../services/graph.js";
 
 export const userFollowing: Handler<object> = async (c, _req, res) => {

@@ -23,7 +23,7 @@ import * as broadcasts from "./handlers/v2/broadcasts.js";
 
 import openapiJson from "./openapi.json" assert { type: "json" };
 import { getApi } from "./services/frequency.js";
-import { getAccountFromAuth } from "./services/auth.js";
+import { getAccountFromAuth } from "./services/TokenAuth.js";
 import * as Config from "./config/config.js";
 import { AuthController } from "./controllers/AuthController.js";
 import { ContentController } from "./controllers/ContentController.js";
@@ -43,42 +43,42 @@ const app = express();
 app.use(express.json());
 
 // TODO: See if we want to generate the OpenAPI doc instead of spec first
-const api = new openapiBackend.OpenAPIBackend({
-  definition: "openapi.json",
-  handlers: {
-    ...assets,
-    ...auth,
-    ...content,
-    ...broadcasts,
-    ...graph,
-    ...profile,
+// const api = new openapiBackend.OpenAPIBackend({
+//   definition: "openapi.json",
+//   handlers: {
+//     ...assets,
+//     ...auth,
+//     ...content,
+//     ...broadcasts,
+//     ...graph,
+//     ...profile,
 
-    validationFail: async (c, req: Request, res: Response) => {
-      return res.status(400).json({ err: c.validation.errors });
-    },
-    notFound: async (c, req: Request, res: Response) =>
-      res.status(404).json({ err: "not found" }),
-  },
-});
+//     validationFail: async (c, req: Request, res: Response) => {
+//       return res.status(400).json({ err: c.validation.errors });
+//     },
+//     notFound: async (c, req: Request, res: Response) =>
+//       res.status(404).json({ err: "not found" }),
+//   },
+// });
 
-api.register("unauthorizedHandler", (_c, _req, res) => {
-  return res.status(401).send();
-});
+// api.register("unauthorizedHandler", (_c, _req, res) => {
+//   return res.status(401).send();
+// });
 
-// Simple Token Auth
-api.registerSecurityHandler("tokenAuth", async (c) => {
-  if (typeof c.request.headers.authorization !== "string") return false;
-  const token = c.request.headers.authorization.split(" ")[1];
-  const account = await getAccountFromAuth(token);
+// // Simple Token Auth
+// api.registerSecurityHandler("tokenAuth", async (c) => {
+//   if (typeof c.request.headers.authorization !== "string") return false;
+//   const token = c.request.headers.authorization.split(" ")[1];
+//   const account = await getAccountFromAuth(token);
 
-  if (account === null) return false;
+//   if (account === null) return false;
 
-  // truthy return values are interpreted as auth success
-  // you can also add any auth information to the return value
-  return account;
-});
+//   // truthy return values are interpreted as auth success
+//   // you can also add any auth information to the return value
+//   return account;
+// });
 
-api.init();
+// api.init();
 
 // cors
 app.use(cors());
@@ -108,9 +108,9 @@ app.post(
   },
 );
 
-app.use((req: Request, res: Response) => {
-  return api.handleRequest(req as OpenApiRequest, req, res);
-});
+// app.use((req: Request, res: Response) => {
+//   return api.handleRequest(req as OpenApiRequest, req, res);
+// });
 
 app.use((err: any, req: Request, res: Response, next: NextFunction) => {
   if (res.headersSent) {

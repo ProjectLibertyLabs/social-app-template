@@ -1,7 +1,7 @@
 import { Context, Handler } from "openapi-backend";
 import type { Request, Response } from "express";
 import type { PostBroadcastRequest } from "../../types/types.js";
-import { getMsaByPublicKey } from "../../services/auth.js";
+import { getMsaByPublicKey } from "../../services/TokenAuth.js";
 import { BroadcastService } from "../../services/BroadcastService.js";
 
 export const postBroadcastHandler: Handler<PostBroadcastRequest> = async (

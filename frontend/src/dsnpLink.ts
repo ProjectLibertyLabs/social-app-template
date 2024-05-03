@@ -280,7 +280,7 @@ export async function authLogin2<FetcherData>(
   opts?: FetcherData
 ): Promise<WalletLoginResponse> {
   const req = await ctx.createRequest({
-    path: "/v2/auth/login",
+    path: "/auth/login",
     params,
     method: r.HttpMethod.POST,
     body,
@@ -314,7 +314,7 @@ export async function authAccount<FetcherData>(
   opts?: FetcherData
 ): Promise<AuthAccountResponse | any> {
   const req = await ctx.createRequest({
-    path: "/v1/auth/account",
+    path: "/auth/account",
     params,
     method: r.HttpMethod.GET,
     auth: ["tokenAuth"],

@@ -26,3 +26,6 @@ frontend/build/*
 
 ### ENV ###
 .env
+.env*
+.vscode
+

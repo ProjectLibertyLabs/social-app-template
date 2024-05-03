@@ -11,7 +11,7 @@ import {
 import { publish } from "../services/announce.js";
 import { getPostsInRange } from "../services/feed.js";
 import { getCurrentBlockNumber } from "../services/frequency.js";
-import { getMsaByPublicKey } from "../services/auth.js";
+import { getMsaByPublicKey } from "../services/TokenAuth.js";
 import { getPublicFollows } from "../services/graph.js";
 import * as Config from "../config/config.js";
 
