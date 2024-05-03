@@ -7,7 +7,7 @@
     "build": "tsc",
     "build:watch": "tsc -w",
     "start": "npm run build && node dist/index.js",
-    "start:watch": "npx tsx index.ts",
+    "start:watch": "npx tsx --watch index.ts",
     "start:dev": "set -a ; . .env.common ; . .env.social-app-backend ; npx tsx index.ts --watch",
     "test": "set -a ; . ./env.template ; vitest run",
     "format": "eslint --fix . && prettier --write .",
@@ -17,6 +17,7 @@
     "docker-build:dev": "docker-compose build",
     "docker-run:dev": "docker-compose up -d ; docker-compose logs",
     "docker-stop:dev": "docker-compose stop",
+    "generate-types-account-service": "npx openapi-client-axios-typegen openapi-specs/account-service.json > types/openapi-account-service.d.ts",
     "generate-types-content-publisher": "npx openapi-client-axios-typegen ./openapi-content-publisher.json > types/openapi-content-publisher.d.ts",
     "gen:types": "npx openapi-client-axios-typegen ./openapi.json > types/openapi.d.ts",
     "local:init": "node scripts/local-init.cjs"

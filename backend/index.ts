@@ -25,6 +25,10 @@ import openapiJson from "./openapi.json" assert { type: "json" };
 import { getApi } from "./services/frequency.js";
 import { getAccountFromAuth } from "./services/auth.js";
 import * as Config from "./config/config.js";
+import { AuthController } from "./controllers/AuthController.js";
+import { ContentController } from "./controllers/ContentController.js";
+import { GraphController } from "./controllers/GraphController.js";
+import { ProfilesController } from "./controllers/ProfilesController.js";
 
 // Support BigInt JSON
 (BigInt.prototype as any).toJSON = function () {
@@ -81,6 +85,13 @@ app.use(cors());
 
 // logging
 app.use(morgan("combined"));
+
+const _controllers = [
+  new AuthController(app),
+  new ContentController(app),
+  new GraphController(app),
+  new ProfilesController(app),
+];
 
 // Swagger UI
 app.use("/docs", swaggerUi.serve, swaggerUi.setup(openapiJson));

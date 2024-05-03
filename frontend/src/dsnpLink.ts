@@ -210,7 +210,7 @@ export function createContext<FetcherData>(
   params?: r.CreateContextParams<AuthMethods, FetcherData>
 ): r.Context<AuthMethods, FetcherData> {
   return new r.Context<AuthMethods, FetcherData>({
-    serverConfiguration: new r.ServerConfiguration("http://localhost:5005", {}),
+    serverConfiguration: new r.ServerConfiguration(process.env.REACT_APP_BACKEND_URL || "http://localhost:5005", {}),
     authMethods: configureAuth(params?.authProviders),
     ...params,
   });
@@ -263,7 +263,7 @@ export async function authProvider<FetcherData>(
   opts?: FetcherData
 ): Promise<ProviderResponse> {
   const req = await ctx.createRequest({
-    path: "/v1/auth/provider",
+    path: "/auth/siwf",
     params,
     method: r.HttpMethod.GET,
   });
