@@ -297,7 +297,7 @@ export async function authLogout<FetcherData>(
   opts?: FetcherData
 ): Promise<any> {
   const req = await ctx.createRequest({
-    path: "/v1/auth/logout",
+    path: "/auth/logout",
     params,
     method: r.HttpMethod.POST,
     auth: ["tokenAuth"],

@@ -18,7 +18,7 @@ export class AuthController extends BaseController {
     this.router.post("/logout", validateAuthToken, this.postLogout.bind(this));
   }
 
-  public getSiwf(req: Request, res: Response) {
+  public getSiwf(_req: Request, res: Response) {
     const payload = AuthHandler.getSiwfRequestConfig();
     res.send(payload).status(200).end();
   }
@@ -46,7 +46,7 @@ export class AuthController extends BaseController {
     }
   }
 
-  public postLogout(req: Request, res: Response) {
-    res.status(201);
+  public postLogout(_req: Request, res: Response) {
+    res.status(HttpStatusCode.Created);
   }
 }
