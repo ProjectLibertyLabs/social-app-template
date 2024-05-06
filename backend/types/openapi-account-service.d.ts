@@ -48,6 +48,11 @@ declare namespace Components {
             message: string;
             signature: string;
         }
+        export interface WalletLoginConfigResponse {
+            providerId: string;
+            siwfUrl: string;
+            frequencyRpcUrl: string;
+        }
         export interface WalletLoginRequestDto {
             /**
              * The wallet login request information
@@ -86,6 +91,11 @@ declare namespace Paths {
         namespace Responses {
             export interface $200 {
             }
+        }
+    }
+    namespace AccountsControllerGetSIWFConfig {
+        namespace Responses {
+            export type $200 = Components.Schemas.WalletLoginConfigResponse;
         }
     }
     namespace AccountsControllerSignInWithFrequency {
@@ -169,13 +179,13 @@ export interface OperationMethods {
     config?: AxiosRequestConfig  
   ): OperationResponse<Paths.ApiControllerHealth.Responses.$200>
   /**
-   * AccountsController_getAccount - Fetch an account given an msaId.
+   * AccountsController_getSIWFConfig - Get the Sign-In With Frequency Configuration
    */
-  'AccountsController_getAccount'(
-    parameters: Parameters<Paths.AccountsControllerGetAccount.PathParameters>,
+  'AccountsController_getSIWFConfig'(
+    parameters?: Parameters<UnknownParamsObject> | null,
     data?: any,
     config?: AxiosRequestConfig  
-  ): OperationResponse<Paths.AccountsControllerGetAccount.Responses.$200>
+  ): OperationResponse<Paths.AccountsControllerGetSIWFConfig.Responses.$200>
   /**
    * AccountsController_signInWithFrequency - Request to sign in with Frequency
    */
@@ -184,6 +194,14 @@ export interface OperationMethods {
     data?: Paths.AccountsControllerSignInWithFrequency.RequestBody,
     config?: AxiosRequestConfig  
   ): OperationResponse<Paths.AccountsControllerSignInWithFrequency.Responses.$201>
+  /**
+   * AccountsController_getAccount - Fetch an account given an msaId.
+   */
+  'AccountsController_getAccount'(
+    parameters: Parameters<Paths.AccountsControllerGetAccount.PathParameters>,
+    data?: any,
+    config?: AxiosRequestConfig  
+  ): OperationResponse<Paths.AccountsControllerGetAccount.Responses.$200>
   /**
    * DelegationController_getDelegation - Get the delegation information associated with an msaId.
    */
@@ -245,6 +263,24 @@ export interface PathsDictionary {
       config?: AxiosRequestConfig  
     ): OperationResponse<Paths.ApiControllerHealth.Responses.$200>
   }
+  ['/accounts/siwf']: {
+    /**
+     * AccountsController_getSIWFConfig - Get the Sign-In With Frequency Configuration
+     */
+    'get'(
+      parameters?: Parameters<UnknownParamsObject> | null,
+      data?: any,
+      config?: AxiosRequestConfig  
+    ): OperationResponse<Paths.AccountsControllerGetSIWFConfig.Responses.$200>
+    /**
+     * AccountsController_signInWithFrequency - Request to sign in with Frequency
+     */
+    'post'(
+      parameters?: Parameters<UnknownParamsObject> | null,
+      data?: Paths.AccountsControllerSignInWithFrequency.RequestBody,
+      config?: AxiosRequestConfig  
+    ): OperationResponse<Paths.AccountsControllerSignInWithFrequency.Responses.$201>
+  }
   ['/accounts/{msaId}']: {
     /**
      * AccountsController_getAccount - Fetch an account given an msaId.
@@ -254,16 +290,6 @@ export interface PathsDictionary {
       data?: any,
       config?: AxiosRequestConfig  
     ): OperationResponse<Paths.AccountsControllerGetAccount.Responses.$200>
-  }
-  ['/accounts/siwf']: {
-    /**
-     * AccountsController_signInWithFrequency - Request to sign in with Frequency
-     */
-    'post'(
-      parameters?: Parameters<UnknownParamsObject> | null,
-      data?: Paths.AccountsControllerSignInWithFrequency.RequestBody,
-      config?: AxiosRequestConfig  
-    ): OperationResponse<Paths.AccountsControllerSignInWithFrequency.Responses.$201>
   }
   ['/delegation/{msaId}']: {
     /**

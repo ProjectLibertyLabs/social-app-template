@@ -12,11 +12,15 @@ type CacheData = { msaId: string; added: Date };
 const cachePublicKeys: Map<string, CacheData> = new Map();
 
 
-export async function createAuthToken(publicKey: string): Promise<string> {
+export function createAuthToken(publicKey: string): string {
   const uuid = randomUUID();
   authTokenRegistry.set(uuid, { publicKey });
   return uuid;
 };
+
+export function revokeAuthToken(token: string): void {
+  authTokenRegistry.delete(token);
+}
 
 export async function getAccountFromAuth(
   token: string,
@@ -49,11 +53,20 @@ export async function getMsaByPublicKey(
   return msaIdStr;
 };
 
+export function getAuthToken(req: Request): string | null {
+  if (req.headers?.authorization && typeof req.headers.authorization === 'string') {
+    return req.headers.authorization.split(' ')[1];
+  }
+
+  return null;
+}
+
 export async function validateAuthToken(req: Request, res: Response, next: NextFunction) {
-  if (!req.headers?.authorization || typeof req.headers.authorization !== 'string') {
+   const token = getAuthToken(req);
+   if (!token) {
     res.status(HttpStatusCode.BadRequest).end();
-  } else {
-   const token = req.headers.authorization.split(' ')[1];
+    return;
+   }
   const account = await getAccountFromAuth(token);
 
   if (account === null) {
@@ -66,5 +79,4 @@ export async function validateAuthToken(req: Request, res: Response, next: NextF
   req.headers['msaId'] = account.msaId;
   next();
   }
-}
 }

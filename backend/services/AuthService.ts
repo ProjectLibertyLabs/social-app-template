@@ -2,7 +2,7 @@ import { Client } from '../types/openapi-account-service';
 import { OpenAPIClientAxios, type Document } from 'openapi-client-axios';
 import openapiJson from '../openapi-specs/account-service.json' assert { type: 'json' };
 import { WalletProxyResponse, validateSignin, validateSignup } from '@amplica-labs/siwf';
-import { createAuthToken } from './TokenAuth';
+import { createAuthToken, getAuthToken, revokeAuthToken } from './TokenAuth';
 import { getApi, getNonce, getProviderKey } from './frequency';
 import * as Config from '../config/config';
 import { HttpStatusCode } from 'axios';
@@ -67,7 +67,7 @@ export class AuthService {
                     }
                 );
                 return {
-                    accessToken: await createAuthToken(publicKey),
+                    accessToken: createAuthToken(publicKey),
                     expires: Date.now() + (24 * 60 * 60 * 1_000),
                 }
             } catch (e: any) {
@@ -78,7 +78,7 @@ export class AuthService {
             try {
                 const parsedSignin = await validateSignin(api, signIn, 'amplicalabs.github.io');
                 return {
-                    accessToken: await createAuthToken(parsedSignin.publicKey),
+                    accessToken: createAuthToken(parsedSignin.publicKey),
                     expires: Date.now() + (24 * 60 * 60 * 1_000),
                 }
             } catch (e) {
@@ -111,6 +111,13 @@ export class AuthService {
         return {
             displayHandle: `${handle.base_handle}.${handle.suffix}`,
             dsnpId: msaId?.toString(),
+        }
+    }
+
+    public logout(req: Request) {
+        const authToken = getAuthToken(req);
+        if (authToken) {
+            revokeAuthToken(authToken);
         }
     }
 }

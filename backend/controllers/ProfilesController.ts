@@ -1,5 +1,6 @@
-import { Express } from "express";
+import { Express, Request, Response } from "express";
 import { BaseController } from "./BaseController";
+import { HttpStatusCode } from "axios";
 
 export class ProfilesController extends BaseController {
   constructor(app: Express) {
@@ -11,6 +12,10 @@ export class ProfilesController extends BaseController {
     this.router.put("/:dsnpId", this.putProfile.bind(this));
   }
 
-  public getProfile() {}
-  public putProfile() {}
+  public getProfile(_req: Request, res: Response) {
+    return res.status(HttpStatusCode.Ok).send();
+  }
+  public putProfile(_res: Request, res: Response) {
+   return res.status(HttpStatusCode.Accepted).send();
+  }
 }

@@ -1,19 +1,22 @@
 import { Context, Handler } from "openapi-backend";
 import Busboy from "busboy";
 import type * as T from "../types/openapi.js";
-import { ipfsPin } from "../services/ipfs.js";
-import * as dsnp from "../services/dsnp.js";
+import { ipfsPin } from "./ipfs.js";
+import * as dsnp from "./dsnp.js";
 import {
   createImageAttachment,
   createImageLink,
   createNote,
 } from "@dsnp/activity-content/factories";
-import { publish } from "../services/announce.js";
-import { getPostsInRange } from "../services/feed.js";
-import { getCurrentBlockNumber } from "../services/frequency.js";
-import { getMsaByPublicKey } from "../services/TokenAuth.js";
-import { getPublicFollows } from "../services/graph.js";
+import { publish } from "./announce.js";
+import { getPostsInRange } from "./feed.js";
+import { getCurrentBlockNumber } from "./frequency.js";
+import { getMsaByPublicKey } from "./TokenAuth.js";
+import { GraphService } from "./GraphService.js";
 import * as Config from "../config/config.js";
+import { HttpError } from "../types/HttpError.js";
+import { HttpStatusCode } from "axios";
+import { Request } from "express";
 
 type Fields = Record<string, string>;
 type File = {
@@ -22,22 +25,15 @@ type File = {
   info: Busboy.FileInfo;
 };
 
-export const getUserFeed: Handler<object> = async (
-  c: Context<object, object, T.Paths.GetUserFeed.QueryParameters>,
-  _req,
-  res,
-) => {
-  /// T.Paths.GetFeed.PathParameters, T.Paths.GetFeed.QueryParameters,
-  const { newestBlockNumber, oldestBlockNumber } = c.request.query;
+export interface IFeedRange {
+  newestBlockNumber?: number;
+  oldestBlockNumber?: number;
+}
+
+export async function getUserFeed(msaId: string, { newestBlockNumber, oldestBlockNumber }: IFeedRange) {
   // Default to now
   const newest = newestBlockNumber ?? (await getCurrentBlockNumber());
   const oldest = Math.max(1, oldestBlockNumber || 1, newest - 45_000); // 45k blocks at a time max
-
-  const msaId = (c.request.params as any).dsnpId;
-
-  if (typeof msaId !== "string") {
-    return res.status(404).send();
-  }
 
   const posts = await getPostsInRange(newest, oldest);
   const response: T.Paths.GetUserFeed.Responses.$200 = {
@@ -45,30 +41,16 @@ export const getUserFeed: Handler<object> = async (
     oldestBlockNumber: oldest,
     posts: posts.filter((x) => x.fromId === msaId),
   };
-  return res.status(200).json(response);
+  return response;
 };
 
-export const getFeed: Handler<object> = async (
-  c: Context<object, object, T.Paths.GetFeed.QueryParameters>,
-  _req,
-  res,
-) => {
-  // Return only items from who the user follows
-  const msaId =
-    c.security.tokenAuth.msaId ||
-    (await getMsaByPublicKey(c.security.tokenAuth.publicKey));
-
-  if (typeof msaId !== "string") {
-    return res.status(404).send();
-  }
-
-  const { newestBlockNumber, oldestBlockNumber } = c.request.query;
+export async function getFeed(msaId: string, { newestBlockNumber, oldestBlockNumber }: IFeedRange) {
   // Default to now
   const newest = newestBlockNumber ?? (await getCurrentBlockNumber());
   const oldest = Math.max(1, oldestBlockNumber || 1, newest - 45_000); // 45k blocks at a time max
 
   try {
-    const following = await getPublicFollows(msaId);
+    const following = await GraphService.instance().then(service => service.getPublicFollows(msaId));
 
     const posts = await getPostsInRange(newest, oldest);
     const response: T.Paths.GetFeed.Responses.$200 = {
@@ -76,19 +58,13 @@ export const getFeed: Handler<object> = async (
       oldestBlockNumber: oldest,
       posts: posts.filter((x) => following.includes(x.fromId)),
     };
-    return res.status(200).json(response);
+    return response;
   } catch (e) {
-    console.error("Error fetching feed for current user", e);
-    return res.status(500).send();
+    throw new HttpError(HttpStatusCode.InternalServerError, 'Error fetching feed for current user', { cause: e });
   }
 };
 
-export const getDiscover: Handler<object> = async (
-  c: Context<object, object, T.Paths.GetDiscover.QueryParameters>,
-  _req,
-  res,
-) => {
-  const { newestBlockNumber, oldestBlockNumber } = c.request.query;
+export async function getDiscover({ newestBlockNumber, oldestBlockNumber }: { newestBlockNumber?: number, oldestBlockNumber?: number }) {
   // Default to now
   const newest = newestBlockNumber ?? (await getCurrentBlockNumber());
   const oldest = Math.max(1, oldestBlockNumber || 1, newest - 45_000); // 45k blocks at a time max
@@ -99,16 +75,11 @@ export const getDiscover: Handler<object> = async (
     oldestBlockNumber: oldest,
     posts: posts,
   };
-  return res.status(200).json(response);
+  return response;
 };
 
-export const createBroadcast: Handler<
-  T.Paths.CreateBroadcast.RequestBody
-> = async (c, req, res) => {
+export async function createBroadcast(msaId: string, req: Request) {
   try {
-    const msaId =
-      c.security.tokenAuth.msaId ||
-      (await getMsaByPublicKey(c.security.tokenAuth.publicKey));
     const bb = Busboy({ headers: req.headers });
 
     const formAsync: Promise<[Fields, File[]]> = new Promise(
@@ -189,10 +160,9 @@ export const createBroadcast: Handler<
       timestamp: note.published,
       replies: [],
     };
-    return res.status(200).json(response);
+    return response;
   } catch (e) {
-    console.error(e);
-    return res.status(500);
+    throw new HttpError(HttpStatusCode.InternalServerError, 'Error creating content broadcast', { cause: e })
   }
 };
 

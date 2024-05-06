@@ -1,5 +1,4 @@
-import { Client as ContentPublisherClient } from "../types/openapi-content-publisher.js";
-import type { Components } from "../types/openapi-content-publisher.js";
+import { Client as ContentPublisherClient, type Components } from "../types/openapi-content-publishing-service.js";
 import openapiJson from "../openapi-content-publisher.json" assert { type: "json" };
 import { OpenAPIClientAxios, type Document } from "openapi-client-axios";
 import FormData from "form-data";

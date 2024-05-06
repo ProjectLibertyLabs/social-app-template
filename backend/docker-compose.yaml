@@ -135,7 +135,7 @@ services:
       tags:
         - social-app-backend:latest
     ports:
-      - 3000:3000
+      - 3004:3000
     env_file:
       - path: .env.common.docker
         required: true
