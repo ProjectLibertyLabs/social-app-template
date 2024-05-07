@@ -11,12 +11,11 @@ const authTokenRegistry: Map<string, RequestAccount> = new Map();
 type CacheData = { msaId: string; added: Date };
 const cachePublicKeys: Map<string, CacheData> = new Map();
 
-
 export function createAuthToken(publicKey: string): string {
   const uuid = randomUUID();
   authTokenRegistry.set(uuid, { publicKey });
   return uuid;
-};
+}
 
 export function revokeAuthToken(token: string): void {
   authTokenRegistry.delete(token);
@@ -33,7 +32,7 @@ export async function getAccountFromAuth(
   account.msaId = (await getMsaByPublicKey(account.publicKey)) || undefined;
   authTokenRegistry.set(token, account);
   return account;
-};
+}
 
 export async function getMsaByPublicKey(
   publicKey: string,
@@ -51,32 +50,38 @@ export async function getMsaByPublicKey(
   const msaIdStr = msaId.value.toString();
   cachePublicKeys.set(publicKey, { added: new Date(), msaId: msaIdStr });
   return msaIdStr;
-};
+}
 
 export function getAuthToken(req: Request): string | null {
-  if (req.headers?.authorization && typeof req.headers.authorization === 'string') {
-    return req.headers.authorization.split(' ')[1];
+  if (
+    req.headers?.authorization &&
+    typeof req.headers.authorization === "string"
+  ) {
+    return req.headers.authorization.split(" ")[1];
   }
 
   return null;
 }
 
-export async function validateAuthToken(req: Request, res: Response, next: NextFunction) {
-   const token = getAuthToken(req);
-   if (!token) {
+export async function validateAuthToken(
+  req: Request,
+  res: Response,
+  next: NextFunction,
+) {
+  const token = getAuthToken(req);
+  if (!token) {
     res.status(HttpStatusCode.BadRequest).end();
     return;
-   }
+  }
   const account = await getAccountFromAuth(token);
 
   if (account === null) {
     res.status(HttpStatusCode.Unauthorized).end();
   } else {
-
-  // truthy return values are interpreted as auth success
-  // you can also add any auth information to the return value
-  req.headers['publicKey'] = account.publicKey;
-  req.headers['msaId'] = account.msaId;
-  next();
+    // truthy return values are interpreted as auth success
+    // you can also add any auth information to the return value
+    req.headers["publicKey"] = account.publicKey;
+    req.headers["msaId"] = account.msaId;
+    next();
   }
 }

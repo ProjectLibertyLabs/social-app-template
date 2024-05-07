@@ -29,7 +29,10 @@ export interface IFeedRange {
   oldestBlockNumber?: number;
 }
 
-export async function getUserFeed(msaId: string, { newestBlockNumber, oldestBlockNumber }: IFeedRange) {
+export async function getUserFeed(
+  msaId: string,
+  { newestBlockNumber, oldestBlockNumber }: IFeedRange,
+) {
   // Default to now
   const newest = newestBlockNumber ?? (await getCurrentBlockNumber());
   const oldest = Math.max(1, oldestBlockNumber || 1, newest - 45_000); // 45k blocks at a time max
@@ -41,15 +44,20 @@ export async function getUserFeed(msaId: string, { newestBlockNumber, oldestBloc
     posts: posts.filter((x) => x.fromId === msaId),
   };
   return response;
-};
+}
 
-export async function getFeed(msaId: string, { newestBlockNumber, oldestBlockNumber }: IFeedRange) {
+export async function getFeed(
+  msaId: string,
+  { newestBlockNumber, oldestBlockNumber }: IFeedRange,
+) {
   // Default to now
   const newest = newestBlockNumber ?? (await getCurrentBlockNumber());
   const oldest = Math.max(1, oldestBlockNumber || 1, newest - 45_000); // 45k blocks at a time max
 
   try {
-    const following = await GraphService.instance().then(service => service.getPublicFollows(msaId));
+    const following = await GraphService.instance().then((service) =>
+      service.getPublicFollows(msaId),
+    );
 
     const posts = await getPostsInRange(newest, oldest);
     const response: T.Paths.GetFeed.Responses.$200 = {
@@ -59,11 +67,21 @@ export async function getFeed(msaId: string, { newestBlockNumber, oldestBlockNum
     };
     return response;
   } catch (e) {
-    throw new HttpError(HttpStatusCode.InternalServerError, 'Error fetching feed for current user', { cause: e });
+    throw new HttpError(
+      HttpStatusCode.InternalServerError,
+      "Error fetching feed for current user",
+      { cause: e },
+    );
   }
-};
+}
 
-export async function getDiscover({ newestBlockNumber, oldestBlockNumber }: { newestBlockNumber?: number, oldestBlockNumber?: number }) {
+export async function getDiscover({
+  newestBlockNumber,
+  oldestBlockNumber,
+}: {
+  newestBlockNumber?: number;
+  oldestBlockNumber?: number;
+}) {
   // Default to now
   const newest = newestBlockNumber ?? (await getCurrentBlockNumber());
   const oldest = Math.max(1, oldestBlockNumber || 1, newest - 45_000); // 45k blocks at a time max
@@ -75,7 +93,7 @@ export async function getDiscover({ newestBlockNumber, oldestBlockNumber }: { ne
     posts: posts,
   };
   return response;
-};
+}
 
 export async function createBroadcast(msaId: string, req: Request) {
   try {
@@ -161,9 +179,13 @@ export async function createBroadcast(msaId: string, req: Request) {
     };
     return response;
   } catch (e) {
-    throw new HttpError(HttpStatusCode.InternalServerError, 'Error creating content broadcast', { cause: e })
+    throw new HttpError(
+      HttpStatusCode.InternalServerError,
+      "Error creating content broadcast",
+      { cause: e },
+    );
   }
-};
+}
 
 export const getContent: Handler<object> = async (c, _req, res) => {
   // T.Paths.GetContent.PathParameters

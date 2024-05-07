@@ -1,7 +1,7 @@
 import { Express, Request, Response } from "express";
 import { BaseController } from "./BaseController";
-import * as AuthHandler from '../handlers/AuthHandler';
-import { AuthService } from '../services/AuthService';
+import * as AuthHandler from "../handlers/AuthHandler";
+import { AuthService } from "../services/AuthService";
 import { validateAuthToken } from "../services/TokenAuth";
 import { HttpError } from "../types/HttpError";
 import { HttpStatusCode } from "axios";
@@ -24,25 +24,29 @@ export class AuthController extends BaseController {
   }
 
   public async getAccount(req: Request, res: Response) {
-    const data = await AuthService.instance().then(service => service.getAccount(req));
+    const data = await AuthService.instance().then((service) =>
+      service.getAccount(req),
+    );
     if (!data?.displayHandle || !data?.dsnpId) {
-        res = res.status(HttpStatusCode.Accepted);
+      res = res.status(HttpStatusCode.Accepted);
     } else {
-        res.status(HttpStatusCode.Ok).send(data);
+      res.status(HttpStatusCode.Ok).send(data);
     }
     res.end();
   }
 
   public async postLogin(req: Request, res: Response) {
     try {
-    const response = await AuthService.instance().then(service => service.signIn(req.body));
-    res.send(response).end();
+      const response = await AuthService.instance().then((service) =>
+        service.signIn(req.body),
+      );
+      res.send(response).end();
     } catch (e) {
-        if (e instanceof HttpError) {
-            res.status(e.code).send(e.message).end();
-        } else {
-            res.status(HttpStatusCode.InternalServerError).send(e).end();
-        }
+      if (e instanceof HttpError) {
+        res.status(e.code).send(e.message).end();
+      } else {
+        res.status(HttpStatusCode.InternalServerError).send(e).end();
+      }
     }
   }
 

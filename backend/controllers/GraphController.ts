@@ -6,15 +6,26 @@ import { HttpError } from "../types/HttpError";
 import { validateAuthToken } from "../services/TokenAuth";
 
 export class GraphController extends BaseController {
-
   constructor(app: Express) {
     super(app, "/v1/graph");
   }
 
   protected initializeRoutes(): void {
-    this.router.get("/:dsnpId/following", validateAuthToken, this.getFollowing.bind(this));
-    this.router.post("/:dsnpId/follow", validateAuthToken, this.postFollow.bind(this));
-    this.router.post("/:dsnpId/unfollow", validateAuthToken, this.postUnfollow.bind(this));
+    this.router.get(
+      "/:dsnpId/following",
+      validateAuthToken,
+      this.getFollowing.bind(this),
+    );
+    this.router.post(
+      "/:dsnpId/follow",
+      validateAuthToken,
+      this.postFollow.bind(this),
+    );
+    this.router.post(
+      "/:dsnpId/unfollow",
+      validateAuthToken,
+      this.postUnfollow.bind(this),
+    );
   }
 
   public async getFollowing(req: Request, res: Response) {
@@ -25,10 +36,12 @@ export class GraphController extends BaseController {
     }
 
     try {
-      const follows = await GraphService.instance().then(service => service.getPublicFollows(msaId));
+      const follows = await GraphService.instance().then((service) =>
+        service.getPublicFollows(msaId),
+      );
       return res.status(HttpStatusCode.Ok).send(follows);
     } catch (err) {
-      console.error('Error getting user follows', err);
+      console.error("Error getting user follows", err);
       if (err instanceof HttpError) {
         return res.status(err.code).send(err.message);
       }
@@ -38,22 +51,24 @@ export class GraphController extends BaseController {
   }
 
   public async postFollow(req: Request, res: Response) {
-    const msaId = req.headers?.['msaId'];
+    const msaId = req.headers?.["msaId"];
 
-    if (!msaId || typeof msaId !== 'string') {
+    if (!msaId || typeof msaId !== "string") {
       return res.status(HttpStatusCode.BadRequest).send();
     }
 
     const msaToFollow = req.params.dsnpId;
-    if (!msaToFollow || typeof msaToFollow !== 'string') {
+    if (!msaToFollow || typeof msaToFollow !== "string") {
       return res.status(HttpStatusCode.BadRequest).send();
     }
 
     try {
-      await GraphService.instance().then(service => service.follow(msaId, parseInt(msaToFollow)));
+      await GraphService.instance().then((service) =>
+        service.follow(msaId, parseInt(msaToFollow)),
+      );
       return res.status(HttpStatusCode.Created).send();
     } catch (err: any) {
-      console.error('Error changing user graph: follow', err);
+      console.error("Error changing user graph: follow", err);
       if (err instanceof HttpError) {
         return res.status(err.code).send(err.message);
       }
@@ -63,22 +78,24 @@ export class GraphController extends BaseController {
   }
 
   public async postUnfollow(req: Request, res: Response) {
-    const msaId = req.headers?.['msaId'];
-    if (!msaId || typeof msaId !== 'string') {
+    const msaId = req.headers?.["msaId"];
+    if (!msaId || typeof msaId !== "string") {
       return res.status(HttpStatusCode.BadRequest).send();
     }
 
     const msaToUnfollow = req.params.dsnpId;
-    if (!msaToUnfollow || typeof msaToUnfollow !== 'string') {
+    if (!msaToUnfollow || typeof msaToUnfollow !== "string") {
       return res.status(HttpStatusCode.BadRequest).send();
     }
 
     try {
-      await GraphService.instance().then(service => service.unfollow(msaId, parseInt(msaToUnfollow)));
+      await GraphService.instance().then((service) =>
+        service.unfollow(msaId, parseInt(msaToUnfollow)),
+      );
 
       return res.status(HttpStatusCode.Created).send();
     } catch (err: any) {
-      console.error('Error changing user graph: unfollow', err);
+      console.error("Error changing user graph: unfollow", err);
       if (err instanceof HttpError) {
         return res.status(err.code).send(err.message);
       }

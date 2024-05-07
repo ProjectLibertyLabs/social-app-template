@@ -10,6 +10,10 @@ export async function postAssetsHandler(req: Request) {
 
     return response;
   } catch (e: any) {
-    throw new HttpError(HttpStatusCode.ServiceUnavailable, `Unable to upload asset(s): ${e.message}`, { cause: e });
+    throw new HttpError(
+      HttpStatusCode.ServiceUnavailable,
+      `Unable to upload asset(s): ${e.message}`,
+      { cause: e },
+    );
   }
-};
+}

@@ -11,8 +11,6 @@ import multer, { MulterError } from "multer";
 const storage = multer.memoryStorage();
 const upload = multer({ storage: storage });
 
-
-
 import openapiJson from "./openapi.json" assert { type: "json" };
 import { getApi } from "./services/frequency.js";
 import * as Config from "./config/config.js";
