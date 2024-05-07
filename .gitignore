@@ -25,6 +25,12 @@ backend/dist/*
 frontend/build/*
 
 ### ENV ###
+.env
 .env*
 
+
+### Idea ###
 .idea/
+
+### VS Code ###
+.vscode
