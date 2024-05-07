@@ -5,10 +5,11 @@ import { mnemonicValidate } from "@polkadot/util-crypto";
 const devUriRegEx = /^\/\/(Alice|Bob|Charlie|Dave|Eve|Ferdie)(\/[\/]?\d+)?$/;
 
 const ENV_SCHEMA = Joi.object({
+  ACCOUNT_SERVICE_URL: Joi.string().uri().required(),
   CHAIN_ENVIRONMENT: Joi.string()
     .valid(...["dev", "rococo", "testnet", "mainnet"])
     .required(),
-  DEBUG: Joi.bool(),
+  DEBUG: Joi.string(),
   IPFS_ENDPOINT: Joi.string().uri().required(),
   IPFS_BASIC_AUTH_USER: Joi.string(),
   IPFS_BASIC_AUTH_SECRET: Joi.string(),
@@ -62,6 +63,10 @@ export class Config {
     }
 
     this.configValues = value;
+  }
+
+  public get accountServiceUrl() {
+    return this.configValues["ACCOUNT_SERVICE_URL"];
   }
 
   public get chainType() {

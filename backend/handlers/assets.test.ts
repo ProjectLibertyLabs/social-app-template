@@ -1,8 +1,8 @@
 import request from "supertest";
 import axios from "axios";
 import { it, describe, expect, MockedFunction, vi } from "vitest";
-import { app } from "../../index.js";
-import { AssetsService } from "../../services/AssetsService.js";
+import { app } from "../index.js";
+import { AssetsService } from "../services/AssetsService.js";
 
 vi.mock("../../services/AssetsService.js");
 vi.mock("axios");

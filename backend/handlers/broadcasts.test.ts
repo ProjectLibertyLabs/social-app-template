@@ -1,8 +1,8 @@
 import request from "supertest";
 import { describe, expect, it, vi, MockedFunction, beforeEach } from "vitest";
-import { app } from "../../index.js";
+import { app } from "../index.js";
 import * as auth from "../../services/auth.js";
-import { BroadcastService } from "../../services/BroadcastService.js";
+import { BroadcastService } from "../services/BroadcastService.js";
 
 vi.mock("../../services/BroadcastService.js");
 vi.mock("../../services/auth.js");

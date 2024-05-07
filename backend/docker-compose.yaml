@@ -135,7 +135,7 @@ services:
       tags:
         - social-app-backend:latest
     ports:
-      - 3000:3000
+      - 3004:3000
     env_file:
       - path: .env.common.docker
         required: true
@@ -145,7 +145,7 @@ services:
       - NODE_ENV=development
     volumes:
       - .:/app
-      - /app/node_modules
+      - node_cache:/app/node_modules
     networks:
       - social-app-backend
     depends_on:
@@ -161,6 +161,7 @@ volumes:
   ipfs_data:
   chainstorage:
     external: false
+  node_cache:
   redis_data:
 
 networks:
