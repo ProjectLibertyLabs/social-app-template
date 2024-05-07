@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react';
+import React, { ReactElement, useEffect, useState } from 'react';
 import styles from './App.module.css';
 import LoginScreen from './login/LoginScreen';
 
@@ -15,8 +15,9 @@ import { getUserProfile } from './service/UserProfileService';
 import { HeaderProfile } from './chrome/HeaderProfile';
 import { setIpfsGateway } from './service/IpfsService';
 import AuthErrorBoundary from './AuthErrorBoundary';
+import FrequencyWaves from './style/frequencyWaves.svg';
 
-const App = (): JSX.Element => {
+const App = (): ReactElement => {
   const _fakeUser = {
     address: '0x',
     expiresIn: 100,
@@ -119,6 +120,7 @@ const App = (): JSX.Element => {
             </Content>
           </div>
         )}
+        <img src={FrequencyWaves} alt={'Frequency Waves'} className={styles.waves} />
       </Layout>
     </ConfigProvider>
   );

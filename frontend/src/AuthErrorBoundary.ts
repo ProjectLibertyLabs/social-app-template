@@ -1,4 +1,4 @@
-import React, { ErrorInfo, PropsWithChildren } from "react";
+import React, { ErrorInfo, PropsWithChildren } from 'react';
 
 type AuthErrorBoundaryProps = PropsWithChildren<{
   onError?: (error: Error) => void;
@@ -10,17 +10,14 @@ const initialState: ErrorBoundaryState = {
   hasError: false,
 };
 
-class AuthErrorBoundary extends React.Component<
-  AuthErrorBoundaryProps,
-  ErrorBoundaryState
-> {
+class AuthErrorBoundary extends React.Component<AuthErrorBoundaryProps, ErrorBoundaryState> {
   constructor(props: AuthErrorBoundaryProps) {
     super(props);
     this.state = initialState;
   }
 
   static getDerivedStateFromError(error: Error) {
-    console.error("getDerivedStateFromError", error);
+    console.error('getDerivedStateFromError', error);
     // Update state so the next render will show the fallback UI.
     return { hasError: false };
   }

@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { ReactElement } from 'react';
 import { Button, Modal, Input, Form } from 'antd';
 import UserAvatar from '../chrome/UserAvatar';
 import NewPostImageUpload from './NewPostImageUpload';
@@ -20,7 +20,7 @@ type NewPostValues = {
   images: UploadFile[];
 };
 
-const NewPost = ({ onSuccess, onCancel, account }: NewPostProps): JSX.Element => {
+const NewPost = ({ onSuccess, onCancel, account }: NewPostProps): ReactElement => {
   const [form] = Form.useForm();
   const [saving, setSaving] = React.useState<boolean>(false);
 

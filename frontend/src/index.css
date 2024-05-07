@@ -3,14 +3,13 @@
   font-family: 'Newake';
   src: url('./style/indieground-newakefont-web/Newake-Font-Regular.eot');
   src:
-          url('./style/indieground-newakefont-web/Newake-Font-Regular.woff') format('woff'),
-          url('./style/indieground-newakefont-web/Newake-Font-Regular.otf') format('opentype'),
-          url('./style/indieground-newakefont-web/Newake-Font-Regular.svg#filename') format('svg');
+    url('./style/indieground-newakefont-web/Newake-Font-Regular.woff') format('woff'),
+    url('./style/indieground-newakefont-web/Newake-Font-Regular.otf') format('opentype'),
+    url('./style/indieground-newakefont-web/Newake-Font-Regular.svg#filename') format('svg');
 }
 
-
 :root {
-  --main-bg-color: #19455E;
+  --main-bg-color: rgba(25, 69, 94, 90%);
 }
 
 body {
@@ -22,13 +21,15 @@ body {
   background-color: var(--main-bg-color);
 }
 
-h1, h2, h3, h4, h5 {
+h1,
+h2,
+h3,
+h4,
+h5 {
   font-family: Newake, sans-serif !important;
   font-weight: normal !important;
-
 }
 
 code {
-  font-family: source-code-pro, Menlo, Monaco, Consolas, "Courier New",
-    monospace;
+  font-family: source-code-pro, Menlo, Monaco, Consolas, 'Courier New', monospace;
 }

@@ -1,22 +1,22 @@
-import { useEffect, useState } from "react";
-import { ActivityContentProfile } from "@dsnp/activity-content/types";
-import * as dsnpLink from "../dsnpLink";
-import { User } from "../types";
-import { getContext } from "./AuthService";
+import { useEffect, useState } from 'react';
+import { ActivityContentProfile } from '@dsnp/activity-content/types';
+import * as dsnpLink from '../dsnpLink';
+import { User } from '../types';
+import { getContext } from './AuthService';
 
 const profileCache: Map<string, Promise<User>> = new Map();
 
 const profileToUser = (profile: dsnpLink.Profile): User => {
-  let userProfile: User["profile"] | undefined = undefined;
+  let userProfile: User['profile'] | undefined = undefined;
   if (profile.content) {
     const contentParsed = JSON.parse(profile.content) as ActivityContentProfile;
     userProfile = {
-      icon: contentParsed.icon?.[0].href || "",
-      name: contentParsed.name || "",
+      icon: contentParsed.icon?.[0].href || '',
+      name: contentParsed.name || '',
     };
   }
   return {
-    handle: profile.displayHandle || "Anonymous",
+    handle: profile.displayHandle || 'Anonymous',
     dsnpId: profile.fromId,
     profile: userProfile,
   };
@@ -29,9 +29,7 @@ export const getUserProfile = (dsnpId: string): Promise<User | null> => {
 
   // Profile not found in cache, fetch from the server
   try {
-    const profile = dsnpLink
-      .getProfile(getContext(), { dsnpId })
-      .then(profileToUser);
+    const profile = dsnpLink.getProfile(getContext(), { dsnpId }).then(profileToUser);
     profileCache.set(dsnpId, profile);
     return profile;
   } catch (error) {
@@ -40,26 +38,26 @@ export const getUserProfile = (dsnpId: string): Promise<User | null> => {
   }
 };
 
-const loadingUser = { handle: "Loading", dsnpId: "" };
+const loadingUser = { handle: 'Loading', dsnpId: '' };
 
 type UseGetUserResp = { user: User; isLoading: boolean; error: string };
 export const useGetUser = (dsnpId: string): UseGetUserResp => {
   const [user, setUser] = useState<User>(loadingUser);
   const [isLoading, setIsLoading] = useState(true);
-  const [error, setError] = useState("");
+  const [error, setError] = useState('');
 
   useEffect(() => {
     getUserProfile(dsnpId)
       .then((resp) => {
         if (resp === null) {
           setUser({
-            handle: "unknown",
-            dsnpId: "",
+            handle: 'unknown',
+            dsnpId: '',
           });
-          setError("Unknown User");
+          setError('Unknown User');
         } else {
           setUser(resp);
-          setError("");
+          setError('');
         }
         setIsLoading(false);
       })

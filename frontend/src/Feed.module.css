@@ -2,7 +2,7 @@
   --feed-bg: white;
   --feed-fg: #111;
   --nav-fg: gray;
-  --nav-spacer: #5E69FF;
+  --nav-spacer: #5e69ff;
 }
 
 .root {
@@ -49,12 +49,4 @@
 
 .navigationItem--active {
   text-decoration: underline;
-}
-
-.navigationSpacer {
-  width: 5px;
-  height: 22px;
-  transform: skew(-20deg);
-  background: var(--nav-spacer);
-  margin: 0 6px;
 }

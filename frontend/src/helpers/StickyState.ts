@@ -1,4 +1,4 @@
-import React from "react";
+import React from 'react';
 
 export const useStickyState = <T>(defaultValue: T, key: string) => {
   const [value, setValue] = React.useState(() => {

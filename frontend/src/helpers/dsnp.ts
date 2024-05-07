@@ -1,4 +1,4 @@
-import { HexString } from "../types";
+import { HexString } from '../types';
 
 const DSNP_SCHEMA_REGEX = /^dsnp:\/\//i;
 
@@ -30,7 +30,7 @@ export type DSNPUserURI = string;
  * @returns True of false depending on whether the string is a valid DSNPUserURI
  */
 export const isDSNPUserURI = (uri: unknown): uri is DSNPUserURI => {
-  if (typeof uri !== "string") return false;
+  if (typeof uri !== 'string') return false;
   return uri.match(/^dsnp:\/\/[1-9][0-9]{0,19}$/) !== null;
 };
 
@@ -41,7 +41,7 @@ export const isDSNPUserURI = (uri: unknown): uri is DSNPUserURI => {
  * @returns True of false depending on whether the string is a valid DSNPContentURI
  */
 export const isDSNPContentURI = (id: unknown): id is DSNPContentURI => {
-  if (typeof id !== "string") return false;
+  if (typeof id !== 'string') return false;
   return id.match(/^dsnp:\/\/[0-9]{1,20}\/0x[0-9a-f]{64}$/) !== null;
 };
 
@@ -53,18 +53,18 @@ export const isDSNPContentURI = (id: unknown): id is DSNPContentURI => {
  * @returns The same value as a properly formatted DSNPUserId
  */
 export const convertToDSNPUserId = (value: unknown): DSNPUserId => {
-  if (typeof value === "bigint") return value;
-  if (typeof value === "number") return BigInt(value);
+  if (typeof value === 'bigint') return value;
+  if (typeof value === 'number') return BigInt(value);
 
-  if (typeof value === "string") {
+  if (typeof value === 'string') {
     if (value.match(/^[1-9][0-9]{0,19}/) || value.match(/^0x[0-9]{1,7}/)) {
       return BigInt(value);
     }
 
     if (isDSNPUserURI(value)) {
-      return BigInt(value.replace(DSNP_SCHEMA_REGEX, ""));
+      return BigInt(value.replace(DSNP_SCHEMA_REGEX, ''));
     } else {
-      throw new Error("Invalid DSNP Id");
+      throw new Error('Invalid DSNP Id');
     }
   }
   // Cast or throw?
@@ -90,9 +90,6 @@ export const convertToDSNPUserURI = (value: unknown): DSNPUserURI => {
  * @param contentHash - The content hash of the announcement posted by the user
  * @returns A DSNP Content Uri for the given announcement
  */
-export const buildDSNPContentURI = (
-  userIdOrUri: DSNPUserId | DSNPUserURI,
-  contentHash: HexString,
-): DSNPContentURI => {
+export const buildDSNPContentURI = (userIdOrUri: DSNPUserId | DSNPUserURI, contentHash: HexString): DSNPContentURI => {
   return `dsnp://${convertToDSNPUserId(userIdOrUri)}/${contentHash}`;
 };

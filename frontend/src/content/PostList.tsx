@@ -1,4 +1,4 @@
-import React, { useEffect } from 'react';
+import React, { ReactElement, useEffect } from 'react';
 import Title from 'antd/es/typography/Title';
 import Post from './Post';
 import * as dsnpLink from '../dsnpLink';
@@ -6,7 +6,6 @@ import { User, FeedTypes, Network } from '../types';
 import { getContext } from '../service/AuthService';
 import styles from './Post.module.css';
 import { Button, Space, Spin } from 'antd';
-import { ReplyExtended } from '../dsnpLink';
 
 const OLDEST_BLOCK_TO_GO_TO: Record<Network, number> = {
   local: 1,
@@ -26,34 +25,13 @@ type PostListProps = {
 
 type FeedItem = dsnpLink.BroadcastExtended;
 
-const PostList = ({ feedType, user, refreshTrigger, goToProfile, resetFeed, network }: PostListProps): JSX.Element => {
+const PostList = ({ feedType, user, refreshTrigger, goToProfile, resetFeed, network }: PostListProps): ReactElement => {
   const [priorTrigger, setPriorTrigger] = React.useState<number>(refreshTrigger);
   const [priorFeedType, setPriorFeedType] = React.useState<number>(feedType);
   const [newestBlockNumber, setNewestBlockNumber] = React.useState<number | null>(null);
   const [oldestBlockNumber, setOldestBlockNumber] = React.useState<number | null>(null);
   const [isLoading, setIsLoading] = React.useState(true);
-  const [currentFeed, setCurrentFeed] = React.useState<FeedItem[]>([
-    {
-      fromId: '213',
-      contentHash: '1234',
-      content: '{}',
-      timestamp: '123',
-      replies: [
-        {
-          fromId: '2',
-          contentHash: '123321',
-          content: '{}',
-          timestamp: '321',
-        },
-      ],
-    },
-    {
-      fromId: '213',
-      contentHash: '1234',
-      content: '{}',
-      timestamp: '123',
-    },
-  ]);
+  const [currentFeed, setCurrentFeed] = React.useState<FeedItem[]>([]);
 
   const postGetPosts = (
     result: dsnpLink.PaginatedBroadcast,

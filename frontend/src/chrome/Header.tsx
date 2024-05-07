@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { ReactElement } from 'react';
 import UserAvatar from './UserAvatar';
 import { Popover } from 'antd';
 import UserMenu from './UserMenu';
@@ -11,7 +11,7 @@ type HeaderProps = {
   logout?: () => void;
 };
 
-const Header = ({ account, logout }: HeaderProps): JSX.Element => {
+const Header = ({ account, logout }: HeaderProps): ReactElement => {
   return (
     <div className={styles.root}>
       <div className={styles.container}>
