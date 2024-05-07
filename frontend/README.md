@@ -6,7 +6,12 @@ This project was bootstrapped with [Create React App](https://github.com/faceboo
 
 ### Environment Variables
 
-The application is configured by way of environment variables. A complete list of available environment variables is [here](./ENVIRONMENT.md). Environment variables are supplied to the application through _environment files_. The environment is loaded by the `create-react-app` framework. Details on specific naming of environment files for different environments (dev, test, prod, etc) can be found [here](https://create-react-app.dev/docs/adding-custom-environment-variables/). For local development, the environment file is `.env.local`.
+The application is configured by way of environment variables. A complete list of available environment variables is
+[here](./ENVIRONMENT.md). Environment variables are supplied to the application through _environment files_. The
+environment is loaded by the `create-react-app` framework. Details on specific naming of environment files for different
+environments (dev, test, prod, etc) can be found
+[here](https://create-react-app.dev/docs/adding-custom-environment-variables/). For local development, the environment
+file is `.env.local`.
 
 A sample configuration file can be found [here](./env.template)
 
