@@ -210,7 +210,7 @@ export function createContext<FetcherData>(
   params?: r.CreateContextParams<AuthMethods, FetcherData>
 ): r.Context<AuthMethods, FetcherData> {
   return new r.Context<AuthMethods, FetcherData>({
-    serverConfiguration: new r.ServerConfiguration(process.env.REACT_APP_BACKEND_URL || 'http://localhost:5005', {}),
+    serverConfiguration: new r.ServerConfiguration(process.env.REACT_APP_BACKEND_URL || 'http://localhost:3000', {}),
     authMethods: configureAuth(params?.authProviders),
     ...params,
   });

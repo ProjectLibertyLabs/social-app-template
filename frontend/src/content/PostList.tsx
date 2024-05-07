@@ -109,7 +109,7 @@ const PostList = ({ feedType, user, refreshTrigger, goToProfile, resetFeed, netw
 
   return (
     <div className={styles.root}>
-      {isLoading && <Spin size="large" spinning={true} />}
+      <Spin size="large" spinning={isLoading} className={styles.spinner} />
       {oldestBlockNumber !== undefined && (
         <>
           {currentFeed.map((feedItem, index) => (
