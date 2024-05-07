@@ -26,3 +26,5 @@ frontend/build/*
 
 ### ENV ###
 .env*
+
+.idea/
