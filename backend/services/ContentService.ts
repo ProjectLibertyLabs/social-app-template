@@ -1,4 +1,4 @@
-import { Context, Handler } from "openapi-backend";
+import { Handler } from "openapi-backend";
 import Busboy from "busboy";
 import type * as T from "../types/openapi.js";
 import { ipfsPin } from "./ipfs.js";
@@ -11,7 +11,6 @@ import {
 import { publish } from "./announce.js";
 import { getPostsInRange } from "./feed.js";
 import { getCurrentBlockNumber } from "./frequency.js";
-import { getMsaByPublicKey } from "./TokenAuth.js";
 import { GraphService } from "./GraphService.js";
 import * as Config from "../config/config.js";
 import { HttpError } from "../types/HttpError.js";

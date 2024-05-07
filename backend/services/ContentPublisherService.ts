@@ -8,18 +8,18 @@ type BroadcastDto = Components.Schemas.BroadcastDto;
 type ReplyDto = Components.Schemas.ReplyDto;
 type UploadResponseDto = Components.Schemas.UploadResponseDto;
 
-export class ContentPublisherRepository {
-  private static instance: ContentPublisherRepository;
+export class ContentPublisherService {
+  private static instance: ContentPublisherService;
   private _client: ContentPublisherClient;
 
   private constructor() {}
 
-  public static async getInstance(): Promise<ContentPublisherRepository> {
-    if (!ContentPublisherRepository.instance) {
-      ContentPublisherRepository.instance = new ContentPublisherRepository();
-      await ContentPublisherRepository.instance.connect();
+  public static async getInstance(): Promise<ContentPublisherService> {
+    if (!ContentPublisherService.instance) {
+      ContentPublisherService.instance = new ContentPublisherService();
+      await ContentPublisherService.instance.connect();
     }
-    return ContentPublisherRepository.instance;
+    return ContentPublisherService.instance;
   }
 
   private async connect() {
