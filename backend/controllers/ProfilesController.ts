@@ -16,6 +16,6 @@ export class ProfilesController extends BaseController {
     return res.status(HttpStatusCode.Ok).send();
   }
   public putProfile(_res: Request, res: Response) {
-   return res.status(HttpStatusCode.Accepted).send();
+    return res.status(HttpStatusCode.Accepted).send();
   }
 }
