@@ -11,9 +11,7 @@
             "description": "Service is healthy"
           }
         },
-        "tags": [
-          "graph-service"
-        ]
+        "tags": ["graph-service"]
       }
     },
     "/api/graphs": {
@@ -46,9 +44,7 @@
             }
           }
         },
-        "tags": [
-          "graph-service"
-        ]
+        "tags": ["graph-service"]
       }
     },
     "/api/update-graph": {
@@ -78,9 +74,7 @@
             }
           }
         },
-        "tags": [
-          "graph-service"
-        ]
+        "tags": ["graph-service"]
       }
     },
     "/api/watch-graphs": {
@@ -103,9 +97,7 @@
             "description": "Successfully started watching graphs"
           }
         },
-        "tags": [
-          "graph-service"
-        ]
+        "tags": ["graph-service"]
       }
     }
   },
@@ -143,16 +135,10 @@
           },
           "keyType": {
             "type": "string",
-            "enum": [
-              "X25519"
-            ]
+            "enum": ["X25519"]
           }
         },
-        "required": [
-          "publicKey",
-          "privateKey",
-          "keyType"
-        ]
+        "required": ["publicKey", "privateKey", "keyType"]
       },
       "GraphsQueryParamsDto": {
         "type": "object",
@@ -165,10 +151,7 @@
           },
           "privacyType": {
             "type": "string",
-            "enum": [
-              "private",
-              "public"
-            ]
+            "enum": ["private", "public"]
           },
           "graphKeyPairs": {
             "type": "array",
@@ -177,11 +160,7 @@
             }
           }
         },
-        "required": [
-          "dsnpIds",
-          "privacyType",
-          "graphKeyPairs"
-        ]
+        "required": ["dsnpIds", "privacyType", "graphKeyPairs"]
       },
       "DsnpGraphEdge": {
         "type": "object",
@@ -193,10 +172,7 @@
             "type": "number"
           }
         },
-        "required": [
-          "userId",
-          "since"
-        ]
+        "required": ["userId", "since"]
       },
       "UserGraphDto": {
         "type": "object",
@@ -211,9 +187,7 @@
             }
           }
         },
-        "required": [
-          "dsnpId"
-        ]
+        "required": ["dsnpId"]
       },
       "ConnectionDto": {
         "type": "object",
@@ -223,10 +197,7 @@
           },
           "privacyType": {
             "type": "string",
-            "enum": [
-              "private",
-              "public"
-            ]
+            "enum": ["private", "public"]
           },
           "direction": {
             "type": "string",
@@ -239,18 +210,10 @@
           },
           "connectionType": {
             "type": "string",
-            "enum": [
-              "follow",
-              "friendship"
-            ]
+            "enum": ["follow", "friendship"]
           }
         },
-        "required": [
-          "dsnpId",
-          "privacyType",
-          "direction",
-          "connectionType"
-        ]
+        "required": ["dsnpId", "privacyType", "direction", "connectionType"]
       },
       "ProviderGraphDto": {
         "type": "object",
@@ -277,10 +240,7 @@
             }
           }
         },
-        "required": [
-          "dsnpId",
-          "connections"
-        ]
+        "required": ["dsnpId", "connections"]
       },
       "GraphChangeRepsonseDto": {
         "type": "object",
@@ -299,10 +259,7 @@
             "type": "string"
           }
         },
-        "required": [
-          "dsnpIds",
-          "webhookEndpoint"
-        ]
+        "required": ["dsnpIds", "webhookEndpoint"]
       }
     }
   }

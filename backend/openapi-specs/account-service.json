@@ -11,9 +11,7 @@
             "description": "Service is healthy"
           }
         },
-        "tags": [
-          "api"
-        ]
+        "tags": ["api"]
       }
     },
     "/accounts/siwf": {
@@ -33,9 +31,7 @@
             }
           }
         },
-        "tags": [
-          "accounts"
-        ]
+        "tags": ["accounts"]
       },
       "post": {
         "operationId": "AccountsController_signInWithFrequency",
@@ -63,9 +59,7 @@
             }
           }
         },
-        "tags": [
-          "accounts"
-        ]
+        "tags": ["accounts"]
       }
     },
     "/accounts/{msaId}": {
@@ -87,9 +81,7 @@
             "description": "Found account"
           }
         },
-        "tags": [
-          "accounts"
-        ]
+        "tags": ["accounts"]
       }
     },
     "/delegation/{msaId}": {
@@ -111,9 +103,7 @@
             "description": "Found delegation information."
           }
         },
-        "tags": [
-          "delegation"
-        ]
+        "tags": ["delegation"]
       }
     },
     "/keys/add": {
@@ -136,9 +126,7 @@
             "description": "Found public keys."
           }
         },
-        "tags": [
-          "keys"
-        ]
+        "tags": ["keys"]
       }
     },
     "/keys/{msaId}": {
@@ -160,9 +148,7 @@
             "description": "Found public keys."
           }
         },
-        "tags": [
-          "keys"
-        ]
+        "tags": ["keys"]
       }
     },
     "/handles": {
@@ -185,9 +171,7 @@
             "description": "Handle created successfully"
           }
         },
-        "tags": [
-          "handles"
-        ]
+        "tags": ["handles"]
       }
     },
     "/handles/change": {
@@ -210,9 +194,7 @@
             "description": "Handle changed successfully"
           }
         },
-        "tags": [
-          "handles"
-        ]
+        "tags": ["handles"]
       }
     },
     "/handles/{msaId}": {
@@ -234,9 +216,7 @@
             "description": "Found account"
           }
         },
-        "tags": [
-          "handles"
-        ]
+        "tags": ["handles"]
       }
     }
   },
@@ -276,11 +256,7 @@
             "type": "string"
           }
         },
-        "required": [
-          "providerId",
-          "siwfUrl",
-          "frequencyRpcUrl"
-        ]
+        "required": ["providerId", "siwfUrl", "frequencyRpcUrl"]
       },
       "SiwsPayloadDto": {
         "type": "object",
@@ -292,10 +268,7 @@
             "type": "string"
           }
         },
-        "required": [
-          "message",
-          "signature"
-        ]
+        "required": ["message", "signature"]
       },
       "ErrorResponseDto": {
         "type": "object",
@@ -304,9 +277,7 @@
             "type": "string"
           }
         },
-        "required": [
-          "message"
-        ]
+        "required": ["message"]
       },
       "SignInResponseDto": {
         "type": "object",
@@ -332,11 +303,7 @@
             "type": "string"
           }
         },
-        "required": [
-          "pallet",
-          "extrinsicName",
-          "encodedExtrinsic"
-        ]
+        "required": ["pallet", "extrinsicName", "encodedExtrinsic"]
       },
       "SignUpResponseDto": {
         "type": "object",
@@ -390,9 +357,7 @@
             "type": "string"
           }
         },
-        "required": [
-          "referenceId"
-        ]
+        "required": ["referenceId"]
       },
       "KeysRequestPayload": {
         "type": "object",
@@ -407,11 +372,7 @@
             "type": "string"
           }
         },
-        "required": [
-          "msaId",
-          "expiration",
-          "newPublicKey"
-        ]
+        "required": ["msaId", "expiration", "newPublicKey"]
       },
       "KeysRequest": {
         "type": "object",
@@ -446,10 +407,7 @@
             "type": "number"
           }
         },
-        "required": [
-          "baseHandle",
-          "expiration"
-        ]
+        "required": ["baseHandle", "expiration"]
       },
       "HandleRequest": {
         "type": "object",
@@ -464,11 +422,7 @@
             "type": "string"
           }
         },
-        "required": [
-          "accountId",
-          "payload",
-          "proof"
-        ]
+        "required": ["accountId", "payload", "proof"]
       }
     }
   }

@@ -296,9 +296,7 @@
             }
           }
         },
-        "required": [
-          "files"
-        ]
+        "required": ["files"]
       },
       "UploadResponseDto": {
         "type": "object",
@@ -310,9 +308,7 @@
             }
           }
         },
-        "required": [
-          "assetIds"
-        ]
+        "required": ["assetIds"]
       },
       "AssetReferenceDto": {
         "type": "object",
@@ -334,21 +330,14 @@
             "pattern": "DURATION_REGEX"
           }
         },
-        "required": [
-          "referenceId"
-        ]
+        "required": ["referenceId"]
       },
       "AssetDto": {
         "type": "object",
         "properties": {
           "type": {
             "type": "string",
-            "enum": [
-              "link",
-              "image",
-              "audio",
-              "video"
-            ]
+            "enum": ["link", "image", "audio", "video"]
           },
           "references": {
             "type": "array",
@@ -365,19 +354,14 @@
             "minLength": 1
           }
         },
-        "required": [
-          "type"
-        ]
+        "required": ["type"]
       },
       "TagDto": {
         "type": "object",
         "properties": {
           "type": {
             "type": "string",
-            "enum": [
-              "mention",
-              "hashtag"
-            ]
+            "enum": ["mention", "hashtag"]
           },
           "name": {
             "type": "string",
@@ -389,9 +373,7 @@
             "pattern": "DSNP_USER_URI_REGEX"
           }
         },
-        "required": [
-          "type"
-        ]
+        "required": ["type"]
       },
       "LocationDto": {
         "type": "object",
@@ -420,19 +402,10 @@
           },
           "units": {
             "type": "string",
-            "enum": [
-              "cm",
-              "m",
-              "km",
-              "inches",
-              "feet",
-              "miles"
-            ]
+            "enum": ["cm", "m", "km", "inches", "feet", "miles"]
           }
         },
-        "required": [
-          "name"
-        ]
+        "required": ["name"]
       },
       "NoteActivityDto": {
         "type": "object",
@@ -464,10 +437,7 @@
             "$ref": "#/components/schemas/LocationDto"
           }
         },
-        "required": [
-          "content",
-          "published"
-        ]
+        "required": ["content", "published"]
       },
       "BroadcastDto": {
         "type": "object",
@@ -476,9 +446,7 @@
             "$ref": "#/components/schemas/NoteActivityDto"
           }
         },
-        "required": [
-          "content"
-        ]
+        "required": ["content"]
       },
       "AnnouncementResponseDto": {
         "type": "object",
@@ -487,9 +455,7 @@
             "type": "string"
           }
         },
-        "required": [
-          "referenceId"
-        ]
+        "required": ["referenceId"]
       },
       "ReplyDto": {
         "type": "object",
@@ -502,10 +468,7 @@
             "$ref": "#/components/schemas/NoteActivityDto"
           }
         },
-        "required": [
-          "inReplyTo",
-          "content"
-        ]
+        "required": ["inReplyTo", "content"]
       },
       "ReactionDto": {
         "type": "object",
@@ -525,11 +488,7 @@
             "pattern": "DSNP_CONTENT_URI_REGEX"
           }
         },
-        "required": [
-          "emoji",
-          "apply",
-          "inReplyTo"
-        ]
+        "required": ["emoji", "apply", "inReplyTo"]
       },
       "UpdateDto": {
         "type": "object",
@@ -540,20 +499,13 @@
           },
           "targetAnnouncementType": {
             "type": "string",
-            "enum": [
-              "broadcast",
-              "reply"
-            ]
+            "enum": ["broadcast", "reply"]
           },
           "content": {
             "$ref": "#/components/schemas/NoteActivityDto"
           }
         },
-        "required": [
-          "targetContentHash",
-          "targetAnnouncementType",
-          "content"
-        ]
+        "required": ["targetContentHash", "targetAnnouncementType", "content"]
       },
       "TombstoneDto": {
         "type": "object",
@@ -564,16 +516,10 @@
           },
           "targetAnnouncementType": {
             "type": "string",
-            "enum": [
-              "broadcast",
-              "reply"
-            ]
+            "enum": ["broadcast", "reply"]
           }
         },
-        "required": [
-          "targetContentHash",
-          "targetAnnouncementType"
-        ]
+        "required": ["targetContentHash", "targetAnnouncementType"]
       },
       "ProfileActivityDto": {
         "type": "object",
@@ -612,9 +558,7 @@
             "$ref": "#/components/schemas/ProfileActivityDto"
           }
         },
-        "required": [
-          "profile"
-        ]
+        "required": ["profile"]
       }
     }
   }

@@ -1,5 +1,5 @@
 import FormData from "form-data";
-import { ContentPublisherRepository } from "../repositories/ContentPublisherRepository.js";
+import { ContentPublisherService } from "./ContentPublisherService.js";
 
 type File = Express.Multer.File;
 export class AssetsService {
@@ -13,7 +13,7 @@ export class AssetsService {
     }, new FormData());
 
     try {
-      const repository = await ContentPublisherRepository.getInstance();
+      const repository = await ContentPublisherService.getInstance();
       const response = await repository.uploadAsset(formData);
       return response.assetIds;
     } catch (error) {

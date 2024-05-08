@@ -194,19 +194,14 @@
             "example": "0"
           }
         },
-        "required": [
-          "blockNumber"
-        ]
+        "required": ["blockNumber"]
       },
       "ChainWatchOptionsDto": {
         "type": "object",
         "properties": {
           "schemaIds": {
             "description": "Specific schema ids to watch for",
-            "example": [
-              "1",
-              "19"
-            ],
+            "example": ["1", "19"],
             "type": "array",
             "items": {
               "type": "string"
@@ -214,20 +209,14 @@
           },
           "dsnpIds": {
             "description": "Specific dsnpIds (msa_id) to watch for",
-            "example": [
-              "10074",
-              "100001"
-            ],
+            "example": ["10074", "100001"],
             "type": "array",
             "items": {
               "type": "string"
             }
           }
         },
-        "required": [
-          "schemaIds",
-          "dsnpIds"
-        ]
+        "required": ["schemaIds", "dsnpIds"]
       },
       "ContentSearchRequestDto": {
         "type": "object",
@@ -251,11 +240,7 @@
             ]
           }
         },
-        "required": [
-          "startBlock",
-          "endBlock",
-          "filters"
-        ]
+        "required": ["startBlock", "endBlock", "filters"]
       },
       "WebhookRegistrationDto": {
         "type": "object",
@@ -280,10 +265,7 @@
             }
           }
         },
-        "required": [
-          "url",
-          "announcementTypes"
-        ]
+        "required": ["url", "announcementTypes"]
       }
     }
   }

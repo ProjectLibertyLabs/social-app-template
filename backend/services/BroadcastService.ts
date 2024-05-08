@@ -1,4 +1,4 @@
-import { ContentPublisherRepository } from "../repositories/ContentPublisherRepository.js";
+import { ContentPublisherService } from "./ContentPublisherService.js";
 import { PostBroadcastRequest, PostBroadcastResponse } from "../types/types.js";
 import { BroadcastDataBuilder } from "./BroadcastDataBuilder.js";
 
@@ -8,7 +8,7 @@ export class BroadcastService {
     params: PostBroadcastRequest,
   ): Promise<PostBroadcastResponse> {
     try {
-      const repository = await ContentPublisherRepository.getInstance();
+      const repository = await ContentPublisherService.getInstance();
       const { assets, content, inReplyTo } = params;
 
       const data = BroadcastDataBuilder.build(content, assets);
