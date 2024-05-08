@@ -3,7 +3,10 @@ import { BaseController } from "./BaseController";
 import { HttpStatusCode } from "axios";
 import * as ContentService from "../services/ContentService";
 import { HttpError } from "../types/HttpError";
-import { validateAuthToken } from "../services/TokenAuth";
+import {
+  validateAuthToken,
+  validateMsaAuth,
+} from "../services/TokenAuth";
 
 export class ContentController extends BaseController {
   constructor(app: Express) {
@@ -12,30 +15,51 @@ export class ContentController extends BaseController {
   }
 
   protected initializeRoutes(): void {
-    this.router.get("/", this.getContent.bind(this));
-    this.router.get("/feed", validateAuthToken, this.getFeed.bind(this));
-    this.router.get("/discover", this.getDiscover.bind(this));
-    this.router.post("/create", this.postContentCreate.bind(this));
+    this.router.get(
+      "/feed",
+      validateAuthToken,
+      validateMsaAuth,
+      this.getFeed.bind(this),
+    );
+    this.router.get(
+      "/discover",
+      validateAuthToken,
+      validateMsaAuth,
+      this.getDiscover.bind(this),
+    );
+    this.router.get("/:dsnpId", this.getContent.bind(this));
+    this.router.post(
+      "/create",
+      validateAuthToken,
+      validateMsaAuth,
+      this.postContentCreate.bind(this),
+    );
 
     this.router.get(
-      "/:dsnpId/:contentHash?",
+      "/:dsnpId/:contentHash",
+      validateAuthToken,
+      validateMsaAuth,
       this.getSpecificUserContent.bind(this),
     );
     this.router.put(
-      "/:contentType/:contentHash?",
+      "/:contentType/:contentHash",
+      validateAuthToken,
+      validateMsaAuth,
       this.putSpecificContentType.bind(this),
     );
   }
 
-  public getContent() {}
+  public async getContent(req: Request, res: Response) {
+    const { dsnpId: msaId } = req.params;
+    const { newestBlockNumber: endStr, oldestBlockNumber: startStr } =
+      req.query;
+    res.status(HttpStatusCode.Ok).send();
+  }
 
   public async getFeed(req: Request, res: Response) {
     const { newestBlockNumber: endStr, oldestBlockNumber: startStr } =
       req.query;
-    const msaId = req.headers?.["msaId"];
-    if (!msaId || typeof msaId !== "string") {
-      return res.status(HttpStatusCode.BadRequest).send("Bad/no MSA").end();
-    }
+    const { msaId } = req.headers as { msaId: string };
 
     try {
       const oldestBlockNumber =
@@ -44,7 +68,7 @@ export class ContentController extends BaseController {
           : undefined;
       const newestBlockNumber =
         endStr && typeof endStr === "string" ? parseInt(endStr) : undefined;
-      const response = await ContentService.getUserFeed(msaId, {
+      const response = await ContentService.getUserFeed(msaId!, {
         newestBlockNumber,
         oldestBlockNumber,
       });

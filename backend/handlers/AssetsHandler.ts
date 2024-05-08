@@ -1,11 +1,9 @@
-import { Request } from "express";
 import { AssetsService } from "../services/AssetsService.js";
 import { HttpError } from "../types/HttpError.js";
 import { HttpStatusCode } from "axios";
 
-export async function postAssetsHandler(req: Request) {
+export async function postAssetsHandler(files: Express.Multer.File[]) {
   try {
-    const files = Array.isArray(req.files) ? req.files : [];
     const response = await AssetsService.create(files);
 
     return response;

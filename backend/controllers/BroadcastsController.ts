@@ -3,6 +3,14 @@ import { BaseController } from "./BaseController";
 import * as BroadcastsHandler from "../handlers/BroadcastsHandler";
 import { HttpStatusCode } from "axios";
 import { HttpError } from "../types/HttpError";
+import { RequestAccount, validateAuthToken, validateMsaAuth } from "../services/TokenAuth";
+// uncomment below for easy dev/debug usage
+// import { RequestAccount, debugAuthToken as validateAuthToken, debugMsaAuth as validateMsaAuth } from "../services/TokenAuth";
+
+const logit = (req: any, res: any, next: () => void) => {
+  console.log('Got here');
+  next();
+}
 
 export class BroadcastsController extends BaseController {
   constructor(app: Express) {
@@ -11,19 +19,16 @@ export class BroadcastsController extends BaseController {
   }
 
   protected initializeRoutes(): void {
-    this.router.post("/", this.postBroadcast.bind(this));
+    this.router.post("/", logit, validateAuthToken, logit, validateMsaAuth, this.postBroadcast.bind(this));
   }
 
   public async postBroadcast(req: Request, res: Response) {
-    const msaId = req.headers?.msaId;
-    if (!msaId || typeof msaId !== "string") {
-      return res
-        .status(HttpStatusCode.BadRequest)
-        .send("Missing or invalid MSA");
-    }
+    console.log('POST broadcast: ', req.body);
+    const { msaId } = req.headers as RequestAccount;
+    console.dir(req.body);
     try {
       const response = await BroadcastsHandler.postBroadcastHandler(
-        msaId,
+        msaId!,
         req.body,
       );
       return res.status(HttpStatusCode.Created).send(response);

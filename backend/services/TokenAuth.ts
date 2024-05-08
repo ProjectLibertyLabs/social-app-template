@@ -70,18 +70,56 @@ export async function validateAuthToken(
 ) {
   const token = getAuthToken(req);
   if (!token) {
-    res.status(HttpStatusCode.BadRequest).end();
-    return;
+    return res.status(HttpStatusCode.Unauthorized).end();
   }
+
   const account = await getAccountFromAuth(token);
 
   if (account === null) {
-    res.status(HttpStatusCode.Unauthorized).end();
-  } else {
-    // truthy return values are interpreted as auth success
-    // you can also add any auth information to the return value
-    req.headers["publicKey"] = account.publicKey;
-    req.headers["msaId"] = account.msaId;
-    next();
+    return res.status(HttpStatusCode.Unauthorized).end();
   }
+
+  // you can also add any auth information to the return value
+  Object.assign(req.headers, account);
+  next();
+}
+
+/// Dev function useful to swap in to endpoints when testing with Postman, etc
+export function debugAuthToken(
+  req: Request,
+  res: Response,
+  next: NextFunction,
+) {
+  Object.assign(req.headers, {
+    publicKey: process.env.DEBUG_PUBKEY,
+    msaId: process.env.DEBUG_MSA_ID,
+  });
+  next();
+}
+
+export async function validateMsaAuth(
+  req: Request,
+  res: Response,
+  next: NextFunction,
+) {
+  const { msaId } = req.headers;
+
+  // Make sure msaId is populated & is a string (as opposed to an array)
+  if (!msaId || typeof msaId !== "string") {
+    return res
+      .status(HttpStatusCode.Unauthorized)
+      .send("Missing or invalid MSA")
+      .end();
+  }
+
+  try {
+    BigInt(msaId);
+    next();
+  } catch (err: any) {
+    return res.status(HttpStatusCode.Unauthorized).send("Invalid MSA");
+  }
+}
+
+export function debugMsaAuth(_req: Request, _res: Response, next: NextFunction) {
+  next();
 }
