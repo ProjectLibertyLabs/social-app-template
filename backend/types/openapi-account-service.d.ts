@@ -8,6 +8,12 @@ import type {
 
 declare namespace Components {
   namespace Schemas {
+    export interface AccountResponse {
+      msaId: number;
+      handle?: {
+        [key: string]: any;
+      } | null;
+    }
     export interface EncodedExtrinsicDto {
       pallet: string;
       extrinsicName: string;
@@ -89,7 +95,7 @@ declare namespace Paths {
       msaId: Parameters.MsaId;
     }
     namespace Responses {
-      export interface $200 {}
+      export type $200 = Components.Schemas.AccountResponse;
     }
   }
   namespace AccountsControllerGetSIWFConfig {
@@ -97,7 +103,7 @@ declare namespace Paths {
       export type $200 = Components.Schemas.WalletLoginConfigResponse;
     }
   }
-  namespace AccountsControllerSignInWithFrequency {
+  namespace AccountsControllerPostSignInWithFrequency {
     export type RequestBody = Components.Schemas.WalletLoginRequestDto;
     namespace Responses {
       export type $201 = Components.Schemas.WalletLoginResponse;
@@ -179,13 +185,13 @@ export interface OperationMethods {
     config?: AxiosRequestConfig,
   ): OperationResponse<Paths.AccountsControllerGetSIWFConfig.Responses.$200>;
   /**
-   * AccountsController_signInWithFrequency - Request to sign in with Frequency
+   * AccountsController_postSignInWithFrequency - Request to sign in with Frequency
    */
-  "AccountsController_signInWithFrequency"(
+  "AccountsController_postSignInWithFrequency"(
     parameters?: Parameters<UnknownParamsObject> | null,
-    data?: Paths.AccountsControllerSignInWithFrequency.RequestBody,
+    data?: Paths.AccountsControllerPostSignInWithFrequency.RequestBody,
     config?: AxiosRequestConfig,
-  ): OperationResponse<Paths.AccountsControllerSignInWithFrequency.Responses.$201>;
+  ): OperationResponse<Paths.AccountsControllerPostSignInWithFrequency.Responses.$201>;
   /**
    * AccountsController_getAccount - Fetch an account given an msaId.
    */
@@ -265,13 +271,13 @@ export interface PathsDictionary {
       config?: AxiosRequestConfig,
     ): OperationResponse<Paths.AccountsControllerGetSIWFConfig.Responses.$200>;
     /**
-     * AccountsController_signInWithFrequency - Request to sign in with Frequency
+     * AccountsController_postSignInWithFrequency - Request to sign in with Frequency
      */
     "post"(
       parameters?: Parameters<UnknownParamsObject> | null,
-      data?: Paths.AccountsControllerSignInWithFrequency.RequestBody,
+      data?: Paths.AccountsControllerPostSignInWithFrequency.RequestBody,
       config?: AxiosRequestConfig,
-    ): OperationResponse<Paths.AccountsControllerSignInWithFrequency.Responses.$201>;
+    ): OperationResponse<Paths.AccountsControllerPostSignInWithFrequency.Responses.$201>;
   };
   ["/accounts/{msaId}"]: {
     /**

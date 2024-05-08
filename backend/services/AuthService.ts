@@ -1,4 +1,7 @@
-import { Client } from "../types/openapi-account-service";
+import {
+  Client as AccountServiceClient,
+  type Components,
+} from "../types/openapi-account-service";
 import { OpenAPIClientAxios, type Document } from "openapi-client-axios";
 import openapiJson from "../openapi-specs/account-service.json" assert { type: "json" };
 import {
@@ -13,80 +16,140 @@ import { HttpStatusCode } from "axios";
 import { HttpError } from "../types/HttpError";
 import { Request } from "express";
 
-export class AuthService {
-  private static _instance: AuthService;
+type AccountResponse = Components.Schemas.AccountResponse;
+type WalletLoginRequestDto = Components.Schemas.WalletLoginRequestDto;
+type SignUpResponseDto = Components.Schemas.SignUpResponseDto;
+type SignInResponseDto = Components.Schemas.SignInResponseDto;
+type WalletLoginConfigResponse = Components.Schemas.WalletLoginConfigResponse;
+type WalletLoginResponse = Components.Schemas.WalletLoginResponse;
 
-  private _client: Client;
+export class AccountService {
+  private static instance: AccountService;
+  private _client: AccountServiceClient;
 
   private constructor() {}
 
-  public static async instance() {
-    if (!this._instance) {
-      this._instance = new this();
-      await this._instance.connect();
+  public static async getInstance(): Promise<AccountService> {
+    if (!AccountService.instance) {
+      AccountService.instance = new AccountService();
+      await AccountService.instance.connect();
     }
-
-    return this._instance;
-  }
-
-  private get client() {
-    if (!this._client) {
-      throw new Error(`${this.constructor.name} API not initialized`);
-    }
-
-    return this._client;
+    return AccountService.instance;
   }
 
   private async connect() {
-    if (!this._client) {
+    if (this._client === undefined) {
       const api = new OpenAPIClientAxios({
         definition: openapiJson as Document,
+        withServer: { url: Config.instance().accountServiceUrl },
       });
-      this._client = await api.init<Client>();
+      this._client = await api.init<AccountServiceClient>();
+    }
+  }
+
+  private set client(api: AccountServiceClient) {
+    this._client = api;
+  }
+
+  private get client() {
+    if (this._client === undefined) {
+      throw new Error(`${this.constructor.name} API not initialized`);
+    }
+    return this._client;
+  }
+
+  public async getSWIFConfig(): Promise<WalletLoginConfigResponse> {
+    try {
+      const response = await this.client.AccountsController_getSIWFConfig();
+      return response.data;
+    } catch (e) {
+      console.error("Failed to get SIWF config: ", e);
+      throw e;
+    }
+  }
+
+  public async getAccount(msaId: string): Promise<AccountResponse> {
+    try {
+      const response = await this.client.AccountsController_getAccount(msaId);
+      return response.data;
+    } catch (e) {
+      console.error(`Failed to get account for msaID:${msaId}  error:${e}`);
+      throw e;
+    }
+  }
+
+  public async signInOrSignUp(
+    request: WalletLoginRequestDto,
+  ): Promise<WalletLoginResponse> {
+    const { signIn, signUp } = request;
+    let response: Partial<WalletLoginResponse> = {};
+    try {
+      if (signUp) {
+        response = await AccountService.getInstance().then((service) =>
+          service.signUp(request),
+        );
+        return response as WalletLoginResponse;
+      } else if (signIn) {
+        // REMOVE: This is just for debugging
+        console.log("Signing in");
+        response = await AccountService.getInstance().then((service) =>
+          service.signIn(request),
+        );
+      }
+      return response as WalletLoginResponse;
+    } catch (e) {
+      console.error("Failed to sign in or sign up: ", e);
+      throw e;
+    }
+  }
+
+  public async signUp(payload: WalletLoginRequestDto): Promise<any> {
+    const api = await getApi();
+    const { signUp } = payload;
+    // TODO: typescript hates optional and undefined
+    if (!signUp) {
+      throw new HttpError(HttpStatusCode.BadRequest, "Invalid signup payload");
+    }
+    try {
+      console.log(`validateSignup: ${JSON.stringify(signUp, null, 2)}`);
+      const { calls, publicKey } = await validateSignup(
+        api,
+        signUp,
+        Config.instance().providerId,
+      );
+      console.log(`publicKey from validateSignup: ${publicKey}`);
+      const response =
+        await this.client.AccountsController_postSignInWithFrequency(
+          null,
+          payload,
+        );
+
+      // REMOVE: This is just for debugging
+      console.log(
+        `Account signup processed, referenceId: ${response.data.referenceId}`,
+      );
+      // TODO: the real data is in the webhook response
+      return {
+        accessToken: createAuthToken(publicKey),
+        expires: Date.now() + 24 * 60 * 60 * 1_000,
+      };
+    } catch (e: any) {
+      console.error("Failed signup validation", e);
+      throw new HttpError(
+        HttpStatusCode.Unauthorized,
+        "Failed signup validation",
+        { cause: e },
+      );
     }
   }
 
   public async signIn(payload: WalletProxyResponse): Promise<any> {
     const api = await getApi();
-    const { signIn, signUp } = payload;
+    const { signIn } = payload;
 
-    if (signUp) {
-      try {
-        const { calls, publicKey } = await validateSignup(
-          api,
-          signUp,
-          Config.instance().providerId,
-        );
-
-        const txns = calls?.map((tx) => api.tx(tx.encodedExtrinsic));
-        const callVec = api.registry.createType("Vec<Call>", txns);
-
-        await api.tx.frequencyTxPayment
-          .payWithCapacityBatchAll(callVec)
-          .signAndSend(
-            getProviderKey(),
-            { nonce: await getNonce() },
-            ({ status, dispatchError }) => {
-              if (dispatchError) {
-                console.error("ERROR in signup: ", dispatchError.toHuman());
-              } else if (status.isInBlock || status.isFinalized) {
-                console.log("Account signup processed", status.toHuman());
-              }
-            },
-          );
-        return {
-          accessToken: createAuthToken(publicKey),
-          expires: Date.now() + 24 * 60 * 60 * 1_000,
-        };
-      } catch (e: any) {
-        console.error("Failed signup validation", e);
-        throw new HttpError(
-          HttpStatusCode.Unauthorized,
-          "Failed signup validation",
-          { cause: e },
-        );
-      }
-    } else if (signIn) {
+    // TODO: typescript hates optional and undefined
+    console.log(`Signin: ${JSON.stringify(signIn, null, 2)}`);
+    if (signIn) {
       try {
         const parsedSignin = await validateSignin(
           api,
@@ -107,29 +170,6 @@ export class AuthService {
 
     // Shouldn't get here
     throw new HttpError(HttpStatusCode.BadRequest, "Invalid signin payload");
-  }
-
-  public async getAccount(req: Request) {
-    const msaId = req.headers?.["msaId"];
-
-    if (!msaId) {
-      return {};
-    }
-
-    const api = await getApi();
-    const handleResp = await api.rpc.handles.getHandleForMsa(msaId);
-    // Handle still being created...
-    // TODO: Be OK with no handle
-    if (handleResp.isEmpty) {
-      return {};
-    }
-
-    const handle = handleResp.value.toJSON();
-
-    return {
-      displayHandle: `${handle.base_handle}.${handle.suffix}`,
-      dsnpId: msaId?.toString(),
-    };
   }
 
   public logout(req: Request) {
