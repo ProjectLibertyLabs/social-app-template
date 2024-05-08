@@ -1,7 +1,8 @@
-import * as Config from '../config/config';
+import axios from "axios";
+import * as Config from "../config/config";
 
 // TODO: Fetch from account-service when the new endpoint is ready
-export function getSiwfRequestConfig() {
+export async function getSiwfRequestConfig() {
     // TODO: This is what this should really look like, but currently the template frontend expects something slightly different
     // return {
     //     providerId: Config.instance().providerId,
@@ -13,20 +14,18 @@ export function getSiwfRequestConfig() {
     //         expiresInMsecs: 300_000,
     //     },
     // }
+    const response = await axios.get(`${Config.instance().accountServiceUrl}/accounts/siwf`);
+    // REMOVE: This is just for debugging
+    console.log(`AuthHandler:getSiwfRequestConfig: response: ${JSON.stringify(response.data, null, 2)}`);
+    console.log(`Config.instance().siwfUrl: ${Config.instance().siwfUrl}`);
+    console.log(`Config.instance().frequencyHttpUrl: ${Config.instance().frequencyHttpUrl}`);
+    console.log(`Config.instance().providerId: ${Config.instance().providerId}`);
     return {
-    siwfUrl: Config.instance().siwfUrl,
-    nodeUrl: Config.instance().frequencyHttpUrl,
-    ipfsGateway: "http://kubo_ipfs:8080",
-    providerId: Config.instance().providerId,
-    schemas: [
-        1,
-        2,
-        3,
-        4,
-        5,
-        6,
-        8
-    ],
-    network: Config.instance().chainType
-}
+        siwfUrl: response.data.siwfUrl,
+        nodeUrl: response.data.frequencyRpcUrl,
+        ipfsGateway: "http://kubo_ipfs:8080",
+        providerId: response.data.providerId,
+        schemas: [1, 2, 3, 4, 5, 6, 8],
+        network: Config.instance().chainType,
+    };
 }

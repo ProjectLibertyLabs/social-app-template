@@ -18,9 +18,15 @@ export class AuthController extends BaseController {
     this.router.post("/logout", validateAuthToken, this.postLogout.bind(this));
   }
 
-  public getSiwf(_req: Request, res: Response) {
-    const payload = AuthHandler.getSiwfRequestConfig();
-    res.send(payload).status(200).end();
+  public async getSiwf(_req: Request, res: Response) {
+    const payload = await AuthHandler.getSiwfRequestConfig();
+    if (!payload) {
+      res.status(HttpStatusCode.InternalServerError).send("Failed to get siwf config").end();
+      return;
+    }
+    // REMOVE: This is just for debugging
+    console.log(`AuthoController:getSiwf config payload: ${JSON.stringify(payload, null, 2)}`);
+    res.status(HttpStatusCode.Ok).send(payload).end();
   }
 
   public async getAccount(req: Request, res: Response) {

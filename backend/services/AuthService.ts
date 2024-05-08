@@ -5,7 +5,7 @@ import { WalletProxyResponse, validateSignin, validateSignup } from '@amplica-la
 import { createAuthToken, getAuthToken, revokeAuthToken } from './TokenAuth';
 import { getApi, getNonce, getProviderKey } from './frequency';
 import * as Config from '../config/config';
-import { HttpStatusCode } from 'axios';
+import axios, { HttpStatusCode } from 'axios';
 import { HttpError } from '../types/HttpError';
 import { Request } from 'express';
 
@@ -98,18 +98,21 @@ export class AuthService {
             return {}
         }
 
-        const api = await getApi();
-        const handleResp = await api.rpc.handles.getHandleForMsa(msaId);
+        // REMOVE: This is just for debugging
+        console.log(`get the account for msaId: ${msaId}`);
+        const handleResp = await axios.get(`${Config.instance().accountServiceUrl}/accounts/${msaId}`);
         // Handle still being created...
         // TODO: Be OK with no handle
-        if (handleResp.isEmpty) {
+        if (handleResp.data === null) {
             return {};
         }
 
-        const handle = handleResp.value.toJSON();
+        const handle = handleResp.data.handle;
+        // REMOVE: This is just for debugging
+        console.log(`handle: ${handle}`);
 
         return {
-            displayHandle: `${handle.base_handle}.${handle.suffix}`,
+            displayHandle: handle,
             dsnpId: msaId?.toString(),
         }
     }
