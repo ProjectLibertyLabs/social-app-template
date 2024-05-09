@@ -4,3 +4,6 @@ package-lock.json
 **/*.map
 # Generated files
 dist
+openapi-specs
+openapi.json
+

@@ -77,6 +77,23 @@ services:
     networks:
       - social-app-backend
 
+  content-watcher-service:
+    image: amplicalabs/content-watcher-service:latest
+    platform: linux/amd64
+    ports:
+      - 3005:3000
+    env_file:
+      - path: .env.common.docker
+        required: true
+      - path: .env.content-watcher-service
+        required: false
+    depends_on:
+      - redis
+      - frequency
+      - kubo_ipfs
+    networks:
+      - social-app-backend
+
   graph-service:
     image: amplicalabs/graph-service:latest
     platform: linux/amd64
