@@ -4,7 +4,10 @@
     <option name="autoReloadType" value="SELECTIVE" />
   </component>
   <component name="ChangeListManager">
-    <list default="true" id="b1c940b0-c27d-4057-8e3e-d56fefbfb176" name="Changes" comment="" />
+    <list default="true" id="b1c940b0-c27d-4057-8e3e-d56fefbfb176" name="Changes" comment="">
+      <change beforePath="$PROJECT_DIR$/.gitignore" beforeDir="false" afterPath="$PROJECT_DIR$/.gitignore" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" />
+    </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
     <option name="HIGHLIGHT_NON_ACTIVE_CHANGELIST" value="false" />
@@ -25,7 +28,7 @@
   "keyToString": {
     "RunOnceActivity.ShowReadmeOnStart": "true",
     "WebServerToolWindowFactoryState": "false",
-    "git-widget-placeholder": "32-remove-v2-from-endpoints",
+    "git-widget-placeholder": "35-replace-servicesgraphts-with-graph-service",
     "last_opened_file_path": "/Users/claireolmstead/Desktop/Amplica/social-app-template/frontend/src/style",
     "node.js.detected.package.eslint": "true",
     "node.js.detected.package.standard": "true",
@@ -145,6 +148,7 @@
       <workItem from="1714499623379" duration="20321000" />
       <workItem from="1714679182990" duration="19041000" />
       <workItem from="1715107933721" duration="10621000" />
+      <workItem from="1715292210654" duration="497000" />
     </task>
     <servers />
   </component>
