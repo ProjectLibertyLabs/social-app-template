@@ -3,7 +3,7 @@ import { BaseController } from "./BaseController";
 import { HttpStatusCode } from "axios";
 import * as ContentService from "../services/ContentService";
 import { HttpError } from "../types/HttpError";
-import { validateAuthToken, validateMsaAuth } from "../services/TokenAuth";
+import { RequestAccount, validateAuthToken, validateMsaAuth } from "../services/TokenAuth";
 
 export class ContentController extends BaseController {
   constructor(app: Express) {
@@ -56,7 +56,7 @@ export class ContentController extends BaseController {
   public async getFeed(req: Request, res: Response) {
     const { newestBlockNumber: endStr, oldestBlockNumber: startStr } =
       req.query;
-    const { msaId } = req.headers as { msaId: string };
+    const { msaId } = req.headers as Required<RequestAccount>;
 
     try {
       const oldestBlockNumber =
@@ -65,7 +65,7 @@ export class ContentController extends BaseController {
           : undefined;
       const newestBlockNumber =
         endStr && typeof endStr === "string" ? parseInt(endStr) : undefined;
-      const response = await ContentService.getUserFeed(msaId!, {
+      const response = await ContentService.getUserFeed(msaId, {
         newestBlockNumber,
         oldestBlockNumber,
       });

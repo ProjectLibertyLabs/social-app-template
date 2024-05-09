@@ -27,10 +27,10 @@ export class BroadcastsController extends BaseController {
   }
 
   public async postBroadcast(req: Request, res: Response) {
-    const { msaId } = req.headers as RequestAccount;
+    const { msaId } = req.headers as Required<RequestAccount>;
     try {
       const response = await BroadcastsHandler.postBroadcastHandler(
-        msaId!,
+        msaId,
         req.body,
       );
       return res.status(HttpStatusCode.Created).send(response);
