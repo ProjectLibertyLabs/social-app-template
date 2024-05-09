@@ -9,7 +9,7 @@ import styles from "./Feed.module.css";
 type FeedProps = {
   account: UserAccount;
   user: User | undefined;
-  goToProfile: (dsnpId?: string) => void;
+  goToProfile: (msaId?: string) => void;
   network: Network;
 };
 
@@ -26,7 +26,7 @@ const Feed = ({
 
   if (
     feedType === FeedTypes.DISPLAY_ID_POSTS &&
-    user?.dsnpId === account.dsnpId
+    user?.msaId === account.msaId
   ) {
     setFeedType(FeedTypes.MY_POSTS);
   }
@@ -45,14 +45,14 @@ const Feed = ({
     goToProfile();
   };
 
-  const showProfile = (dsnpId?: string) => {
-    if (dsnpId) {
+  const showProfile = (msaId?: string) => {
+    if (msaId) {
       setFeedType(FeedTypes.DISPLAY_ID_POSTS);
     } else {
       setFeedType(FeedTypes.DISCOVER);
     }
 
-    goToProfile(dsnpId);
+    goToProfile(msaId);
   };
 
   useEffect(() => {
@@ -94,7 +94,7 @@ const Feed = ({
           <div
             className={feedNavClassName(FeedTypes.MY_POSTS)}
             onClick={() => {
-              goToProfile(account.dsnpId);
+              goToProfile(account.msaId);
               setFeedType(FeedTypes.MY_POSTS);
             }}
           >

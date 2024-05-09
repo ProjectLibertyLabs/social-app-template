@@ -41,7 +41,7 @@ export type LoginRequest = {
 export type WalletLoginResponse = {
   accessToken: string;
   expires: number;
-  dsnpId?: string;
+  msaId?: string;
   handle?: string;
 };
 export type WalletLoginRequest = {
@@ -68,7 +68,7 @@ export type WalletLoginRequest = {
 export type LoginResponse = {
   accessToken: string;
   expires: number;
-  dsnpId: string;
+  msaId: string;
 };
 export type CreateIdentityRequest = {
   addProviderSignature: string;
@@ -84,7 +84,7 @@ export type CreateIdentityResponse = {
   expires: number;
 };
 export type AuthAccountResponse = {
-  dsnpId: string;
+  msaId: string;
   displayHandle?: string;
 };
 export type DelegateRequest = {
@@ -328,14 +328,14 @@ export async function authAccount<FetcherData>(
 export async function getUserFeed<FetcherData>(
   ctx: r.Context<AuthMethods, FetcherData>,
   params: {
-    dsnpId: string;
+    msaId: string;
     newestBlockNumber?: number;
     oldestBlockNumber?: number;
   },
   opts?: FetcherData
 ): Promise<PaginatedBroadcast> {
   const req = await ctx.createRequest({
-    path: "/v1/content/{dsnpId}",
+    path: "/v1/content/{msaId}",
     params,
     method: r.HttpMethod.GET,
     queryParams: ["newestBlockNumber", "oldestBlockNumber"],
@@ -411,13 +411,13 @@ export async function createBroadcast<FetcherData>(
 export async function getContent<FetcherData>(
   ctx: r.Context<AuthMethods, FetcherData>,
   params: {
-    dsnpId: string;
+    msaId: string;
     contentHash: string;
   },
   opts?: FetcherData
 ): Promise<BroadcastExtended> {
   const req = await ctx.createRequest({
-    path: "/v1/content/{dsnpId}/{contentHash}",
+    path: "/v1/content/{msaId}/{contentHash}",
     params,
     method: r.HttpMethod.GET,
     auth: ["tokenAuth"],
@@ -453,12 +453,12 @@ export async function editContent<FetcherData>(
 export async function userFollowing<FetcherData>(
   ctx: r.Context<AuthMethods, FetcherData>,
   params: {
-    dsnpId: string;
+    msaId: string;
   },
   opts?: FetcherData
 ): Promise<string[]> {
   const req = await ctx.createRequest({
-    path: "/v1/graph/{dsnpId}/following",
+    path: "/v1/graph/{msaId}/following",
     params,
     method: r.HttpMethod.GET,
     auth: ["tokenAuth"],
@@ -472,12 +472,12 @@ export async function userFollowing<FetcherData>(
 export async function graphFollow<FetcherData>(
   ctx: r.Context<AuthMethods, FetcherData>,
   params: {
-    dsnpId: string;
+    msaId: string;
   },
   opts?: FetcherData
 ): Promise<any> {
   const req = await ctx.createRequest({
-    path: "/v1/graph/{dsnpId}/follow",
+    path: "/v1/graph/{msaId}/follow",
     params,
     method: r.HttpMethod.POST,
     auth: ["tokenAuth"],
@@ -491,12 +491,12 @@ export async function graphFollow<FetcherData>(
 export async function graphUnfollow<FetcherData>(
   ctx: r.Context<AuthMethods, FetcherData>,
   params: {
-    dsnpId: string;
+    msaId: string;
   },
   opts?: FetcherData
 ): Promise<any> {
   const req = await ctx.createRequest({
-    path: "/v1/graph/{dsnpId}/unfollow",
+    path: "/v1/graph/{msaId}/unfollow",
     params,
     method: r.HttpMethod.POST,
     auth: ["tokenAuth"],
@@ -510,12 +510,12 @@ export async function graphUnfollow<FetcherData>(
 export async function getProfile<FetcherData>(
   ctx: r.Context<AuthMethods, FetcherData>,
   params: {
-    dsnpId: string;
+    msaId: string;
   },
   opts?: FetcherData
 ): Promise<Profile> {
   const req = await ctx.createRequest({
-    path: "/v1/profiles/{dsnpId}",
+    path: "/v1/profiles/{msaId}",
     params,
     method: r.HttpMethod.GET,
     auth: ["tokenAuth"],
@@ -529,13 +529,13 @@ export async function getProfile<FetcherData>(
 export async function createProfile<FetcherData>(
   ctx: r.Context<AuthMethods, FetcherData>,
   params: {
-    dsnpId: string;
+    msaId: string;
   },
   body: EditProfileRequest,
   opts?: FetcherData
 ): Promise<Profile> {
   const req = await ctx.createRequest({
-    path: "/v1/profiles/{dsnpId}",
+    path: "/v1/profiles/{msaId}",
     params,
     method: r.HttpMethod.PUT,
     body,

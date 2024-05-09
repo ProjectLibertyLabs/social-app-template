@@ -10,7 +10,7 @@ interface ConnectionsListProfilesProps {
   connectionsList: User[];
   accountFollowing: string[];
   triggerGraphRefresh: () => void;
-  goToProfile: (dsnpId?: string) => void;
+  goToProfile: (msaId?: string) => void;
 }
 
 const ConnectionsListProfiles = ({
@@ -23,19 +23,19 @@ const ConnectionsListProfiles = ({
   return (
     <>
       {connectionsList.map((user, index) => (
-        <div className={styles.profile} key={user.dsnpId}>
+        <div className={styles.profile} key={user.msaId}>
           <UserAvatar user={user} avatarSize="small" />
-          <div className={styles.name} onClick={() => goToProfile(user.dsnpId)}>
+          <div className={styles.name} onClick={() => goToProfile(user.msaId)}>
             <FromTitle user={user} />
           </div>
           {/* Skip change button for self */}
-          {user.dsnpId !== account.dsnpId && (
+          {user.msaId !== account.msaId && (
             <GraphChangeButton
               key={index}
               triggerGraphRefresh={triggerGraphRefresh}
               user={user}
               relationshipStatus={
-                accountFollowing.includes(user.dsnpId)
+                accountFollowing.includes(user.msaId)
                   ? RelationshipStatus.FOLLOWING
                   : RelationshipStatus.NONE
               }

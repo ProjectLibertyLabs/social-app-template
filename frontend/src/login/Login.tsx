@@ -95,7 +95,7 @@ const Login = ({
         handle: accountResp.displayHandle || "Anonymous",
         expires,
         accessToken,
-        dsnpId: accountResp.dsnpId,
+        msaId: accountResp.msaId,
       });
     } catch (e) {
       console.error(e);

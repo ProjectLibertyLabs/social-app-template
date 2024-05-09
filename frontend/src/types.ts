@@ -9,7 +9,7 @@ export type UserAccount = {
 
 export type User = {
   handle: string;
-  dsnpId: string;
+  msaId: string;
   profile?: {
     icon: string;
     name: string;

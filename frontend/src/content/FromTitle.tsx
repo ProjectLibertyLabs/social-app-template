@@ -6,7 +6,7 @@ import Title from "antd/es/typography/Title";
 interface FromTitleProps {
   user: User;
   level?: 1 | 2 | 3 | 4;
-  goToProfile?: (dsnpId: string) => void;
+  goToProfile?: (msaId: string) => void;
   isReply?: boolean;
 }
 
@@ -22,7 +22,7 @@ export const FromTitle = ({
 
   return (
     <div
-      onClick={() => (goToProfile ? goToProfile(user.dsnpId) : "")}
+      onClick={() => (goToProfile ? goToProfile(user.msaId) : "")}
       className={styles.root}
     >
       {level && (
