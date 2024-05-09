@@ -1,10 +1,11 @@
 import {
   Client as ContentPublisherClient,
   type Components,
-} from "../types/openapi-content-publishing-service.js";
-import openapiJson from "../openapi-content-publisher.json" assert { type: "json" };
+} from "../types/openapi-content-publishing-service";
+import openapiJson from "../openapi-specs/content-publishing-service.json" with { type: "json" };
 import { OpenAPIClientAxios, type Document } from "openapi-client-axios";
 import FormData from "form-data";
+import * as Config from "../config/config";
 
 type AnnouncementResponseDto = Components.Schemas.AnnouncementResponseDto;
 type BroadcastDto = Components.Schemas.BroadcastDto;
@@ -29,9 +30,11 @@ export class ContentPublisherService {
     if (this._client === undefined) {
       const api = new OpenAPIClientAxios({
         definition: openapiJson as Document,
+        withServer: Config.instance().contentPublisherUrl,
       });
 
       this.client = await api.init<ContentPublisherClient>();
+      this.client.defaults.baseURL = Config.instance().contentPublisherUrl;
     }
   }
   private set client(api: ContentPublisherClient) {

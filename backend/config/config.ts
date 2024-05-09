@@ -6,6 +6,7 @@ const devUriRegEx = /^\/\/(Alice|Bob|Charlie|Dave|Eve|Ferdie)(\/[\/]?\d+)?$/;
 
 const ENV_SCHEMA = Joi.object({
   ACCOUNT_SERVICE_URL: Joi.string().uri().required(),
+  CONTENT_PUBLISHER_URL: Joi.string().uri().required(),
   CHAIN_ENVIRONMENT: Joi.string()
     .valid(...["dev", "rococo", "testnet", "mainnet"])
     .required(),
@@ -67,6 +68,10 @@ export class Config {
 
   public get accountServiceUrl() {
     return this.configValues["ACCOUNT_SERVICE_URL"];
+  }
+
+  public get contentPublisherUrl() {
+    return this.configValues["CONTENT_PUBLISHER_URL"];
   }
 
   public get chainType() {
