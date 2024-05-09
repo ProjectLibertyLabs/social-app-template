@@ -18,16 +18,16 @@ interface GraphEdge {
 }
 
 export class GraphService {
-  private static _instance: GraphService;
+  private static instance: GraphService;
 
   private constructor() {}
 
-  public static async instance() {
-    if (!this._instance) {
-      this._instance = new this();
+  public static async getInstance(): Promise<GraphService> {
+    if (!GraphService.instance) {
+      GraphService.instance = new GraphService();
+      // await GraphService.instance.connect();
     }
-
-    return this._instance;
+    return GraphService.instance;
   }
 
   private inflatePage(payload: string): GraphEdge[] {

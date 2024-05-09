@@ -3,7 +3,7 @@ import { BaseController } from './BaseController';
 import { HttpStatusCode } from 'axios';
 import { GraphService } from '../services/GraphService';
 import { HttpError } from '../types/HttpError';
-import { validateAuthToken } from '../services/TokenAuth';
+import { validateAuthToken, validateMsaAuth } from '../services/TokenAuth';
 
 export class GraphController extends BaseController {
   constructor(app: Express) {
