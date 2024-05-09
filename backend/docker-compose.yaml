@@ -47,7 +47,7 @@ services:
     ports:
       - 3001:3000
     env_file:
-      - path: ".env.common.docker"
+      - path: .env.common.docker
         required: true
       - path: ".env.content-publishing-service"
         required: false
