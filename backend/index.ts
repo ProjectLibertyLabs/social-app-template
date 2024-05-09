@@ -3,7 +3,7 @@ import "dotenv/config";
 // Augment Polkadot Types First
 import "@frequency-chain/api-augment";
 import express, { Request, Response, NextFunction } from "express";
-import morgan from "morgan";
+import pinoHttp from 'pino-http';
 import swaggerUi from "swagger-ui-express";
 import cors from "cors";
 
@@ -17,6 +17,7 @@ import { ProfilesController } from "./controllers/ProfilesController.js";
 import { AssestsController } from "./controllers/AssetsController";
 import { BroadcastsController } from "./controllers/BroadcastsController";
 import { MulterError } from "multer";
+import logger from './logger';
 
 // Support BigInt JSON
 (BigInt.prototype as any).toJSON = function () {
@@ -33,8 +34,7 @@ app.use(express.json());
 // cors
 app.use(cors());
 
-// logging
-app.use(morgan("combined"));
+app.use(pinoHttp({ logger }));
 
 const _controllers = [
   new AuthController(app),
