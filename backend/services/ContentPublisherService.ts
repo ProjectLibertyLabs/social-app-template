@@ -2,7 +2,7 @@ import {
   Client as ContentPublisherClient,
   type Components,
 } from "../types/openapi-content-publishing-service";
-import openapiJson from "../openapi-specs/content-publishing-service.json" assert { type: "json" };
+import openapiJson from "../openapi-specs/content-publishing-service.json" with { type: "json" };
 import { OpenAPIClientAxios, type Document } from "openapi-client-axios";
 import FormData from "form-data";
 import * as Config from "../config/config";
