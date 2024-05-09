@@ -3,10 +3,7 @@ import { BaseController } from "./BaseController";
 import { HttpStatusCode } from "axios";
 import * as ContentService from "../services/ContentService";
 import { HttpError } from "../types/HttpError";
-import {
-  validateAuthToken,
-  validateMsaAuth,
-} from "../services/TokenAuth";
+import { validateAuthToken, validateMsaAuth } from "../services/TokenAuth";
 
 export class ContentController extends BaseController {
   constructor(app: Express) {

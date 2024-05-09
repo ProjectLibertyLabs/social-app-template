@@ -2,5 +2,9 @@
 package.json
 package-lock.json
 **/*.map
+G
 # Generated files
 dist
+openapi-specs
+openapi.json
+

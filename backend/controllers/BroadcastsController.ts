@@ -3,14 +3,13 @@ import { BaseController } from "./BaseController";
 import * as BroadcastsHandler from "../handlers/BroadcastsHandler";
 import { HttpStatusCode } from "axios";
 import { HttpError } from "../types/HttpError";
-import { RequestAccount, validateAuthToken, validateMsaAuth } from "../services/TokenAuth";
+import {
+  RequestAccount,
+  validateAuthToken,
+  validateMsaAuth,
+} from "../services/TokenAuth";
 // uncomment below for easy dev/debug usage
 // import { RequestAccount, debugAuthToken as validateAuthToken, debugMsaAuth as validateMsaAuth } from "../services/TokenAuth";
-
-const logit = (req: any, res: any, next: () => void) => {
-  console.log('Got here');
-  next();
-}
 
 export class BroadcastsController extends BaseController {
   constructor(app: Express) {
@@ -19,11 +18,15 @@ export class BroadcastsController extends BaseController {
   }
 
   protected initializeRoutes(): void {
-    this.router.post("/", logit, validateAuthToken, logit, validateMsaAuth, this.postBroadcast.bind(this));
+    this.router.post(
+      "/",
+      validateAuthToken,
+      validateMsaAuth,
+      this.postBroadcast.bind(this),
+    );
   }
 
   public async postBroadcast(req: Request, res: Response) {
-    console.log('POST broadcast: ', req.body);
     const { msaId } = req.headers as RequestAccount;
     console.dir(req.body);
     try {

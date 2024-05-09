@@ -120,6 +120,10 @@ export async function validateMsaAuth(
   }
 }
 
-export function debugMsaAuth(_req: Request, _res: Response, next: NextFunction) {
+export function debugMsaAuth(
+  _req: Request,
+  _res: Response,
+  next: NextFunction,
+) {
   next();
 }

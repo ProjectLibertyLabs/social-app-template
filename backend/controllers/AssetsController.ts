@@ -14,13 +14,19 @@ export class AssestsController extends BaseController {
 
   protected initializeRoutes(): void {
     this.upload = multer({ storage: multer.memoryStorage() });
-    this.router.post("/", this.upload.array('files'), this.postAssets.bind(this));
+    this.router.post(
+      "/",
+      this.upload.array("files"),
+      this.postAssets.bind(this),
+    );
   }
 
   public async postAssets(req: Request, res: Response) {
     const { files } = req;
     if (!Array.isArray(files) || !files.length) {
-      return res.status(HttpStatusCode.BadRequest).send('Empty asset upload request');
+      return res
+        .status(HttpStatusCode.BadRequest)
+        .send("Empty asset upload request");
     }
 
     try {
