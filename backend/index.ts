@@ -3,7 +3,7 @@ import "dotenv/config";
 // Augment Polkadot Types First
 import "@frequency-chain/api-augment";
 import express, { Request, Response, NextFunction } from "express";
-import morgan from "morgan";
+import pinoHttp from 'pino-http';
 import swaggerUi from "swagger-ui-express";
 import cors from "cors";
 
@@ -17,38 +17,42 @@ import { ProfilesController } from "./controllers/ProfilesController.js";
 import { AssestsController } from "./controllers/AssetsController";
 import { BroadcastsController } from "./controllers/BroadcastsController";
 import { MulterError } from "multer";
+import logger from './logger';
+import { WebhookController } from "./controllers/WebhookController";
 
 // Support BigInt JSON
 (BigInt.prototype as any).toJSON = function () {
   return this.toString();
 };
 
-const DEFAULT_PORT = 3000;
-
 Config.init(process.env);
 
-const app = express();
-app.use(express.json());
+const publicApp = express();
+publicApp.use(express.json());
+publicApp.use(cors());
+publicApp.use(pinoHttp({ logger }));
 
-// cors
-app.use(cors());
-
-// logging
-app.use(morgan("combined"));
+const privateApp = express();
+privateApp.use(express.json());
+privateApp.use(cors());
+privateApp.use(pinoHttp({ logger }));
 
 const _controllers = [
-  new AuthController(app),
-  new AssestsController(app),
-  new BroadcastsController(app),
-  new ContentController(app),
-  new GraphController(app),
-  new ProfilesController(app),
+  new AuthController(publicApp),
+  new AssestsController(publicApp),
+  new BroadcastsController(publicApp),
+  new ContentController(publicApp),
+  new GraphController(publicApp),
+  new ProfilesController(publicApp),
+
+  // private (backend) webhook controllers
+  new WebhookController(privateApp),
 ];
 
 // Swagger UI
-app.use("/docs", swaggerUi.serve, swaggerUi.setup(openapiJson));
+publicApp.use("/docs", swaggerUi.serve, swaggerUi.setup(openapiJson));
 
-app.use((err: any, req: Request, res: Response, next: NextFunction) => {
+publicApp.use((err: any, req: Request, res: Response, next: NextFunction) => {
   if (res.headersSent) {
     return next(err);
   }
@@ -69,20 +73,22 @@ app.use((err: any, req: Request, res: Response, next: NextFunction) => {
   return res.status(500).json({ error: "An internal server error occurred." });
 });
 
-let port = parseInt(process.env.API_PORT || DEFAULT_PORT.toString());
-if (isNaN(port)) {
-  port = DEFAULT_PORT;
-}
+const { port, privatePort, privateHost } = Config.instance();
 if (process.env.NODE_ENV != "test") {
   // start server
-  app.listen(port, () => {
+  publicApp.listen(port, () => {
     getApi().catch((e) => {
-      console.error("Error connecting to Frequency Node!!", e.message);
+      logger.error("Error connecting to Frequency Node!!", e.message);
     });
-    console.info(
-      `api listening at http://localhost:${port}\nOpenAPI Docs at http://localhost:${port}/docs`,
-    );
+    logger.info('api listening at http://localhost:%d', port);
+    logger.info('OpenAPI Docs at http://localhost:%d/docs', port);
   });
+
+  if (privateHost) {
+    privateApp.listen(privatePort, privateHost, () => logger.info('private api listening at http://%s:%d', privateHost, privatePort));
+  } else {
+    privateApp.listen(privatePort, () => logger.info('private api listening at http://localhost:%d', privatePort))
+  }
 }
 
-export { app };
+export { publicApp as app, privateApp };
