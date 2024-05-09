@@ -5,6 +5,9 @@ import { mnemonicValidate } from "@polkadot/util-crypto";
 const devUriRegEx = /^\/\/(Alice|Bob|Charlie|Dave|Eve|Ferdie)(\/[\/]?\d+)?$/;
 
 const ENV_SCHEMA = Joi.object({
+  API_PORT: Joi.number().min(1001).max(10_000).default(3000),
+  PRIVATE_PORT: Joi.number().min(1001).max(10_000),
+  PRIVATE_HOST: Joi.string().hostname(),
   ACCOUNT_SERVICE_URL: Joi.string().uri().required(),
   CONTENT_PUBLISHER_URL: Joi.string().uri().required(),
   CHAIN_ENVIRONMENT: Joi.string()
@@ -64,6 +67,19 @@ export class Config {
     }
 
     this.configValues = value;
+  }
+
+  public get port() {
+    return parseInt(this.configValues["API_PORT"]);
+  }
+
+  public get privatePort() {
+    const port = parseInt(this.configValues["PRIVATE_PORT"]);
+    return port || (this.port + 1);
+  }
+
+  public get privateHost() {
+    return this.configValues["PRIVATE_HOST"];
   }
 
   public get accountServiceUrl() {
