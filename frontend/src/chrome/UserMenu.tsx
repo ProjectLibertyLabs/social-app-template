@@ -1,12 +1,12 @@
-import React, { useState } from "react";
-import { Button } from "antd";
-import styles from "./UserMenu.module.css";
+import React, { ReactElement } from 'react';
+import { Button } from 'antd';
+import styles from './UserMenu.module.css';
 
 interface UserMenuProps {
   logout: () => void;
 }
 
-const UserMenu = ({ logout }: UserMenuProps): JSX.Element => {
+const UserMenu = ({ logout }: UserMenuProps): ReactElement => {
   return (
     <Button className={styles.Signout} aria-label="Logout" onClick={logout}>
       Sign Out

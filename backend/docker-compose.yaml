@@ -49,7 +49,7 @@ services:
     env_file:
       - path: .env.common.docker
         required: true
-      - path: .env.content-publishing-service
+      - path: ".env.content-publishing-service"
         required: false
     environment:
       - START_PROCESS=api
@@ -64,9 +64,9 @@ services:
     image: amplicalabs/content-publishing-service:latest
     platform: linux/amd64
     env_file:
-      - path: .env.common.docker
+      - path: ".env.common.docker"
         required: true
-      - path: .env.content-publishing-service
+      - path: ".env.content-publishing-service"
         required: false
     environment:
       - START_PROCESS=worker

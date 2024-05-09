@@ -1,10 +1,11 @@
-import React, { useEffect, useState } from "react";
-import NewPost from "./content/NewPost";
-import PostList from "./content/PostList";
-import { Button, Spin } from "antd";
-import { ArrowLeftOutlined } from "@ant-design/icons";
-import { UserAccount, FeedTypes, User, Network } from "./types";
-import styles from "./Feed.module.css";
+import React, { ReactElement, useEffect, useState } from 'react';
+import NewPost from './content/NewPost';
+import PostList from './content/PostList';
+import { Button, Spin } from 'antd';
+import { ArrowLeftOutlined } from '@ant-design/icons';
+import { UserAccount, FeedTypes, User, Network } from './types';
+import styles from './Feed.module.css';
+import FeedNav from './content/FeedNav';
 
 type FeedProps = {
   account: UserAccount;
@@ -13,21 +14,13 @@ type FeedProps = {
   network: Network;
 };
 
-const Feed = ({
-  account,
-  user,
-  goToProfile,
-  network,
-}: FeedProps): JSX.Element => {
+const Feed = ({ account, user, goToProfile, network }: FeedProps): ReactElement => {
   const [isModalOpen, setIsModalOpen] = useState<boolean>(false);
   const [isPosting, setIsPosting] = useState<boolean>(false);
   const [refreshTrigger, setRefreshTrigger] = useState<number>(Date.now());
   const [feedType, setFeedType] = useState<FeedTypes>(FeedTypes.DISCOVER);
 
-  if (
-    feedType === FeedTypes.DISPLAY_ID_POSTS &&
-    user?.dsnpId === account.dsnpId
-  ) {
+  if (feedType === FeedTypes.DISPLAY_ID_POSTS && user?.dsnpId === account.dsnpId) {
     setFeedType(FeedTypes.MY_POSTS);
   }
 
@@ -35,14 +28,14 @@ const Feed = ({
     setFeedType(FeedTypes.DISCOVER);
   }
 
-  const feedNavClassName = (navItemType: FeedTypes) =>
-    feedType === navItemType
-      ? [styles.navigationItem, styles["navigationItem--active"]].join(" ")
-      : styles.navigationItem;
-
   const resetFeed = () => {
     setFeedType(FeedTypes.DISCOVER);
     goToProfile();
+  };
+
+  const goToMyFeed = () => {
+    goToProfile(account.dsnpId);
+    setFeedType(FeedTypes.MY_POSTS);
   };
 
   const showProfile = (dsnpId?: string) => {
@@ -62,49 +55,14 @@ const Feed = ({
   return (
     <div className={styles.root}>
       <div className={styles.header}>
-        <nav className={styles.navigation}>
-          {user &&
-            [FeedTypes.DISPLAY_ID_POSTS, FeedTypes.MY_POSTS].includes(
-              feedType,
-            ) && (
-              <>
-                <div className={styles.backArrow} onClick={() => resetFeed()}>
-                  <ArrowLeftOutlined />
-                </div>
-                <div className={feedNavClassName(FeedTypes.DISPLAY_ID_POSTS)}>
-                  @{user.handle}&nbsp;Posts
-                </div>
-                <div className={styles.navigationSpacer}></div>
-              </>
-            )}
-          <div
-            className={feedNavClassName(FeedTypes.DISCOVER)}
-            onClick={() => setFeedType(FeedTypes.DISCOVER)}
-          >
-            Discover
-          </div>
-          <div className={styles.navigationSpacer}></div>
-          <div
-            className={feedNavClassName(FeedTypes.MY_FEED)}
-            onClick={() => setFeedType(FeedTypes.MY_FEED)}
-          >
-            My Feed
-          </div>
-          <div className={styles.navigationSpacer}></div>
-          <div
-            className={feedNavClassName(FeedTypes.MY_POSTS)}
-            onClick={() => {
-              goToProfile(account.dsnpId);
-              setFeedType(FeedTypes.MY_POSTS);
-            }}
-          >
-            My Posts
-          </div>
-        </nav>
-        <Button
-          className={styles.newPostButton}
-          onClick={() => setIsModalOpen(true)}
-        >
+        <FeedNav
+          feedType={feedType}
+          setFeedType={setFeedType}
+          user={user}
+          resetFeed={resetFeed}
+          goToMyFeed={goToMyFeed}
+        />
+        <Button className={styles.newPostButton} onClick={() => setIsModalOpen(true)}>
           New Post
         </Button>
         {isModalOpen && (

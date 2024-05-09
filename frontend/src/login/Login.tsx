@@ -1,12 +1,12 @@
-import React, { useState } from "react";
-import { Button, Spin, Form } from "antd";
-import Title from "antd/es/typography/Title";
-import { getLoginOrRegistrationPayload, setConfig } from "@amplica-labs/siwf";
+import React, { ReactElement, useState } from 'react';
+import { Button, Spin, Form } from 'antd';
+import Title from 'antd/es/typography/Title';
+import { getLoginOrRegistrationPayload, setConfig } from '@amplica-labs/siwf';
 
-import * as dsnpLink from "../dsnpLink";
-import { UserAccount } from "../types";
-import styles from "./Login.module.css";
-import { getContext, setAccessToken } from "../service/AuthService";
+import * as dsnpLink from '../dsnpLink';
+import { UserAccount } from '../types';
+import styles from './Login.module.css';
+import { getContext, setAccessToken } from '../service/AuthService';
 
 interface LoginProps {
   onLogin: (account: UserAccount) => void;
@@ -15,12 +15,7 @@ interface LoginProps {
   siwfUrl: string;
 }
 
-const Login = ({
-  onLogin,
-  providerId,
-  nodeUrl,
-  siwfUrl,
-}: LoginProps): JSX.Element => {
+const Login = ({ onLogin, providerId, nodeUrl, siwfUrl }: LoginProps): ReactElement => {
   const [isLoading, setIsLoading] = useState(false);
 
   const handleLogin = async () => {
@@ -41,13 +36,13 @@ const Login = ({
         // A specified version can be set using the ID attribute.
         // If set to 0 it grabs the latest version for the schema.
         schemas: [
-          { name: "broadcast" },
-          { name: "reply" },
-          { name: "reaction" },
-          { name: "profile" },
-          { name: "tombstone" },
-          { name: "update" },
-          { name: "public-follows" },
+          { name: 'broadcast' },
+          { name: 'reply' },
+          { name: 'reaction' },
+          { name: 'profile' },
+          { name: 'tombstone' },
+          { name: 'update' },
+          { name: 'public-follows' },
         ],
       });
 
@@ -57,16 +52,14 @@ const Login = ({
       const { accessToken, expires } = await dsnpLink.authLogin2(
         dsnpLinkNoTokenCtx,
         {},
-        response as dsnpLink.WalletLoginRequest,
+        response as dsnpLink.WalletLoginRequest
       );
       setAccessToken(accessToken, expires);
       const dsnpLinkCtx = getContext();
 
       // We have to poll for the account creation
       let accountResp: dsnpLink.AuthAccountResponse | null = null;
-      const getDsnpAndHandle = async (
-        timeout: number,
-      ): Promise<null | dsnpLink.AuthAccountResponse> =>
+      const getDsnpAndHandle = async (timeout: number): Promise<null | dsnpLink.AuthAccountResponse> =>
         new Promise((resolve) => {
           setTimeout(async () => {
             const resp = await dsnpLink.authAccount(dsnpLinkCtx, {});
@@ -81,18 +74,16 @@ const Login = ({
       accountResp = await getDsnpAndHandle(0);
       let tries = 1;
       while (accountResp === null && tries < 10) {
-        console.log(
-          "Waiting another 3 seconds before getting the account again...",
-        );
+        console.log('Waiting another 3 seconds before getting the account again...');
         accountResp = await getDsnpAndHandle(3_000);
         tries++;
       }
       if (accountResp === null) {
-        throw new Error("Account Creation timed out");
+        throw new Error('Account Creation timed out');
       }
 
       onLogin({
-        handle: accountResp.displayHandle || "Anonymous",
+        handle: accountResp.displayHandle || 'Anonymous',
         expires,
         accessToken,
         dsnpId: accountResp.dsnpId,

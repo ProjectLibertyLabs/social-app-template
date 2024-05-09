@@ -1,20 +1,20 @@
 export const getBlockNumber = async (url: string): Promise<number> => {
   try {
     const response = await fetch(url, {
-      method: "POST",
+      method: 'POST',
       headers: {
-        "Content-Type": "application/json",
+        'Content-Type': 'application/json',
       },
       body: JSON.stringify({
-        jsonrpc: "2.0",
+        jsonrpc: '2.0',
         id: 1,
-        method: "chain_getHeader",
+        method: 'chain_getHeader',
         params: [],
       }),
     });
 
     if (!response.ok) {
-      throw new Error("Failed to fetch block number");
+      throw new Error('Failed to fetch block number');
     }
 
     const data = await response.json();
@@ -27,7 +27,7 @@ export const getBlockNumber = async (url: string): Promise<number> => {
       return Number(data.result.number);
     }
 
-    throw new Error("Invalid response format");
+    throw new Error('Invalid response format');
   } catch (error) {
     console.error(error);
     throw error;

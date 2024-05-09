@@ -1,20 +1,7 @@
-import React from "react";
+import React, { ReactElement } from 'react';
 
 const getMonthName = (monthNum: number) => {
-  const months = [
-    "Jan",
-    "Feb",
-    "Mar",
-    "Apr",
-    "May",
-    "Jun",
-    "Jul",
-    "Aug",
-    "Sept",
-    "Oct",
-    "Nov",
-    "Dec",
-  ];
+  const months = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sept', 'Oct', 'Nov', 'Dec'];
   return months[monthNum];
 };
 
@@ -23,18 +10,16 @@ const getRelativeTime = (postTime: string) => {
   const currentTime = new Date();
   const secondsPast = (currentTime.getTime() - timeOfPost.getTime()) / 1000;
   if (secondsPast < 60) {
-    return Math.floor(secondsPast) + "s";
+    return Math.floor(secondsPast) + 's';
   }
   if (secondsPast < 3600) {
-    return Math.floor(secondsPast / 60) + "m";
+    return Math.floor(secondsPast / 60) + 'm';
   }
   if (secondsPast <= 86400) {
-    return Math.floor(secondsPast / 3600) + "h";
+    return Math.floor(secondsPast / 3600) + 'h';
   }
   if (secondsPast > 86400) {
-    return `${getMonthName(
-      timeOfPost.getMonth(),
-    )} ${timeOfPost.getDate()}, ${timeOfPost.getFullYear()}`;
+    return `${getMonthName(timeOfPost.getMonth())} ${timeOfPost.getDate()}, ${timeOfPost.getFullYear()}`;
   }
 };
 
@@ -43,15 +28,8 @@ interface RelativeTimeProps {
   postStyle: boolean;
 }
 
-const RelativeTime = ({
-  published,
-  postStyle,
-}: RelativeTimeProps): JSX.Element => {
-  return (
-    <p className={`RelativeTime ${postStyle ? "RelativeTime--post" : ""}`}>
-      {getRelativeTime(published)}
-    </p>
-  );
+const RelativeTime = ({ published, postStyle }: RelativeTimeProps): ReactElement => {
+  return <p className={`RelativeTime ${postStyle ? 'RelativeTime--post' : ''}`}>{getRelativeTime(published)}</p>;
 };
 
 export default RelativeTime;

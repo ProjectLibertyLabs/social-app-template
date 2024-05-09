@@ -1,6 +1,6 @@
-import type { ProviderResponse } from "./dsnpLink";
+import type { ProviderResponse } from './dsnpLink';
 
-export type Network = ProviderResponse["network"];
+export type Network = ProviderResponse['network'];
 
 export type UserAccount = {
   expires: number;

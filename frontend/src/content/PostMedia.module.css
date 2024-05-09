@@ -6,6 +6,7 @@
   overflow: hidden;
   margin-bottom: 30px;
   max-height: 550px;
+  border-radius: 10px;
 }
 
 .image {
@@ -16,7 +17,7 @@
 /* stylelint-disable-next-line selector-max-compound-selectors */
 .slider img {
   max-height: 500px;
-  object-fit: scale-down;
+  object-fit: cover;
   object-position: center;
   max-width: 100%;
   flex: 1;
