@@ -1,1 +1,1 @@
-declare module "avro-js";
+declare module 'avro-js';

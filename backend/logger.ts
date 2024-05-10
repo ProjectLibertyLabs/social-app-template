@@ -14,8 +14,8 @@ const logger = pino({
     options: {
       colorize: true,
       async: true,
-    }
-  }
-})
+    },
+  },
+});
 
 export default logger;

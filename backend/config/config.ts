@@ -1,5 +1,5 @@
-import Joi from "joi";
-import { mnemonicValidate } from "@polkadot/util-crypto";
+import Joi from 'joi';
+import { mnemonicValidate } from '@polkadot/util-crypto';
 
 // eslint-disable-next-line no-useless-escape
 const devUriRegEx = /^\/\/(Alice|Bob|Charlie|Dave|Eve|Ferdie)(\/[\/]?\d+)?$/;
@@ -11,7 +11,7 @@ const ENV_SCHEMA = Joi.object({
   ACCOUNT_SERVICE_URL: Joi.string().uri().required(),
   CONTENT_PUBLISHER_URL: Joi.string().uri().required(),
   CHAIN_ENVIRONMENT: Joi.string()
-    .valid(...["dev", "rococo", "testnet", "mainnet"])
+    .valid(...['dev', 'rococo', 'testnet', 'mainnet'])
     .required(),
   DEBUG: Joi.string(),
   IPFS_ENDPOINT: Joi.string().uri().required(),
@@ -21,7 +21,7 @@ const ENV_SCHEMA = Joi.object({
     .pattern(/\[CID\]/)
     .required()
     .custom((value, helpers) => {
-      const ret = Joi.string().uri().validate(value.replace("[CID]", "cid"));
+      const ret = Joi.string().uri().validate(value.replace('[CID]', 'cid'));
       return ret?.error ? helpers.error(ret.error.details[0].type) : value;
     }),
   FREQUENCY_URL: Joi.string().uri().required(),
@@ -34,23 +34,18 @@ const ENV_SCHEMA = Joi.object({
   PROVIDER_ACCOUNT_SEED_PHRASE: Joi.string()
     .required()
     .custom((value: string, helpers) => {
-      if (process.env?.CHAIN_ENVIRONMENT === "dev" && devUriRegEx.test(value)) {
+      if (process.env?.CHAIN_ENVIRONMENT === 'dev' && devUriRegEx.test(value)) {
         return value;
       }
       if (!mnemonicValidate(value)) {
-        return helpers.error("any.custom", {
-          error: new Error(
-            `the provided value is not a valid BIP39 seed phrase`,
-          ),
+        return helpers.error('any.custom', {
+          error: new Error(`the provided value is not a valid BIP39 seed phrase`),
         });
       }
       return value;
     }),
   SIWF_URL: Joi.string().uri().required(),
-  SIWF_DOMAIN: Joi.alternatives()
-    .required()
-    .match("any")
-    .try(Joi.string().domain(), Joi.string().hostname()), // allow hostname for local testing
+  SIWF_DOMAIN: Joi.alternatives().required().match('any').try(Joi.string().domain(), Joi.string().hostname()), // allow hostname for local testing
 });
 
 export class Config {
@@ -70,76 +65,76 @@ export class Config {
   }
 
   public get port() {
-    return parseInt(this.configValues["API_PORT"]);
+    return parseInt(this.configValues['API_PORT']);
   }
 
   public get privatePort() {
-    const port = parseInt(this.configValues["PRIVATE_PORT"]);
-    return port || (this.port + 1);
+    const port = parseInt(this.configValues['PRIVATE_PORT']);
+    return port || this.port + 1;
   }
 
   public get privateHost() {
-    return this.configValues["PRIVATE_HOST"];
+    return this.configValues['PRIVATE_HOST'];
   }
 
   public get accountServiceUrl() {
-    return this.configValues["ACCOUNT_SERVICE_URL"];
+    return this.configValues['ACCOUNT_SERVICE_URL'];
   }
 
   public get contentPublisherUrl() {
-    return this.configValues["CONTENT_PUBLISHER_URL"];
+    return this.configValues['CONTENT_PUBLISHER_URL'];
   }
 
   public get chainType() {
-    return this.configValues["CHAIN_ENVIRONMENT"];
+    return this.configValues['CHAIN_ENVIRONMENT'];
   }
 
   public get debug(): boolean {
-    return this.configValues?.["DEBUG"] ?? false;
+    return this.configValues?.['DEBUG'] ?? false;
   }
 
   public get ipfsEndpoint() {
-    return this.configValues["IPFS_ENDPOINT"];
+    return this.configValues['IPFS_ENDPOINT'];
   }
 
   public get ipfsBasicAuthUser() {
-    return this.configValues?.["IPFS_BASIC_AUTH_USER"];
+    return this.configValues?.['IPFS_BASIC_AUTH_USER'];
   }
 
   public get ipfsBasicAuthSecret() {
-    return this.configValues?.["IPFS_BASIC_AUTH_SECRET"];
+    return this.configValues?.['IPFS_BASIC_AUTH_SECRET'];
   }
 
   public get ipfsGatewayUrl() {
-    return this.configValues["IPFS_GATEWAY_URL"];
+    return this.configValues['IPFS_GATEWAY_URL'];
   }
 
   public getIpfsContentUrl(cid: string) {
-    return this.ipfsGatewayUrl.replace("[CID]", cid);
+    return this.ipfsGatewayUrl.replace('[CID]', cid);
   }
 
   public get frequencyUrl() {
-    return this.configValues["FREQUENCY_URL"];
+    return this.configValues['FREQUENCY_URL'];
   }
 
   public get frequencyHttpUrl() {
-    return this.configValues["FREQUENCY_HTTP_URL"];
+    return this.configValues['FREQUENCY_HTTP_URL'];
   }
 
   public get providerId(): string {
-    return this.configValues["PROVIDER_ID"].toString();
+    return this.configValues['PROVIDER_ID'].toString();
   }
 
   public get providerSeedPhrase() {
-    return this.configValues["PROVIDER_ACCOUNT_SEED_PHRASE"];
+    return this.configValues['PROVIDER_ACCOUNT_SEED_PHRASE'];
   }
 
   public get siwfUrl() {
-    return this.configValues["SIWF_URL"];
+    return this.configValues['SIWF_URL'];
   }
 
   public get siwfDomain() {
-    return this.configValues["SIWF_DOMAIN"];
+    return this.configValues['SIWF_DOMAIN'];
   }
 }
 

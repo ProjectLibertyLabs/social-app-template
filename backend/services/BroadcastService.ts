@@ -1,12 +1,9 @@
-import { ContentPublisherService } from "./ContentPublisherService.js";
-import { PostBroadcastRequest, PostBroadcastResponse } from "../types/types.js";
-import { BroadcastDataBuilder } from "./BroadcastDataBuilder.js";
+import { ContentPublisherService } from './ContentPublisherService.js';
+import { PostBroadcastRequest, PostBroadcastResponse } from '../types/types.js';
+import { BroadcastDataBuilder } from './BroadcastDataBuilder.js';
 
 export class BroadcastService {
-  public static async create(
-    msaId: string,
-    params: PostBroadcastRequest,
-  ): Promise<PostBroadcastResponse> {
+  public static async create(msaId: string, params: PostBroadcastRequest): Promise<PostBroadcastResponse> {
     try {
       const repository = await ContentPublisherService.getInstance();
       const { assets, content, inReplyTo } = params;
@@ -25,7 +22,7 @@ export class BroadcastService {
         published: data.content.published,
       };
     } catch (e) {
-      console.error("Failed to create broadcast:", e);
+      console.error('Failed to create broadcast:', e);
       throw e;
     }
   }

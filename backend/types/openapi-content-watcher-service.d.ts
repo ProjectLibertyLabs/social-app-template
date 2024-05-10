@@ -4,7 +4,7 @@ import type {
   UnknownParamsObject,
   OperationResponse,
   AxiosRequestConfig,
-} from "openapi-client-axios";
+} from 'openapi-client-axios';
 
 declare namespace Components {
   namespace Schemas {
@@ -151,166 +151,166 @@ export interface OperationMethods {
   /**
    * ApiController_health
    */
-  "ApiController_health"(
+  'ApiController_health'(
     parameters?: Parameters<UnknownParamsObject> | null,
     data?: any,
-    config?: AxiosRequestConfig,
+    config?: AxiosRequestConfig
   ): OperationResponse<Paths.ApiControllerHealth.Responses.$200>;
   /**
    * ApiController_resetScanner
    */
-  "ApiController_resetScanner"(
+  'ApiController_resetScanner'(
     parameters?: Parameters<UnknownParamsObject> | null,
     data?: Paths.ApiControllerResetScanner.RequestBody,
-    config?: AxiosRequestConfig,
+    config?: AxiosRequestConfig
   ): OperationResponse<Paths.ApiControllerResetScanner.Responses.$201>;
   /**
    * ApiController_setWatchOptions
    */
-  "ApiController_setWatchOptions"(
+  'ApiController_setWatchOptions'(
     parameters?: Parameters<UnknownParamsObject> | null,
     data?: Paths.ApiControllerSetWatchOptions.RequestBody,
-    config?: AxiosRequestConfig,
+    config?: AxiosRequestConfig
   ): OperationResponse<Paths.ApiControllerSetWatchOptions.Responses.$201>;
   /**
    * ApiController_pauseScanner
    */
-  "ApiController_pauseScanner"(
+  'ApiController_pauseScanner'(
     parameters?: Parameters<UnknownParamsObject> | null,
     data?: any,
-    config?: AxiosRequestConfig,
+    config?: AxiosRequestConfig
   ): OperationResponse<Paths.ApiControllerPauseScanner.Responses.$201>;
   /**
    * ApiController_startScanner
    */
-  "ApiController_startScanner"(
+  'ApiController_startScanner'(
     parameters?: Parameters<UnknownParamsObject> | null,
     data?: any,
-    config?: AxiosRequestConfig,
+    config?: AxiosRequestConfig
   ): OperationResponse<Paths.ApiControllerStartScanner.Responses.$201>;
   /**
    * ApiController_search
    */
-  "ApiController_search"(
+  'ApiController_search'(
     parameters?: Parameters<UnknownParamsObject> | null,
     data?: Paths.ApiControllerSearch.RequestBody,
-    config?: AxiosRequestConfig,
+    config?: AxiosRequestConfig
   ): OperationResponse<Paths.ApiControllerSearch.Responses.$200>;
   /**
    * ApiController_registerWebhook
    */
-  "ApiController_registerWebhook"(
+  'ApiController_registerWebhook'(
     parameters?: Parameters<UnknownParamsObject> | null,
     data?: Paths.ApiControllerRegisterWebhook.RequestBody,
-    config?: AxiosRequestConfig,
+    config?: AxiosRequestConfig
   ): OperationResponse<Paths.ApiControllerRegisterWebhook.Responses.$200>;
   /**
    * ApiController_clearAllWebHooks
    */
-  "ApiController_clearAllWebHooks"(
+  'ApiController_clearAllWebHooks'(
     parameters?: Parameters<UnknownParamsObject> | null,
     data?: any,
-    config?: AxiosRequestConfig,
+    config?: AxiosRequestConfig
   ): OperationResponse<Paths.ApiControllerClearAllWebHooks.Responses.$200>;
   /**
    * ApiController_getRegisteredWebhooks
    */
-  "ApiController_getRegisteredWebhooks"(
+  'ApiController_getRegisteredWebhooks'(
     parameters?: Parameters<UnknownParamsObject> | null,
     data?: any,
-    config?: AxiosRequestConfig,
+    config?: AxiosRequestConfig
   ): OperationResponse<Paths.ApiControllerGetRegisteredWebhooks.Responses.$200>;
 }
 
 export interface PathsDictionary {
-  ["/api/health"]: {
+  ['/api/health']: {
     /**
      * ApiController_health
      */
-    "get"(
+    'get'(
       parameters?: Parameters<UnknownParamsObject> | null,
       data?: any,
-      config?: AxiosRequestConfig,
+      config?: AxiosRequestConfig
     ): OperationResponse<Paths.ApiControllerHealth.Responses.$200>;
   };
-  ["/api/resetScanner"]: {
+  ['/api/resetScanner']: {
     /**
      * ApiController_resetScanner
      */
-    "post"(
+    'post'(
       parameters?: Parameters<UnknownParamsObject> | null,
       data?: Paths.ApiControllerResetScanner.RequestBody,
-      config?: AxiosRequestConfig,
+      config?: AxiosRequestConfig
     ): OperationResponse<Paths.ApiControllerResetScanner.Responses.$201>;
   };
-  ["/api/setWatchOptions"]: {
+  ['/api/setWatchOptions']: {
     /**
      * ApiController_setWatchOptions
      */
-    "post"(
+    'post'(
       parameters?: Parameters<UnknownParamsObject> | null,
       data?: Paths.ApiControllerSetWatchOptions.RequestBody,
-      config?: AxiosRequestConfig,
+      config?: AxiosRequestConfig
     ): OperationResponse<Paths.ApiControllerSetWatchOptions.Responses.$201>;
   };
-  ["/api/pauseScanner"]: {
+  ['/api/pauseScanner']: {
     /**
      * ApiController_pauseScanner
      */
-    "post"(
+    'post'(
       parameters?: Parameters<UnknownParamsObject> | null,
       data?: any,
-      config?: AxiosRequestConfig,
+      config?: AxiosRequestConfig
     ): OperationResponse<Paths.ApiControllerPauseScanner.Responses.$201>;
   };
-  ["/api/startScanner"]: {
+  ['/api/startScanner']: {
     /**
      * ApiController_startScanner
      */
-    "post"(
+    'post'(
       parameters?: Parameters<UnknownParamsObject> | null,
       data?: any,
-      config?: AxiosRequestConfig,
+      config?: AxiosRequestConfig
     ): OperationResponse<Paths.ApiControllerStartScanner.Responses.$201>;
   };
-  ["/api/search"]: {
+  ['/api/search']: {
     /**
      * ApiController_search
      */
-    "put"(
+    'put'(
       parameters?: Parameters<UnknownParamsObject> | null,
       data?: Paths.ApiControllerSearch.RequestBody,
-      config?: AxiosRequestConfig,
+      config?: AxiosRequestConfig
     ): OperationResponse<Paths.ApiControllerSearch.Responses.$200>;
   };
-  ["/api/registerWebhook"]: {
+  ['/api/registerWebhook']: {
     /**
      * ApiController_registerWebhook
      */
-    "put"(
+    'put'(
       parameters?: Parameters<UnknownParamsObject> | null,
       data?: Paths.ApiControllerRegisterWebhook.RequestBody,
-      config?: AxiosRequestConfig,
+      config?: AxiosRequestConfig
     ): OperationResponse<Paths.ApiControllerRegisterWebhook.Responses.$200>;
   };
-  ["/api/clearAllWebHooks"]: {
+  ['/api/clearAllWebHooks']: {
     /**
      * ApiController_clearAllWebHooks
      */
-    "delete"(
+    'delete'(
       parameters?: Parameters<UnknownParamsObject> | null,
       data?: any,
-      config?: AxiosRequestConfig,
+      config?: AxiosRequestConfig
     ): OperationResponse<Paths.ApiControllerClearAllWebHooks.Responses.$200>;
   };
-  ["/api/getRegisteredWebhooks"]: {
+  ['/api/getRegisteredWebhooks']: {
     /**
      * ApiController_getRegisteredWebhooks
      */
-    "get"(
+    'get'(
       parameters?: Parameters<UnknownParamsObject> | null,
       data?: any,
-      config?: AxiosRequestConfig,
+      config?: AxiosRequestConfig
     ): OperationResponse<Paths.ApiControllerGetRegisteredWebhooks.Responses.$200>;
   };
 }

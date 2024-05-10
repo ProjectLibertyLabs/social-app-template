@@ -1,5 +1,5 @@
-import FormData from "form-data";
-import { ContentPublisherService } from "./ContentPublisherService.js";
+import FormData from 'form-data';
+import { ContentPublisherService } from './ContentPublisherService.js';
 
 type File = Express.Multer.File;
 export class AssetsService {

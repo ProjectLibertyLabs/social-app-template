@@ -1,10 +1,10 @@
-import { HttpStatusCode } from "axios";
+import { HttpStatusCode } from 'axios';
 
 export class HttpError extends Error {
   constructor(
     public readonly code: HttpStatusCode,
     message?: string,
-    options?: ErrorOptions,
+    options?: ErrorOptions
   ) {
     super(message, options);
   }

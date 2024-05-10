@@ -1,13 +1,13 @@
-import { options } from "@frequency-chain/api-augment";
-import { WsProvider, ApiPromise, Keyring } from "@polkadot/api";
-import * as Config from "../config/config";
+import { options } from '@frequency-chain/api-augment';
+import { WsProvider, ApiPromise, Keyring } from '@polkadot/api';
+import * as Config from '../config/config';
 
 // Environment Variables
 const frequencyUri = Config.instance().frequencyUrl.toString();
 const providerKeyUri = Config.instance().providerSeedPhrase;
 
 export const getProviderKey = () => {
-  return new Keyring().addFromUri(providerKeyUri, {}, "sr25519");
+  return new Keyring().addFromUri(providerKeyUri, {}, 'sr25519');
 };
 
 // Reset
@@ -45,12 +45,8 @@ export enum ChainType {
 }
 
 export const getChainType = (): ChainType => {
-  if (frequencyUri?.includes("rococo")) return ChainType.Testnet;
-  if (
-    frequencyUri?.includes("localhost") ||
-    frequencyUri?.includes("127.0.0.1") ||
-    frequencyUri?.includes("::1")
-  )
+  if (frequencyUri?.includes('rococo')) return ChainType.Testnet;
+  if (frequencyUri?.includes('localhost') || frequencyUri?.includes('127.0.0.1') || frequencyUri?.includes('::1'))
     return ChainType.Dev;
   return ChainType.Mainnet;
 };
@@ -63,9 +59,7 @@ export const getNonce = async (): Promise<number> => {
     return _nonce[1];
   }
   const api = await getApi();
-  const startNonce = (
-    await api.rpc.system.accountNextIndex(getProviderKey().address)
-  ).toNumber();
+  const startNonce = (await api.rpc.system.accountNextIndex(getProviderKey().address)).toNumber();
   _nonce = [new Date(), startNonce];
   return startNonce;
 };

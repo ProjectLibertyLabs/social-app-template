@@ -4,74 +4,74 @@
  */
 
 export interface paths {
-  "/v2/assets": {
+  '/v2/assets': {
     /**
      * Upload and register new assets
      * @description Allows clients to upload new assets. This endpoint accepts multipart file uploads and returns the identifiers for the newly uploaded assets.
      */
-    post: operations["postAssetsHandler"];
+    post: operations['postAssetsHandler'];
   };
-  "/v2/content": {
+  '/v2/content': {
     /** Create a new post */
-    post: operations["postContentHandler"];
+    post: operations['postContentHandler'];
   };
-  "/v1/auth/provider": {
+  '/v1/auth/provider': {
     /** Return the delegation and provider information */
-    get: operations["authProvider"];
+    get: operations['authProvider'];
   };
-  "/v2/auth/login": {
+  '/v2/auth/login': {
     /** Use Wallet Proxy to login */
-    post: operations["authLogin2"];
+    post: operations['authLogin2'];
   };
-  "/v1/auth/logout": {
+  '/v1/auth/logout': {
     /** Logout and invalidate the access token */
-    post: operations["authLogout"];
+    post: operations['authLogout'];
   };
-  "/v1/auth/account": {
+  '/v1/auth/account': {
     /** For polling to get the created account as authCreate can take time */
-    get: operations["authAccount"];
+    get: operations['authAccount'];
   };
-  "/v1/content/{dsnpId}": {
+  '/v1/content/{dsnpId}': {
     /** Get recent posts from a user, paginated */
-    get: operations["getUserFeed"];
+    get: operations['getUserFeed'];
   };
-  "/v1/content/feed": {
+  '/v1/content/feed': {
     /** Get the Feed for the current user, paginated */
-    get: operations["getFeed"];
+    get: operations['getFeed'];
   };
-  "/v1/content/discover": {
+  '/v1/content/discover': {
     /** Get the Discovery Feed for the current user, paginated */
-    get: operations["getDiscover"];
+    get: operations['getDiscover'];
   };
-  "/v1/content/create": {
+  '/v1/content/create': {
     /** Create a new post */
-    post: operations["createBroadcast"];
+    post: operations['createBroadcast'];
   };
-  "/v1/content/{dsnpId}/{contentHash}": {
+  '/v1/content/{dsnpId}/{contentHash}': {
     /** Get details of a specific post */
-    get: operations["getContent"];
+    get: operations['getContent'];
   };
-  "/v1/content/{type}/{contentHash}": {
+  '/v1/content/{type}/{contentHash}': {
     /** Edit the content of a specific post */
-    put: operations["editContent"];
+    put: operations['editContent'];
   };
-  "/v1/graph/{dsnpId}/following": {
+  '/v1/graph/{dsnpId}/following': {
     /** Get a list of users that a specific user follows */
-    get: operations["userFollowing"];
+    get: operations['userFollowing'];
   };
-  "/v1/graph/{dsnpId}/follow": {
+  '/v1/graph/{dsnpId}/follow': {
     /** Follow a user */
-    post: operations["graphFollow"];
+    post: operations['graphFollow'];
   };
-  "/v1/graph/{dsnpId}/unfollow": {
+  '/v1/graph/{dsnpId}/unfollow': {
     /** Unfollow a user */
-    post: operations["graphUnfollow"];
+    post: operations['graphUnfollow'];
   };
-  "/v1/profiles/{dsnpId}": {
+  '/v1/profiles/{dsnpId}': {
     /** Get profile information for a specific user */
-    get: operations["getProfile"];
+    get: operations['getProfile'];
     /** Create/Edit the profile information for a current user */
-    put: operations["createProfile"];
+    put: operations['createProfile'];
   };
 }
 
@@ -97,16 +97,16 @@ export interface components {
       providerId: string;
       schemas: number[];
       /** @enum {string} */
-      network: "local" | "testnet" | "mainnet";
+      network: 'local' | 'testnet' | 'mainnet';
     };
     ChallengeResponse: {
       challenge: string;
     };
     LoginRequest: {
       /** @enum {string} */
-      algo: "SR25519";
+      algo: 'SR25519';
       /** @enum {string} */
-      encoding: "hex";
+      encoding: 'hex';
       encodedValue: string;
       publicKey: string;
       challenge: string;
@@ -146,10 +146,10 @@ export interface components {
     CreateIdentityRequest: {
       addProviderSignature: string;
       /** @enum {string} */
-      algo: "SR25519";
+      algo: 'SR25519';
       baseHandle: string;
       /** @enum {string} */
-      encoding: "hex";
+      encoding: 'hex';
       expiration: number;
       handleSignature: string;
       publicKey: string;
@@ -164,9 +164,9 @@ export interface components {
     };
     DelegateRequest: {
       /** @enum {string} */
-      algo: "SR25519";
+      algo: 'SR25519';
       /** @enum {string} */
-      encoding: "hex";
+      encoding: 'hex';
       encodedValue: string;
       publicKey: string;
     };
@@ -181,7 +181,7 @@ export interface components {
     PaginatedBroadcast: {
       newestBlockNumber: number;
       oldestBlockNumber: number;
-      posts: components["schemas"]["BroadcastExtended"][];
+      posts: components['schemas']['BroadcastExtended'][];
     };
     BroadcastExtended: {
       fromId: string;
@@ -191,7 +191,7 @@ export interface components {
       /** @description Timestamp of the post */
       timestamp: string;
       /** @description Array of ReplyExtended objects */
-      replies?: components["schemas"]["ReplyExtended"][];
+      replies?: components['schemas']['ReplyExtended'][];
     };
     ReplyExtended: {
       fromId: string;
@@ -201,7 +201,7 @@ export interface components {
       /** @description Timestamp of the post */
       timestamp: string;
       /** @description Array of ReplyExtended objects */
-      replies?: components["schemas"]["ReplyExtended"][];
+      replies?: components['schemas']['ReplyExtended'][];
     };
     CreatePostRequestV2: {
       content: string;
@@ -256,14 +256,14 @@ export interface operations {
     /** @description Payload containing the file(s) to upload. Each file must be in binary format. */
     requestBody: {
       content: {
-        "multipart/form-data": components["schemas"]["UploadAssetRequest"];
+        'multipart/form-data': components['schemas']['UploadAssetRequest'];
       };
     };
     responses: {
       /** @description Assets uploaded successfully. Returns identifiers for each uploaded asset. */
       202: {
         content: {
-          "application/json": components["schemas"]["UploadAssetResponse"];
+          'application/json': components['schemas']['UploadAssetResponse'];
         };
       };
       /** @description Bad Request. The request was invalid or cannot be served. Check the error message for details. */
@@ -288,17 +288,17 @@ export interface operations {
   postContentHandler: {
     requestBody: {
       content: {
-        "application/json": components["schemas"]["CreatePostRequestV2"];
+        'application/json': components['schemas']['CreatePostRequestV2'];
       };
     };
     responses: {
       /** @description Successful response */
       200: {
         content: {
-          "application/json": components["schemas"]["BroadcastExtended"];
+          'application/json': components['schemas']['BroadcastExtended'];
         };
       };
-      401: components["responses"]["UnauthorizedError"];
+      401: components['responses']['UnauthorizedError'];
     };
   };
   /** Return the delegation and provider information */
@@ -307,7 +307,7 @@ export interface operations {
       /** @description Successful response */
       200: {
         content: {
-          "application/json": components["schemas"]["ProviderResponse"];
+          'application/json': components['schemas']['ProviderResponse'];
         };
       };
     };
@@ -316,14 +316,14 @@ export interface operations {
   authLogin2: {
     requestBody: {
       content: {
-        "application/json": components["schemas"]["WalletLoginRequest"];
+        'application/json': components['schemas']['WalletLoginRequest'];
       };
     };
     responses: {
       /** @description Successful response */
       200: {
         content: {
-          "application/json": components["schemas"]["WalletLoginResponse"];
+          'application/json': components['schemas']['WalletLoginResponse'];
         };
       };
     };
@@ -335,7 +335,7 @@ export interface operations {
       201: {
         content: never;
       };
-      401: components["responses"]["UnauthorizedError"];
+      401: components['responses']['UnauthorizedError'];
     };
   };
   /** For polling to get the created account as authCreate can take time */
@@ -344,14 +344,14 @@ export interface operations {
       /** @description Successful response */
       200: {
         content: {
-          "application/json": components["schemas"]["AuthAccountResponse"];
+          'application/json': components['schemas']['AuthAccountResponse'];
         };
       };
       /** @description Account still pending creation */
       202: {
         content: never;
       };
-      401: components["responses"]["UnauthorizedError"];
+      401: components['responses']['UnauthorizedError'];
     };
   };
   /** Get recent posts from a user, paginated */
@@ -369,10 +369,10 @@ export interface operations {
       /** @description Successful response */
       200: {
         content: {
-          "application/json": components["schemas"]["PaginatedBroadcast"];
+          'application/json': components['schemas']['PaginatedBroadcast'];
         };
       };
-      401: components["responses"]["UnauthorizedError"];
+      401: components['responses']['UnauthorizedError'];
     };
   };
   /** Get the Feed for the current user, paginated */
@@ -387,10 +387,10 @@ export interface operations {
       /** @description Successful response */
       200: {
         content: {
-          "application/json": components["schemas"]["PaginatedBroadcast"];
+          'application/json': components['schemas']['PaginatedBroadcast'];
         };
       };
-      401: components["responses"]["UnauthorizedError"];
+      401: components['responses']['UnauthorizedError'];
     };
   };
   /** Get the Discovery Feed for the current user, paginated */
@@ -405,27 +405,27 @@ export interface operations {
       /** @description Successful response */
       200: {
         content: {
-          "application/json": components["schemas"]["PaginatedBroadcast"];
+          'application/json': components['schemas']['PaginatedBroadcast'];
         };
       };
-      401: components["responses"]["UnauthorizedError"];
+      401: components['responses']['UnauthorizedError'];
     };
   };
   /** Create a new post */
   createBroadcast: {
     requestBody: {
       content: {
-        "multipart/form-data": components["schemas"]["CreatePostRequest"];
+        'multipart/form-data': components['schemas']['CreatePostRequest'];
       };
     };
     responses: {
       /** @description Successful response */
       200: {
         content: {
-          "application/json": components["schemas"]["BroadcastExtended"];
+          'application/json': components['schemas']['BroadcastExtended'];
         };
       };
-      401: components["responses"]["UnauthorizedError"];
+      401: components['responses']['UnauthorizedError'];
     };
   };
   /** Get details of a specific post */
@@ -440,10 +440,10 @@ export interface operations {
       /** @description Successful response */
       200: {
         content: {
-          "application/json": components["schemas"]["BroadcastExtended"];
+          'application/json': components['schemas']['BroadcastExtended'];
         };
       };
-      401: components["responses"]["UnauthorizedError"];
+      401: components['responses']['UnauthorizedError'];
       /** @description Content not found */
       404: {
         content: never;
@@ -461,17 +461,17 @@ export interface operations {
     };
     requestBody: {
       content: {
-        "application/json": components["schemas"]["EditPostRequest"];
+        'application/json': components['schemas']['EditPostRequest'];
       };
     };
     responses: {
       /** @description Successful response */
       200: {
         content: {
-          "application/json": components["schemas"]["BroadcastExtended"];
+          'application/json': components['schemas']['BroadcastExtended'];
         };
       };
-      401: components["responses"]["UnauthorizedError"];
+      401: components['responses']['UnauthorizedError'];
     };
   };
   /** Get a list of users that a specific user follows */
@@ -485,10 +485,10 @@ export interface operations {
       /** @description Successful response */
       200: {
         content: {
-          "application/json": string[];
+          'application/json': string[];
         };
       };
-      401: components["responses"]["UnauthorizedError"];
+      401: components['responses']['UnauthorizedError'];
     };
   };
   /** Follow a user */
@@ -503,7 +503,7 @@ export interface operations {
       201: {
         content: never;
       };
-      401: components["responses"]["UnauthorizedError"];
+      401: components['responses']['UnauthorizedError'];
     };
   };
   /** Unfollow a user */
@@ -518,7 +518,7 @@ export interface operations {
       201: {
         content: never;
       };
-      401: components["responses"]["UnauthorizedError"];
+      401: components['responses']['UnauthorizedError'];
     };
   };
   /** Get profile information for a specific user */
@@ -532,10 +532,10 @@ export interface operations {
       /** @description Successful response */
       200: {
         content: {
-          "application/json": components["schemas"]["Profile"];
+          'application/json': components['schemas']['Profile'];
         };
       };
-      401: components["responses"]["UnauthorizedError"];
+      401: components['responses']['UnauthorizedError'];
     };
   };
   /** Create/Edit the profile information for a current user */
@@ -547,17 +547,17 @@ export interface operations {
     };
     requestBody: {
       content: {
-        "application/json": components["schemas"]["EditProfileRequest"];
+        'application/json': components['schemas']['EditProfileRequest'];
       };
     };
     responses: {
       /** @description Successful response */
       200: {
         content: {
-          "application/json": components["schemas"]["Profile"];
+          'application/json': components['schemas']['Profile'];
         };
       };
-      401: components["responses"]["UnauthorizedError"];
+      401: components['responses']['UnauthorizedError'];
     };
   };
 }

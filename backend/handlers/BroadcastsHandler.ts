@@ -1,6 +1,6 @@
-import { BroadcastService } from "../services/BroadcastService.js";
-import { HttpError } from "../types/HttpError.js";
-import { HttpStatusCode } from "axios";
+import { BroadcastService } from '../services/BroadcastService.js';
+import { HttpError } from '../types/HttpError.js';
+import { HttpStatusCode } from 'axios';
 
 export async function postBroadcastHandler(msaId: string, body: any) {
   try {
@@ -9,10 +9,6 @@ export async function postBroadcastHandler(msaId: string, body: any) {
     return broadcast;
   } catch (e) {
     console.error(e);
-    throw new HttpError(
-      HttpStatusCode.ServiceUnavailable,
-      "Error creating broadcast",
-      { cause: e },
-    );
+    throw new HttpError(HttpStatusCode.ServiceUnavailable, 'Error creating broadcast', { cause: e });
   }
 }

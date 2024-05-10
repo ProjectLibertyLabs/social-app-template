@@ -1,21 +1,21 @@
-import { Express, Request, Response } from "express";
-import { BaseController } from "./BaseController";
-import * as AuthHandler from "../handlers/AuthHandler";
-import { AuthService } from "../services/AuthService";
-import { validateAuthToken } from "../services/TokenAuth";
-import { HttpError } from "../types/HttpError";
-import { HttpStatusCode } from "axios";
+import { Express, Request, Response } from 'express';
+import { BaseController } from './BaseController';
+import * as AuthHandler from '../handlers/AuthHandler';
+import { AuthService } from '../services/AuthService';
+import { validateAuthToken } from '../services/TokenAuth';
+import { HttpError } from '../types/HttpError';
+import { HttpStatusCode } from 'axios';
 
 export class AuthController extends BaseController {
   constructor(app: Express) {
-    super(app, "/auth");
+    super(app, '/auth');
   }
 
   protected initializeRoutes(): void {
-    this.router.get("/siwf", this.getSiwf.bind(this));
-    this.router.get("/account", validateAuthToken, this.getAccount.bind(this));
-    this.router.post("/login", this.postLogin.bind(this));
-    this.router.post("/logout", validateAuthToken, this.postLogout.bind(this));
+    this.router.get('/siwf', this.getSiwf.bind(this));
+    this.router.get('/account', validateAuthToken, this.getAccount.bind(this));
+    this.router.post('/login', this.postLogin.bind(this));
+    this.router.post('/logout', validateAuthToken, this.postLogout.bind(this));
   }
 
   public getSiwf(_req: Request, res: Response) {
@@ -24,9 +24,7 @@ export class AuthController extends BaseController {
   }
 
   public async getAccount(req: Request, res: Response) {
-    const data = await AuthService.instance().then((service) =>
-      service.getAccount(req),
-    );
+    const data = await AuthService.instance().then((service) => service.getAccount(req));
     if (!data?.displayHandle || !data?.dsnpId) {
       res = res.status(HttpStatusCode.Accepted);
     } else {
@@ -37,9 +35,7 @@ export class AuthController extends BaseController {
 
   public async postLogin(req: Request, res: Response) {
     try {
-      const response = await AuthService.instance().then((service) =>
-        service.signIn(req.body),
-      );
+      const response = await AuthService.instance().then((service) => service.signIn(req.body));
       res.send(response).end();
     } catch (e) {
       if (e instanceof HttpError) {

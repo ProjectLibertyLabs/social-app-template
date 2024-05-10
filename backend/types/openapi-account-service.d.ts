@@ -4,7 +4,7 @@ import type {
   UnknownParamsObject,
   OperationResponse,
   AxiosRequestConfig,
-} from "openapi-client-axios";
+} from 'openapi-client-axios';
 
 declare namespace Components {
   namespace Schemas {
@@ -165,182 +165,182 @@ export interface OperationMethods {
   /**
    * ApiController_health - Check the health status of the service
    */
-  "ApiController_health"(
+  'ApiController_health'(
     parameters?: Parameters<UnknownParamsObject> | null,
     data?: any,
-    config?: AxiosRequestConfig,
+    config?: AxiosRequestConfig
   ): OperationResponse<Paths.ApiControllerHealth.Responses.$200>;
   /**
    * AccountsController_getSIWFConfig - Get the Sign-In With Frequency Configuration
    */
-  "AccountsController_getSIWFConfig"(
+  'AccountsController_getSIWFConfig'(
     parameters?: Parameters<UnknownParamsObject> | null,
     data?: any,
-    config?: AxiosRequestConfig,
+    config?: AxiosRequestConfig
   ): OperationResponse<Paths.AccountsControllerGetSIWFConfig.Responses.$200>;
   /**
    * AccountsController_signInWithFrequency - Request to sign in with Frequency
    */
-  "AccountsController_signInWithFrequency"(
+  'AccountsController_signInWithFrequency'(
     parameters?: Parameters<UnknownParamsObject> | null,
     data?: Paths.AccountsControllerSignInWithFrequency.RequestBody,
-    config?: AxiosRequestConfig,
+    config?: AxiosRequestConfig
   ): OperationResponse<Paths.AccountsControllerSignInWithFrequency.Responses.$201>;
   /**
    * AccountsController_getAccount - Fetch an account given an msaId.
    */
-  "AccountsController_getAccount"(
+  'AccountsController_getAccount'(
     parameters: Parameters<Paths.AccountsControllerGetAccount.PathParameters>,
     data?: any,
-    config?: AxiosRequestConfig,
+    config?: AxiosRequestConfig
   ): OperationResponse<Paths.AccountsControllerGetAccount.Responses.$200>;
   /**
    * DelegationController_getDelegation - Get the delegation information associated with an msaId.
    */
-  "DelegationController_getDelegation"(
+  'DelegationController_getDelegation'(
     parameters: Parameters<Paths.DelegationControllerGetDelegation.PathParameters>,
     data?: any,
-    config?: AxiosRequestConfig,
+    config?: AxiosRequestConfig
   ): OperationResponse<Paths.DelegationControllerGetDelegation.Responses.$200>;
   /**
    * KeysController_addKey - add new control keys for an MSA ID
    */
-  "KeysController_addKey"(
+  'KeysController_addKey'(
     parameters?: Parameters<UnknownParamsObject> | null,
     data?: Paths.KeysControllerAddKey.RequestBody,
-    config?: AxiosRequestConfig,
+    config?: AxiosRequestConfig
   ): OperationResponse<Paths.KeysControllerAddKey.Responses.$200>;
   /**
    * KeysController_getKeys - Fetch public keys given an msaId.
    */
-  "KeysController_getKeys"(
+  'KeysController_getKeys'(
     parameters: Parameters<Paths.KeysControllerGetKeys.PathParameters>,
     data?: any,
-    config?: AxiosRequestConfig,
+    config?: AxiosRequestConfig
   ): OperationResponse<Paths.KeysControllerGetKeys.Responses.$200>;
   /**
    * HandlesController_createHandle - Request to create a new handle for an account
    */
-  "HandlesController_createHandle"(
+  'HandlesController_createHandle'(
     parameters?: Parameters<UnknownParamsObject> | null,
     data?: Paths.HandlesControllerCreateHandle.RequestBody,
-    config?: AxiosRequestConfig,
+    config?: AxiosRequestConfig
   ): OperationResponse<Paths.HandlesControllerCreateHandle.Responses.$200>;
   /**
    * HandlesController_changeHandle - Request to change a handle
    */
-  "HandlesController_changeHandle"(
+  'HandlesController_changeHandle'(
     parameters?: Parameters<UnknownParamsObject> | null,
     data?: Paths.HandlesControllerChangeHandle.RequestBody,
-    config?: AxiosRequestConfig,
+    config?: AxiosRequestConfig
   ): OperationResponse<Paths.HandlesControllerChangeHandle.Responses.$200>;
   /**
    * HandlesController_getHandle - Fetch a handle given an msaId.
    */
-  "HandlesController_getHandle"(
+  'HandlesController_getHandle'(
     parameters: Parameters<Paths.HandlesControllerGetHandle.PathParameters>,
     data?: any,
-    config?: AxiosRequestConfig,
+    config?: AxiosRequestConfig
   ): OperationResponse<Paths.HandlesControllerGetHandle.Responses.$200>;
 }
 
 export interface PathsDictionary {
-  ["/api/health"]: {
+  ['/api/health']: {
     /**
      * ApiController_health - Check the health status of the service
      */
-    "get"(
+    'get'(
       parameters?: Parameters<UnknownParamsObject> | null,
       data?: any,
-      config?: AxiosRequestConfig,
+      config?: AxiosRequestConfig
     ): OperationResponse<Paths.ApiControllerHealth.Responses.$200>;
   };
-  ["/accounts/siwf"]: {
+  ['/accounts/siwf']: {
     /**
      * AccountsController_getSIWFConfig - Get the Sign-In With Frequency Configuration
      */
-    "get"(
+    'get'(
       parameters?: Parameters<UnknownParamsObject> | null,
       data?: any,
-      config?: AxiosRequestConfig,
+      config?: AxiosRequestConfig
     ): OperationResponse<Paths.AccountsControllerGetSIWFConfig.Responses.$200>;
     /**
      * AccountsController_signInWithFrequency - Request to sign in with Frequency
      */
-    "post"(
+    'post'(
       parameters?: Parameters<UnknownParamsObject> | null,
       data?: Paths.AccountsControllerSignInWithFrequency.RequestBody,
-      config?: AxiosRequestConfig,
+      config?: AxiosRequestConfig
     ): OperationResponse<Paths.AccountsControllerSignInWithFrequency.Responses.$201>;
   };
-  ["/accounts/{msaId}"]: {
+  ['/accounts/{msaId}']: {
     /**
      * AccountsController_getAccount - Fetch an account given an msaId.
      */
-    "get"(
+    'get'(
       parameters: Parameters<Paths.AccountsControllerGetAccount.PathParameters>,
       data?: any,
-      config?: AxiosRequestConfig,
+      config?: AxiosRequestConfig
     ): OperationResponse<Paths.AccountsControllerGetAccount.Responses.$200>;
   };
-  ["/delegation/{msaId}"]: {
+  ['/delegation/{msaId}']: {
     /**
      * DelegationController_getDelegation - Get the delegation information associated with an msaId.
      */
-    "get"(
+    'get'(
       parameters: Parameters<Paths.DelegationControllerGetDelegation.PathParameters>,
       data?: any,
-      config?: AxiosRequestConfig,
+      config?: AxiosRequestConfig
     ): OperationResponse<Paths.DelegationControllerGetDelegation.Responses.$200>;
   };
-  ["/keys/add"]: {
+  ['/keys/add']: {
     /**
      * KeysController_addKey - add new control keys for an MSA ID
      */
-    "post"(
+    'post'(
       parameters?: Parameters<UnknownParamsObject> | null,
       data?: Paths.KeysControllerAddKey.RequestBody,
-      config?: AxiosRequestConfig,
+      config?: AxiosRequestConfig
     ): OperationResponse<Paths.KeysControllerAddKey.Responses.$200>;
   };
-  ["/keys/{msaId}"]: {
+  ['/keys/{msaId}']: {
     /**
      * KeysController_getKeys - Fetch public keys given an msaId.
      */
-    "get"(
+    'get'(
       parameters: Parameters<Paths.KeysControllerGetKeys.PathParameters>,
       data?: any,
-      config?: AxiosRequestConfig,
+      config?: AxiosRequestConfig
     ): OperationResponse<Paths.KeysControllerGetKeys.Responses.$200>;
   };
-  ["/handles"]: {
+  ['/handles']: {
     /**
      * HandlesController_createHandle - Request to create a new handle for an account
      */
-    "post"(
+    'post'(
       parameters?: Parameters<UnknownParamsObject> | null,
       data?: Paths.HandlesControllerCreateHandle.RequestBody,
-      config?: AxiosRequestConfig,
+      config?: AxiosRequestConfig
     ): OperationResponse<Paths.HandlesControllerCreateHandle.Responses.$200>;
   };
-  ["/handles/change"]: {
+  ['/handles/change']: {
     /**
      * HandlesController_changeHandle - Request to change a handle
      */
-    "post"(
+    'post'(
       parameters?: Parameters<UnknownParamsObject> | null,
       data?: Paths.HandlesControllerChangeHandle.RequestBody,
-      config?: AxiosRequestConfig,
+      config?: AxiosRequestConfig
     ): OperationResponse<Paths.HandlesControllerChangeHandle.Responses.$200>;
   };
-  ["/handles/{msaId}"]: {
+  ['/handles/{msaId}']: {
     /**
      * HandlesController_getHandle - Fetch a handle given an msaId.
      */
-    "get"(
+    'get'(
       parameters: Parameters<Paths.HandlesControllerGetHandle.PathParameters>,
       data?: any,
-      config?: AxiosRequestConfig,
+      config?: AxiosRequestConfig
     ): OperationResponse<Paths.HandlesControllerGetHandle.Responses.$200>;
   };
 }
