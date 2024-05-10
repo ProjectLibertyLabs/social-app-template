@@ -1,11 +1,8 @@
-import {
-  Client as ContentPublisherClient,
-  type Components,
-} from "../types/openapi-content-publishing-service";
-import openapiJson from "../openapi-specs/content-publishing-service.json" with { type: "json" };
-import { OpenAPIClientAxios, type Document } from "openapi-client-axios";
-import FormData from "form-data";
-import * as Config from "../config/config";
+import { Client as ContentPublisherClient, type Components } from '../types/openapi-content-publishing-service';
+import openapiJson from '../openapi-specs/content-publishing-service.json' with { type: 'json' };
+import { OpenAPIClientAxios, type Document } from 'openapi-client-axios';
+import FormData from 'form-data';
+import * as Config from '../config/config';
 
 type AnnouncementResponseDto = Components.Schemas.AnnouncementResponseDto;
 type BroadcastDto = Components.Schemas.BroadcastDto;
@@ -43,48 +40,42 @@ export class ContentPublisherService {
 
   private get client() {
     if (this._client === undefined) {
-      throw new Error("API not initialized");
+      throw new Error('API not initialized');
     }
 
     return this._client;
   }
 
-  public async postBroadcast(
-    msaId: string,
-    data: BroadcastDto,
-  ): Promise<AnnouncementResponseDto> {
+  public async postBroadcast(msaId: string, data: BroadcastDto): Promise<AnnouncementResponseDto> {
     try {
       const res = await this.client.ApiController_broadcast(msaId, data);
       return res.data;
     } catch (e) {
-      console.error("Failed to post broadcast:", e);
+      console.error('Failed to post broadcast:', e);
       throw e;
     }
   }
 
-  public async postReply(
-    msaId: string,
-    data: ReplyDto,
-  ): Promise<AnnouncementResponseDto> {
+  public async postReply(msaId: string, data: ReplyDto): Promise<AnnouncementResponseDto> {
     try {
       const res = await this.client.ApiController_reply(msaId, data);
       return res.data;
     } catch (e) {
-      console.error("Failed to post broadcast reply:", e);
+      console.error('Failed to post broadcast reply:', e);
       throw e;
     }
   }
 
   public async uploadAsset(data: FormData): Promise<UploadResponseDto> {
     try {
-      const response = await this.client.put("/api/asset/upload", data, {
+      const response = await this.client.put('/api/asset/upload', data, {
         headers: {
           ...data.getHeaders(),
         },
       });
       return response.data;
     } catch (e) {
-      console.error("Failed to upload asset:", e);
+      console.error('Failed to upload asset:', e);
       throw e;
     }
   }

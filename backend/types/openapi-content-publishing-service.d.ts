@@ -4,7 +4,7 @@ import type {
   UnknownParamsObject,
   OperationResponse,
   AxiosRequestConfig,
-} from "openapi-client-axios";
+} from 'openapi-client-axios';
 
 declare namespace Components {
   namespace Schemas {
@@ -12,7 +12,7 @@ declare namespace Components {
       referenceId: string;
     }
     export interface AssetDto {
-      type: "link" | "image" | "audio" | "video";
+      type: 'link' | 'image' | 'audio' | 'video';
       references?: AssetReferenceDto[];
       name?: string;
       href?: string;
@@ -36,7 +36,7 @@ declare namespace Components {
       latitude?: number;
       longitude?: number;
       radius?: number;
-      units?: "cm" | "m" | "km" | "inches" | "feet" | "miles";
+      units?: 'cm' | 'm' | 'km' | 'inches' | 'feet' | 'miles';
     }
     export interface NoteActivityDto {
       content: string;
@@ -67,17 +67,17 @@ declare namespace Components {
       content: NoteActivityDto;
     }
     export interface TagDto {
-      type: "mention" | "hashtag";
+      type: 'mention' | 'hashtag';
       name?: string;
       mentionedId?: string; // DSNP_USER_URI_REGEX
     }
     export interface TombstoneDto {
       targetContentHash: string; // DSNP_CONTENT_HASH_REGEX
-      targetAnnouncementType: "broadcast" | "reply";
+      targetAnnouncementType: 'broadcast' | 'reply';
     }
     export interface UpdateDto {
       targetContentHash: string; // DSNP_CONTENT_HASH_REGEX
-      targetAnnouncementType: "broadcast" | "reply";
+      targetAnnouncementType: 'broadcast' | 'reply';
       content: NoteActivityDto;
     }
     export interface UploadResponseDto {
@@ -175,146 +175,146 @@ export interface OperationMethods {
   /**
    * ApiController_health
    */
-  "ApiController_health"(
+  'ApiController_health'(
     parameters?: Parameters<UnknownParamsObject> | null,
     data?: any,
-    config?: AxiosRequestConfig,
+    config?: AxiosRequestConfig
   ): OperationResponse<Paths.ApiControllerHealth.Responses.$200>;
   /**
    * ApiController_assetUpload
    */
-  "ApiController_assetUpload"(
+  'ApiController_assetUpload'(
     parameters?: Parameters<UnknownParamsObject> | null,
     data?: Paths.ApiControllerAssetUpload.RequestBody,
-    config?: AxiosRequestConfig,
+    config?: AxiosRequestConfig
   ): OperationResponse<Paths.ApiControllerAssetUpload.Responses.$202>;
   /**
    * ApiController_broadcast
    */
-  "ApiController_broadcast"(
+  'ApiController_broadcast'(
     parameters: Parameters<Paths.ApiControllerBroadcast.PathParameters>,
     data?: Paths.ApiControllerBroadcast.RequestBody,
-    config?: AxiosRequestConfig,
+    config?: AxiosRequestConfig
   ): OperationResponse<Paths.ApiControllerBroadcast.Responses.$202>;
   /**
    * ApiController_reply
    */
-  "ApiController_reply"(
+  'ApiController_reply'(
     parameters: Parameters<Paths.ApiControllerReply.PathParameters>,
     data?: Paths.ApiControllerReply.RequestBody,
-    config?: AxiosRequestConfig,
+    config?: AxiosRequestConfig
   ): OperationResponse<Paths.ApiControllerReply.Responses.$202>;
   /**
    * ApiController_reaction
    */
-  "ApiController_reaction"(
+  'ApiController_reaction'(
     parameters: Parameters<Paths.ApiControllerReaction.PathParameters>,
     data?: Paths.ApiControllerReaction.RequestBody,
-    config?: AxiosRequestConfig,
+    config?: AxiosRequestConfig
   ): OperationResponse<Paths.ApiControllerReaction.Responses.$202>;
   /**
    * ApiController_update
    */
-  "ApiController_update"(
+  'ApiController_update'(
     parameters: Parameters<Paths.ApiControllerUpdate.PathParameters>,
     data?: Paths.ApiControllerUpdate.RequestBody,
-    config?: AxiosRequestConfig,
+    config?: AxiosRequestConfig
   ): OperationResponse<Paths.ApiControllerUpdate.Responses.$202>;
   /**
    * ApiController_delete
    */
-  "ApiController_delete"(
+  'ApiController_delete'(
     parameters: Parameters<Paths.ApiControllerDelete.PathParameters>,
     data?: Paths.ApiControllerDelete.RequestBody,
-    config?: AxiosRequestConfig,
+    config?: AxiosRequestConfig
   ): OperationResponse<Paths.ApiControllerDelete.Responses.$202>;
   /**
    * ApiController_profile
    */
-  "ApiController_profile"(
+  'ApiController_profile'(
     parameters: Parameters<Paths.ApiControllerProfile.PathParameters>,
     data?: Paths.ApiControllerProfile.RequestBody,
-    config?: AxiosRequestConfig,
+    config?: AxiosRequestConfig
   ): OperationResponse<Paths.ApiControllerProfile.Responses.$202>;
 }
 
 export interface PathsDictionary {
-  ["/api/health"]: {
+  ['/api/health']: {
     /**
      * ApiController_health
      */
-    "get"(
+    'get'(
       parameters?: Parameters<UnknownParamsObject> | null,
       data?: any,
-      config?: AxiosRequestConfig,
+      config?: AxiosRequestConfig
     ): OperationResponse<Paths.ApiControllerHealth.Responses.$200>;
   };
-  ["/api/asset/upload"]: {
+  ['/api/asset/upload']: {
     /**
      * ApiController_assetUpload
      */
-    "put"(
+    'put'(
       parameters?: Parameters<UnknownParamsObject> | null,
       data?: Paths.ApiControllerAssetUpload.RequestBody,
-      config?: AxiosRequestConfig,
+      config?: AxiosRequestConfig
     ): OperationResponse<Paths.ApiControllerAssetUpload.Responses.$202>;
   };
-  ["/api/content/{userDsnpId}/broadcast"]: {
+  ['/api/content/{userDsnpId}/broadcast']: {
     /**
      * ApiController_broadcast
      */
-    "post"(
+    'post'(
       parameters: Parameters<Paths.ApiControllerBroadcast.PathParameters>,
       data?: Paths.ApiControllerBroadcast.RequestBody,
-      config?: AxiosRequestConfig,
+      config?: AxiosRequestConfig
     ): OperationResponse<Paths.ApiControllerBroadcast.Responses.$202>;
   };
-  ["/api/content/{userDsnpId}/reply"]: {
+  ['/api/content/{userDsnpId}/reply']: {
     /**
      * ApiController_reply
      */
-    "post"(
+    'post'(
       parameters: Parameters<Paths.ApiControllerReply.PathParameters>,
       data?: Paths.ApiControllerReply.RequestBody,
-      config?: AxiosRequestConfig,
+      config?: AxiosRequestConfig
     ): OperationResponse<Paths.ApiControllerReply.Responses.$202>;
   };
-  ["/api/content/{userDsnpId}/reaction"]: {
+  ['/api/content/{userDsnpId}/reaction']: {
     /**
      * ApiController_reaction
      */
-    "post"(
+    'post'(
       parameters: Parameters<Paths.ApiControllerReaction.PathParameters>,
       data?: Paths.ApiControllerReaction.RequestBody,
-      config?: AxiosRequestConfig,
+      config?: AxiosRequestConfig
     ): OperationResponse<Paths.ApiControllerReaction.Responses.$202>;
   };
-  ["/api/content/{userDsnpId}"]: {
+  ['/api/content/{userDsnpId}']: {
     /**
      * ApiController_update
      */
-    "put"(
+    'put'(
       parameters: Parameters<Paths.ApiControllerUpdate.PathParameters>,
       data?: Paths.ApiControllerUpdate.RequestBody,
-      config?: AxiosRequestConfig,
+      config?: AxiosRequestConfig
     ): OperationResponse<Paths.ApiControllerUpdate.Responses.$202>;
     /**
      * ApiController_delete
      */
-    "delete"(
+    'delete'(
       parameters: Parameters<Paths.ApiControllerDelete.PathParameters>,
       data?: Paths.ApiControllerDelete.RequestBody,
-      config?: AxiosRequestConfig,
+      config?: AxiosRequestConfig
     ): OperationResponse<Paths.ApiControllerDelete.Responses.$202>;
   };
-  ["/api/profile/{userDsnpId}"]: {
+  ['/api/profile/{userDsnpId}']: {
     /**
      * ApiController_profile
      */
-    "put"(
+    'put'(
       parameters: Parameters<Paths.ApiControllerProfile.PathParameters>,
       data?: Paths.ApiControllerProfile.RequestBody,
-      config?: AxiosRequestConfig,
+      config?: AxiosRequestConfig
     ): OperationResponse<Paths.ApiControllerProfile.Responses.$202>;
   };
 }

@@ -18,14 +18,21 @@ For more detailed instructions on configuring individual services, and running t
 
 ### Environment Variables
 
-The application is configured by way of environment variables. A complete list of available environment variables is [here](./ENVIRONMENT.md). Environment variables are supplied to the application through _environment files_.
+The application is configured by way of environment variables. A complete list of available environment variables is
+[here](./ENVIRONMENT.md). Environment variables are supplied to the application through _environment files_.
 
-The default scripts and images for this app are configured in a slightly different way from the usual method. Because this Gateway app is a template meant to be used with other services and built upon,
-the supplied scripts enable launching a full environment of all Frequency Gateway services needed by this Gateway application. To that end, each service has its own environment file, as well as a "common" environment file where shared config values can be specified for all services without the need to duplicate entries. The environment files are named as follows; use the _[.docker]_ variants for running the main Gateway app under docker (the other Gateway services are set up to run under Docker by default).
+The default scripts and images for this app are configured in a slightly different way from the usual method. Because
+this Gateway app is a template meant to be used with other services and built upon, the supplied scripts enable
+launching a full environment of all Frequency Gateway services needed by this Gateway application. To that end, each
+service has its own environment file, as well as a "common" environment file where shared config values can be specified
+for all services without the need to duplicate entries. The environment files are named as follows; use the _[.docker]_
+variants for running the main Gateway app under docker (the other Gateway services are set up to run under Docker by
+default).
 
 - .env.common[.docker]
 - .env.service[.docker]
-  - where <service> is one of: account-service, content-publishing-service, content-watcher-service, graph-service, social-app-backend
+  - where <service> is one of: account-service, content-publishing-service, content-watcher-service, graph-service,
+    social-app-backend
 
 Sample configuration files can be found [here](./environment/)
 
@@ -88,7 +95,8 @@ This is for simple local development work.
 docker compose up -d frequency
 ```
 
-2. For more realistic scenario testing, run the node in Interval Sealing mode (see comments in [docker-compose.yaml](./docker-compose.yaml)
+2. For more realistic scenario testing, run the node in Interval Sealing mode (see comments in
+   [docker-compose.yaml](./docker-compose.yaml)
 3. Setup the Environment Variables
 
    - `FREQUENCY_URL="ws://frequency:9944"`

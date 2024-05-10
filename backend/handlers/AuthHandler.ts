@@ -1,4 +1,4 @@
-import * as Config from "../config/config";
+import * as Config from '../config/config';
 
 // TODO: Fetch from account-service when the new endpoint is ready
 export function getSiwfRequestConfig() {
@@ -16,7 +16,7 @@ export function getSiwfRequestConfig() {
   return {
     siwfUrl: Config.instance().siwfUrl,
     nodeUrl: Config.instance().frequencyHttpUrl,
-    ipfsGateway: "http://kubo_ipfs:8080",
+    ipfsGateway: 'http://kubo_ipfs:8080',
     providerId: Config.instance().providerId,
     schemas: [1, 2, 3, 4, 5, 6, 8],
     network: Config.instance().chainType,

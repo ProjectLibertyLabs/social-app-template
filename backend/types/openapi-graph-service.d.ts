@@ -4,19 +4,15 @@ import type {
   UnknownParamsObject,
   OperationResponse,
   AxiosRequestConfig,
-} from "openapi-client-axios";
+} from 'openapi-client-axios';
 
 declare namespace Components {
   namespace Schemas {
     export interface ConnectionDto {
       dsnpId: string;
-      privacyType: "private" | "public";
-      direction:
-        | "connectionTo"
-        | "connectionFrom"
-        | "bidirectional"
-        | "disconnect";
-      connectionType: "follow" | "friendship";
+      privacyType: 'private' | 'public';
+      direction: 'connectionTo' | 'connectionFrom' | 'bidirectional' | 'disconnect';
+      connectionType: 'follow' | 'friendship';
     }
     export interface DsnpGraphEdge {
       userId: string;
@@ -26,11 +22,11 @@ declare namespace Components {
     export interface GraphKeyPairDto {
       publicKey: string;
       privateKey: string;
-      keyType: "X25519";
+      keyType: 'X25519';
     }
     export interface GraphsQueryParamsDto {
       dsnpIds: string[];
-      privacyType: "private" | "public";
+      privacyType: 'private' | 'public';
       graphKeyPairs: GraphKeyPairDto[];
     }
     export interface ProviderGraphDto {
@@ -80,76 +76,76 @@ export interface OperationMethods {
   /**
    * ApiController_health - Check the health status of the service
    */
-  "ApiController_health"(
+  'ApiController_health'(
     parameters?: Parameters<UnknownParamsObject> | null,
     data?: any,
-    config?: AxiosRequestConfig,
+    config?: AxiosRequestConfig
   ): OperationResponse<Paths.ApiControllerHealth.Responses.$200>;
   /**
    * ApiController_getGraphs - Post a request to fetch graphs for specified dsnpIds and blockNumber
    */
-  "ApiController_getGraphs"(
+  'ApiController_getGraphs'(
     parameters?: Parameters<UnknownParamsObject> | null,
     data?: Paths.ApiControllerGetGraphs.RequestBody,
-    config?: AxiosRequestConfig,
+    config?: AxiosRequestConfig
   ): OperationResponse<Paths.ApiControllerGetGraphs.Responses.$200>;
   /**
    * ApiController_updateGraph - Request an update to given users graph
    */
-  "ApiController_updateGraph"(
+  'ApiController_updateGraph'(
     parameters?: Parameters<UnknownParamsObject> | null,
     data?: Paths.ApiControllerUpdateGraph.RequestBody,
-    config?: AxiosRequestConfig,
+    config?: AxiosRequestConfig
   ): OperationResponse<Paths.ApiControllerUpdateGraph.Responses.$201>;
   /**
    * ApiController_watchGraphs - Watch graphs for specified dsnpIds and receive updates
    */
-  "ApiController_watchGraphs"(
+  'ApiController_watchGraphs'(
     parameters?: Parameters<UnknownParamsObject> | null,
     data?: Paths.ApiControllerWatchGraphs.RequestBody,
-    config?: AxiosRequestConfig,
+    config?: AxiosRequestConfig
   ): OperationResponse<Paths.ApiControllerWatchGraphs.Responses.$200>;
 }
 
 export interface PathsDictionary {
-  ["/api/health"]: {
+  ['/api/health']: {
     /**
      * ApiController_health - Check the health status of the service
      */
-    "get"(
+    'get'(
       parameters?: Parameters<UnknownParamsObject> | null,
       data?: any,
-      config?: AxiosRequestConfig,
+      config?: AxiosRequestConfig
     ): OperationResponse<Paths.ApiControllerHealth.Responses.$200>;
   };
-  ["/api/graphs"]: {
+  ['/api/graphs']: {
     /**
      * ApiController_getGraphs - Post a request to fetch graphs for specified dsnpIds and blockNumber
      */
-    "put"(
+    'put'(
       parameters?: Parameters<UnknownParamsObject> | null,
       data?: Paths.ApiControllerGetGraphs.RequestBody,
-      config?: AxiosRequestConfig,
+      config?: AxiosRequestConfig
     ): OperationResponse<Paths.ApiControllerGetGraphs.Responses.$200>;
   };
-  ["/api/update-graph"]: {
+  ['/api/update-graph']: {
     /**
      * ApiController_updateGraph - Request an update to given users graph
      */
-    "post"(
+    'post'(
       parameters?: Parameters<UnknownParamsObject> | null,
       data?: Paths.ApiControllerUpdateGraph.RequestBody,
-      config?: AxiosRequestConfig,
+      config?: AxiosRequestConfig
     ): OperationResponse<Paths.ApiControllerUpdateGraph.Responses.$201>;
   };
-  ["/api/watch-graphs"]: {
+  ['/api/watch-graphs']: {
     /**
      * ApiController_watchGraphs - Watch graphs for specified dsnpIds and receive updates
      */
-    "put"(
+    'put'(
       parameters?: Parameters<UnknownParamsObject> | null,
       data?: Paths.ApiControllerWatchGraphs.RequestBody,
-      config?: AxiosRequestConfig,
+      config?: AxiosRequestConfig
     ): OperationResponse<Paths.ApiControllerWatchGraphs.Responses.$200>;
   };
 }
