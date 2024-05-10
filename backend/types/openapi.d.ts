@@ -540,7 +540,7 @@ export interface OperationMethods {
 }
 
 export interface PathsDictionary {
-  ['/v2/assets']: {
+  ['/assets']: {
     /**
      * postAssetsHandler - Upload and register new assets
      *
@@ -552,7 +552,7 @@ export interface PathsDictionary {
       config?: AxiosRequestConfig
     ): OperationResponse<Paths.PostAssetsHandler.Responses.$202>;
   };
-  ['/v2/broadcasts']: {
+  ['/broadcasts']: {
     /**
      * postBroadcastHandler - Create a new post
      */
@@ -562,7 +562,7 @@ export interface PathsDictionary {
       config?: AxiosRequestConfig
     ): OperationResponse<Paths.PostBroadcastHandler.Responses.$202>;
   };
-  ['/v1/auth/provider']: {
+  ['/auth/provider']: {
     /**
      * authProvider - Return the delegation and provider information
      */
@@ -572,7 +572,7 @@ export interface PathsDictionary {
       config?: AxiosRequestConfig
     ): OperationResponse<Paths.AuthProvider.Responses.$200>;
   };
-  ['/v2/auth/login']: {
+  ['/auth/login']: {
     /**
      * authLogin2 - Use Wallet Proxy to login
      */
@@ -582,7 +582,7 @@ export interface PathsDictionary {
       config?: AxiosRequestConfig
     ): OperationResponse<Paths.AuthLogin2.Responses.$200>;
   };
-  ['/v1/auth/logout']: {
+  ['/auth/logout']: {
     /**
      * authLogout - Logout and invalidate the access token
      */
@@ -592,7 +592,7 @@ export interface PathsDictionary {
       config?: AxiosRequestConfig
     ): OperationResponse<Paths.AuthLogout.Responses.$201>;
   };
-  ['/v1/auth/account']: {
+  ['/auth/account']: {
     /**
      * authAccount - For polling to get the created account as authCreate can take time
      */
@@ -602,7 +602,7 @@ export interface PathsDictionary {
       config?: AxiosRequestConfig
     ): OperationResponse<Paths.AuthAccount.Responses.$200 | Paths.AuthAccount.Responses.$202>;
   };
-  ['/v1/content/{dsnpId}']: {
+  ['/content/{dsnpId}']: {
     /**
      * getUserFeed - Get recent posts from a user, paginated
      */
@@ -612,7 +612,7 @@ export interface PathsDictionary {
       config?: AxiosRequestConfig
     ): OperationResponse<Paths.GetUserFeed.Responses.$200>;
   };
-  ['/v1/content/feed']: {
+  ['/content/feed']: {
     /**
      * getFeed - Get the Feed for the current user, paginated
      */
@@ -622,7 +622,7 @@ export interface PathsDictionary {
       config?: AxiosRequestConfig
     ): OperationResponse<Paths.GetFeed.Responses.$200>;
   };
-  ['/v1/content/discover']: {
+  ['/content/discover']: {
     /**
      * getDiscover - Get the Discovery Feed for the current user, paginated
      */
@@ -632,7 +632,7 @@ export interface PathsDictionary {
       config?: AxiosRequestConfig
     ): OperationResponse<Paths.GetDiscover.Responses.$200>;
   };
-  ['/v1/content/create']: {
+  ['/content/create']: {
     /**
      * createBroadcast - Create a new post
      */
@@ -642,7 +642,7 @@ export interface PathsDictionary {
       config?: AxiosRequestConfig
     ): OperationResponse<Paths.CreateBroadcast.Responses.$200>;
   };
-  ['/v1/content/{dsnpId}/{contentHash}']: {
+  ['/content/{dsnpId}/{contentHash}']: {
     /**
      * getContent - Get details of a specific post
      */
@@ -652,7 +652,7 @@ export interface PathsDictionary {
       config?: AxiosRequestConfig
     ): OperationResponse<Paths.GetContent.Responses.$200>;
   };
-  ['/v1/content/{type}/{contentHash}']: {
+  ['/content/{type}/{contentHash}']: {
     /**
      * editContent - Edit the content of a specific post
      */
@@ -662,7 +662,7 @@ export interface PathsDictionary {
       config?: AxiosRequestConfig
     ): OperationResponse<Paths.EditContent.Responses.$200>;
   };
-  ['/v1/graph/{dsnpId}/following']: {
+  ['/graph/{dsnpId}/following']: {
     /**
      * userFollowing - Get a list of users that a specific user follows
      */
@@ -672,7 +672,7 @@ export interface PathsDictionary {
       config?: AxiosRequestConfig
     ): OperationResponse<Paths.UserFollowing.Responses.$200>;
   };
-  ['/v1/graph/{dsnpId}/follow']: {
+  ['/graph/{dsnpId}/follow']: {
     /**
      * graphFollow - Follow a user
      */
@@ -682,7 +682,7 @@ export interface PathsDictionary {
       config?: AxiosRequestConfig
     ): OperationResponse<Paths.GraphFollow.Responses.$201>;
   };
-  ['/v1/graph/{dsnpId}/unfollow']: {
+  ['/graph/{dsnpId}/unfollow']: {
     /**
      * graphUnfollow - Unfollow a user
      */
@@ -692,7 +692,7 @@ export interface PathsDictionary {
       config?: AxiosRequestConfig
     ): OperationResponse<Paths.GraphUnfollow.Responses.$201>;
   };
-  ['/v1/profiles/{dsnpId}']: {
+  ['/profiles/{dsnpId}']: {
     /**
      * getProfile - Get profile information for a specific user
      */

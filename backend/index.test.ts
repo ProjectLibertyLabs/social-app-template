@@ -3,8 +3,8 @@ import { describe, expect, it } from 'vitest';
 import { app } from './index.js';
 
 describe('API', () => {
-  it('GET /v1/auth/challenge returns 200 with matched operation', async () => {
-    const res = await request(app).get('/v1/auth/challenge');
+  it('GET /auth/challenge returns 200 with matched operation', async () => {
+    const res = await request(app).get('/auth/challenge');
 
     expect(res.status).toBe(404);
   });

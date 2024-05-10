@@ -4,70 +4,70 @@
  */
 
 export interface paths {
-  '/v2/assets': {
+  '/assets': {
     /**
      * Upload and register new assets
      * @description Allows clients to upload new assets. This endpoint accepts multipart file uploads and returns the identifiers for the newly uploaded assets.
      */
     post: operations['postAssetsHandler'];
   };
-  '/v2/content': {
+  '/content': {
     /** Create a new post */
     post: operations['postContentHandler'];
   };
-  '/v1/auth/provider': {
+  '/auth/provider': {
     /** Return the delegation and provider information */
     get: operations['authProvider'];
   };
-  '/v2/auth/login': {
+  '/auth/login': {
     /** Use Wallet Proxy to login */
     post: operations['authLogin2'];
   };
-  '/v1/auth/logout': {
+  '/auth/logout': {
     /** Logout and invalidate the access token */
     post: operations['authLogout'];
   };
-  '/v1/auth/account': {
+  '/auth/account': {
     /** For polling to get the created account as authCreate can take time */
     get: operations['authAccount'];
   };
-  '/v1/content/{dsnpId}': {
+  '/content/{dsnpId}': {
     /** Get recent posts from a user, paginated */
     get: operations['getUserFeed'];
   };
-  '/v1/content/feed': {
+  '/content/feed': {
     /** Get the Feed for the current user, paginated */
     get: operations['getFeed'];
   };
-  '/v1/content/discover': {
+  '/content/discover': {
     /** Get the Discovery Feed for the current user, paginated */
     get: operations['getDiscover'];
   };
-  '/v1/content/create': {
+  '/content/create': {
     /** Create a new post */
     post: operations['createBroadcast'];
   };
-  '/v1/content/{dsnpId}/{contentHash}': {
+  '/content/{dsnpId}/{contentHash}': {
     /** Get details of a specific post */
     get: operations['getContent'];
   };
-  '/v1/content/{type}/{contentHash}': {
+  '/content/{type}/{contentHash}': {
     /** Edit the content of a specific post */
     put: operations['editContent'];
   };
-  '/v1/graph/{dsnpId}/following': {
+  '/graph/{dsnpId}/following': {
     /** Get a list of users that a specific user follows */
     get: operations['userFollowing'];
   };
-  '/v1/graph/{dsnpId}/follow': {
+  '/graph/{dsnpId}/follow': {
     /** Follow a user */
     post: operations['graphFollow'];
   };
-  '/v1/graph/{dsnpId}/unfollow': {
+  '/graph/{dsnpId}/unfollow': {
     /** Unfollow a user */
     post: operations['graphUnfollow'];
   };
-  '/v1/profiles/{dsnpId}': {
+  '/profiles/{dsnpId}': {
     /** Get profile information for a specific user */
     get: operations['getProfile'];
     /** Create/Edit the profile information for a current user */
