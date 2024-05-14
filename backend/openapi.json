@@ -2,7 +2,7 @@
   "openapi": "3.0.0",
   "servers": [
     {
-      "url": "http://localhost:3004"
+      "url": "http://localhost:5005"
     }
   ],
   "info": {
@@ -10,7 +10,7 @@
     "version": "1.0.0"
   },
   "paths": {
-    "/v2/assets": {
+    "/assets": {
       "post": {
         "operationId": "postAssetsHandler",
         "summary": "Upload and register new assets",
@@ -52,7 +52,7 @@
         }
       }
     },
-    "/v2/broadcasts": {
+    "/broadcasts": {
       "post": {
         "operationId": "postBroadcastHandler",
         "summary": "Create a new post",
@@ -88,7 +88,7 @@
         }
       }
     },
-    "/v1/auth/provider": {
+    "/auth/siwf": {
       "get": {
         "operationId": "authProvider",
         "summary": "Return the delegation and provider information",
@@ -106,10 +106,10 @@
         }
       }
     },
-    "/v2/auth/login": {
+    "/auth/login": {
       "post": {
-        "operationId": "authLogin2",
-        "summary": "Use Wallet Proxy to login",
+        "operationId": "authLogin",
+        "summary": "Use Sign In With Frequency to login",
         "requestBody": {
           "required": true,
           "content": {
@@ -121,6 +121,12 @@
           }
         },
         "responses": {
+          "401": {
+            "$ref": "#/components/responses/UnauthorizedError"
+          },
+          "202": {
+            "description": "Account still pending creation"
+          },
           "200": {
             "description": "Successful response",
             "content": {
@@ -134,7 +140,7 @@
         }
       }
     },
-    "/v1/auth/logout": {
+    "/auth/logout": {
       "post": {
         "operationId": "authLogout",
         "summary": "Logout and invalidate the access token",
@@ -153,19 +159,31 @@
         }
       }
     },
-    "/v1/auth/account": {
+    "/auth/account": {
       "get": {
         "operationId": "authAccount",
         "summary": "For polling to get the created account as authCreate can take time",
-        "security": [
+        "parameters": [
           {
-            "tokenAuth": []
+            "name": "msaId",
+            "in": "query",
+            "description": "The user's Message Source Account ID",
+            "required": false,
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "referenceId",
+            "in": "query",
+            "description": "A reference identifier to retrieve the resource when msaId is not available",
+            "required": false,
+            "schema": {
+              "type": "string"
+            }
           }
         ],
         "responses": {
-          "401": {
-            "$ref": "#/components/responses/UnauthorizedError"
-          },
           "202": {
             "description": "Account still pending creation"
           },
@@ -182,7 +200,7 @@
         }
       }
     },
-    "/v1/content/{dsnpId}": {
+    "/content/{dsnpId}": {
       "get": {
         "operationId": "getUserFeed",
         "summary": "Get recent posts from a user, paginated",
@@ -234,7 +252,7 @@
         }
       }
     },
-    "/v1/content/feed": {
+    "/content/feed": {
       "get": {
         "operationId": "getFeed",
         "summary": "Get the Feed for the current user, paginated",
@@ -278,7 +296,7 @@
         }
       }
     },
-    "/v1/content/discover": {
+    "/content/discover": {
       "get": {
         "operationId": "getDiscover",
         "summary": "Get the Discovery Feed for the current user, paginated",
@@ -322,7 +340,7 @@
         }
       }
     },
-    "/v1/content/create": {
+    "/content/create": {
       "post": {
         "operationId": "createBroadcast",
         "summary": "Create a new post",
@@ -405,7 +423,7 @@
         }
       }
     },
-    "/v1/content/{type}/{contentHash}": {
+    "/content/{type}/{contentHash}": {
       "put": {
         "operationId": "editContent",
         "security": [
@@ -529,7 +547,7 @@
         }
       }
     },
-    "/v1/graph/{dsnpId}/unfollow": {
+    "/graph/{dsnpId}/unfollow": {
       "post": {
         "operationId": "graphUnfollow",
         "summary": "Unfollow a user",
@@ -558,7 +576,7 @@
         }
       }
     },
-    "/v1/profiles/{dsnpId}": {
+    "/profiles/{dsnpId}": {
       "get": {
         "operationId": "getProfile",
         "summary": "Get profile information for a specific user",
@@ -773,13 +791,10 @@
       "WalletLoginResponse": {
         "type": "object",
         "properties": {
-          "accessToken": {
+          "referenceId": {
             "type": "string"
           },
-          "expires": {
-            "type": "integer"
-          },
-          "dsnpId": {
+          "msaId": {
             "type": "string"
           },
           "handle": {
@@ -787,8 +802,7 @@
           }
         },
         "required": [
-          "expires",
-          "accessToken"
+          "referenceId"
         ]
       },
       "WalletLoginRequest": {
@@ -877,14 +891,14 @@
           "expires": {
             "type": "integer"
           },
-          "dsnpId": {
+          "msaId": {
             "type": "string"
           }
         },
         "required": [
           "expires",
           "accessToken",
-          "dsnpId"
+          "msaId"
         ]
       },
       "CreateIdentityRequest": {
@@ -946,7 +960,13 @@
       "AuthAccountResponse": {
         "type": "object",
         "properties": {
-          "dsnpId": {
+          "accessToken": {
+            "type": "string"
+          },
+          "expires": {
+            "type": "integer"
+          },
+          "msaId": {
             "type": "string"
           },
           "displayHandle": {
@@ -954,7 +974,9 @@
           }
         },
         "required": [
-          "dsnpId"
+          "msaId",
+          "accessToken",
+          "expires"
         ]
       },
       "DelegateRequest": {

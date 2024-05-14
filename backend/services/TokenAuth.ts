@@ -2,6 +2,8 @@ import { randomUUID } from "crypto";
 import { getApi } from "./frequency.js";
 import { NextFunction, Request, Response } from "express";
 import { HttpStatusCode } from "axios";
+import { AccountService } from "./AuthService.js";
+import logger from "../logger";
 
 export type RequestAccount = { publicKey: string; msaId?: string };
 
@@ -11,12 +13,21 @@ const authTokenRegistry: Map<string, RequestAccount> = new Map();
 type CacheData = { msaId: string; added: Date };
 const cachePublicKeys: Map<string, CacheData> = new Map();
 
+/**
+ * Creates an authentication token for the given public key.
+ * @param publicKey - The public key associated with the token.
+ * @returns The generated authentication token.
+ */
 export function createAuthToken(publicKey: string): string {
   const uuid = randomUUID();
   authTokenRegistry.set(uuid, { publicKey });
   return uuid;
 }
 
+/**
+ * Revokes an authentication token.
+ * @param token - The authentication token to revoke.
+ */
 export function revokeAuthToken(token: string): void {
   authTokenRegistry.delete(token);
 }
@@ -44,6 +55,18 @@ export async function getMsaByPublicKey(
   ) {
     return cachedResult.msaId;
   }
+
+  // TODO: Implement this
+  // Use Account Service to get the MSA ID
+  // try {
+  //   const response = await AccountService.getInstance().then((service) =>
+  //     service.getAccount(publicKey),
+  //   );
+  // } catch (e) {
+  //   console.error("Failed to get MSA ID: ", e);
+  //   return null;
+  // }
+
   const api = await getApi();
   const msaId = await api.query.msa.publicKeyToMsaId(publicKey);
   if (msaId.isNone) return null;
@@ -69,11 +92,13 @@ export async function validateAuthToken(
   next: NextFunction,
 ) {
   const token = getAuthToken(req);
+  logger.debug(`validateAuthToken: ${token}`);
   if (!token) {
     return res.status(HttpStatusCode.Unauthorized).end();
   }
 
   const account = await getAccountFromAuth(token);
+  logger.debug(`validateAuthToken: ${JSON.stringify(account, null, 2)}`);
 
   if (account === null) {
     return res.status(HttpStatusCode.Unauthorized).end();

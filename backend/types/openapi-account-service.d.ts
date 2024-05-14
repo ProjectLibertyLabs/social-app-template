@@ -9,10 +9,11 @@ import type {
 declare namespace Components {
   namespace Schemas {
     export interface AccountResponse {
+      accessToken?: string;
+      expires?: number;
+      referenceId?: string;
       msaId: number;
-      handle?: {
-        [key: string]: any;
-      } | null;
+      displayHandle?: string;
     }
     export interface EncodedExtrinsicDto {
       pallet: string;

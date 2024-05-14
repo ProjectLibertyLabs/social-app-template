@@ -75,7 +75,7 @@ export class Config {
 
   public get privatePort() {
     const port = parseInt(this.configValues["PRIVATE_PORT"]);
-    return port || (this.port + 1);
+    return port || this.port + 1;
   }
 
   public get privateHost() {

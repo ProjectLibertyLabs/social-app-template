@@ -30,7 +30,7 @@ export const getUserProfile = (msaId: string): Promise<User | null> => {
   // Profile not found in cache, fetch from the server
   try {
     const profile = dsnpLink
-      .getProfile(getContext(), { msaId })
+      .getProfile(getContext(), { dsnpId: msaId })
       .then(profileToUser);
     profileCache.set(msaId, profile);
     return profile;

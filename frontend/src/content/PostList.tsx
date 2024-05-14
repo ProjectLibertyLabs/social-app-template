@@ -133,7 +133,7 @@ const PostList = ({
         if (!user) return resetFeed();
         postGetPosts(
           await dsnpLink.getUserFeed(getContext(), {
-            msaId: user.msaId,
+            dsnpId: user.msaId,
             ...params,
           }),
           appendOrPrepend,

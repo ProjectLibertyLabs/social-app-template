@@ -29,13 +29,13 @@ const ConnectionsList = ({
     const ctx = getContext();
 
     const accountFollowingList = await dsnpLink.userFollowing(ctx, {
-      msaId: graphRootUser.msaId,
+      dsnpId: graphRootUser.msaId,
     });
 
     const list: User[] = await Promise.all(
-      accountFollowingList.map((msaId) =>
+      accountFollowingList.map((dsnpId) =>
         dsnpLink
-          .getProfile(ctx, { msaId })
+          .getProfile(ctx, { dsnpId })
           .then(({ displayHandle, fromId, content }) => {
             try {
               const profile = content ? JSON.parse(content) : {};

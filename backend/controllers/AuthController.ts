@@ -2,11 +2,11 @@ import { Express, Request, Response } from "express";
 import { BaseController } from "./BaseController";
 import * as AuthHandler from "../handlers/AuthHandler";
 import { AccountService } from "../services/AuthService";
-import { validateAuthToken } from "../services/TokenAuth";
+import { createAuthToken, validateAuthToken } from "../services/TokenAuth";
 import { HttpError } from "../types/HttpError";
 import { HttpStatusCode } from "axios";
-// REMOVE:
 import * as Config from "../config/config";
+import logger from "../logger";
 
 export class AuthController extends BaseController {
   constructor(app: Express) {
@@ -15,13 +15,13 @@ export class AuthController extends BaseController {
 
   protected initializeRoutes(): void {
     this.router.get("/siwf", this.getSiwf.bind(this));
-    this.router.get("/account", validateAuthToken, this.getAccount.bind(this));
+    this.router.get("/account", this.getAccount.bind(this));
     this.router.post("/login", this.postLogin.bind(this));
     this.router.post("/logout", validateAuthToken, this.postLogout.bind(this));
   }
 
   public async getSiwf(_req: Request, res: Response) {
-    console.log("AuthController:getSiwf");
+    logger.debug("AuthController:getSiwf: getting siwf config");
     const payload = await AccountService.getInstance().then((service) =>
       service.getSWIFConfig(),
     );
@@ -32,10 +32,6 @@ export class AuthController extends BaseController {
         .end();
       return;
     }
-    // REMOVE: This is just for debugging
-    console.log(
-      `AuthController:getSiwf config payload: ${JSON.stringify(payload, null, 2)}`,
-    );
     res
       .status(HttpStatusCode.Ok)
       .send({
@@ -47,28 +43,55 @@ export class AuthController extends BaseController {
         network: Config.instance().chainType,
       })
       .end();
-    // REMOVE:
-    // res.status(HttpStatusCode.Ok).send(payload).end();
   }
 
+  /**
+   * Retrieves the account information based on the provided request headers.
+   * @param req - The request object. The request headers must contain the msaId.
+   * @param res - The response object.
+   * @returns The account information: displayHandle and msaId.
+   */
   public async getAccount(req: Request, res: Response) {
-    // REMOVE:
-    console.log("AuthController:getAccount");
-    const msaId =
-      typeof req.headers?.["msaId"] === "string" ? req.headers?.["msaId"] : "";
-    const data = await AccountService.getInstance().then((service) =>
-      service.getAccount(msaId),
+    // Check if msaId or referenceId is provided in the request headers
+    const msaId = req.query?.["msaId"]?.toString() || "";
+    const referenceId = req.query?.["referenceId"]?.toString() || "";
+    logger.debug(
+      `AuthController:getAccount: msaId: ${msaId}, referenceId: ${referenceId}`,
     );
-    if (!data?.handle || !data?.msaId) {
-      res = res.status(HttpStatusCode.Accepted);
-    } else {
+
+    if (!msaId && !referenceId) {
+      // If neither msaId nor referenceId is provided, then we are in the Sign In flow
+      res = res
+        .status(HttpStatusCode.BadRequest)
+        .send("msaId or referenceId is required");
+    }
+
+    let data;
+    if (msaId) {
+      // Get the account information based on the msaId
+      data = await AccountService.getInstance().then((service) =>
+        service.getAccount(msaId),
+      );
       res.status(HttpStatusCode.Ok).send(data);
+    } else {
+      // The Front End is asking if we have finished a user login or registration
+      // We should return a 202 if we have not finished the registration
+      // If the transaction has been finalized, the webhook will have received the information, for the referenceId.
+      // Get the account information based on the referenceId
+      data = await AccountService.getInstance().then((service) =>
+        service.getAccountByReferenceId(referenceId),
+      );
+      logger.debug(`AuthController:getAccount: data: ${JSON.stringify(data)}`);
+      res = res.status(HttpStatusCode.Ok).send(data);
     }
     res.end();
   }
 
   public async postLogin(req: Request, res: Response) {
     try {
+      // REMOVE: This is just for debugging
+      logger.debug(req, "AuthController:postLogin: going to signin or signup");
+      const accessToken = createAuthToken(req.body.publicKey);
       const response = await AccountService.getInstance().then((service) =>
         service.signInOrSignUp(req.body),
       );

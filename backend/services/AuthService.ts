@@ -15,6 +15,8 @@ import * as Config from "../config/config";
 import { HttpStatusCode } from "axios";
 import { HttpError } from "../types/HttpError";
 import { Request } from "express";
+import logger from "../logger";
+import { WebhookController } from "../controllers/WebhookController";
 
 type AccountResponse = Components.Schemas.AccountResponse;
 type WalletLoginRequestDto = Components.Schemas.WalletLoginRequestDto;
@@ -63,7 +65,7 @@ export class AccountService {
       const response = await this.client.AccountsController_getSIWFConfig();
       return response.data;
     } catch (e) {
-      console.error("Failed to get SIWF config: ", e);
+      logger.error("Failed to get SIWF config: ", e);
       throw e;
     }
   }
@@ -71,9 +73,44 @@ export class AccountService {
   public async getAccount(msaId: string): Promise<AccountResponse> {
     try {
       const response = await this.client.AccountsController_getAccount(msaId);
-      return response.data;
+      logger.debug(
+        `Got account for msaID:(${msaId}), data:(${JSON.stringify(response.data)})`,
+      );
+      // return response.data;
+      return {
+        msaId: parseInt(msaId),
+        displayHandle: response.data.displayHandle,
+      };
     } catch (e) {
-      console.error(`Failed to get account for msaID:${msaId}  error:${e}`);
+      logger.error(`Failed to get account for msaID:(${msaId}) error:${e}`);
+      throw e;
+    }
+  }
+
+  public async getAccountByReferenceId(
+    referenceId: string,
+  ): Promise<AccountResponse | undefined> {
+    // In this case, we're using the referenceId to get the account
+    // Check the webhook and see if the referenceId has been processed
+    logger.debug(`Looking for account for referenceId:(${referenceId})`);
+    try {
+      const accountData =
+        WebhookController.referenceIdsReceived.get(referenceId);
+      if (accountData) {
+        logger.debug(`Found account for referenceId:(${referenceId})`);
+        // We need accountId/publicKey to create the authToken
+        return {
+          accessToken: createAuthToken(accountData.accountId),
+          expires: Date.now() + 24 * 60 * 60 * 1_000,
+          referenceId: referenceId,
+          msaId: parseInt(accountData.msaId),
+          displayHandle: accountData.displayHandle,
+        };
+      }
+    } catch (e) {
+      logger.error(
+        `Failed to get account for referenceId:(${referenceId}) error:${e}`,
+      );
       throw e;
     }
   }
@@ -85,20 +122,22 @@ export class AccountService {
     let response: Partial<WalletLoginResponse> = {};
     try {
       if (signUp) {
+        // REMOVE: This is just for debugging
+        logger.debug("AuthService: signInOrSignUp: Signing up");
         response = await AccountService.getInstance().then((service) =>
           service.signUp(request),
         );
         return response as WalletLoginResponse;
       } else if (signIn) {
         // REMOVE: This is just for debugging
-        console.log("Signing in");
+        logger.debug("AuthService: signInOrSignUp: Signing in");
         response = await AccountService.getInstance().then((service) =>
           service.signIn(request),
         );
       }
       return response as WalletLoginResponse;
     } catch (e) {
-      console.error("Failed to sign in or sign up: ", e);
+      logger.error("Failed to sign in or sign up: ", e);
       throw e;
     }
   }
@@ -111,13 +150,13 @@ export class AccountService {
       throw new HttpError(HttpStatusCode.BadRequest, "Invalid signup payload");
     }
     try {
-      console.log(`validateSignup: ${JSON.stringify(signUp, null, 2)}`);
+      logger.debug(signUp, "validateSignup: signUp:");
       const { calls, publicKey } = await validateSignup(
         api,
         signUp,
         Config.instance().providerId,
       );
-      console.log(`publicKey from validateSignup: ${publicKey}`);
+      logger.debug("publicKey from validateSignup: %s", publicKey);
       const response =
         await this.client.AccountsController_postSignInWithFrequency(
           null,
@@ -125,20 +164,24 @@ export class AccountService {
         );
 
       // REMOVE: This is just for debugging
-      console.log(
-        `Account signup processed, referenceId: ${response.data.referenceId}`,
+      logger.debug(
+        "Account signup processed, referenceId: %s",
+        response.data.referenceId,
       );
       // TODO: the real data is in the webhook response
       return {
+        referenceId: response.data.referenceId,
         accessToken: createAuthToken(publicKey),
         expires: Date.now() + 24 * 60 * 60 * 1_000,
       };
     } catch (e: any) {
-      console.error("Failed signup validation", e);
+      logger.error("Failed signup validation", e);
       throw new HttpError(
         HttpStatusCode.Unauthorized,
         "Failed signup validation",
-        { cause: e },
+        {
+          cause: e,
+        },
       );
     }
   }
@@ -147,10 +190,11 @@ export class AccountService {
     const api = await getApi();
     const { signIn } = payload;
 
+    logger.debug(signIn, "AuthService:signIn:");
     // TODO: typescript hates optional and undefined
-    console.log(`Signin: ${JSON.stringify(signIn, null, 2)}`);
     if (signIn) {
       try {
+        // TODO: Should we also return the msaId?
         const parsedSignin = await validateSignin(
           api,
           signIn,
@@ -159,9 +203,10 @@ export class AccountService {
         return {
           accessToken: createAuthToken(parsedSignin.publicKey),
           expires: Date.now() + 24 * 60 * 60 * 1_000,
+          msaId: parsedSignin.msaId,
         };
       } catch (e) {
-        console.error("Failed signin: ", e);
+        logger.error("Failed signin: ", e);
         throw new HttpError(HttpStatusCode.Unauthorized, "Failed signin", {
           cause: e,
         });

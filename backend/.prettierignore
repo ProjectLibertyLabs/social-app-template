@@ -6,4 +6,6 @@ package-lock.json
 dist
 openapi-specs
 openapi.json
+# Ignore all .json files for services
+*.json
 

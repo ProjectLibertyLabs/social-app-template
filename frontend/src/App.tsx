@@ -37,7 +37,7 @@ const App = (): JSX.Element => {
 
   const refreshFollowing = async (account: UserAccount) => {
     const userAccountFollows = await dsnpLink.userFollowing(getContext(), {
-      msaId: account.msaId,
+      dsnpId: account.msaId
     });
     setAccountFollowing(userAccountFollows);
   };
