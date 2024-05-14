@@ -1,12 +1,12 @@
-import { Express, Request, Response } from "express";
-import { BaseController } from "./BaseController";
-import * as AuthHandler from "../handlers/AuthHandler";
-import { AccountService } from "../services/AuthService";
-import { createAuthToken, validateAuthToken } from "../services/TokenAuth";
-import { HttpError } from "../types/HttpError";
-import { HttpStatusCode } from "axios";
-import * as Config from "../config/config";
-import logger from "../logger";
+import { Express, Request, Response } from 'express';
+import { BaseController } from './BaseController';
+import * as AuthHandler from '../handlers/AuthHandler';
+import { AccountService } from '../services/AuthService';
+import { createAuthToken, validateAuthToken } from '../services/TokenAuth';
+import { HttpError } from '../types/HttpError';
+import { HttpStatusCode } from 'axios';
+import * as Config from '../config/config';
+import logger from '../logger';
 
 export class AuthController extends BaseController {
   constructor(app: Express) {
@@ -21,15 +21,10 @@ export class AuthController extends BaseController {
   }
 
   public async getSiwf(_req: Request, res: Response) {
-    logger.debug("AuthController:getSiwf: getting siwf config");
-    const payload = await AccountService.getInstance().then((service) =>
-      service.getSWIFConfig(),
-    );
+    logger.debug('AuthController:getSiwf: getting siwf config');
+    const payload = await AccountService.getInstance().then((service) => service.getSWIFConfig());
     if (!payload) {
-      res
-        .status(HttpStatusCode.InternalServerError)
-        .send("Failed to get siwf config")
-        .end();
+      res.status(HttpStatusCode.InternalServerError).send('Failed to get siwf config').end();
       return;
     }
     res
@@ -37,7 +32,7 @@ export class AuthController extends BaseController {
       .send({
         siwfUrl: payload.siwfUrl,
         nodeUrl: payload.frequencyRpcUrl,
-        ipfsGateway: "http://kubo_ipfs:8080",
+        ipfsGateway: 'http://kubo_ipfs:8080',
         providerId: payload.providerId,
         schemas: [1, 2, 3, 4, 5, 6, 8],
         network: Config.instance().chainType,
@@ -53,34 +48,26 @@ export class AuthController extends BaseController {
    */
   public async getAccount(req: Request, res: Response) {
     // Check if msaId or referenceId is provided in the request headers
-    const msaId = req.query?.["msaId"]?.toString() || "";
-    const referenceId = req.query?.["referenceId"]?.toString() || "";
-    logger.debug(
-      `AuthController:getAccount: msaId: ${msaId}, referenceId: ${referenceId}`,
-    );
+    const msaId = req.query?.['msaId']?.toString() || '';
+    const referenceId = req.query?.['referenceId']?.toString() || '';
+    logger.debug(`AuthController:getAccount: msaId: ${msaId}, referenceId: ${referenceId}`);
 
     if (!msaId && !referenceId) {
       // If neither msaId nor referenceId is provided, then we are in the Sign In flow
-      res = res
-        .status(HttpStatusCode.BadRequest)
-        .send("msaId or referenceId is required");
+      res = res.status(HttpStatusCode.BadRequest).send('msaId or referenceId is required');
     }
 
     let data;
     if (msaId) {
       // Get the account information based on the msaId
-      data = await AccountService.getInstance().then((service) =>
-        service.getAccount(msaId),
-      );
+      data = await AccountService.getInstance().then((service) => service.getAccount(msaId));
       res.status(HttpStatusCode.Ok).send(data);
     } else {
       // The Front End is asking if we have finished a user login or registration
       // We should return a 202 if we have not finished the registration
       // If the transaction has been finalized, the webhook will have received the information, for the referenceId.
       // Get the account information based on the referenceId
-      data = await AccountService.getInstance().then((service) =>
-        service.getAccountByReferenceId(referenceId),
-      );
+      data = await AccountService.getInstance().then((service) => service.getAccountByReferenceId(referenceId));
       logger.debug(`AuthController:getAccount: data: ${JSON.stringify(data)}`);
       res = res.status(HttpStatusCode.Ok).send(data);
     }
@@ -90,11 +77,9 @@ export class AuthController extends BaseController {
   public async postLogin(req: Request, res: Response) {
     try {
       // REMOVE: This is just for debugging
-      logger.debug(req, "AuthController:postLogin: going to signin or signup");
+      logger.debug(req, 'AuthController:postLogin: going to signin or signup');
       const accessToken = createAuthToken(req.body.publicKey);
-      const response = await AccountService.getInstance().then((service) =>
-        service.signInOrSignUp(req.body),
-      );
+      const response = await AccountService.getInstance().then((service) => service.signInOrSignUp(req.body));
       res.send(response).end();
     } catch (e) {
       if (e instanceof HttpError) {

@@ -14,9 +14,7 @@ export async function getSiwfRequestConfig() {
   //         expiresInMsecs: 300_000,
   //     },
   // }
-  const response = await axios.get(
-    `${Config.instance().accountServiceUrl}/accounts/siwf`,
-  );
+  const response = await axios.get(`${Config.instance().accountServiceUrl}/accounts/siwf`);
   return {
     siwfUrl: response.data.siwfUrl,
     nodeUrl: response.data.frequencyRpcUrl,

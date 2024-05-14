@@ -17,7 +17,7 @@ const profileToUser = (profile: dsnpLink.Profile): User => {
   }
   return {
     handle: profile.displayHandle || 'Anonymous',
-    dsnpId: profile.fromId,
+    msaId: profile.fromId,
     profile: userProfile,
   };
 };
@@ -29,8 +29,8 @@ export const getUserProfile = (msaId: string): Promise<User | null> => {
 
   // Profile not found in cache, fetch from the server
   try {
-    const profile = dsnpLink.getProfile(getContext(), { dsnpId }).then(profileToUser);
-    profileCache.set(dsnpId, profile);
+    const profile = dsnpLink.getProfile(getContext(), { dsnpId: msaId }).then(profileToUser);
+    profileCache.set(msaId, profile);
     return profile;
   } catch (error) {
     console.error(`Failed to fetch user profile for DSNP ID ${msaId}:`, error);
@@ -38,7 +38,7 @@ export const getUserProfile = (msaId: string): Promise<User | null> => {
   }
 };
 
-const loadingUser = { handle: 'Loading', dsnpId: '' };
+const loadingUser = { handle: 'Loading', msaId: '' };
 
 type UseGetUserResp = { user: User; isLoading: boolean; error: string };
 export const useGetUser = (msaId: string): UseGetUserResp => {
@@ -52,7 +52,7 @@ export const useGetUser = (msaId: string): UseGetUserResp => {
         if (resp === null) {
           setUser({
             handle: 'unknown',
-            dsnpId: '',
+            msaId: '',
           });
           setError('Unknown User');
         } else {

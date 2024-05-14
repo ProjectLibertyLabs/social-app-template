@@ -35,7 +35,7 @@ const ConnectionsListProfiles = ({
               triggerGraphRefresh={triggerGraphRefresh}
               user={user}
               relationshipStatus={
-                accountFollowing.includes(user.dsnpId) ? RelationshipStatus.FOLLOWING : RelationshipStatus.NONE
+                accountFollowing.includes(user.msaId) ? RelationshipStatus.FOLLOWING : RelationshipStatus.NONE
               }
             />
           )}

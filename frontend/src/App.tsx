@@ -23,7 +23,7 @@ const App = (): ReactElement => {
     expiresIn: 100,
     accessToken: '23',
     handle: 'handle-test',
-    dsnpId: 1,
+    msaId: 1,
   };
   const [userAccount, setUserAccount] = useStickyState<UserAccount | undefined>(undefined, 'user-account');
   const [feedUser, setFeedUser] = useState<User | undefined>();
@@ -64,8 +64,8 @@ const App = (): ReactElement => {
 
   const goToProfile = async (msaId?: string) => {
     setLoading(true);
-    if (dsnpId) {
-      const profile = userAccount.dsnpId === dsnpId ? userAccount : await getUserProfile(dsnpId);
+    if (msaId) {
+      const profile = userAccount.msaId === msaId ? userAccount : await getUserProfile(msaId);
       setFeedUser(profile || undefined);
     } else {
       setFeedUser(undefined);

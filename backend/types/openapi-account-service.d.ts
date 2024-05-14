@@ -188,10 +188,10 @@ export interface OperationMethods {
   /**
    * AccountsController_postSignInWithFrequency - Request to sign in with Frequency
    */
-  "AccountsController_postSignInWithFrequency"(
+  'AccountsController_postSignInWithFrequency'(
     parameters?: Parameters<UnknownParamsObject> | null,
     data?: Paths.AccountsControllerPostSignInWithFrequency.RequestBody,
-    config?: AxiosRequestConfig,
+    config?: AxiosRequestConfig
   ): OperationResponse<Paths.AccountsControllerPostSignInWithFrequency.Responses.$201>;
   /**
    * AccountsController_getAccount - Fetch an account given an msaId.
@@ -277,7 +277,7 @@ export interface PathsDictionary {
     'post'(
       parameters?: Parameters<UnknownParamsObject> | null,
       data?: Paths.AccountsControllerPostSignInWithFrequency.RequestBody,
-      config?: AxiosRequestConfig,
+      config?: AxiosRequestConfig
     ): OperationResponse<Paths.AccountsControllerPostSignInWithFrequency.Responses.$201>;
   };
   ['/accounts/{msaId}']: {

@@ -15,7 +15,7 @@ export const FromTitle = ({ user, goToProfile, isReply, level }: FromTitleProps)
   const secondary = user?.profile?.name || '';
 
   return (
-    <div onClick={() => (goToProfile ? goToProfile(user.dsnpId) : '')} className={styles.root}>
+    <div onClick={() => (goToProfile ? goToProfile(user.msaId) : '')} className={styles.root}>
       {level && (
         <Title style={{ margin: 0 }} level={level}>
           {primary}

@@ -1,13 +1,11 @@
-import { Express, Request, Response } from "express";
-import { BaseController } from "./BaseController";
-import { HttpStatusCode } from "axios";
-import logger from "../logger";
+import { Express, Request, Response } from 'express';
+import { BaseController } from './BaseController';
+import { HttpStatusCode } from 'axios';
+import logger from '../logger';
 
 export class WebhookController extends BaseController {
-  public static referenceIdsReceived: Map<
-    string,
-    { msaId: string; displayHandle: string; accountId: string }
-  > = new Map();
+  public static referenceIdsReceived: Map<string, { msaId: string; displayHandle: string; accountId: string }> =
+    new Map();
 
   constructor(app: Express) {
     super(app, '/webhooks');
@@ -18,10 +16,7 @@ export class WebhookController extends BaseController {
   }
 
   public authServiceWebhook(_req: Request, res: Response) {
-    logger.debug(
-      _req,
-      'WebhookController:authServiceWebhook: received webhook from account-service',
-    );
+    logger.debug(_req, 'WebhookController:authServiceWebhook: received webhook from account-service');
     const { referenceId, handle, msaId, accountId } = _req.body;
 
     if (referenceId && handle && msaId && accountId) {
@@ -30,13 +25,9 @@ export class WebhookController extends BaseController {
         displayHandle: handle,
         accountId,
       });
-      logger.debug(
-        `WebhookController:authServiceWebhook: received referenceId: ${referenceId}`,
-      );
+      logger.debug(`WebhookController:authServiceWebhook: received referenceId: ${referenceId}`);
     } else {
-      logger.error(
-        `WebhookController:authServiceWebhook: missing required fields`,
-      );
+      logger.error(`WebhookController:authServiceWebhook: missing required fields`);
       return res.status(HttpStatusCode.BadRequest).send();
     }
 
