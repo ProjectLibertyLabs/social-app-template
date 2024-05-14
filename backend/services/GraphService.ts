@@ -4,6 +4,10 @@ import { AnnouncementType } from './dsnp.js';
 import { getApi, getNonce, getProviderKey } from './frequency.js';
 import { dsnp } from '@dsnp/frequency-schemas';
 import avro from 'avro-js';
+import { Client as GraphServiceClient } from '../types/openapi-graph-service';
+import { OpenAPIClientAxios, type Document } from 'openapi-client-axios';
+import openapiJson from '../openapi-specs/graph-service.json' assert { type: 'json' };
+import * as Config from '../config/config';
 
 // TODO: Remove all graph logic in favor of proxy to `graph-service`
 
@@ -19,15 +23,38 @@ interface GraphEdge {
 
 export class GraphService {
   private static instance: GraphService;
+  private _client: GraphServiceClient;
 
   private constructor() {}
 
   public static async getInstance(): Promise<GraphService> {
     if (!GraphService.instance) {
       GraphService.instance = new GraphService();
-      // await GraphService.instance.connect();
+      await GraphService.instance.connect();
     }
     return GraphService.instance;
+  }
+
+  private async connect() {
+    if (this._client === undefined) {
+      const api = new OpenAPIClientAxios({
+        definition: openapiJson as unknown as Document,
+        withServer: { url: Config.instance().graphServiceUrl },
+      });
+      const curClient = await api.init<GraphServiceClient>();
+      this.setClient(curClient);
+    }
+  }
+
+  private setClient(api: GraphServiceClient) {
+    this._client = api;
+  }
+
+  private get getClient(): GraphServiceClient {
+    if (this._client === undefined) {
+      throw new Error(`${this.constructor.name} API not initialized`);
+    }
+    return this._client;
   }
 
   private inflatePage(payload: string): GraphEdge[] {
@@ -51,9 +78,10 @@ export class GraphService {
   }
 
   public async getPublicFollows(msaId: string): Promise<string[]> {
-    const api = await getApi();
     const schemaId = getSchemaId(AnnouncementType.PublicFollows);
-    const resp = await api.rpc.statefulStorage.getPaginatedStorage(msaId, schemaId);
+    //TODO
+    const resp = await this.getClient;
+    // const resp = await api.rpc.statefulStorage.getPaginatedStorage(msaId, schemaId);
     const followList = resp.flatMap((page) => {
       try {
         return this.inflatePage(page.toJSON().payload).map((x: { userId: number; since: number }) =>

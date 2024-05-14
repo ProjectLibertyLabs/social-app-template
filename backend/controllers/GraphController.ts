@@ -3,7 +3,7 @@ import { BaseController } from './BaseController';
 import { HttpStatusCode } from 'axios';
 import { GraphService } from '../services/GraphService';
 import { HttpError } from '../types/HttpError';
-import { validateAuthToken, validateMsaAuth } from '../services/TokenAuth';
+import { validateAuthToken } from '../services/TokenAuth';
 
 export class GraphController extends BaseController {
   constructor(app: Express) {
@@ -24,7 +24,7 @@ export class GraphController extends BaseController {
     }
 
     try {
-      const follows = await GraphService.instance().then((service) => service.getPublicFollows(msaId));
+      const follows = await GraphService.getInstance().then((service) => service.getPublicFollows(msaId));
       return res.status(HttpStatusCode.Ok).send(follows);
     } catch (err) {
       console.error('Error getting user follows', err);
@@ -49,7 +49,7 @@ export class GraphController extends BaseController {
     }
 
     try {
-      await GraphService.instance().then((service) => service.follow(msaId, parseInt(msaToFollow)));
+      await GraphService.getInstance().then((service) => service.follow(msaId, parseInt(msaToFollow)));
       return res.status(HttpStatusCode.Created).send();
     } catch (err: any) {
       console.error('Error changing user graph: follow', err);
@@ -73,7 +73,7 @@ export class GraphController extends BaseController {
     }
 
     try {
-      await GraphService.instance().then((service) => service.unfollow(msaId, parseInt(msaToUnfollow)));
+      await GraphService.getInstance().then((service) => service.unfollow(msaId, parseInt(msaToUnfollow)));
 
       return res.status(HttpStatusCode.Created).send();
     } catch (err: any) {
