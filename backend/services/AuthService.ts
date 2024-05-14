@@ -1,22 +1,22 @@
 import {
   Client as AccountServiceClient,
   type Components,
-} from "../types/openapi-account-service";
-import { OpenAPIClientAxios, type Document } from "openapi-client-axios";
-import openapiJson from "../openapi-specs/account-service.json" assert { type: "json" };
+} from '../types/openapi-account-service';
+import { OpenAPIClientAxios, type Document } from 'openapi-client-axios';
+import openapiJson from '../openapi-specs/account-service.json' assert { type: 'json' };
 import {
   WalletProxyResponse,
   validateSignin,
   validateSignup,
-} from "@amplica-labs/siwf";
-import { createAuthToken, getAuthToken, revokeAuthToken } from "./TokenAuth";
-import { getApi, getNonce, getProviderKey } from "./frequency";
-import * as Config from "../config/config";
-import { HttpStatusCode } from "axios";
-import { HttpError } from "../types/HttpError";
-import { Request } from "express";
-import logger from "../logger";
-import { WebhookController } from "../controllers/WebhookController";
+} from '@amplica-labs/siwf';
+import { createAuthToken, getAuthToken, revokeAuthToken } from './TokenAuth';
+import { getApi, getNonce, getProviderKey } from './frequency';
+import * as Config from '../config/config';
+import { HttpStatusCode } from 'axios';
+import { HttpError } from '../types/HttpError';
+import { Request } from 'express';
+import logger from '../logger';
+import { WebhookController } from '../controllers/WebhookController';
 
 type AccountResponse = Components.Schemas.AccountResponse;
 type WalletLoginRequestDto = Components.Schemas.WalletLoginRequestDto;
@@ -194,20 +194,15 @@ export class AccountService {
     // TODO: typescript hates optional and undefined
     if (signIn) {
       try {
-        // TODO: Should we also return the msaId?
-        const parsedSignin = await validateSignin(
-          api,
-          signIn,
-          "amplicalabs.github.io",
-        );
+        const parsedSignin = await validateSignin(api, signIn, 'amplicalabs.github.io');
         return {
           accessToken: createAuthToken(parsedSignin.publicKey),
           expires: Date.now() + 24 * 60 * 60 * 1_000,
           msaId: parsedSignin.msaId,
         };
       } catch (e) {
-        logger.error("Failed signin: ", e);
-        throw new HttpError(HttpStatusCode.Unauthorized, "Failed signin", {
+        logger.error('Failed signin: ', e);
+        throw new HttpError(HttpStatusCode.Unauthorized, 'Failed signin', {
           cause: e,
         });
       }

@@ -1,20 +1,17 @@
-import React, { useState } from "react";
-import { Card, Spin } from "antd";
-import UserAvatar from "../chrome/UserAvatar";
-import PostMedia from "./PostMedia";
-import RelativeTime from "../helpers/RelativeTime";
-import ReplyBlock from "./ReplyBlock";
-import PostHashDropdown from "./PostHashDropdown";
-import { FromTitle } from "./FromTitle";
-import {
-  ActivityContentNote,
-  ActivityContentAttachment,
-} from "@dsnp/activity-content/types";
-import { Anchorme } from "react-anchorme";
-import * as dsnpLink from "../dsnpLink";
-import { useGetUser } from "../service/UserProfileService";
-import { buildDSNPContentURI } from "../helpers/dsnp";
-import styles from "./Post.module.css";
+import React, { ReactElement } from 'react';
+import { Card, Spin } from 'antd';
+import UserAvatar from '../chrome/UserAvatar';
+import PostMedia from './PostMedia';
+import RelativeTime from '../helpers/RelativeTime';
+import ReplyBlock from './ReplyBlock';
+import PostHashDropdown from './PostHashDropdown';
+import { FromTitle } from './FromTitle';
+import { ActivityContentNote, ActivityContentAttachment } from '@dsnp/activity-content/types';
+import { Anchorme } from 'react-anchorme';
+import * as dsnpLink from '../dsnpLink';
+import { useGetUser } from '../service/UserProfileService';
+import { buildDSNPContentURI } from '../helpers/dsnp';
+import styles from './Post.module.css';
 
 type FeedItem = dsnpLink.BroadcastExtended;
 
@@ -24,13 +21,7 @@ type PostProps = {
   showReplyInput: boolean;
 };
 
-const Post = ({
-  feedItem,
-  goToProfile,
-  showReplyInput,
-}: PostProps): JSX.Element => {
-  const [isHoveringProfile, setIsHoveringProfile] = useState(false);
-
+const Post = ({ feedItem, goToProfile, showReplyInput }: PostProps): ReactElement => {
   const { user, isLoading } = useGetUser(feedItem.fromId);
 
   const content = JSON.parse(feedItem?.content) as ActivityContentNote;
@@ -42,26 +33,16 @@ const Post = ({
   return (
     <Card key={feedItem.contentHash} className={styles.root} bordered={false}>
       <Spin tip="Loading" size="large" spinning={isLoading}>
-        <div
-          onClick={() => goToProfile(feedItem.fromId)}
-          onMouseEnter={() => setIsHoveringProfile(true)}
-          onMouseLeave={() => setIsHoveringProfile(false)}
-          className={styles.metaBlock}
-        >
+        <div onClick={() => goToProfile(feedItem.fromId)} className={styles.metaBlock}>
           <Card.Meta
             className={styles.metaInnerBlock}
-            avatar={<UserAvatar user={user} avatarSize={"medium"} />}
+            avatar={<UserAvatar user={user} avatarSize={'medium'} />}
             title={<FromTitle user={user} goToProfile={goToProfile} />}
           />
         </div>
         <div className={styles.time}>
-          {content?.published && (
-            <RelativeTime published={content?.published} postStyle={true} />
-          )}
-          <PostHashDropdown
-            hash={feedItem.contentHash}
-            fromId={feedItem.fromId}
-          />
+          {content?.published && <RelativeTime published={content?.published} postStyle={true} />}
+          <PostHashDropdown hash={feedItem.contentHash} fromId={feedItem.fromId} />
         </div>
         <>
           {content && (
@@ -74,10 +55,7 @@ const Post = ({
           {content?.attachment && <PostMedia attachments={attachments} />}
         </>
         <ReplyBlock
-          parentURI={buildDSNPContentURI(
-            BigInt(feedItem.fromId),
-            feedItem.contentHash,
-          )}
+          parentURI={buildDSNPContentURI(BigInt(feedItem.fromId), feedItem.contentHash)}
           showReplyInput={showReplyInput}
           goToProfile={goToProfile}
           replies={feedItem.replies || []}

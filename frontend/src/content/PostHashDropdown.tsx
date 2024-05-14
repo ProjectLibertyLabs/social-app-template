@@ -1,11 +1,11 @@
-import React, { useState } from "react";
-import { Dropdown } from "antd";
-import { CopyOutlined, CheckCircleTwoTone } from "@ant-design/icons";
-import { HexString } from "../types";
-import { buildDSNPContentURI } from "../helpers/dsnp";
-import styles from "./PostHashDropdown.module.css";
+import React, { ReactElement, useState } from 'react';
+import { Dropdown } from 'antd';
+import { CopyOutlined, CheckCircleTwoTone } from '@ant-design/icons';
+import { HexString } from '../types';
+import { buildDSNPContentURI } from '../helpers/dsnp';
+import styles from './PostHashDropdown.module.css';
 
-import type { MenuProps } from "antd";
+import type { MenuProps } from 'antd';
 
 interface PostHashDropdownProps {
   hash: HexString;
@@ -13,19 +13,15 @@ interface PostHashDropdownProps {
   isReply?: boolean;
 }
 
-const PostHashDropdown = ({
-  hash,
-  fromId,
-  isReply,
-}: PostHashDropdownProps): JSX.Element => {
+const PostHashDropdown = ({ hash, fromId, isReply }: PostHashDropdownProps): ReactElement => {
   const [isCopied, setIsCopied] = useState<boolean>(false);
   const [isVisible, setIsVisible] = useState<boolean>(false);
 
   const announcementURI = buildDSNPContentURI(fromId, hash);
 
-  const items: MenuProps["items"] = [
+  const items: MenuProps['items'] = [
     {
-      key: "1",
+      key: '1',
       label: (
         <div className={styles.menu}>
           <div className={styles.title}>DSNP Announcement URI:</div>
@@ -56,12 +52,7 @@ const PostHashDropdown = ({
           }, 2000);
         }}
       >
-        {isCopied ? (
-          <CheckCircleTwoTone twoToneColor="#1dcf76" />
-        ) : (
-          <CopyOutlined />
-        )}{" "}
-        DSNP URI
+        {isCopied ? <CheckCircleTwoTone twoToneColor="#1dcf76" /> : <CopyOutlined />} DSNP URI
       </button>
     </Dropdown>
   );

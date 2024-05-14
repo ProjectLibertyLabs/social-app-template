@@ -4,7 +4,7 @@ import type {
   UnknownParamsObject,
   OperationResponse,
   AxiosRequestConfig,
-} from "openapi-client-axios";
+} from 'openapi-client-axios';
 
 declare namespace Components {
   namespace Responses {
@@ -51,9 +51,9 @@ declare namespace Components {
     }
     export interface CreateIdentityRequest {
       addProviderSignature: string;
-      algo: "SR25519";
+      algo: 'SR25519';
       baseHandle: string;
-      encoding: "hex";
+      encoding: 'hex';
       expiration: number;
       handleSignature: string;
       publicKey: string;
@@ -68,8 +68,8 @@ declare namespace Components {
       images?: string /* binary */[];
     }
     export interface DelegateRequest {
-      algo: "SR25519";
-      encoding: "hex";
+      algo: 'SR25519';
+      encoding: 'hex';
       encodedValue: string;
       publicKey: string;
     }
@@ -90,8 +90,8 @@ declare namespace Components {
       handle: string;
     }
     export interface LoginRequest {
-      algo: "SR25519";
-      encoding: "hex";
+      algo: 'SR25519';
+      encoding: 'hex';
       encodedValue: string;
       publicKey: string;
       challenge: string;
@@ -143,7 +143,7 @@ declare namespace Components {
       ipfsGateway?: string;
       providerId: string;
       schemas: number[];
-      network: "local" | "testnet" | "mainnet";
+      network: 'local' | 'testnet' | 'mainnet';
     }
     export interface ReplyExtended {
       fromId: string;
@@ -404,318 +404,310 @@ export interface OperationMethods {
    *
    * Allows clients to upload new assets. This endpoint accepts multipart file uploads and returns the identifiers for the newly uploaded assets.
    */
-  "postAssetsHandler"(
+  'postAssetsHandler'(
     parameters?: Parameters<UnknownParamsObject> | null,
     data?: Paths.PostAssetsHandler.RequestBody,
-    config?: AxiosRequestConfig,
+    config?: AxiosRequestConfig
   ): OperationResponse<Paths.PostAssetsHandler.Responses.$202>;
   /**
    * postBroadcastHandler - Create a new post
    */
-  "postBroadcastHandler"(
+  'postBroadcastHandler'(
     parameters?: Parameters<UnknownParamsObject> | null,
     data?: Paths.PostBroadcastHandler.RequestBody,
-    config?: AxiosRequestConfig,
+    config?: AxiosRequestConfig
   ): OperationResponse<Paths.PostBroadcastHandler.Responses.$202>;
   /**
    * authProvider - Return the delegation and provider information
    */
-  "authProvider"(
+  'authProvider'(
     parameters?: Parameters<UnknownParamsObject> | null,
     data?: any,
-    config?: AxiosRequestConfig,
+    config?: AxiosRequestConfig
   ): OperationResponse<Paths.AuthProvider.Responses.$200>;
   /**
    * authLogin2 - Use Wallet Proxy to login
    */
-  "authLogin2"(
+  'authLogin2'(
     parameters?: Parameters<UnknownParamsObject> | null,
     data?: Paths.AuthLogin2.RequestBody,
-    config?: AxiosRequestConfig,
+    config?: AxiosRequestConfig
   ): OperationResponse<Paths.AuthLogin2.Responses.$200>;
   /**
    * authLogout - Logout and invalidate the access token
    */
-  "authLogout"(
+  'authLogout'(
     parameters?: Parameters<UnknownParamsObject> | null,
     data?: any,
-    config?: AxiosRequestConfig,
+    config?: AxiosRequestConfig
   ): OperationResponse<Paths.AuthLogout.Responses.$201>;
   /**
    * authAccount - For polling to get the created account as authCreate can take time
    */
-  "authAccount"(
+  'authAccount'(
     parameters?: Parameters<UnknownParamsObject> | null,
     data?: any,
-    config?: AxiosRequestConfig,
-  ): OperationResponse<
-    Paths.AuthAccount.Responses.$200 | Paths.AuthAccount.Responses.$202
-  >;
+    config?: AxiosRequestConfig
+  ): OperationResponse<Paths.AuthAccount.Responses.$200 | Paths.AuthAccount.Responses.$202>;
   /**
    * getUserFeed - Get recent posts from a user, paginated
    */
-  "getUserFeed"(
-    parameters: Parameters<
-      Paths.GetUserFeed.QueryParameters & Paths.GetUserFeed.PathParameters
-    >,
+  'getUserFeed'(
+    parameters: Parameters<Paths.GetUserFeed.QueryParameters & Paths.GetUserFeed.PathParameters>,
     data?: any,
-    config?: AxiosRequestConfig,
+    config?: AxiosRequestConfig
   ): OperationResponse<Paths.GetUserFeed.Responses.$200>;
   /**
    * getFeed - Get the Feed for the current user, paginated
    */
-  "getFeed"(
+  'getFeed'(
     parameters?: Parameters<Paths.GetFeed.QueryParameters> | null,
     data?: any,
-    config?: AxiosRequestConfig,
+    config?: AxiosRequestConfig
   ): OperationResponse<Paths.GetFeed.Responses.$200>;
   /**
    * getDiscover - Get the Discovery Feed for the current user, paginated
    */
-  "getDiscover"(
+  'getDiscover'(
     parameters?: Parameters<Paths.GetDiscover.QueryParameters> | null,
     data?: any,
-    config?: AxiosRequestConfig,
+    config?: AxiosRequestConfig
   ): OperationResponse<Paths.GetDiscover.Responses.$200>;
   /**
    * createBroadcast - Create a new post
    */
-  "createBroadcast"(
+  'createBroadcast'(
     parameters?: Parameters<UnknownParamsObject> | null,
     data?: Paths.CreateBroadcast.RequestBody,
-    config?: AxiosRequestConfig,
+    config?: AxiosRequestConfig
   ): OperationResponse<Paths.CreateBroadcast.Responses.$200>;
   /**
    * getContent - Get details of a specific post
    */
-  "getContent"(
+  'getContent'(
     parameters: Parameters<Paths.GetContent.PathParameters>,
     data?: any,
-    config?: AxiosRequestConfig,
+    config?: AxiosRequestConfig
   ): OperationResponse<Paths.GetContent.Responses.$200>;
   /**
    * editContent - Edit the content of a specific post
    */
-  "editContent"(
+  'editContent'(
     parameters: Parameters<Paths.EditContent.PathParameters>,
     data?: Paths.EditContent.RequestBody,
-    config?: AxiosRequestConfig,
+    config?: AxiosRequestConfig
   ): OperationResponse<Paths.EditContent.Responses.$200>;
   /**
    * userFollowing - Get a list of users that a specific user follows
    */
-  "userFollowing"(
+  'userFollowing'(
     parameters: Parameters<Paths.UserFollowing.PathParameters>,
     data?: any,
-    config?: AxiosRequestConfig,
+    config?: AxiosRequestConfig
   ): OperationResponse<Paths.UserFollowing.Responses.$200>;
   /**
    * graphFollow - Follow a user
    */
-  "graphFollow"(
+  'graphFollow'(
     parameters: Parameters<Paths.GraphFollow.PathParameters>,
     data?: any,
-    config?: AxiosRequestConfig,
+    config?: AxiosRequestConfig
   ): OperationResponse<Paths.GraphFollow.Responses.$201>;
   /**
    * graphUnfollow - Unfollow a user
    */
-  "graphUnfollow"(
+  'graphUnfollow'(
     parameters: Parameters<Paths.GraphUnfollow.PathParameters>,
     data?: any,
-    config?: AxiosRequestConfig,
+    config?: AxiosRequestConfig
   ): OperationResponse<Paths.GraphUnfollow.Responses.$201>;
   /**
    * getProfile - Get profile information for a specific user
    */
-  "getProfile"(
+  'getProfile'(
     parameters: Parameters<Paths.GetProfile.PathParameters>,
     data?: any,
-    config?: AxiosRequestConfig,
+    config?: AxiosRequestConfig
   ): OperationResponse<Paths.GetProfile.Responses.$200>;
   /**
    * createProfile - Create/Edit the profile information for a current user
    */
-  "createProfile"(
+  'createProfile'(
     parameters: Parameters<Paths.CreateProfile.PathParameters>,
     data?: Paths.CreateProfile.RequestBody,
-    config?: AxiosRequestConfig,
+    config?: AxiosRequestConfig
   ): OperationResponse<Paths.CreateProfile.Responses.$200>;
 }
 
 export interface PathsDictionary {
-  ["/v2/assets"]: {
+  ['/assets']: {
     /**
      * postAssetsHandler - Upload and register new assets
      *
      * Allows clients to upload new assets. This endpoint accepts multipart file uploads and returns the identifiers for the newly uploaded assets.
      */
-    "post"(
+    'post'(
       parameters?: Parameters<UnknownParamsObject> | null,
       data?: Paths.PostAssetsHandler.RequestBody,
-      config?: AxiosRequestConfig,
+      config?: AxiosRequestConfig
     ): OperationResponse<Paths.PostAssetsHandler.Responses.$202>;
   };
-  ["/v2/broadcasts"]: {
+  ['/broadcasts']: {
     /**
      * postBroadcastHandler - Create a new post
      */
-    "post"(
+    'post'(
       parameters?: Parameters<UnknownParamsObject> | null,
       data?: Paths.PostBroadcastHandler.RequestBody,
-      config?: AxiosRequestConfig,
+      config?: AxiosRequestConfig
     ): OperationResponse<Paths.PostBroadcastHandler.Responses.$202>;
   };
-  ["/v1/auth/provider"]: {
+  ['/auth/provider']: {
     /**
      * authProvider - Return the delegation and provider information
      */
-    "get"(
+    'get'(
       parameters?: Parameters<UnknownParamsObject> | null,
       data?: any,
-      config?: AxiosRequestConfig,
+      config?: AxiosRequestConfig
     ): OperationResponse<Paths.AuthProvider.Responses.$200>;
   };
-  ["/v2/auth/login"]: {
+  ['/auth/login']: {
     /**
      * authLogin2 - Use Wallet Proxy to login
      */
-    "post"(
+    'post'(
       parameters?: Parameters<UnknownParamsObject> | null,
       data?: Paths.AuthLogin2.RequestBody,
-      config?: AxiosRequestConfig,
+      config?: AxiosRequestConfig
     ): OperationResponse<Paths.AuthLogin2.Responses.$200>;
   };
-  ["/v1/auth/logout"]: {
+  ['/auth/logout']: {
     /**
      * authLogout - Logout and invalidate the access token
      */
-    "post"(
+    'post'(
       parameters?: Parameters<UnknownParamsObject> | null,
       data?: any,
-      config?: AxiosRequestConfig,
+      config?: AxiosRequestConfig
     ): OperationResponse<Paths.AuthLogout.Responses.$201>;
   };
-  ["/v1/auth/account"]: {
+  ['/auth/account']: {
     /**
      * authAccount - For polling to get the created account as authCreate can take time
      */
-    "get"(
+    'get'(
       parameters?: Parameters<UnknownParamsObject> | null,
       data?: any,
-      config?: AxiosRequestConfig,
-    ): OperationResponse<
-      Paths.AuthAccount.Responses.$200 | Paths.AuthAccount.Responses.$202
-    >;
+      config?: AxiosRequestConfig
+    ): OperationResponse<Paths.AuthAccount.Responses.$200 | Paths.AuthAccount.Responses.$202>;
   };
-  ["/v1/content/{dsnpId}"]: {
+  ['/content/{dsnpId}']: {
     /**
      * getUserFeed - Get recent posts from a user, paginated
      */
-    "get"(
-      parameters: Parameters<
-        Paths.GetUserFeed.QueryParameters & Paths.GetUserFeed.PathParameters
-      >,
+    'get'(
+      parameters: Parameters<Paths.GetUserFeed.QueryParameters & Paths.GetUserFeed.PathParameters>,
       data?: any,
-      config?: AxiosRequestConfig,
+      config?: AxiosRequestConfig
     ): OperationResponse<Paths.GetUserFeed.Responses.$200>;
   };
-  ["/v1/content/feed"]: {
+  ['/content/feed']: {
     /**
      * getFeed - Get the Feed for the current user, paginated
      */
-    "get"(
+    'get'(
       parameters?: Parameters<Paths.GetFeed.QueryParameters> | null,
       data?: any,
-      config?: AxiosRequestConfig,
+      config?: AxiosRequestConfig
     ): OperationResponse<Paths.GetFeed.Responses.$200>;
   };
-  ["/v1/content/discover"]: {
+  ['/content/discover']: {
     /**
      * getDiscover - Get the Discovery Feed for the current user, paginated
      */
-    "get"(
+    'get'(
       parameters?: Parameters<Paths.GetDiscover.QueryParameters> | null,
       data?: any,
-      config?: AxiosRequestConfig,
+      config?: AxiosRequestConfig
     ): OperationResponse<Paths.GetDiscover.Responses.$200>;
   };
-  ["/v1/content/create"]: {
+  ['/content/create']: {
     /**
      * createBroadcast - Create a new post
      */
-    "post"(
+    'post'(
       parameters?: Parameters<UnknownParamsObject> | null,
       data?: Paths.CreateBroadcast.RequestBody,
-      config?: AxiosRequestConfig,
+      config?: AxiosRequestConfig
     ): OperationResponse<Paths.CreateBroadcast.Responses.$200>;
   };
-  ["/v1/content/{dsnpId}/{contentHash}"]: {
+  ['/content/{dsnpId}/{contentHash}']: {
     /**
      * getContent - Get details of a specific post
      */
-    "get"(
+    'get'(
       parameters: Parameters<Paths.GetContent.PathParameters>,
       data?: any,
-      config?: AxiosRequestConfig,
+      config?: AxiosRequestConfig
     ): OperationResponse<Paths.GetContent.Responses.$200>;
   };
-  ["/v1/content/{type}/{contentHash}"]: {
+  ['/content/{type}/{contentHash}']: {
     /**
      * editContent - Edit the content of a specific post
      */
-    "put"(
+    'put'(
       parameters: Parameters<Paths.EditContent.PathParameters>,
       data?: Paths.EditContent.RequestBody,
-      config?: AxiosRequestConfig,
+      config?: AxiosRequestConfig
     ): OperationResponse<Paths.EditContent.Responses.$200>;
   };
-  ["/v1/graph/{dsnpId}/following"]: {
+  ['/graph/{dsnpId}/following']: {
     /**
      * userFollowing - Get a list of users that a specific user follows
      */
-    "get"(
+    'get'(
       parameters: Parameters<Paths.UserFollowing.PathParameters>,
       data?: any,
-      config?: AxiosRequestConfig,
+      config?: AxiosRequestConfig
     ): OperationResponse<Paths.UserFollowing.Responses.$200>;
   };
-  ["/v1/graph/{dsnpId}/follow"]: {
+  ['/graph/{dsnpId}/follow']: {
     /**
      * graphFollow - Follow a user
      */
-    "post"(
+    'post'(
       parameters: Parameters<Paths.GraphFollow.PathParameters>,
       data?: any,
-      config?: AxiosRequestConfig,
+      config?: AxiosRequestConfig
     ): OperationResponse<Paths.GraphFollow.Responses.$201>;
   };
-  ["/v1/graph/{dsnpId}/unfollow"]: {
+  ['/graph/{dsnpId}/unfollow']: {
     /**
      * graphUnfollow - Unfollow a user
      */
-    "post"(
+    'post'(
       parameters: Parameters<Paths.GraphUnfollow.PathParameters>,
       data?: any,
-      config?: AxiosRequestConfig,
+      config?: AxiosRequestConfig
     ): OperationResponse<Paths.GraphUnfollow.Responses.$201>;
   };
-  ["/v1/profiles/{dsnpId}"]: {
+  ['/profiles/{dsnpId}']: {
     /**
      * getProfile - Get profile information for a specific user
      */
-    "get"(
+    'get'(
       parameters: Parameters<Paths.GetProfile.PathParameters>,
       data?: any,
-      config?: AxiosRequestConfig,
+      config?: AxiosRequestConfig
     ): OperationResponse<Paths.GetProfile.Responses.$200>;
     /**
      * createProfile - Create/Edit the profile information for a current user
      */
-    "put"(
+    'put'(
       parameters: Parameters<Paths.CreateProfile.PathParameters>,
       data?: Paths.CreateProfile.RequestBody,
-      config?: AxiosRequestConfig,
+      config?: AxiosRequestConfig
     ): OperationResponse<Paths.CreateProfile.Responses.$200>;
   };
 }

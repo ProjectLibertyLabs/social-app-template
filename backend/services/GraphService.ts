@@ -1,9 +1,9 @@
-import zlib from "node:zlib";
-import { getSchemaId } from "./announce.js";
-import { AnnouncementType } from "./dsnp.js";
-import { getApi, getNonce, getProviderKey } from "./frequency.js";
-import { dsnp } from "@dsnp/frequency-schemas";
-import avro from "avro-js";
+import zlib from 'node:zlib';
+import { getSchemaId } from './announce.js';
+import { AnnouncementType } from './dsnp.js';
+import { getApi, getNonce, getProviderKey } from './frequency.js';
+import { dsnp } from '@dsnp/frequency-schemas';
+import avro from 'avro-js';
 
 // TODO: Remove all graph logic in favor of proxy to `graph-service`
 
@@ -33,13 +33,13 @@ export class GraphService {
   private inflatePage(payload: string): GraphEdge[] {
     if (!payload) return [];
     try {
-      const buf = Buffer.from(payload.substring(2), "hex");
+      const buf = Buffer.from(payload.substring(2), 'hex');
       const container = publicFollowsCompressed.fromBuffer(buf);
       const data = zlib.inflateSync(container.compressedPublicGraph);
       const graphEdges = publicFollowsAvro.fromBuffer(data);
       return graphEdges;
     } catch (e) {
-      console.log("Error parsing page", e);
+      console.log('Error parsing page', e);
       return [];
     }
   }
@@ -53,17 +53,14 @@ export class GraphService {
   public async getPublicFollows(msaId: string): Promise<string[]> {
     const api = await getApi();
     const schemaId = getSchemaId(AnnouncementType.PublicFollows);
-    const resp = await api.rpc.statefulStorage.getPaginatedStorage(
-      msaId,
-      schemaId,
-    );
+    const resp = await api.rpc.statefulStorage.getPaginatedStorage(msaId, schemaId);
     const followList = resp.flatMap((page) => {
       try {
-        return this.inflatePage(page.toJSON().payload).map(
-          (x: { userId: number; since: number }) => x.userId.toString(),
+        return this.inflatePage(page.toJSON().payload).map((x: { userId: number; since: number }) =>
+          x.userId.toString()
         );
       } catch (e) {
-        console.error("Failed to parse public follows...", e);
+        console.error('Failed to parse public follows...', e);
         return [];
       }
     });
@@ -72,13 +69,10 @@ export class GraphService {
   }
 
   public async follow(actorId: string, objectId: number): Promise<void> {
-    console.log("Follow Request", { actorId, objectId });
+    console.log('Follow Request', { actorId, objectId });
     const api = await getApi();
     const schemaId = getSchemaId(AnnouncementType.PublicFollows);
-    const resp = await api.rpc.statefulStorage.getPaginatedStorage(
-      actorId,
-      schemaId,
-    );
+    const resp = await api.rpc.statefulStorage.getPaginatedStorage(actorId, schemaId);
 
     const pages = resp.map((page) => page.toJSON());
 
@@ -86,7 +80,7 @@ export class GraphService {
       try {
         return this.inflatePage(page.payload).map((x: GraphEdge) => x.userId);
       } catch (e) {
-        console.error("Failed to parse public follows...", e);
+        console.error('Failed to parse public follows...', e);
         return [];
       }
     });
@@ -115,42 +109,29 @@ export class GraphService {
       userId: objectId,
       since: Math.floor(Date.now() / 1000),
     });
-    console.log("upsertEdges", upsertEdges);
+    console.log('upsertEdges', upsertEdges);
 
     const encodedPage = this.deflatePage(upsertEdges);
-    const payload = "0x" + encodedPage.toString("hex");
+    const payload = '0x' + encodedPage.toString('hex');
 
-    const tx = api.tx.statefulStorage.upsertPage(
-      actorId,
-      schemaId,
-      pageNumber,
-      hash,
-      payload,
-    );
+    const tx = api.tx.statefulStorage.upsertPage(actorId, schemaId, pageNumber, hash, payload);
     // Do NOT wait for all the callbacks. Assume for now that it will work...
     await api.tx.frequencyTxPayment
       .payWithCapacity(tx)
-      .signAndSend(
-        getProviderKey(),
-        { nonce: await getNonce() },
-        ({ status, dispatchError }) => {
-          if (dispatchError) {
-            console.error("Graph ERROR: ", dispatchError.toHuman());
-          } else if (status.isInBlock || status.isFinalized) {
-            console.log("Graph Updated: ", status.toHuman());
-          }
-        },
-      );
+      .signAndSend(getProviderKey(), { nonce: await getNonce() }, ({ status, dispatchError }) => {
+        if (dispatchError) {
+          console.error('Graph ERROR: ', dispatchError.toHuman());
+        } else if (status.isInBlock || status.isFinalized) {
+          console.log('Graph Updated: ', status.toHuman());
+        }
+      });
   }
 
   public async unfollow(actorId: string, objectId: number): Promise<void> {
-    console.log("Unfollow Request", { actorId, objectId });
+    console.log('Unfollow Request', { actorId, objectId });
     const api = await getApi();
     const schemaId = getSchemaId(AnnouncementType.PublicFollows);
-    const resp = await api.rpc.statefulStorage.getPaginatedStorage(
-      actorId,
-      schemaId,
-    );
+    const resp = await api.rpc.statefulStorage.getPaginatedStorage(actorId, schemaId);
 
     const pages = resp.map((page) => page.toJSON());
 
@@ -158,7 +139,7 @@ export class GraphService {
       try {
         return this.inflatePage(page.payload).map((x: GraphEdge) => x.userId);
       } catch (e) {
-        console.error("Failed to parse public follows...", e);
+        console.error('Failed to parse public follows...', e);
         return [];
       }
     });
@@ -172,39 +153,22 @@ export class GraphService {
     const originalEdges = this.inflatePage(editPage.payload);
     const hash = editPage.content_hash;
 
-    const upsertEdges = originalEdges.filter(
-      ({ userId }) => userId !== objectId,
-    );
-    console.log(
-      "upsertEdges",
-      upsertEdges,
-      "Length Difference: ",
-      originalEdges.length - upsertEdges.length,
-    );
+    const upsertEdges = originalEdges.filter(({ userId }) => userId !== objectId);
+    console.log('upsertEdges', upsertEdges, 'Length Difference: ', originalEdges.length - upsertEdges.length);
 
     const encodedPage = this.deflatePage(upsertEdges);
-    const payload = "0x" + encodedPage.toString("hex");
+    const payload = '0x' + encodedPage.toString('hex');
 
-    const tx = api.tx.statefulStorage.upsertPage(
-      actorId,
-      schemaId,
-      pageNumber,
-      hash,
-      payload,
-    );
+    const tx = api.tx.statefulStorage.upsertPage(actorId, schemaId, pageNumber, hash, payload);
     // Do NOT wait for all the callbacks. Assume for now that it will work...
     await api.tx.frequencyTxPayment
       .payWithCapacity(tx)
-      .signAndSend(
-        getProviderKey(),
-        { nonce: await getNonce() },
-        ({ status, dispatchError }) => {
-          if (dispatchError) {
-            console.error("Graph ERROR: ", dispatchError.toHuman());
-          } else if (status.isInBlock || status.isFinalized) {
-            console.log("Graph Updated: ", status.toHuman());
-          }
-        },
-      );
+      .signAndSend(getProviderKey(), { nonce: await getNonce() }, ({ status, dispatchError }) => {
+        if (dispatchError) {
+          console.error('Graph ERROR: ', dispatchError.toHuman());
+        } else if (status.isInBlock || status.isFinalized) {
+          console.log('Graph Updated: ', status.toHuman());
+        }
+      });
   }
 }

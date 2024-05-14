@@ -7,13 +7,19 @@
   padding: 0 16px;
   display: flex;
   align-items: center;
+  justify-content: center;
+}
+
+.container {
+  display: flex;
+  align-items: center;
   justify-content: space-between;
-  margin-bottom: 16px;
+  max-width: 1300px;
+  width: 100%;
 }
 
 .title {
-  margin: 0;
-  font-style: italic;
+  margin: 19px 0;
 }
 
 .user {

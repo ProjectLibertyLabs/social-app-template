@@ -10,17 +10,17 @@ export class WebhookController extends BaseController {
   > = new Map();
 
   constructor(app: Express) {
-    super(app, "/webhooks");
+    super(app, '/webhooks');
   }
 
   protected initializeRoutes(): void {
-    this.router.post("/account-service", this.authServiceWebhook.bind(this));
+    this.router.post('/account-service', this.authServiceWebhook.bind(this));
   }
 
   public authServiceWebhook(_req: Request, res: Response) {
     logger.debug(
       _req,
-      "WebhookController:authServiceWebhook: received webhook from account-service",
+      'WebhookController:authServiceWebhook: received webhook from account-service',
     );
     const { referenceId, handle, msaId, accountId } = _req.body;
 

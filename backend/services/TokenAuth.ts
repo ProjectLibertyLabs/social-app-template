@@ -1,9 +1,9 @@
-import { randomUUID } from "crypto";
-import { getApi } from "./frequency.js";
-import { NextFunction, Request, Response } from "express";
-import { HttpStatusCode } from "axios";
-import { AccountService } from "./AuthService.js";
-import logger from "../logger";
+import { randomUUID } from 'crypto';
+import { getApi } from './frequency.js';
+import { NextFunction, Request, Response } from 'express';
+import { HttpStatusCode } from 'axios';
+import { AccountService } from './AuthService.js';
+import logger from '../logger';
 
 export type RequestAccount = { publicKey: string; msaId?: string };
 
@@ -32,9 +32,7 @@ export function revokeAuthToken(token: string): void {
   authTokenRegistry.delete(token);
 }
 
-export async function getAccountFromAuth(
-  token: string,
-): Promise<null | RequestAccount> {
+export async function getAccountFromAuth(token: string): Promise<null | RequestAccount> {
   const account = authTokenRegistry.get(token);
   if (!account) return null;
   if (account.msaId) return account;
@@ -45,14 +43,9 @@ export async function getAccountFromAuth(
   return account;
 }
 
-export async function getMsaByPublicKey(
-  publicKey: string,
-): Promise<string | null> {
+export async function getMsaByPublicKey(publicKey: string): Promise<string | null> {
   const cachedResult = cachePublicKeys.get(publicKey);
-  if (
-    cachedResult &&
-    cachedResult.added.getTime() + 360 < new Date().getTime()
-  ) {
+  if (cachedResult && cachedResult.added.getTime() + 360 < new Date().getTime()) {
     return cachedResult.msaId;
   }
 
@@ -76,21 +69,14 @@ export async function getMsaByPublicKey(
 }
 
 export function getAuthToken(req: Request): string | null {
-  if (
-    req.headers?.authorization &&
-    typeof req.headers.authorization === "string"
-  ) {
-    return req.headers.authorization.split(" ")[1];
+  if (req.headers?.authorization && typeof req.headers.authorization === 'string') {
+    return req.headers.authorization.split(' ')[1];
   }
 
   return null;
 }
 
-export async function validateAuthToken(
-  req: Request,
-  res: Response,
-  next: NextFunction,
-) {
+export async function validateAuthToken(req: Request, res: Response, next: NextFunction) {
   const token = getAuthToken(req);
   logger.debug(`validateAuthToken: ${token}`);
   if (!token) {
@@ -110,11 +96,7 @@ export async function validateAuthToken(
 }
 
 /// Dev function useful to swap in to endpoints when testing with Postman, etc
-export function debugAuthToken(
-  req: Request,
-  res: Response,
-  next: NextFunction,
-) {
+export function debugAuthToken(req: Request, res: Response, next: NextFunction) {
   Object.assign(req.headers, {
     publicKey: process.env.DEBUG_PUBKEY,
     msaId: process.env.DEBUG_MSA_ID,
@@ -122,33 +104,22 @@ export function debugAuthToken(
   next();
 }
 
-export async function validateMsaAuth(
-  req: Request,
-  res: Response,
-  next: NextFunction,
-) {
+export async function validateMsaAuth(req: Request, res: Response, next: NextFunction) {
   const { msaId } = req.headers;
 
   // Make sure msaId is populated & is a string (as opposed to an array)
-  if (!msaId || typeof msaId !== "string") {
-    return res
-      .status(HttpStatusCode.Unauthorized)
-      .send("Missing or invalid MSA")
-      .end();
+  if (!msaId || typeof msaId !== 'string') {
+    return res.status(HttpStatusCode.Unauthorized).send('Missing or invalid MSA').end();
   }
 
   try {
     BigInt(msaId);
     next();
   } catch (err: any) {
-    return res.status(HttpStatusCode.Unauthorized).send("Invalid MSA");
+    return res.status(HttpStatusCode.Unauthorized).send('Invalid MSA');
   }
 }
 
-export function debugMsaAuth(
-  _req: Request,
-  _res: Response,
-  next: NextFunction,
-) {
+export function debugMsaAuth(_req: Request, _res: Response, next: NextFunction) {
   next();
 }

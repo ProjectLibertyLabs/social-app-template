@@ -10,14 +10,14 @@ import logger from "../logger";
 
 export class AuthController extends BaseController {
   constructor(app: Express) {
-    super(app, "/auth");
+    super(app, '/auth');
   }
 
   protected initializeRoutes(): void {
-    this.router.get("/siwf", this.getSiwf.bind(this));
-    this.router.get("/account", this.getAccount.bind(this));
-    this.router.post("/login", this.postLogin.bind(this));
-    this.router.post("/logout", validateAuthToken, this.postLogout.bind(this));
+    this.router.get('/siwf', this.getSiwf.bind(this));
+    this.router.get('/account', this.getAccount.bind(this));
+    this.router.post('/login', this.postLogin.bind(this));
+    this.router.post('/logout', validateAuthToken, this.postLogout.bind(this));
   }
 
   public async getSiwf(_req: Request, res: Response) {

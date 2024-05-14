@@ -1,9 +1,9 @@
-import React from "react";
-import { RelationshipStatus, User, UserAccount } from "../types";
-import GraphChangeButton from "./GraphChangeButton";
-import { FromTitle } from "../content/FromTitle";
-import UserAvatar from "../chrome/UserAvatar";
-import styles from "./ConnectionsListProfiles.module.css";
+import React, { ReactElement } from 'react';
+import { RelationshipStatus, User, UserAccount } from '../types';
+import GraphChangeButton from './GraphChangeButton';
+import { FromTitle } from '../content/FromTitle';
+import UserAvatar from '../chrome/UserAvatar';
+import styles from './ConnectionsListProfiles.module.css';
 
 interface ConnectionsListProfilesProps {
   account: UserAccount;
@@ -19,7 +19,7 @@ const ConnectionsListProfiles = ({
   accountFollowing,
   triggerGraphRefresh,
   goToProfile,
-}: ConnectionsListProfilesProps): JSX.Element => {
+}: ConnectionsListProfilesProps): ReactElement => {
   return (
     <>
       {connectionsList.map((user, index) => (
@@ -35,9 +35,7 @@ const ConnectionsListProfiles = ({
               triggerGraphRefresh={triggerGraphRefresh}
               user={user}
               relationshipStatus={
-                accountFollowing.includes(user.msaId)
-                  ? RelationshipStatus.FOLLOWING
-                  : RelationshipStatus.NONE
+                accountFollowing.includes(user.dsnpId) ? RelationshipStatus.FOLLOWING : RelationshipStatus.NONE
               }
             />
           )}

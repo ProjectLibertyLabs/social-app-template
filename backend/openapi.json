@@ -2,7 +2,7 @@
   "openapi": "3.0.0",
   "servers": [
     {
-      "url": "http://localhost:5005"
+      "url": "http://localhost:3000"
     }
   ],
   "info": {
@@ -376,7 +376,7 @@
         }
       }
     },
-    "/v1/content/{dsnpId}/{contentHash}": {
+    "/content/{dsnpId}/{contentHash}": {
       "get": {
         "operationId": "getContent",
         "summary": "Get details of a specific post",
@@ -478,7 +478,7 @@
         }
       }
     },
-    "/v1/graph/{dsnpId}/following": {
+    "/graph/{dsnpId}/following": {
       "get": {
         "operationId": "userFollowing",
         "summary": "Get a list of users that a specific user follows",
@@ -518,7 +518,7 @@
         }
       }
     },
-    "/v1/graph/{dsnpId}/follow": {
+    "/graph/{dsnpId}/follow": {
       "post": {
         "operationId": "graphFollow",
         "summary": "Follow a user",

@@ -24,13 +24,7 @@ export type Announcement = TypedAnnouncement<AnnouncementType>;
 export type TypedAnnouncement<T extends AnnouncementType> = {
   announcementType: T;
   fromId: string;
-} & (
-  | TombstoneFields
-  | BroadcastFields
-  | ReplyFields
-  | ReactionFields
-  | ProfileFields
-);
+} & (TombstoneFields | BroadcastFields | ReplyFields | ReactionFields | ProfileFields);
 
 type TombstoneFields = {
   announcementType: AnnouncementType.Tombstone;
@@ -66,8 +60,7 @@ type ProfileFields = {
 /**
  * TombstoneAnnouncement: an Announcement of type Tombstone
  */
-export type TombstoneAnnouncement =
-  TypedAnnouncement<AnnouncementType.Tombstone>;
+export type TombstoneAnnouncement = TypedAnnouncement<AnnouncementType.Tombstone>;
 
 /**
  * createTombstone() generates a tombstone announcement from a given URL and
@@ -81,7 +74,7 @@ export type TombstoneAnnouncement =
 export const createTombstone = (
   fromId: string,
   targetType: AnnouncementType,
-  targetSignature: string,
+  targetSignature: string
 ): TombstoneAnnouncement => ({
   announcementType: AnnouncementType.Tombstone,
   targetAnnouncementType: targetType,
@@ -92,8 +85,7 @@ export const createTombstone = (
 /**
  * BroadcastAnnouncement: an Announcement of type Broadcast
  */
-export type BroadcastAnnouncement =
-  TypedAnnouncement<AnnouncementType.Broadcast>;
+export type BroadcastAnnouncement = TypedAnnouncement<AnnouncementType.Broadcast>;
 
 /**
  * createBroadcast() generates a broadcast announcement from a given URL and
@@ -104,11 +96,7 @@ export type BroadcastAnnouncement =
  * @param hash      - The hash of the content at the URL
  * @returns A BroadcastAnnouncement
  */
-export const createBroadcast = (
-  fromId: string,
-  url: string,
-  hash: string,
-): BroadcastAnnouncement => ({
+export const createBroadcast = (fromId: string, url: string, hash: string): BroadcastAnnouncement => ({
   announcementType: AnnouncementType.Broadcast,
   contentHash: hash,
   fromId,
@@ -130,12 +118,7 @@ export type ReplyAnnouncement = TypedAnnouncement<AnnouncementType.Reply>;
  * @param inReplyTo - The DSNP Content Uri of the parent announcement
  * @returns A ReplyAnnouncement
  */
-export const createReply = (
-  fromId: string,
-  url: string,
-  hash: string,
-  inReplyTo: string,
-): ReplyAnnouncement => ({
+export const createReply = (fromId: string, url: string, hash: string, inReplyTo: string): ReplyAnnouncement => ({
   announcementType: AnnouncementType.Reply,
   contentHash: hash,
   fromId,
@@ -157,11 +140,7 @@ export type ReactionAnnouncement = TypedAnnouncement<AnnouncementType.Reaction>;
  * @param inReplyTo - The DSNP Content Uri of the parent announcement
  * @returns A ReactionAnnouncement
  */
-export const createReaction = (
-  fromId: string,
-  emoji: string,
-  inReplyTo: string,
-): ReactionAnnouncement => ({
+export const createReaction = (fromId: string, emoji: string, inReplyTo: string): ReactionAnnouncement => ({
   announcementType: AnnouncementType.Reaction,
   emoji,
   fromId,
@@ -181,11 +160,7 @@ export type ProfileAnnouncement = TypedAnnouncement<AnnouncementType.Profile>;
  * @param hash      - The hash of the content at the URL
  * @returns A ProfileAnnouncement
  */
-export const createProfile = (
-  fromId: string,
-  url: string,
-  hash: string,
-): ProfileAnnouncement => ({
+export const createProfile = (fromId: string, url: string, hash: string): ProfileAnnouncement => ({
   announcementType: AnnouncementType.Profile,
   contentHash: hash,
   fromId,

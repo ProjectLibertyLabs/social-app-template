@@ -1,12 +1,12 @@
-import React, { useState } from "react";
-import { Button, Spin, Form } from "antd";
-import Title from "antd/es/typography/Title";
-import { getLoginOrRegistrationPayload, setConfig } from "@amplica-labs/siwf";
+import React, { ReactElement, useState } from 'react';
+import { Button, Spin, Form } from 'antd';
+import Title from 'antd/es/typography/Title';
+import { getLoginOrRegistrationPayload, setConfig } from '@amplica-labs/siwf';
 
-import * as dsnpLink from "../dsnpLink";
-import { UserAccount } from "../types";
-import styles from "./Login.module.css";
-import { getContext, setAccessToken } from "../service/AuthService";
+import * as dsnpLink from '../dsnpLink';
+import { UserAccount } from '../types';
+import styles from './Login.module.css';
+import { getContext, setAccessToken } from '../service/AuthService';
 
 /**
  * Props for the Login component.
@@ -45,12 +45,7 @@ interface LoginProps {
  * @param {string} props.siwfUrl - The URL where Wallet-Proxy lives.
  * @returns {JSX.Element} The rendered login component.
  */
-const Login = ({
-  onLogin,
-  providerId,
-  nodeUrl,
-  siwfUrl,
-}: LoginProps): JSX.Element => {
+const Login = ({ onLogin, providerId, nodeUrl, siwfUrl }: LoginProps): ReactElement => {
   const [isLoading, setIsLoading] = useState(false);
 
   const handleLogin = async () => {
@@ -72,13 +67,13 @@ const Login = ({
         // A specified version can be set using the ID attribute.
         // If set to 0 it grabs the latest version for the schema.
         schemas: [
-          { name: "broadcast" },
-          { name: "reply" },
-          { name: "reaction" },
-          { name: "profile" },
-          { name: "tombstone" },
-          { name: "update" },
-          { name: "public-follows" },
+          { name: 'broadcast' },
+          { name: 'reply' },
+          { name: 'reaction' },
+          { name: 'profile' },
+          { name: 'tombstone' },
+          { name: 'update' },
+          { name: 'public-follows' },
         ],
       });
 
@@ -224,7 +219,7 @@ const Login = ({
         tries++;
       }
       if (accountResp === null) {
-        throw new Error("Account Creation timed out");
+        throw new Error('Account Creation timed out');
       }
 
       console.log(

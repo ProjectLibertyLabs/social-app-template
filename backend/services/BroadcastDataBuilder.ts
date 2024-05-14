@@ -11,7 +11,7 @@ export class BroadcastDataBuilder {
 
   private static createAsset(asset: string) {
     return {
-      type: "image" as "image" | "link" | "audio" | "video",
+      type: 'image' as 'image' | 'link' | 'audio' | 'video',
       references: [
         {
           referenceId: asset,

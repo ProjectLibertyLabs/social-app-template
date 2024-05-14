@@ -1,20 +1,17 @@
-import React, { useEffect, useState } from "react";
-import { Spin, Row, Col } from "antd";
-import * as dsnpLink from "../dsnpLink";
-import Login from "./Login";
-import { UserAccount } from "../types";
-import styles from "./LoginScreen.module.css";
+import React, { ReactElement, useEffect, useState } from 'react';
+import { Spin, Row, Col } from 'antd';
+import * as dsnpLink from '../dsnpLink';
+import Login from './Login';
+import { UserAccount } from '../types';
+import styles from './LoginScreen.module.css';
 
 const dsnpLinkCtx = dsnpLink.createContext();
 
 interface LoginScreenProps {
-  onLogin: (
-    account: UserAccount,
-    providerInfo: dsnpLink.ProviderResponse,
-  ) => void;
+  onLogin: (account: UserAccount, providerInfo: dsnpLink.ProviderResponse) => void;
 }
 
-const LoginScreen = ({ onLogin }: LoginScreenProps): JSX.Element => {
+const LoginScreen = ({ onLogin }: LoginScreenProps): ReactElement => {
   // Assume it has a wallet extension until after we have called enable
   const [isLoading, setIsLoading] = useState(true);
   const [providerInfo, setProviderInfo] = useState<dsnpLink.ProviderResponse>();

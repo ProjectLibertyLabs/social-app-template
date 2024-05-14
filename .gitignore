@@ -27,4 +27,14 @@ frontend/build/*
 ### ENV ###
 .env
 .env*
+
+
+### Idea ###
+.idea/
+
+### VS Code ###
 .vscode
+
+## Idea ##
+.idea/
+.idea

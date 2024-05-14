@@ -206,7 +206,7 @@ export function createContext<FetcherData>(
   params?: r.CreateContextParams<AuthMethods, FetcherData>
 ): r.Context<AuthMethods, FetcherData> {
   return new r.Context<AuthMethods, FetcherData>({
-    serverConfiguration: new r.ServerConfiguration(process.env.REACT_APP_BACKEND_URL || 'http://localhost:5005', {}),
+    serverConfiguration: new r.ServerConfiguration(process.env.REACT_APP_BACKEND_URL || 'http://localhost:3000', {}),
     authMethods: configureAuth(params?.authProviders),
     ...params
 }); }
@@ -379,7 +379,7 @@ export async function getContent<FetcherData>(ctx: r.Context<AuthMethods, Fetche
     contentHash: string;
 }, opts?: FetcherData): Promise<BroadcastExtended> {
     const req = await ctx.createRequest({
-        path: '/v1/content/{dsnpId}/{contentHash}',
+        path: '/content/{dsnpId}/{contentHash}',
         params,
         method: r.HttpMethod.GET,
         auth: ["tokenAuth"]
@@ -411,7 +411,7 @@ export async function userFollowing<FetcherData>(ctx: r.Context<AuthMethods, Fet
     dsnpId: string;
 }, opts?: FetcherData): Promise<string[]> {
     const req = await ctx.createRequest({
-        path: '/v1/graph/{dsnpId}/following',
+        path: '/graph/{dsnpId}/following',
         params,
         method: r.HttpMethod.GET,
         auth: ["tokenAuth"]
@@ -426,7 +426,7 @@ export async function graphFollow<FetcherData>(ctx: r.Context<AuthMethods, Fetch
     dsnpId: string;
 }, opts?: FetcherData): Promise<any> {
     const req = await ctx.createRequest({
-        path: '/v1/graph/{dsnpId}/follow',
+        path: '/graph/{dsnpId}/follow',
         params,
         method: r.HttpMethod.POST,
         auth: ["tokenAuth"]

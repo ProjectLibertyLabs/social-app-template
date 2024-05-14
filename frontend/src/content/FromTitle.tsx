@@ -1,7 +1,7 @@
-import React from "react";
-import { User } from "../types";
-import styles from "./FromTitle.module.css";
-import Title from "antd/es/typography/Title";
+import React, { ReactElement } from 'react';
+import { User } from '../types';
+import styles from './FromTitle.module.css';
+import Title from 'antd/es/typography/Title';
 
 interface FromTitleProps {
   user: User;
@@ -10,21 +10,12 @@ interface FromTitleProps {
   isReply?: boolean;
 }
 
-export const FromTitle = ({
-  user,
-  goToProfile,
-  isReply,
-  level,
-}: FromTitleProps): JSX.Element => {
-  const atHandle = user.handle;
-  const primary = atHandle;
-  const secondary = user?.profile?.name || "";
+export const FromTitle = ({ user, goToProfile, isReply, level }: FromTitleProps): ReactElement => {
+  const primary = user.handle;
+  const secondary = user?.profile?.name || '';
 
   return (
-    <div
-      onClick={() => (goToProfile ? goToProfile(user.msaId) : "")}
-      className={styles.root}
-    >
+    <div onClick={() => (goToProfile ? goToProfile(user.dsnpId) : '')} className={styles.root}>
       {level && (
         <Title style={{ margin: 0 }} level={level}>
           {primary}

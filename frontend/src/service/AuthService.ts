@@ -1,4 +1,4 @@
-import * as dsnpLink from "../dsnpLink";
+import * as dsnpLink from '../dsnpLink';
 
 let accessToken: string | null = null;
 let accessExpires: number | null = null;

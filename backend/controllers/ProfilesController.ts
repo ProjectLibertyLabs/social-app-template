@@ -1,15 +1,15 @@
-import { Express, Request, Response } from "express";
-import { BaseController } from "./BaseController";
-import { HttpStatusCode } from "axios";
+import { Express, Request, Response } from 'express';
+import { BaseController } from './BaseController';
+import { HttpStatusCode } from 'axios';
 
 export class ProfilesController extends BaseController {
   constructor(app: Express) {
-    super(app, "/profiles");
+    super(app, '/profiles');
   }
 
   protected initializeRoutes(): void {
-    this.router.get("/:dsnpId", this.getProfile.bind(this));
-    this.router.put("/:dsnpId", this.putProfile.bind(this));
+    this.router.get('/:dsnpId', this.getProfile.bind(this));
+    this.router.put('/:dsnpId', this.putProfile.bind(this));
   }
 
   public getProfile(_req: Request, res: Response) {
