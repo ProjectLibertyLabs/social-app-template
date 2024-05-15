@@ -85,14 +85,13 @@ const Login = ({ onLogin, providerId, nodeUrl, siwfUrl }: LoginProps): ReactElem
 
       // Initiate the login process with SIWF
       // This will return a referenceId that we can use to correlate with the webhook callback response
-      const { msaId, referenceId, accessToken, expires } =
-        await dsnpLink.authLogin(
-          dsnpLinkNoTokenCtx,
-          {},
-          authPayload as dsnpLink.WalletLoginRequest,
-        );
+      const { msaId, referenceId, accessToken, expires } = await dsnpLink.authLogin(
+        dsnpLinkNoTokenCtx,
+        {},
+        authPayload as dsnpLink.WalletLoginRequest
+      );
       console.log(
-        `Login.tsx::handleLogin: dsnpLink.authLogin: msaId:(${msaId}) referenceId:(${referenceId}) accessToken:(${accessToken}) expires:(${expires}`,
+        `Login.tsx::handleLogin: dsnpLink.authLogin: msaId:(${msaId}) referenceId:(${referenceId}) accessToken:(${accessToken}) expires:(${expires}`
       );
       // TODO: Move access token to after receiving webhook callback response
       // setAccessToken(accessToken, expires);
@@ -122,7 +121,7 @@ const Login = ({ onLogin, providerId, nodeUrl, siwfUrl }: LoginProps): ReactElem
           accessToken: accessToken,
           expires: expires,
           msaId: msaId,
-          displayHandle: "",
+          displayHandle: '',
         };
         let resp;
         try {
@@ -133,16 +132,12 @@ const Login = ({ onLogin, providerId, nodeUrl, siwfUrl }: LoginProps): ReactElem
           });
           accountResp.displayHandle = resp.displayHandle;
         } catch (e) {
-          console.error(
-            `Login.tsx::getMsaIdAndHandle: dsnpLink.authAccount: error: ${e}`,
-          );
+          console.error(`Login.tsx::getMsaIdAndHandle: dsnpLink.authAccount: error: ${e}`);
           throw new Error(`Account Sign In Failed: (${e})`);
         }
-        console.log(
-          `Login.tsx::handleLogin: accountResp: ${JSON.stringify(accountResp)}`,
-        );
+        console.log(`Login.tsx::handleLogin: accountResp: ${JSON.stringify(accountResp)}`);
         onLogin({
-          handle: accountResp.displayHandle || "Anonymous",
+          handle: accountResp.displayHandle || 'Anonymous',
           expires: accountResp.expires,
           accessToken: accountResp.accessToken,
           msaId: accountResp.msaId,
@@ -153,12 +148,12 @@ const Login = ({ onLogin, providerId, nodeUrl, siwfUrl }: LoginProps): ReactElem
 
       const getMsaIdAndHandle = async (
         referenceId: string,
-        timeout: number,
+        timeout: number
       ): Promise<null | dsnpLink.AuthAccountResponse> =>
         new Promise((resolve) => {
           setTimeout(async () => {
             console.log(
-              `Login.tsx::getMsaIdAndHandle: dsnpLink.authAccount: timeout: ${timeout}, referenceId: ${referenceId}`,
+              `Login.tsx::getMsaIdAndHandle: dsnpLink.authAccount: timeout: ${timeout}, referenceId: ${referenceId}`
             );
             let resp;
             try {
@@ -169,20 +164,14 @@ const Login = ({ onLogin, providerId, nodeUrl, siwfUrl }: LoginProps): ReactElem
               });
             } catch (e) {
               // REMOVE: Account Service is throwing an HTTPException:400, swallow it here
-              console.error(
-                `Login.tsx::getMsaIdAndHandle: dsnpLink.authAccount: error: ${e}`,
-              );
+              console.error(`Login.tsx::getMsaIdAndHandle: dsnpLink.authAccount: error: ${e}`);
             }
             // Handle the 202 response
             // REMOVE:
-            console.log(
-              `Login.tsx::getMsaIdAndHandle: dsnpLink.authAccount returns Account Response: ${resp}`,
-            );
+            console.log(`Login.tsx::getMsaIdAndHandle: dsnpLink.authAccount returns Account Response: ${resp}`);
 
             if (resp.size === 0) {
-              console.log(
-                `Login.tsx::getMsaIdAndHandle: dsnpLink.authAccount returns resp.size === 0`,
-              );
+              console.log(`Login.tsx::getMsaIdAndHandle: dsnpLink.authAccount returns resp.size === 0`);
               resolve(null);
             }
             // if (resp.status === 202) {
@@ -190,9 +179,7 @@ const Login = ({ onLogin, providerId, nodeUrl, siwfUrl }: LoginProps): ReactElem
             //   resolve(null);
             //   return;
             // } else if (resp.status === 200) {
-            console.log(
-              `Login.tsx::getMsaIdAndHandle: dsnpLink.authAccount returns 200`,
-            );
+            console.log(`Login.tsx::getMsaIdAndHandle: dsnpLink.authAccount returns 200`);
             // Now we have all the data we need to create the accessToken
             resolve({
               accessToken: resp.accessToken,
@@ -211,9 +198,7 @@ const Login = ({ onLogin, providerId, nodeUrl, siwfUrl }: LoginProps): ReactElem
       accountResp = await getMsaIdAndHandle(referenceId, 0);
       let tries = 1;
       while (accountResp === null && tries < 10) {
-        console.log(
-          "Waiting another 3 seconds before getting the account again...",
-        );
+        console.log('Waiting another 3 seconds before getting the account again...');
         console.log(`Continue polling for account creation... timeout:(3000)`);
         accountResp = await getMsaIdAndHandle(referenceId, 3_000);
         tries++;
@@ -222,11 +207,9 @@ const Login = ({ onLogin, providerId, nodeUrl, siwfUrl }: LoginProps): ReactElem
         throw new Error('Account Creation timed out');
       }
 
-      console.log(
-        `Login.tsx::handleLogin: accountResp: ${JSON.stringify(accountResp)}`,
-      );
+      console.log(`Login.tsx::handleLogin: accountResp: ${JSON.stringify(accountResp)}`);
       onLogin({
-        handle: accountResp.displayHandle || "Anonymous",
+        handle: accountResp.displayHandle || 'Anonymous',
         expires: accountResp.expires,
         accessToken: accountResp.accessToken,
         msaId: accountResp.msaId,

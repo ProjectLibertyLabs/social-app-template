@@ -33,7 +33,7 @@ const App = (): ReactElement => {
 
   const refreshFollowing = async (account: UserAccount) => {
     const userAccountFollows = await dsnpLink.userFollowing(getContext(), {
-      dsnpId: account.msaId
+      dsnpId: account.msaId,
     });
     setAccountFollowing(userAccountFollows);
   };
