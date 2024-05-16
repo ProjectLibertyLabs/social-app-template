@@ -2,7 +2,7 @@ import { randomUUID } from 'crypto';
 import { getApi } from './frequency.js';
 import { NextFunction, Request, Response } from 'express';
 import { HttpStatusCode } from 'axios';
-import { AccountService } from './AuthService.js';
+import { AccountService } from './AccountService.js';
 import logger from '../logger';
 
 export type RequestAccount = { publicKey: string; msaId?: string };

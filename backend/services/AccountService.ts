@@ -3,7 +3,7 @@ import { OpenAPIClientAxios, type Document } from 'openapi-client-axios';
 import openapiJson from '../openapi-specs/account-service.json' assert { type: 'json' };
 import { WalletProxyResponse, validateSignin, validateSignup } from '@amplica-labs/siwf';
 import { createAuthToken, getAuthToken, revokeAuthToken } from './TokenAuth';
-import { getApi, getNonce, getProviderKey } from './frequency';
+import { getApi } from './frequency';
 import * as Config from '../config/config';
 import { HttpStatusCode } from 'axios';
 import { HttpError } from '../types/HttpError';
@@ -13,11 +13,14 @@ import { WebhookController } from '../controllers/WebhookController';
 
 type AccountResponse = Components.Schemas.AccountResponse;
 type WalletLoginRequestDto = Components.Schemas.WalletLoginRequestDto;
-type SignUpResponseDto = Components.Schemas.SignUpResponseDto;
-type SignInResponseDto = Components.Schemas.SignInResponseDto;
 type WalletLoginConfigResponse = Components.Schemas.WalletLoginConfigResponse;
 type WalletLoginResponse = Components.Schemas.WalletLoginResponse;
 
+/**
+ * The `AccountService` class provides methods for interacting with user accounts.
+ * It handles operations such as retrieving account information, signing in or signing up users,
+ * and managing authentication tokens. It uses the Account-Service RESTful API to perform these operations.
+ */
 export class AccountService {
   private static instance: AccountService;
   private _client: AccountServiceClient;
@@ -53,6 +56,11 @@ export class AccountService {
     return this._client;
   }
 
+  /**
+   * Retrieves the SIWF configuration for wallet login.
+   * @returns A promise that resolves to a `WalletLoginConfigResponse` object.
+   * @throws If there was an error retrieving the SWIF config.
+   */
   public async getSWIFConfig(): Promise<WalletLoginConfigResponse> {
     try {
       const response = await this.client.AccountsController_getSIWFConfig();
@@ -63,11 +71,16 @@ export class AccountService {
     }
   }
 
+  /**
+   * Retrieves the account information for a given MSA ID.
+   * @param msaId - The MSA ID of the account to retrieve.
+   * @returns A Promise that resolves to an AccountResponse object containing the account information.
+   * @throws If there was an error retrieving the account information.
+   */
   public async getAccount(msaId: string): Promise<AccountResponse> {
     try {
       const response = await this.client.AccountsController_getAccount(msaId);
-      logger.debug(`Got account for msaID:(${msaId}), data:(${JSON.stringify(response.data)})`);
-      // return response.data;
+      logger.debug(`AccountService: getAccount: Got account for msaID:(${msaId}), data:(${JSON.stringify(response.data)})`);
       return {
         msaId: parseInt(msaId),
         displayHandle: response.data.displayHandle,
@@ -78,15 +91,20 @@ export class AccountService {
     }
   }
 
+  /**
+   * Retrieves an account based on the provided reference ID.
+   * @param referenceId - The reference ID used to correlate the data from the blockchain transaction to the account.
+   * @returns A Promise that resolves to an AccountResponse object if the account is found, or undefined if not found.
+   * @throws Throws an error if there was an issue retrieving the account.
+   */
   public async getAccountByReferenceId(referenceId: string): Promise<AccountResponse | undefined> {
     // In this case, we're using the referenceId to get the account
     // Check the webhook and see if the referenceId has been processed
-    logger.debug(`Looking for account for referenceId:(${referenceId})`);
+    logger.debug(`AccountService: getAccountByReferenceId: Looking for account for referenceId:(${referenceId})`);
     try {
       const accountData = WebhookController.referenceIdsReceived.get(referenceId);
       if (accountData) {
         logger.debug(`Found account for referenceId:(${referenceId})`);
-        // We need accountId/publicKey to create the authToken
         return {
           accessToken: createAuthToken(accountData.accountId),
           expires: Date.now() + 24 * 60 * 60 * 1_000,
@@ -101,18 +119,21 @@ export class AccountService {
     }
   }
 
+  /**
+   * Signs in or signs up a user based on the provided request.
+   * If `signUp` is true, it will sign up the user. If `signIn` is true, it will sign in the user.
+   * @param request - The request object containing the necessary information for signing in or signing up.
+   * @returns A promise that resolves to a `WalletLoginResponse` object.
+   * @throws If there is an error during the sign in or sign up process.
+   */
   public async signInOrSignUp(request: WalletLoginRequestDto): Promise<WalletLoginResponse> {
     const { signIn, signUp } = request;
     let response: Partial<WalletLoginResponse> = {};
     try {
       if (signUp) {
-        // REMOVE: This is just for debugging
-        logger.debug('AuthService: signInOrSignUp: Signing up');
         response = await AccountService.getInstance().then((service) => service.signUp(request));
         return response as WalletLoginResponse;
       } else if (signIn) {
-        // REMOVE: This is just for debugging
-        logger.debug('AuthService: signInOrSignUp: Signing in');
         response = await AccountService.getInstance().then((service) => service.signIn(request));
       }
       return response as WalletLoginResponse;
@@ -122,22 +143,24 @@ export class AccountService {
     }
   }
 
+  /**
+    * Signs up a user based on the provided SIWF payload.
+    * @param payload - The SIWF payload containing the signup information.
+    * @returns A Promise that resolves to an object with the referenceId, accessToken, and expires properties.
+    * @throws {HttpError} If the signup payload is invalid or if signup validation fails.
+    */
   public async signUp(payload: WalletLoginRequestDto): Promise<any> {
     const api = await getApi();
     const { signUp } = payload;
-    // TODO: typescript hates optional and undefined
+
     if (!signUp) {
       throw new HttpError(HttpStatusCode.BadRequest, 'Invalid signup payload');
     }
     try {
-      logger.debug(signUp, 'validateSignup: signUp:');
-      const { calls, publicKey } = await validateSignup(api, signUp, Config.instance().providerId);
-      logger.debug('publicKey from validateSignup: %s', publicKey);
+      const { publicKey } = await validateSignup(api, signUp, Config.instance().providerId);
       const response = await this.client.AccountsController_postSignInWithFrequency(null, payload);
 
-      // REMOVE: This is just for debugging
-      logger.debug('Account signup processed, referenceId: %s', response.data.referenceId);
-      // TODO: the real data is in the webhook response
+      logger.debug(`AccountService: signUp: Account signup processed, referenceId: ${response.data.referenceId}`);
       return {
         referenceId: response.data.referenceId,
         accessToken: createAuthToken(publicKey),
@@ -151,19 +174,23 @@ export class AccountService {
     }
   }
 
+  /**
+    * Sign in a user with the provided SIWF payload.
+    * @param payload - The SIWF payload containing the sign-in information.
+    * @returns A Promise that resolves to an object containing the access token, expiration time, and MSA ID.
+    * @throws {HttpError} If the sign-in fails or the payload is invalid.
+    */
   public async signIn(payload: WalletProxyResponse): Promise<any> {
     const api = await getApi();
     const { signIn } = payload;
 
-    logger.debug(signIn, 'AuthService:signIn:');
-    // TODO: typescript hates optional and undefined
     if (signIn) {
       try {
-        const parsedSignin = await validateSignin(api, signIn, 'amplicalabs.github.io');
+        const { msaId, publicKey } = await validateSignin(api, signIn, 'amplicalabs.github.io');
         return {
-          accessToken: createAuthToken(parsedSignin.publicKey),
+          accessToken: createAuthToken(publicKey),
           expires: Date.now() + 24 * 60 * 60 * 1_000,
-          msaId: parsedSignin.msaId,
+          msaId: msaId,
         };
       } catch (e) {
         logger.error('Failed signin: ', e);
@@ -177,6 +204,10 @@ export class AccountService {
     throw new HttpError(HttpStatusCode.BadRequest, 'Invalid signin payload');
   }
 
+  /**
+   * Logs out the user by revoking the authentication token.
+   * @param req - The request object, containing the authentication token.
+   */
   public logout(req: Request) {
     const authToken = getAuthToken(req);
     if (authToken) {

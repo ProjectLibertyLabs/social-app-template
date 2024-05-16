@@ -1,6 +1,6 @@
 import { Express, Request, Response } from 'express';
 import { BaseController } from './BaseController';
-import { AccountService } from '../services/AuthService';
+import { AccountService } from '../services/AccountService';
 import { validateAuthToken } from '../services/TokenAuth';
 import { HttpError } from '../types/HttpError';
 import { HttpStatusCode } from 'axios';
