@@ -83,36 +83,16 @@ const Login = ({ onLogin, providerId, nodeUrl, siwfUrl }: LoginProps): ReactElem
 
       const dsnpLinkNoTokenCtx = getContext();
 
-      // Initiate the login process with SIWF
-      // This will return a referenceId that we can use to correlate with the webhook callback response
+      // Initiate the SIWF login process with the backend
+      // This will return a referenceId that we can use to correlate with the webhook callback response from the backend
       const { msaId, referenceId, accessToken, expires } = await dsnpLink.authLogin(
         dsnpLinkNoTokenCtx,
         {},
         authPayload as dsnpLink.WalletLoginRequest
       );
-      console.log(
-        `Login.tsx::handleLogin: dsnpLink.authLogin: msaId:(${msaId}) referenceId:(${referenceId}) accessToken:(${accessToken}) expires:(${expires}`
-      );
-      // TODO: Move access token to after receiving webhook callback response
-      // setAccessToken(accessToken, expires);
-      // const dsnpLinkCtx = getContext();
 
-      // REMOVE: Should this go somewhere else?
-      // We need to request the account creation and then we need to wait for the
-      // webhook to be called before we can move on to the next step.
-      // 1. Request account creation (SIWF with Account Service TXNs)
-      //    returns 202 with referenceId
-      // 2. Poll authAccount(getAccount) for account created data (gets msaId,handle)
-      //    Backend needs refactor: getAccount should return 202 until account is created
-      //    Backend webhook can fill-in msaId and handle
-      // 3. Get public key with msaId so that we can:
-      // 4. Create the accessToken
-      // 5. Set all the data in accountResp for display on the FE
-
-      // const resp = await dsnpLink.authAccount(dsnpLinkCtx, {});
-      // This should be a 202 response with a reference ID we can correlate with the webhook
-
-      // We have to poll for the account creation
+      // In the Sign Up flow, poll the backend for completion of the account creation
+      // In the Sign In flow, we have the accessToken and can skip the polling
       let accountResp: dsnpLink.AuthAccountResponse | null = null;
       // Check to see if we are in the sign-in flow
       // If so, we have the accessToken and can skip the polling
@@ -125,17 +105,15 @@ const Login = ({ onLogin, providerId, nodeUrl, siwfUrl }: LoginProps): ReactElem
         };
         let resp;
         try {
-          // TODO: Is it important to have the the accessToken here?
           resp = await dsnpLink.authAccount(dsnpLinkNoTokenCtx, {
             referenceId: referenceId,
             msaId: msaId,
           });
           accountResp.displayHandle = resp.displayHandle;
         } catch (e) {
-          console.error(`Login.tsx::getMsaIdAndHandle: dsnpLink.authAccount: error: ${e}`);
+          console.error(`Login.tsx::handleLogin: dsnpLink.authAccount: error: ${e}`);
           throw new Error(`Account Sign In Failed: (${e})`);
         }
-        console.log(`Login.tsx::handleLogin: accountResp: ${JSON.stringify(accountResp)}`);
         onLogin({
           handle: accountResp.displayHandle || 'Anonymous',
           expires: accountResp.expires,
@@ -146,60 +124,45 @@ const Login = ({ onLogin, providerId, nodeUrl, siwfUrl }: LoginProps): ReactElem
         return;
       }
 
+      /**
+       * Retrieves the MSA ID and handle asynchronously, used in the SIWF Sign Up flow.
+       * @param referenceId - The reference ID.
+       * @param timeout - The timeout value in milliseconds.
+       * @returns A Promise that resolves to either null or an instance of `dsnpLink.AuthAccountResponse`.
+       */
       const getMsaIdAndHandle = async (
         referenceId: string,
         timeout: number
       ): Promise<null | dsnpLink.AuthAccountResponse> =>
         new Promise((resolve) => {
           setTimeout(async () => {
-            console.log(
-              `Login.tsx::getMsaIdAndHandle: dsnpLink.authAccount: timeout: ${timeout}, referenceId: ${referenceId}`
-            );
             let resp;
             try {
-              // TODO: Is it important to have the the accessToken here?
+              // Use the referenceId to poll the backend for the account creation
               resp = await dsnpLink.authAccount(dsnpLinkNoTokenCtx, {
                 referenceId: referenceId,
-                msaId: msaId,
               });
             } catch (e) {
-              // REMOVE: Account Service is throwing an HTTPException:400, swallow it here
               console.error(`Login.tsx::getMsaIdAndHandle: dsnpLink.authAccount: error: ${e}`);
+              throw new Error(`Account Sign In Failed: (${e})`);
             }
-            // Handle the 202 response
-            // REMOVE:
-            console.log(`Login.tsx::getMsaIdAndHandle: dsnpLink.authAccount returns Account Response: ${resp}`);
 
             if (resp.size === 0) {
-              console.log(`Login.tsx::getMsaIdAndHandle: dsnpLink.authAccount returns resp.size === 0`);
               resolve(null);
             }
-            // if (resp.status === 202) {
-            //   console.log(`Login.tsx::getMsaIdAndHandle: dsnpLink.authAccount returns 202`);
-            //   resolve(null);
-            //   return;
-            // } else if (resp.status === 200) {
-            console.log(`Login.tsx::getMsaIdAndHandle: dsnpLink.authAccount returns 200`);
-            // Now we have all the data we need to create the accessToken
             resolve({
               accessToken: resp.accessToken,
               expires: resp.expires,
               msaId: resp.msaId,
               displayHandle: resp.displayHandle,
             });
-            return;
-            // } else {
-            //   // REMOVE: What the hell is in resp?
-            //   resolve(null);
-            // }
           }, timeout);
         });
-      console.log(`Start polling for account creation... timeout:(0)`);
+      console.log(`Start polling for SIWF account creation... timeout:(0)`);
       accountResp = await getMsaIdAndHandle(referenceId, 0);
       let tries = 1;
       while (accountResp === null && tries < 10) {
         console.log('Waiting another 3 seconds before getting the account again...');
-        console.log(`Continue polling for account creation... timeout:(3000)`);
         accountResp = await getMsaIdAndHandle(referenceId, 3_000);
         tries++;
       }
@@ -207,7 +170,6 @@ const Login = ({ onLogin, providerId, nodeUrl, siwfUrl }: LoginProps): ReactElem
         throw new Error('Account Creation timed out');
       }
 
-      console.log(`Login.tsx::handleLogin: accountResp: ${JSON.stringify(accountResp)}`);
       onLogin({
         handle: accountResp.displayHandle || 'Anonymous',
         expires: accountResp.expires,

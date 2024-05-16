@@ -201,7 +201,7 @@ export type AuthMethods = {
 export function configureAuth(params?: r.CreateContextParams<AuthMethods>["authProviders"]): AuthMethods {
     return { tokenAuth: params?.tokenAuth && new r.HttpBearerSecurityAuthentication(params.tokenAuth) };
 }
-// TODO: Was this file edited manuall to add REACT_APP_BACKEND_URL?
+// TODO: Was this file edited manually to add REACT_APP_BACKEND_URL?
 export function createContext<FetcherData>(
   params?: r.CreateContextParams<AuthMethods, FetcherData>
 ): r.Context<AuthMethods, FetcherData> {

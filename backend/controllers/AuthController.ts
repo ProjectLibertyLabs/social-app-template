@@ -19,6 +19,11 @@ export class AuthController extends BaseController {
     this.router.post('/logout', validateAuthToken, this.postLogout.bind(this));
   }
 
+  /**
+   * Retrieves the SIWF configuration and sends the response to the client.
+   * @param req - The request object, not used in this method.
+   * @param res - The response object.
+   */
   public async getSiwf(_req: Request, res: Response) {
     const payload = await AccountService.getInstance().then((service) => service.getSWIFConfig());
     if (!payload) {
@@ -71,6 +76,11 @@ export class AuthController extends BaseController {
     res.end();
   }
 
+  /**
+   * Handles the POST request for SIWF user login or registration.
+   * @param req - The request object of type `WalletLoginRequest`.
+   * @param res - The response object of type `WalletLoginResponse`.
+   */
   public async postLogin(req: Request, res: Response) {
     try {
       const response = await AccountService.getInstance().then((service) => service.signInOrSignUp(req.body));

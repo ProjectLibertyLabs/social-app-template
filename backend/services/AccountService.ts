@@ -80,7 +80,9 @@ export class AccountService {
   public async getAccount(msaId: string): Promise<AccountResponse> {
     try {
       const response = await this.client.AccountsController_getAccount(msaId);
-      logger.debug(`AccountService: getAccount: Got account for msaID:(${msaId}), data:(${JSON.stringify(response.data)})`);
+      logger.debug(
+        `AccountService: getAccount: Got account for msaID:(${msaId}), data:(${JSON.stringify(response.data)})`
+      );
       return {
         msaId: parseInt(msaId),
         displayHandle: response.data.displayHandle,
@@ -144,11 +146,11 @@ export class AccountService {
   }
 
   /**
-    * Signs up a user based on the provided SIWF payload.
-    * @param payload - The SIWF payload containing the signup information.
-    * @returns A Promise that resolves to an object with the referenceId, accessToken, and expires properties.
-    * @throws {HttpError} If the signup payload is invalid or if signup validation fails.
-    */
+   * Signs up a user based on the provided SIWF payload.
+   * @param payload - The SIWF payload containing the signup information.
+   * @returns A Promise that resolves to an object with the referenceId, accessToken, and expires properties.
+   * @throws {HttpError} If the signup payload is invalid or if signup validation fails.
+   */
   public async signUp(payload: WalletLoginRequestDto): Promise<any> {
     const api = await getApi();
     const { signUp } = payload;
@@ -175,11 +177,11 @@ export class AccountService {
   }
 
   /**
-    * Sign in a user with the provided SIWF payload.
-    * @param payload - The SIWF payload containing the sign-in information.
-    * @returns A Promise that resolves to an object containing the access token, expiration time, and MSA ID.
-    * @throws {HttpError} If the sign-in fails or the payload is invalid.
-    */
+   * Sign in a user with the provided SIWF payload.
+   * @param payload - The SIWF payload containing the sign-in information.
+   * @returns A Promise that resolves to an object containing the access token, expiration time, and MSA ID.
+   * @throws {HttpError} If the sign-in fails or the payload is invalid.
+   */
   public async signIn(payload: WalletProxyResponse): Promise<any> {
     const api = await getApi();
     const { signIn } = payload;

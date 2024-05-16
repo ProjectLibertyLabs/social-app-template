@@ -32,6 +32,11 @@ export function revokeAuthToken(token: string): void {
   authTokenRegistry.delete(token);
 }
 
+/**
+ * Retrieves the account associated with the provided authentication token.
+ * @param token - The authentication token.
+ * @returns A Promise that resolves to the account associated with the token, or null if no account is found.
+ */
 export async function getAccountFromAuth(token: string): Promise<null | RequestAccount> {
   const account = authTokenRegistry.get(token);
   if (!account) return null;
@@ -43,6 +48,11 @@ export async function getAccountFromAuth(token: string): Promise<null | RequestA
   return account;
 }
 
+/**
+ * Retrieves the MSA ID associated with the given public key.
+ * @param publicKey - The public key for which to retrieve the MSA ID.
+ * @returns A Promise that resolves to the MSA ID as a string, or null if the MSA ID is not found.
+ */
 export async function getMsaByPublicKey(publicKey: string): Promise<string | null> {
   const cachedResult = cachePublicKeys.get(publicKey);
   if (cachedResult && cachedResult.added.getTime() + 360 < new Date().getTime()) {
@@ -68,6 +78,11 @@ export async function getMsaByPublicKey(publicKey: string): Promise<string | nul
   return msaIdStr;
 }
 
+/**
+ * Retrieves the authentication token from the request headers.
+ * @param req - The request object with authentication token in the headers.
+ * @returns The authentication token or null if not found.
+ */
 export function getAuthToken(req: Request): string | null {
   if (req.headers?.authorization && typeof req.headers.authorization === 'string') {
     return req.headers.authorization.split(' ')[1];
@@ -76,15 +91,23 @@ export function getAuthToken(req: Request): string | null {
   return null;
 }
 
+/**
+ * Validates the authentication token in the request headers.
+ * If the token is valid, it adds the account information to the request headers and calls the next middleware.
+ * If the token is invalid or missing, it sends an unauthorized response.
+ * @param req - The request object.
+ * @param res - The response object.
+ * @param next - The next middleware function.
+ */
 export async function validateAuthToken(req: Request, res: Response, next: NextFunction) {
   const token = getAuthToken(req);
-  logger.debug(`validateAuthToken: ${token}`);
+  logger.debug(`TokenAuth: validateAuthToken: token:(${token})`);
   if (!token) {
     return res.status(HttpStatusCode.Unauthorized).end();
   }
 
   const account = await getAccountFromAuth(token);
-  logger.debug(`validateAuthToken: ${JSON.stringify(account, null, 2)}`);
+  logger.debug(`TokenAuth: validateAuthToken: account:(${JSON.stringify(account, null, 2)})`);
 
   if (account === null) {
     return res.status(HttpStatusCode.Unauthorized).end();
@@ -95,7 +118,12 @@ export async function validateAuthToken(req: Request, res: Response, next: NextF
   next();
 }
 
-/// Dev function useful to swap in to endpoints when testing with Postman, etc
+/**
+ * Dev function useful to swap in to endpoints when testing with Postman, etc
+ * @param req - The request object.
+ * @param res - The response object.
+ * @param next - The next function to call in the middleware chain.
+ */
 export function debugAuthToken(req: Request, res: Response, next: NextFunction) {
   Object.assign(req.headers, {
     publicKey: process.env.DEBUG_PUBKEY,
@@ -104,6 +132,13 @@ export function debugAuthToken(req: Request, res: Response, next: NextFunction) 
   next();
 }
 
+/**
+ * Validates the MSA ID in the request headers.
+ * @param req - The request object with the MSA ID in the headers.
+ * @param res - The response object.
+ * @param next - The next function to call in the middleware chain.
+ * @returns If the MSA is missing or invalid, it sends an error response. Otherwise, it calls the next function.
+ */
 export async function validateMsaAuth(req: Request, res: Response, next: NextFunction) {
   const { msaId } = req.headers;
 
