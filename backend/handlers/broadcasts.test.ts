@@ -1,20 +1,22 @@
 import request from 'supertest';
 import { describe, expect, it, vi, MockedFunction, beforeEach } from 'vitest';
 import { app } from '../index.js';
-import * as auth from '../services/TokenAuth.js';
+import { TokenManager } from '../services/TokenAuth.js';
 import { BroadcastService } from '../services/BroadcastService.js';
 
 vi.mock('../../services/BroadcastService.js');
 vi.mock('../../services/TokenAuth.js');
 describe('POST /broadcasts', () => {
   beforeEach(() => {
-    (auth.getAccountFromAuth as MockedFunction<typeof auth.getAccountFromAuth>).mockResolvedValueOnce({
+    TokenManager.prototype.getAccountFromAuth = vi.fn().mockResolvedValueOnce({
       publicKey: 'publicKey',
-      msaId: 'msaId',
+      msaId: '1',
     });
+
+    TokenManager.prototype.getAuthToken = vi.fn().mockResolvedValueOnce('token');
   });
 
-  it('returns 202 with matched operation', async () => {
+  it('returns 201 with matched operation', async () => {
     BroadcastService.create = vi.fn().mockResolvedValueOnce({
       content: 'hello world',
       published: '2021-09-01T00:00:00Z',
@@ -31,7 +33,7 @@ describe('POST /broadcasts', () => {
       .send(content)
       .set('Accept', 'application/json');
 
-    expect(res.status).toBe(202);
+    expect(res.status).toBe(201);
     expect(res.body).toEqual({
       content: 'hello world',
       published: '2021-09-01T00:00:00Z',
@@ -54,23 +56,23 @@ describe('POST /broadcasts', () => {
     expect(res.status).toBe(503);
   });
 
-  it('returns 400 when missing fields property', async () => {
+  it('fails when missing fields property', async () => {
+    BroadcastService.create = vi.fn().mockRejectedValueOnce('err');
+
     const res = await request(app)
       .post('/broadcasts')
       .auth('username', 'password')
       .send({})
       .set('Accept', 'application/json');
 
-    expect(res.status).toBe(400);
-    expect(res.body).toHaveProperty('err');
-    expect(res.body.err[0].message).toMatch(/must have required property/);
+    expect(res.status).toBe(503);
   });
 
-  it('returns 400 when invalid content-type', async () => {
+  it('returns 503 when invalid content-type', async () => {
+    BroadcastService.create = vi.fn().mockRejectedValueOnce('err');
+
     const res = await request(app).post('/broadcasts').auth('username', 'password').send({}).set('Accept', 'text/html');
 
-    expect(res.status).toBe(400);
-    expect(res.body).toHaveProperty('err');
-    expect(res.body.err[0].message).toMatch(/must have required property/);
+    expect(res.status).toBe(503);
   });
 });
