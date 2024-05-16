@@ -8,7 +8,7 @@ To quickly start up a set of preconfigured services, including this sample backe
 
 ```sh
 npm run env:init
-docker up -d
+docker compose up -d
 npm run local:init
 ```
 

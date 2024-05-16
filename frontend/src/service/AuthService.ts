@@ -13,6 +13,13 @@ export const clearAccessToken = (token: string): void => {
   accessExpires = null;
 };
 
+/**
+ * Retrieves the context for the application.
+ * If the access token is null, it creates a context without authentication.
+ * Otherwise, it creates a context with token authentication.
+ *
+ * @returns The context object.
+ */
 export const getContext = () => {
   if (accessToken === null) return dsnpLink.createContext();
 

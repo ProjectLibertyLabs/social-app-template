@@ -17,42 +17,42 @@ const profileToUser = (profile: dsnpLink.Profile): User => {
   }
   return {
     handle: profile.displayHandle || 'Anonymous',
-    dsnpId: profile.fromId,
+    msaId: profile.fromId,
     profile: userProfile,
   };
 };
 
-export const getUserProfile = (dsnpId: string): Promise<User | null> => {
+export const getUserProfile = (msaId: string): Promise<User | null> => {
   // Check if the profile is already cached
-  const cached = profileCache.get(dsnpId);
+  const cached = profileCache.get(msaId);
   if (cached) return cached;
 
   // Profile not found in cache, fetch from the server
   try {
-    const profile = dsnpLink.getProfile(getContext(), { dsnpId }).then(profileToUser);
-    profileCache.set(dsnpId, profile);
+    const profile = dsnpLink.getProfile(getContext(), { dsnpId: msaId }).then(profileToUser);
+    profileCache.set(msaId, profile);
     return profile;
   } catch (error) {
-    console.error(`Failed to fetch user profile for DSNP ID ${dsnpId}:`, error);
+    console.error(`Failed to fetch user profile for DSNP ID ${msaId}:`, error);
     return Promise.resolve(null);
   }
 };
 
-const loadingUser = { handle: 'Loading', dsnpId: '' };
+const loadingUser = { handle: 'Loading', msaId: '' };
 
 type UseGetUserResp = { user: User; isLoading: boolean; error: string };
-export const useGetUser = (dsnpId: string): UseGetUserResp => {
+export const useGetUser = (msaId: string): UseGetUserResp => {
   const [user, setUser] = useState<User>(loadingUser);
   const [isLoading, setIsLoading] = useState(true);
   const [error, setError] = useState('');
 
   useEffect(() => {
-    getUserProfile(dsnpId)
+    getUserProfile(msaId)
       .then((resp) => {
         if (resp === null) {
           setUser({
             handle: 'unknown',
-            dsnpId: '',
+            msaId: '',
           });
           setError('Unknown User');
         } else {
@@ -65,7 +65,7 @@ export const useGetUser = (dsnpId: string): UseGetUserResp => {
         setError(String(e));
         setIsLoading(false);
       });
-  }, [dsnpId]);
+  }, [msaId]);
 
   return { user, isLoading, error };
 };

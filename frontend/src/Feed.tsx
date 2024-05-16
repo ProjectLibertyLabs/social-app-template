@@ -9,7 +9,7 @@ import FeedNav from './content/FeedNav';
 type FeedProps = {
   account: UserAccount;
   user: User | undefined;
-  goToProfile: (dsnpId?: string) => void;
+  goToProfile: (msaId?: string) => void;
   network: Network;
 };
 
@@ -19,7 +19,7 @@ const Feed = ({ account, user, goToProfile, network }: FeedProps): ReactElement 
   const [refreshTrigger, setRefreshTrigger] = useState<number>(Date.now());
   const [feedType, setFeedType] = useState<FeedTypes>(FeedTypes.DISCOVER);
 
-  if (feedType === FeedTypes.DISPLAY_ID_POSTS && user?.dsnpId === account.dsnpId) {
+  if (feedType === FeedTypes.DISPLAY_ID_POSTS && user?.msaId === account.msaId) {
     setFeedType(FeedTypes.MY_POSTS);
   }
 
@@ -33,18 +33,18 @@ const Feed = ({ account, user, goToProfile, network }: FeedProps): ReactElement 
   };
 
   const goToMyFeed = () => {
-    goToProfile(account.dsnpId);
+    goToProfile(account.msaId);
     setFeedType(FeedTypes.MY_POSTS);
   };
 
-  const showProfile = (dsnpId?: string) => {
-    if (dsnpId) {
+  const showProfile = (msaId?: string) => {
+    if (msaId) {
       setFeedType(FeedTypes.DISPLAY_ID_POSTS);
     } else {
       setFeedType(FeedTypes.DISCOVER);
     }
 
-    goToProfile(dsnpId);
+    goToProfile(msaId);
   };
 
   useEffect(() => {

@@ -12,7 +12,7 @@ type ConnectionsListProps = {
   accountFollowing: string[];
   graphRootUser: User;
   triggerGraphRefresh: () => void;
-  goToProfile: (dsnpId?: string) => void;
+  goToProfile: (msaId?: string) => void;
 };
 
 const ConnectionsList = ({
@@ -29,24 +29,24 @@ const ConnectionsList = ({
     const ctx = getContext();
 
     const accountFollowingList = await dsnpLink.userFollowing(ctx, {
-      dsnpId: graphRootUser.dsnpId,
+      dsnpId: graphRootUser.msaId,
     });
 
     const list: User[] = await Promise.all(
-      accountFollowingList.map((dsnpId) =>
-        dsnpLink.getProfile(ctx, { dsnpId }).then(({ displayHandle, fromId, content }) => {
+      accountFollowingList.map((msaId) =>
+        dsnpLink.getProfile(ctx, { dsnpId: msaId }).then(({ displayHandle, fromId, content }) => {
           try {
             const profile = content ? JSON.parse(content) : {};
             return {
               handle: displayHandle || '',
-              dsnpId: fromId,
+              msaId: fromId,
               profile: profile,
             };
           } catch (e) {
             console.error(e);
             return {
               handle: displayHandle || '',
-              dsnpId: fromId,
+              msaId: fromId,
               profile: {},
             };
           }

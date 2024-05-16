@@ -23,7 +23,7 @@ const App = (): ReactElement => {
     expiresIn: 100,
     accessToken: '23',
     handle: 'handle-test',
-    dsnpId: 1,
+    msaId: 1,
   };
   const [userAccount, setUserAccount] = useStickyState<UserAccount | undefined>(undefined, 'user-account');
   const [feedUser, setFeedUser] = useState<User | undefined>();
@@ -33,7 +33,7 @@ const App = (): ReactElement => {
 
   const refreshFollowing = async (account: UserAccount) => {
     const userAccountFollows = await dsnpLink.userFollowing(getContext(), {
-      dsnpId: account.dsnpId,
+      dsnpId: account.msaId,
     });
     setAccountFollowing(userAccountFollows);
   };
@@ -62,10 +62,10 @@ const App = (): ReactElement => {
     setUserAccount(undefined);
   };
 
-  const goToProfile = async (dsnpId?: string) => {
+  const goToProfile = async (msaId?: string) => {
     setLoading(true);
-    if (dsnpId) {
-      const profile = userAccount.dsnpId === dsnpId ? userAccount : await getUserProfile(dsnpId);
+    if (msaId) {
+      const profile = userAccount.msaId === msaId ? userAccount : await getUserProfile(msaId);
       setFeedUser(profile || undefined);
     } else {
       setFeedUser(undefined);

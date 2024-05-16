@@ -8,13 +8,13 @@ vi.mock('../../services/AssetsService.js');
 vi.mock('axios');
 
 describe('POST /assets/', () => {
-  it('returns 202 with matched operation', async () => {
+  it('returns 201 with matched operation', async () => {
     const responseData = ['asset1'];
-    (AssetsService.create as MockedFunction<typeof AssetsService.create>).mockResolvedValueOnce(responseData);
+    vi.spyOn(AssetsService, 'create').mockResolvedValue(responseData);
 
     const res = await request(app).post('/assets').attach('files', Buffer.from('hello world', 'utf8'), 'file1.txt');
 
-    expect(res.status).toBe(202);
+    expect(res.status).toBe(201);
     expect(res.body).toEqual(['asset1']);
   });
 

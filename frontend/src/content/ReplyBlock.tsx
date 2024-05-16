@@ -8,7 +8,7 @@ import styles from './ReplyBlock.module.css';
 interface ReplyBlockProps {
   parentURI: DSNPContentURI;
   replies: dsnpLink.ReplyExtended[];
-  goToProfile: (dsnpId?: string) => void;
+  goToProfile: (msaId?: string) => void;
   showReplyInput: boolean;
 }
 

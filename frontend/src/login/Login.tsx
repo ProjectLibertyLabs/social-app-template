@@ -8,13 +8,43 @@ import { UserAccount } from '../types';
 import styles from './Login.module.css';
 import { getContext, setAccessToken } from '../service/AuthService';
 
+/**
+ * Props for the Login component.
+ */
 interface LoginProps {
+  /**
+   * Callback function to be called when the user logs in.
+   * @param account - The user account information.
+   */
   onLogin: (account: UserAccount) => void;
+
+  /**
+   * The ID of the provider used for authentication.
+   */
   providerId: string;
+
+  /**
+   * The URL of the Frequency RPC endpoint.
+   */
   nodeUrl: string;
+
+  /**
+   * The URL of the SIWF/Wallet-Proxy server.
+   */
   siwfUrl: string;
 }
 
+/**
+ * Represents the login component.
+ *
+ * @component
+ * @param {Object} props - The component props.
+ * @param {Function} props.onLogin - The callback function to be called when the user logs in.
+ * @param {string} props.providerId - The ID of the provider.
+ * @param {string} props.nodeUrl - The URL of the Frequency RPC endpoint.
+ * @param {string} props.siwfUrl - The URL where Wallet-Proxy lives.
+ * @returns {JSX.Element} The rendered login component.
+ */
 const Login = ({ onLogin, providerId, nodeUrl, siwfUrl }: LoginProps): ReactElement => {
   const [isLoading, setIsLoading] = useState(false);
 
@@ -22,9 +52,10 @@ const Login = ({ onLogin, providerId, nodeUrl, siwfUrl }: LoginProps): ReactElem
     setIsLoading(true);
 
     try {
+      // Set the configuration for SIWF
       setConfig({
         providerId,
-        // The url where Wallet-Proxy lives
+        // The url where SIWF front-end lives
         proxyUrl: siwfUrl,
         // The Frequency RPC endpoint
         frequencyRpcUrl: nodeUrl,
@@ -46,36 +77,93 @@ const Login = ({ onLogin, providerId, nodeUrl, siwfUrl }: LoginProps): ReactElem
         ],
       });
 
-      const response = await getLoginOrRegistrationPayload();
+      // This is the first step in the login process.
+      // We need to get the payload from SIWF to send to the Wallet-Proxy
+      const authPayload = await getLoginOrRegistrationPayload();
 
       const dsnpLinkNoTokenCtx = getContext();
-      const { accessToken, expires } = await dsnpLink.authLogin2(
+
+      // Initiate the SIWF login process with the backend
+      // This will return a referenceId that we can use to correlate with the webhook callback response from the backend
+      const { msaId, referenceId, accessToken, expires } = await dsnpLink.authLogin(
         dsnpLinkNoTokenCtx,
         {},
-        response as dsnpLink.WalletLoginRequest
+        authPayload as dsnpLink.WalletLoginRequest
       );
-      setAccessToken(accessToken, expires);
-      const dsnpLinkCtx = getContext();
 
-      // We have to poll for the account creation
+      // In the Sign Up flow, poll the backend for completion of the account creation
+      // In the Sign In flow, we have the accessToken and can skip the polling
       let accountResp: dsnpLink.AuthAccountResponse | null = null;
-      const getDsnpAndHandle = async (timeout: number): Promise<null | dsnpLink.AuthAccountResponse> =>
+      // Check to see if we are in the sign-in flow
+      // If so, we have the accessToken and can skip the polling
+      if (accessToken && expires && msaId) {
+        accountResp = {
+          accessToken: accessToken,
+          expires: expires,
+          msaId: msaId,
+          displayHandle: '',
+        };
+        let resp;
+        try {
+          resp = await dsnpLink.authAccount(dsnpLinkNoTokenCtx, {
+            referenceId: referenceId,
+            msaId: msaId,
+          });
+          accountResp.displayHandle = resp.displayHandle;
+        } catch (e) {
+          console.error(`Login.tsx::handleLogin: dsnpLink.authAccount: error: ${e}`);
+          throw new Error(`Account Sign In Failed: (${e})`);
+        }
+        onLogin({
+          handle: accountResp.displayHandle || 'Anonymous',
+          expires: accountResp.expires,
+          accessToken: accountResp.accessToken,
+          msaId: accountResp.msaId,
+        });
+        setIsLoading(false);
+        return;
+      }
+
+      /**
+       * Retrieves the MSA ID and handle asynchronously, used in the SIWF Sign Up flow.
+       * @param referenceId - The reference ID.
+       * @param timeout - The timeout value in milliseconds.
+       * @returns A Promise that resolves to either null or an instance of `dsnpLink.AuthAccountResponse`.
+       */
+      const getMsaIdAndHandle = async (
+        referenceId: string,
+        timeout: number
+      ): Promise<null | dsnpLink.AuthAccountResponse> =>
         new Promise((resolve) => {
           setTimeout(async () => {
-            const resp = await dsnpLink.authAccount(dsnpLinkCtx, {});
-            // Handle the 202 response
+            let resp;
+            try {
+              // Use the referenceId to poll the backend for the account creation
+              resp = await dsnpLink.authAccount(dsnpLinkNoTokenCtx, {
+                referenceId: referenceId,
+              });
+            } catch (e) {
+              console.error(`Login.tsx::getMsaIdAndHandle: dsnpLink.authAccount: error: ${e}`);
+              throw new Error(`Account Sign In Failed: (${e})`);
+            }
+
             if (resp.size === 0) {
               resolve(null);
-            } else {
-              resolve(resp);
             }
+            resolve({
+              accessToken: resp.accessToken,
+              expires: resp.expires,
+              msaId: resp.msaId,
+              displayHandle: resp.displayHandle,
+            });
           }, timeout);
         });
-      accountResp = await getDsnpAndHandle(0);
+      console.log(`Start polling for SIWF account creation... timeout:(0)`);
+      accountResp = await getMsaIdAndHandle(referenceId, 0);
       let tries = 1;
       while (accountResp === null && tries < 10) {
         console.log('Waiting another 3 seconds before getting the account again...');
-        accountResp = await getDsnpAndHandle(3_000);
+        accountResp = await getMsaIdAndHandle(referenceId, 3_000);
         tries++;
       }
       if (accountResp === null) {
@@ -84,14 +172,14 @@ const Login = ({ onLogin, providerId, nodeUrl, siwfUrl }: LoginProps): ReactElem
 
       onLogin({
         handle: accountResp.displayHandle || 'Anonymous',
-        expires,
-        accessToken,
-        dsnpId: accountResp.dsnpId,
+        expires: accountResp.expires,
+        accessToken: accountResp.accessToken,
+        msaId: accountResp.msaId,
       });
     } catch (e) {
       console.error(e);
-      setIsLoading(false);
     }
+    setIsLoading(false);
   };
 
   return (
