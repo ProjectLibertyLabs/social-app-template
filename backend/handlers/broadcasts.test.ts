@@ -1,11 +1,11 @@
 import request from 'supertest';
 import { describe, expect, it, vi, MockedFunction, beforeEach } from 'vitest';
 import { app } from '../index.js';
-import * as auth from '../services/auth.js';
+import * as auth from '../services/TokenAuth.js';
 import { BroadcastService } from '../services/BroadcastService.js';
 
 vi.mock('../../services/BroadcastService.js');
-vi.mock('../../services/auth.js');
+vi.mock('../../services/TokenAuth.js');
 describe('POST /broadcasts', () => {
   beforeEach(() => {
     (auth.getAccountFromAuth as MockedFunction<typeof auth.getAccountFromAuth>).mockResolvedValueOnce({
