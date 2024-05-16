@@ -15,10 +15,15 @@ export class WebhookController extends BaseController {
     this.router.post('/account-service', this.authServiceWebhook.bind(this));
   }
 
+  /**
+   * Handles the webhook from the authentication service.
+   * @param _req - The request object, contains the on-chain data from the account-service for the referenceId.
+   * @param res - The response object.
+   */
   public authServiceWebhook(_req: Request, res: Response) {
-    logger.debug(_req, 'WebhookController:authServiceWebhook: received webhook from account-service');
     const { referenceId, handle, msaId, accountId } = _req.body;
 
+    // TODO: This may need to be updated when claim/change handle is implemented
     if (referenceId && handle && msaId && accountId) {
       WebhookController.referenceIdsReceived.set(referenceId, {
         msaId,
