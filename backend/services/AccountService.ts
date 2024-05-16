@@ -133,10 +133,10 @@ export class AccountService {
     let response: Partial<WalletLoginResponse> = {};
     try {
       if (signUp) {
-        response = await AccountService.getInstance().then((service) => service.signUp(request));
+        response = await this.signUp(request);
         return response as WalletLoginResponse;
       } else if (signIn) {
-        response = await AccountService.getInstance().then((service) => service.signIn(request));
+        response = await this.signIn(request);
       }
       return response as WalletLoginResponse;
     } catch (e) {
@@ -152,14 +152,14 @@ export class AccountService {
    * @throws {HttpError} If the signup payload is invalid or if signup validation fails.
    */
   public async signUp(payload: WalletLoginRequestDto): Promise<any> {
-    const api = await getApi();
+    const chainApi = await getApi();
     const { signUp } = payload;
 
     if (!signUp) {
       throw new HttpError(HttpStatusCode.BadRequest, 'Invalid signup payload');
     }
     try {
-      const { publicKey } = await validateSignup(api, signUp, Config.instance().providerId);
+      const { publicKey } = await validateSignup(chainApi, signUp, Config.instance().providerId);
       const response = await this.client.AccountsController_postSignInWithFrequency(null, payload);
 
       logger.debug(`AccountService: signUp: Account signup processed, referenceId: ${response.data.referenceId}`);
@@ -183,12 +183,12 @@ export class AccountService {
    * @throws {HttpError} If the sign-in fails or the payload is invalid.
    */
   public async signIn(payload: WalletProxyResponse): Promise<any> {
-    const api = await getApi();
+    const chainApi = await getApi();
     const { signIn } = payload;
 
     if (signIn) {
       try {
-        const { msaId, publicKey } = await validateSignin(api, signIn, 'amplicalabs.github.io');
+        const { msaId, publicKey } = await validateSignin(chainApi, signIn, 'amplicalabs.github.io');
         return {
           accessToken: createAuthToken(publicKey),
           expires: Date.now() + 24 * 60 * 60 * 1_000,

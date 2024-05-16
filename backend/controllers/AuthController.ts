@@ -7,6 +7,9 @@ import { HttpStatusCode } from 'axios';
 import * as Config from '../config/config';
 import logger from '../logger';
 
+/**
+ * Controller class for handling authentication-related routes.
+ */
 export class AuthController extends BaseController {
   constructor(app: Express) {
     super(app, '/auth');

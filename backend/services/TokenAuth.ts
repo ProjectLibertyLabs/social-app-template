@@ -70,8 +70,8 @@ export async function getMsaByPublicKey(publicKey: string): Promise<string | nul
   //   return null;
   // }
 
-  const api = await getApi();
-  const msaId = await api.query.msa.publicKeyToMsaId(publicKey);
+  const chainApi = await getApi();
+  const msaId = await chainApi.query.msa.publicKeyToMsaId(publicKey);
   if (msaId.isNone) return null;
   const msaIdStr = msaId.value.toString();
   cachePublicKeys.set(publicKey, { added: new Date(), msaId: msaIdStr });
