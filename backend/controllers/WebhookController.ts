@@ -6,8 +6,6 @@ import { HttpError } from '../types/HttpError';
 import logger from '../logger';
 
 export class WebhookController extends BaseController {
-  public static referenceIdsReceived: Map<string, { msaId: string; displayHandle: string; accountId: string }> =
-    new Map();
   constructor(app: Express) {
     super(app, '/webhooks');
   }
@@ -18,7 +16,7 @@ export class WebhookController extends BaseController {
 
   /**
    * Handles the account service webhook.
-   * 
+   *
    * @param req - The request object, the body contains the on-chain data from the account-service for the referenceId.
    * @param res - The response object.
    */

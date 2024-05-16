@@ -9,7 +9,7 @@ import { HttpStatusCode } from 'axios';
 import { HttpError } from '../types/HttpError';
 import { Request } from 'express';
 import logger from '../logger';
-import { WebhookController } from '../controllers/WebhookController';
+import { AccountServiceWebhook } from './AccountWebhookService';
 
 type AccountResponse = Components.Schemas.AccountResponse;
 type WalletLoginRequestDto = Components.Schemas.WalletLoginRequestDto;
@@ -104,7 +104,7 @@ export class AccountService {
     // Check the webhook and see if the referenceId has been processed
     logger.debug(`AccountService: getAccountByReferenceId: Looking for account for referenceId:(${referenceId})`);
     try {
-      const accountData = WebhookController.referenceIdsReceived.get(referenceId);
+      const accountData = AccountServiceWebhook.referenceIdsReceived.get(referenceId);
       if (accountData) {
         logger.debug(`Found account for referenceId:(${referenceId})`);
         return {
