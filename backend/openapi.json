@@ -88,7 +88,7 @@
         }
       }
     },
-    "/auth/provider": {
+    "/auth/siwf": {
       "get": {
         "operationId": "authProvider",
         "summary": "Return the delegation and provider information",
@@ -108,8 +108,8 @@
     },
     "/auth/login": {
       "post": {
-        "operationId": "authLogin2",
-        "summary": "Use Wallet Proxy to login",
+        "operationId": "authLogin",
+        "summary": "Use Sign In With Frequency to login",
         "requestBody": {
           "required": true,
           "content": {
@@ -121,6 +121,12 @@
           }
         },
         "responses": {
+          "401": {
+            "$ref": "#/components/responses/UnauthorizedError"
+          },
+          "202": {
+            "description": "Account still pending creation"
+          },
           "200": {
             "description": "Successful response",
             "content": {
@@ -157,15 +163,27 @@
       "get": {
         "operationId": "authAccount",
         "summary": "For polling to get the created account as authCreate can take time",
-        "security": [
+        "parameters": [
           {
-            "tokenAuth": []
+            "name": "msaId",
+            "in": "query",
+            "description": "The user's Message Source Account ID",
+            "required": false,
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "referenceId",
+            "in": "query",
+            "description": "A reference identifier to retrieve the resource when msaId is not available",
+            "required": false,
+            "schema": {
+              "type": "string"
+            }
           }
         ],
         "responses": {
-          "401": {
-            "$ref": "#/components/responses/UnauthorizedError"
-          },
           "202": {
             "description": "Account still pending creation"
           },
@@ -773,13 +791,10 @@
       "WalletLoginResponse": {
         "type": "object",
         "properties": {
-          "accessToken": {
+          "referenceId": {
             "type": "string"
           },
-          "expires": {
-            "type": "integer"
-          },
-          "dsnpId": {
+          "msaId": {
             "type": "string"
           },
           "handle": {
@@ -787,8 +802,7 @@
           }
         },
         "required": [
-          "expires",
-          "accessToken"
+          "referenceId"
         ]
       },
       "WalletLoginRequest": {
@@ -877,14 +891,14 @@
           "expires": {
             "type": "integer"
           },
-          "dsnpId": {
+          "msaId": {
             "type": "string"
           }
         },
         "required": [
           "expires",
           "accessToken",
-          "dsnpId"
+          "msaId"
         ]
       },
       "CreateIdentityRequest": {
@@ -946,7 +960,13 @@
       "AuthAccountResponse": {
         "type": "object",
         "properties": {
-          "dsnpId": {
+          "accessToken": {
+            "type": "string"
+          },
+          "expires": {
+            "type": "integer"
+          },
+          "msaId": {
             "type": "string"
           },
           "displayHandle": {
@@ -954,7 +974,9 @@
           }
         },
         "required": [
-          "dsnpId"
+          "msaId",
+          "accessToken",
+          "expires"
         ]
       },
       "DelegateRequest": {

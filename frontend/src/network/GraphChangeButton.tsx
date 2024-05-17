@@ -21,9 +21,9 @@ const GraphChangeButton = ({ user, relationshipStatus, triggerGraphRefresh }: Gr
   const changeGraphState = async () => {
     setIsUpdating(true);
     if (isFollowing) {
-      await dsnpLink.graphUnfollow(getContext(), { dsnpId: user.dsnpId });
+      await dsnpLink.graphUnfollow(getContext(), { dsnpId: user.msaId });
     } else {
-      await dsnpLink.graphFollow(getContext(), { dsnpId: user.dsnpId });
+      await dsnpLink.graphFollow(getContext(), { dsnpId: user.msaId });
     }
     triggerGraphRefresh();
   };

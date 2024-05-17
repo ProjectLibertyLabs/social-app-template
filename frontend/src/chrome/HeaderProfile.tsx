@@ -12,7 +12,7 @@ interface HeaderProfileProps {
   user?: User;
   accountFollowing: string[];
   triggerGraphRefresh: () => void;
-  goToProfile: (dsnpId?: string) => void;
+  goToProfile: (msaId?: string) => void;
 }
 
 export const HeaderProfile = ({
@@ -34,13 +34,13 @@ export const HeaderProfile = ({
         title={<FromTitle level={2} user={user} />}
       />
       <div className={styles.profile}>{secondary ? secondary : 'No Profile'}</div>
-      {account.dsnpId !== user.dsnpId && (
+      {account.msaId !== user.msaId && (
         <GraphChangeButton
           key={accountFollowing.length}
           user={user}
           triggerGraphRefresh={triggerGraphRefresh}
           relationshipStatus={
-            accountFollowing.includes(user.dsnpId) ? RelationshipStatus.FOLLOWING : RelationshipStatus.NONE
+            accountFollowing.includes(user.msaId) ? RelationshipStatus.FOLLOWING : RelationshipStatus.NONE
           }
         />
       )}

@@ -2,9 +2,10 @@ import axios from 'axios';
 import FormData from 'form-data';
 import { AssetsService } from './AssetsService.js';
 import { describe, vi, expect, test, afterEach, MockedFunction } from 'vitest';
-import { ContentPublisherRepository } from '../repositories/ContentPublisherRepository.js';
+import { ContentPublisherService } from './ContentPublisherService.js';
 
-vi.mock('../repositories/ContentPublisherRepository.js');
+vi.mock('./ContentPublisherService.js');
+
 describe('FileUploader', () => {
   afterEach(() => {
     vi.resetAllMocks();
@@ -39,7 +40,7 @@ describe('FileUploader', () => {
     const responseData = ['asset1', 'asset2'];
 
     (
-      ContentPublisherRepository.getInstance as MockedFunction<typeof ContentPublisherRepository.getInstance>
+      ContentPublisherService.getInstance as MockedFunction<typeof ContentPublisherService.getInstance>
     ).mockResolvedValueOnce({
       uploadAsset: vi.fn().mockResolvedValueOnce({
         assetIds: responseData,
@@ -70,7 +71,7 @@ describe('FileUploader', () => {
     });
 
     (
-      ContentPublisherRepository.getInstance as MockedFunction<typeof ContentPublisherRepository.getInstance>
+      ContentPublisherService.getInstance as MockedFunction<typeof ContentPublisherService.getInstance>
     ).mockResolvedValueOnce({
       uploadAsset: vi.fn().mockRejectedValueOnce(new Error('Request failed with status code 500')),
     } as any);

@@ -39,9 +39,8 @@ export type LoginRequest = {
     challenge: string;
 };
 export type WalletLoginResponse = {
-    accessToken: string;
-    expires: number;
-    dsnpId?: string;
+    referenceId: string;
+    msaId?: string;
     handle?: string;
 };
 export type WalletLoginRequest = {
@@ -68,7 +67,7 @@ export type WalletLoginRequest = {
 export type LoginResponse = {
     accessToken: string;
     expires: number;
-    dsnpId: string;
+    msaId: string;
 };
 export type CreateIdentityRequest = {
     addProviderSignature: string;
@@ -84,7 +83,9 @@ export type CreateIdentityResponse = {
     expires: number;
 };
 export type AuthAccountResponse = {
-    dsnpId: string;
+    accessToken: string;
+    expires: number;
+    msaId: string;
     displayHandle?: string;
 };
 export type DelegateRequest = {
@@ -200,7 +201,7 @@ export type AuthMethods = {
 export function configureAuth(params?: r.CreateContextParams<AuthMethods>["authProviders"]): AuthMethods {
     return { tokenAuth: params?.tokenAuth && new r.HttpBearerSecurityAuthentication(params.tokenAuth) };
 }
-
+// TODO: Was this file edited manually to add REACT_APP_BACKEND_URL?
 export function createContext<FetcherData>(
   params?: r.CreateContextParams<AuthMethods, FetcherData>
 ): r.Context<AuthMethods, FetcherData> {
@@ -243,7 +244,7 @@ export async function postBroadcastHandler<FetcherData>(ctx: r.Context<AuthMetho
  */
 export async function authProvider<FetcherData>(ctx: r.Context<AuthMethods, FetcherData>, params: {}, opts?: FetcherData): Promise<ProviderResponse> {
     const req = await ctx.createRequest({
-        path: '/auth/provider',
+        path: '/auth/siwf',
         params,
         method: r.HttpMethod.GET
     });
@@ -251,9 +252,9 @@ export async function authProvider<FetcherData>(ctx: r.Context<AuthMethods, Fetc
     return ctx.handleResponse(res, {});
 }
 /**
- * Use Wallet Proxy to login
+ * Use Sign In With Frequency to login
  */
-export async function authLogin2<FetcherData>(ctx: r.Context<AuthMethods, FetcherData>, params: {}, body: WalletLoginRequest, opts?: FetcherData): Promise<WalletLoginResponse> {
+export async function authLogin<FetcherData>(ctx: r.Context<AuthMethods, FetcherData>, params: {}, body: WalletLoginRequest, opts?: FetcherData): Promise<WalletLoginResponse | any> {
     const req = await ctx.createRequest({
         path: '/auth/login',
         params,
@@ -279,12 +280,18 @@ export async function authLogout<FetcherData>(ctx: r.Context<AuthMethods, Fetche
 /**
  * For polling to get the created account as authCreate can take time
  */
-export async function authAccount<FetcherData>(ctx: r.Context<AuthMethods, FetcherData>, params: {}, opts?: FetcherData): Promise<AuthAccountResponse | any> {
+export async function authAccount<FetcherData>(ctx: r.Context<AuthMethods, FetcherData>, params: {
+    msaId?: string;
+    referenceId?: string;
+}, opts?: FetcherData): Promise<AuthAccountResponse | any> {
     const req = await ctx.createRequest({
         path: '/auth/account',
         params,
         method: r.HttpMethod.GET,
-        auth: ["tokenAuth"]
+        queryParams: [
+            "msaId",
+            "referenceId"
+        ]
     });
     const res = await ctx.sendRequest(req, opts);
     return ctx.handleResponse(res, {});

@@ -21,8 +21,8 @@ const UserAvatar = ({ user, avatarSize }: UserAvatarProps): ReactElement => {
   const iconURL = user
     ? user.profile?.icon ||
       React.useMemo(
-        () => `data:image/svg+xml;utf8,${encodeURIComponent(minidenticon(user.dsnpId.toString()))}`,
-        [user.dsnpId]
+        () => `data:image/svg+xml;utf8,${encodeURIComponent(minidenticon(user.msaId.toString()))}`,
+        [user.msaId]
       )
     : '';
 

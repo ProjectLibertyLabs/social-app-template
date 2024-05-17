@@ -18,7 +18,7 @@ type PostListProps = {
   user: User | undefined;
   // Uses Date.now to trigger an update
   refreshTrigger: number;
-  goToProfile: (dsnpId?: string) => void;
+  goToProfile: (msaId?: string) => void;
   resetFeed: () => void;
   network: Network;
 };
@@ -95,7 +95,7 @@ const PostList = ({ feedType, user, refreshTrigger, goToProfile, resetFeed, netw
         if (!user) return resetFeed();
         postGetPosts(
           await dsnpLink.getUserFeed(getContext(), {
-            dsnpId: user.dsnpId,
+            dsnpId: user.msaId,
             ...params,
           }),
           appendOrPrepend,
