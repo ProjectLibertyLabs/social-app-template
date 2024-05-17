@@ -15,10 +15,15 @@ type AccountServiceWebhookResponse = {
   accountId: string;
 };
 
+type SIWFTransactionData = {
+  msaId: string;
+  displayHandle: string;
+  accountId: string;
+};
+
 export class AccountServiceWebhook {
   private static instance: AccountServiceWebhook;
-  public static referenceIdsReceived: Map<string, { msaId: string; displayHandle: string; accountId: string }> =
-    new Map();
+  public static referenceIdsReceived: Map<string, SIWFTransactionData> = new Map();
   private _client: AccountServiceWebhookClient;
 
   private constructor() {}
