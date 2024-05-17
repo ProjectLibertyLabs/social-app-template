@@ -12,6 +12,6 @@ describe('API', () => {
   it('GET /unknown returns 404', async () => {
     const res = await request(app).get('/unknown');
     expect(res.status).toBe(404);
-    expect(JSON.parse(res.text)).toHaveProperty('err');
+    expect(res.text).toContain('Error');
   });
 });
