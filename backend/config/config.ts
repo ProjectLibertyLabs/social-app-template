@@ -6,10 +6,12 @@ const devUriRegEx = /^\/\/(Alice|Bob|Charlie|Dave|Eve|Ferdie)(\/[\/]?\d+)?$/;
 
 const ENV_SCHEMA = Joi.object({
   API_PORT: Joi.number().min(1001).max(10_000).default(3000),
-  PRIVATE_PORT: Joi.number().min(1001).max(10_000),
-  PRIVATE_HOST: Joi.string().hostname(),
+  WEBHOOK_BASE_URL: Joi.string().uri().required(),
+  WEBHOOK_PORT: Joi.number().min(1001).max(10_000),
+  WEBHOOK_HOST: Joi.string().hostname(),
   ACCOUNT_SERVICE_URL: Joi.string().uri().required(),
   CONTENT_PUBLISHER_URL: Joi.string().uri().required(),
+  CONTENT_WATCHER_URL: Joi.string().uri().required(),
   CHAIN_ENVIRONMENT: Joi.string()
     .valid(...['dev', 'rococo', 'testnet', 'mainnet'])
     .required(),
@@ -68,13 +70,17 @@ export class Config {
     return parseInt(this.configValues['API_PORT']);
   }
 
-  public get privatePort() {
-    const port = parseInt(this.configValues['PRIVATE_PORT']);
+  public get webhookPort() {
+    const port = parseInt(this.configValues["WEBHOOK_PORT"]);
     return port || this.port + 1;
   }
 
-  public get privateHost() {
-    return this.configValues['PRIVATE_HOST'];
+  public get webhookHost() {
+    return this.configValues["WEBHOOK_HOST"];
+  }
+
+  public get webhookBaseUrl() {
+    return this.configValues["WEBHOOK_BASE_URL"];
   }
 
   public get accountServiceUrl() {
@@ -83,6 +89,10 @@ export class Config {
 
   public get contentPublisherUrl() {
     return this.configValues['CONTENT_PUBLISHER_URL'];
+  }
+
+  public get contentWatcherUrl() {
+    return this.configValues["CONTENT_WATCHER_URL"];
   }
 
   public get chainType() {

@@ -1,9 +1,9 @@
-import zlib from 'node:zlib';
-import { getSchemaId } from './announce.js';
-import { AnnouncementType } from './dsnp.js';
-import { getApi, getNonce, getProviderKey } from './frequency.js';
-import { dsnp } from '@dsnp/frequency-schemas';
-import avro from 'avro-js';
+import zlib from "node:zlib";
+import { getSchemaId } from "./announce.js";
+import { getApi, getNonce, getProviderKey } from "./frequency.js";
+import { dsnp } from "@dsnp/frequency-schemas";
+import avro from "avro-js";
+import { AnnouncementType } from "../types/content-announcement";
 
 // TODO: Remove all graph logic in favor of proxy to `graph-service`
 

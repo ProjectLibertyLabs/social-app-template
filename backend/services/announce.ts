@@ -1,9 +1,19 @@
-import { PassThrough } from 'node:stream';
-import { parquet } from '@dsnp/frequency-schemas';
-import { ParquetWriter } from '@dsnp/parquetjs';
-import { ChainType, getApi, getChainType, getNonce, getProviderKey } from './frequency.js';
-import { ipfsPin } from './ipfs.js';
-import { AnnouncementType, BroadcastAnnouncement, ReplyAnnouncement } from './dsnp.js';
+import { PassThrough } from "node:stream";
+import { parquet } from "@dsnp/frequency-schemas";
+import { ParquetWriter } from "@dsnp/parquetjs";
+import {
+  ChainType,
+  getApi,
+  getChainType,
+  getNonce,
+  getProviderKey,
+} from "./frequency.js";
+import { ipfsPin } from "./ipfs.js";
+import {
+  AnnouncementType,
+  BroadcastAnnouncement,
+  ReplyAnnouncement,
+} from "../types/content-announcement";
 
 const TestnetSchemas = (type: AnnouncementType): number => {
   switch (type) {
@@ -21,8 +31,9 @@ const TestnetSchemas = (type: AnnouncementType): number => {
       return 5;
     case AnnouncementType.PublicFollows:
       return 13;
+    default:
+      throw new Error("Unknown Announcement Type");
   }
-  throw new Error('Unknown Announcement Type');
 };
 
 const MainnetSchemas = (type: AnnouncementType): number => {
@@ -41,8 +52,9 @@ const MainnetSchemas = (type: AnnouncementType): number => {
       return 6;
     case AnnouncementType.PublicFollows:
       return 8;
+    default:
+      throw new Error("Unknown Announcement Type");
   }
-  throw new Error('Unknown Announcement Type');
 };
 
 export const getSchemaId = (type: AnnouncementType): number => {

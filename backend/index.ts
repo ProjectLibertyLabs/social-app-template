@@ -1,24 +1,26 @@
 // Config first
 import 'dotenv/config';
 // Augment Polkadot Types First
-import '@frequency-chain/api-augment';
-import express, { Request, Response, NextFunction } from 'express';
-import pinoHttp from 'pino-http';
-import swaggerUi from 'swagger-ui-express';
-import cors from 'cors';
+import "@frequency-chain/api-augment";
+import express, { Request, Response, NextFunction } from "express";
+import pinoHttp from "pino-http";
+import swaggerUi from "swagger-ui-express";
+import cors from "cors";
 
-import openapiJson from './openapi.json' assert { type: 'json' };
-import { getApi } from './services/frequency.js';
-import * as Config from './config/config.js';
-import { AuthController } from './controllers/AuthController.js';
-import { ContentController } from './controllers/ContentController.js';
-import { GraphController } from './controllers/GraphController.js';
-import { ProfilesController } from './controllers/ProfilesController.js';
-import { AssestsController } from './controllers/AssetsController';
-import { BroadcastsController } from './controllers/BroadcastsController';
-import { MulterError } from 'multer';
-import logger from './logger';
-import { WebhookController } from './controllers/WebhookController';
+import openapiJson from "./openapi.json" assert { type: "json" };
+import { getApi } from "./services/frequency.js";
+import * as Config from "./config/config.js";
+import { AuthController } from "./controllers/AuthController.js";
+import { ContentController } from "./controllers/ContentController.js";
+import { GraphController } from "./controllers/GraphController.js";
+import { ProfilesController } from "./controllers/ProfilesController.js";
+import { AssestsController } from "./controllers/AssetsController";
+import { BroadcastsController } from "./controllers/BroadcastsController";
+import { MulterError } from "multer";
+import logger from "./logger";
+import { WebhookController } from "./controllers/WebhookController";
+import { ContentWatcherService } from "./services/ContentWatcherService";
+import { AnnouncementType } from "./types/content-announcement";
 
 // Support BigInt JSON
 (BigInt.prototype as any).toJSON = function () {
@@ -49,10 +51,19 @@ const _controllers = [
   new WebhookController(privateApp),
 ];
 
+ContentWatcherService.getInstance().then((service) => {
+  service.registerWebhook(
+    `${Config.instance().webhookBaseUrl}/content-watcher/announcements`,
+    Object.values(AnnouncementType)
+      .filter((v) => typeof v !== "string")
+      .map((v) => v as AnnouncementType),
+  );
+});
+
 // Swagger UI
 publicApp.use('/docs', swaggerUi.serve, swaggerUi.setup(openapiJson));
 
-publicApp.use((err: any, req: Request, res: Response, next: NextFunction) => {
+publicApp.use((err: any, _req: Request, res: Response, next: NextFunction) => {
   if (res.headersSent) {
     return next(err);
   }
@@ -68,23 +79,33 @@ publicApp.use((err: any, req: Request, res: Response, next: NextFunction) => {
   return res.status(500).json({ error: 'An internal server error occurred.' });
 });
 
-const { port, privatePort, privateHost } = Config.instance();
-if (process.env.NODE_ENV != 'test') {
+const {
+  port,
+  webhookPort: privatePort,
+  webhookHost: privateHost,
+} = Config.instance();
+if (process.env.NODE_ENV != "test") {
   // start server
   publicApp.listen(port, () => {
     getApi().catch((e) => {
       logger.error('Error connecting to Frequency Node!!', e.message);
     });
-    logger.info('api listening at http://localhost:%d', port);
-    logger.info('OpenAPI Docs at http://localhost:%d/docs', port);
+    logger.info("api listening at http://localhost:%d", port);
+    logger.info("OpenAPI Docs at http://localhost:%d/docs", port);
   });
 
   if (privateHost) {
     privateApp.listen(privatePort, privateHost, () =>
-      logger.info('private api listening at http://%s:%d', privateHost, privatePort)
+      logger.info(
+        "private api listening at http://%s:%d",
+        privateHost,
+        privatePort,
+      ),
     );
   } else {
-    privateApp.listen(privatePort, () => logger.info('private api listening at http://localhost:%d', privatePort));
+    privateApp.listen(privatePort, () =>
+      logger.info("private api listening at http://localhost:%d", privatePort),
+    );
   }
 }
 
