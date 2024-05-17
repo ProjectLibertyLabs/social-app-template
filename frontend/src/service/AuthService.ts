@@ -1,3 +1,4 @@
+import { ServerConfiguration } from '@typoas/runtime';
 import * as dsnpLink from '../dsnpLink';
 
 let accessToken: string | null = null;
@@ -21,16 +22,22 @@ export const clearAccessToken = (token: string): void => {
  * @returns The context object.
  */
 export const getContext = () => {
-  if (accessToken === null) return dsnpLink.createContext();
+  const contextOptions: any = {}
+
+  if (process.env.REACT_APP_BACKEND_URL) {
+    contextOptions.serverConfiguration = new ServerConfiguration(process.env.REACT_APP_BACKEND_URL, {});
+  }
+
+  if (accessToken) {
+    contextOptions.authProviders = {
+      tokenAuth: {
+        getConfig: () => accessToken
+      }
+    }
+  }
 
   // TODO: Handle expiring tokens
 
   // TODO: Something might be broken in typoas. This is trying to fix it
-  return dsnpLink.createContext({
-    authProviders: {
-      tokenAuth: {
-        getConfig: () => accessToken,
-      } as any,
-    },
-  });
+  return dsnpLink.createContext(contextOptions);
 };
