@@ -10,11 +10,12 @@ export const getProfile: Handler<object> = async (c, _req, res) => {
     return res.status(404).send();
   }
 
+  // TODO: Implement something to abstract the Frequency RPC calls
   try {
-    const api = await getApi();
+    const chainApi = await getApi();
 
     let displayHandle = '';
-    const handle = await api.rpc.handles.getHandleForMsa(msaId);
+    const handle = await chainApi.rpc.handles.getHandleForMsa(msaId);
     if (handle.isSome) {
       displayHandle = `${handle.value.base_handle}.${handle.value.suffix}`;
     }

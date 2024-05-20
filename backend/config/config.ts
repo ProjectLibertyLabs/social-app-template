@@ -87,7 +87,7 @@ export class Config {
   }
 
   public get graphServiceUrl() {
-    return this.configValues["GRAPH_SERVICE_URL"];
+    return this.configValues['GRAPH_SERVICE_URL'];
   }
 
   public get chainType() {

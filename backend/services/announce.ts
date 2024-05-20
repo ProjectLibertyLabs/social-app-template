@@ -53,9 +53,10 @@ export const getSchemaId = (type: AnnouncementType): number => {
   }
 };
 
+// TODO: Implement something to abstract the Frequency RPC calls
 export const publish = async <T extends BroadcastAnnouncement | ReplyAnnouncement>(announcements: Array<T>) => {
   console.log(`Preparing to publish a batch of announcements. Count: ${announcements.length}`);
-  const api = await getApi();
+  const chainApi = await getApi();
 
   const announcementType = announcements[0].announcementType;
 
@@ -85,10 +86,10 @@ export const publish = async <T extends BroadcastAnnouncement | ReplyAnnouncemen
   // Pin to IPFS
   const { cid, size } = await ipfsPin('application/octet-stream', buf);
   const schemaId = getSchemaId(announcementType);
-  const tx = api.tx.messages.addIpfsMessage(schemaId, cid, size);
+  const tx = chainApi.tx.messages.addIpfsMessage(schemaId, cid, size);
 
   // Do NOT wait for all the callbacks. Assume for now that it will work...
-  await api.tx.frequencyTxPayment
+  await chainApi.tx.frequencyTxPayment
     .payWithCapacity(tx)
     .signAndSend(getProviderKey(), { nonce: await getNonce() }, ({ status, dispatchError }) => {
       if (dispatchError) {

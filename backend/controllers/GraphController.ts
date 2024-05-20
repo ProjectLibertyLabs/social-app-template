@@ -11,13 +11,20 @@ export class GraphController extends BaseController {
   }
 
   protected initializeRoutes(): void {
-    this.router.get('/:dsnpId/following', validateAuthToken, this.getFollowing.bind(this));
-    this.router.post('/:dsnpId/follow', validateAuthToken, this.postFollow.bind(this));
-    this.router.post('/:dsnpId/unfollow', validateAuthToken, this.postUnfollow.bind(this));
+    this.router.get('/:msaId/following', validateAuthToken, this.getFollowing.bind(this));
+    this.router.post('/:msaId/follow', validateAuthToken, this.postFollow.bind(this));
+    this.router.post('/:msaId/unfollow', validateAuthToken, this.postUnfollow.bind(this));
   }
 
+  /**
+   * Retrieves the list of users that a given user is following.
+   *
+   * @param req - The request object.
+   * @param res - The response object.
+   * @returns A Promise that resolves to the list of users that the given user is following.
+   */
   public async getFollowing(req: Request, res: Response) {
-    const msaId = req.params?.dsnpId;
+    const msaId = req.params?.msaId;
 
     if (!msaId) {
       return res.status(HttpStatusCode.NotFound).send();
@@ -43,7 +50,7 @@ export class GraphController extends BaseController {
       return res.status(HttpStatusCode.BadRequest).send();
     }
 
-    const msaToFollow = req.params.dsnpId;
+    const msaToFollow = req.params.msaId;
     if (!msaToFollow || typeof msaToFollow !== 'string') {
       return res.status(HttpStatusCode.BadRequest).send();
     }
@@ -67,7 +74,7 @@ export class GraphController extends BaseController {
       return res.status(HttpStatusCode.BadRequest).send();
     }
 
-    const msaToUnfollow = req.params.dsnpId;
+    const msaToUnfollow = req.params.msaId;
     if (!msaToUnfollow || typeof msaToUnfollow !== 'string') {
       return res.status(HttpStatusCode.BadRequest).send();
     }

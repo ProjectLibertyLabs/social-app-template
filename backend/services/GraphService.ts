@@ -4,12 +4,16 @@ import { AnnouncementType } from './dsnp.js';
 import { getApi, getNonce, getProviderKey } from './frequency.js';
 import { dsnp } from '@dsnp/frequency-schemas';
 import avro from 'avro-js';
-import { Client as GraphServiceClient } from '../types/openapi-graph-service';
+import { Components, Client as GraphServiceClient } from '../types/openapi-graph-service';
 import { OpenAPIClientAxios, type Document } from 'openapi-client-axios';
 import openapiJson from '../openapi-specs/graph-service.json' assert { type: 'json' };
 import * as Config from '../config/config';
+import { getMsaforPublicKey } from '@amplica-labs/siwf';
+import logger from '../logger.js';
 
-// TODO: Remove all graph logic in favor of proxy to `graph-service`
+type GraphsQueryParamsDto = Components.Schemas.GraphsQueryParamsDto;
+type GraphKeyPairDto = Components.Schemas.GraphKeyPairDto;
+type UserGraphDto = Components.Schemas.UserGraphDto;
 
 // { userId, since }
 const publicFollowsAvro = avro.parse(dsnp.userPublicFollows.types[0]);
@@ -41,22 +45,26 @@ export class GraphService {
         definition: openapiJson as unknown as Document,
         withServer: { url: Config.instance().graphServiceUrl },
       });
-      const curClient = await api.init<GraphServiceClient>();
-      this.setClient(curClient);
+      this._client = await api.init<GraphServiceClient>();
     }
   }
 
-  private setClient(api: GraphServiceClient) {
+  private set client(api: GraphServiceClient) {
     this._client = api;
   }
 
-  private get getClient(): GraphServiceClient {
+  private get client(): GraphServiceClient {
     if (this._client === undefined) {
       throw new Error(`${this.constructor.name} API not initialized`);
     }
     return this._client;
   }
 
+  /**
+   * Inflates a payload string and returns an array of GraphEdge objects.
+   * @param payload - The payload string to be inflated.
+   * @returns An array of GraphEdge objects.
+   */
   private inflatePage(payload: string): GraphEdge[] {
     if (!payload) return [];
     try {
@@ -77,22 +85,25 @@ export class GraphService {
     return publicFollowsCompressed.toBuffer({ compressedPublicGraph });
   }
 
+  /**
+   * Retrieves the list of public follows for a given MSA ID.
+   * @param msaId - The MSA ID for which to retrieve the public follows.
+   * @returns A promise that resolves to an array of strings representing the user IDs of the public follows.
+   */
   public async getPublicFollows(msaId: string): Promise<string[]> {
-    const schemaId = getSchemaId(AnnouncementType.PublicFollows);
-    //TODO
-    const resp = await this.getClient;
-    // const resp = await api.rpc.statefulStorage.getPaginatedStorage(msaId, schemaId);
-    const followList = resp.flatMap((page) => {
-      try {
-        return this.inflatePage(page.toJSON().payload).map((x: { userId: number; since: number }) =>
-          x.userId.toString()
-        );
-      } catch (e) {
-        console.error('Failed to parse public follows...', e);
-        return [];
-      }
-    });
-
+    const graphsQueryParamsDto: GraphsQueryParamsDto = {
+      dsnpIds: [msaId],
+      privacyType: 'public',
+      graphKeyPairs: [],
+    };
+    logger.debug(`GraphService: getPublicFollows: msaId(${msaId}), graphsQueryParamsDto:(${JSON.stringify(graphsQueryParamsDto)}`);
+    const resp = await this.client.ApiController_getGraphs(null, graphsQueryParamsDto);
+    const userGraphDto: UserGraphDto[] = resp.data;
+    const followList: string[] = userGraphDto
+      .map((userGraph) => userGraph.dsnpGraphEdges?.map((edge) => edge.userId.toString()))
+      .filter((item): item is string[] => item !== undefined)
+      .flat();
+    logger.debug(`GraphService: getPublicFollows followList:(${ followList })`);
     return followList;
   }
 
