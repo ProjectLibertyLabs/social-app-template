@@ -22,7 +22,7 @@ export const clearAccessToken = (token: string): void => {
  * @returns The context object.
  */
 export const getContext = () => {
-  const contextOptions: any = {}
+  const contextOptions: any = {};
 
   if (process.env.REACT_APP_BACKEND_URL) {
     contextOptions.serverConfiguration = new ServerConfiguration(process.env.REACT_APP_BACKEND_URL, {});
@@ -31,9 +31,9 @@ export const getContext = () => {
   if (accessToken) {
     contextOptions.authProviders = {
       tokenAuth: {
-        getConfig: () => accessToken
-      }
-    }
+        getConfig: () => accessToken,
+      },
+    };
   }
 
   // TODO: Handle expiring tokens
