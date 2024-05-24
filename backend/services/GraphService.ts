@@ -97,7 +97,9 @@ export class GraphService {
       privacyType: 'public',
       graphKeyPairs: [],
     };
-    logger.debug(`GraphService: getPublicFollows: msaId(${msaId}), graphsQueryParamsDto:(${JSON.stringify(graphsQueryParamsDto)}`);
+    logger.debug(
+      `GraphService: getPublicFollows: msaId(${msaId}), graphsQueryParamsDto:(${JSON.stringify(graphsQueryParamsDto)}`
+    );
     const resp = await this.client.ApiController_getGraphs(null, graphsQueryParamsDto);
     const userGraphDto: UserGraphDto[] = resp.data;
     logger.warn(`GraphService: getPublicFollows userGraphDto:(${JSON.stringify(userGraphDto)})`);
@@ -105,13 +107,13 @@ export class GraphService {
       .map((userGraph) => userGraph.dsnpGraphEdges?.map((edge) => edge.userId.toString()))
       .filter((item): item is string[] => item !== undefined)
       .flat();
-    logger.debug(`GraphService: getPublicFollows followList:(${ followList })`);
+    logger.debug(`GraphService: getPublicFollows followList:(${followList})`);
     return followList;
   }
 
   /**
    * Posts a follow request from an actor to an object.
-   * 
+   *
    * @param actorId - The ID of the actor.
    * @param objectId - The ID of the object.
    * @returns A Promise that resolves to void.

@@ -39,9 +39,7 @@ export class WebhookController extends BaseController {
   }
   public async graphServiceWebhook(req: Request, res: Response) {
     try {
-      const response = await GraphServiceWebhook.getInstance().then((service) =>
-        service.graphServiceWebhook(req.body)
-      );
+      const response = await GraphServiceWebhook.getInstance().then((service) => service.graphServiceWebhook(req.body));
       res.send(response).end();
     } catch (e) {
       logger.error(`Error handling graph service webhook: ${e}`);
