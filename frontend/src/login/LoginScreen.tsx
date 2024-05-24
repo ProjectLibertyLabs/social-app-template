@@ -6,7 +6,9 @@ import { UserAccount } from '../types';
 import styles from './LoginScreen.module.css';
 import { ServerConfiguration } from '@typoas/runtime';
 
-const dsnpLinkCtx = process.env.REACT_APP_BACKEND_URL ? dsnpLink.createContext({ serverConfiguration: new ServerConfiguration(process.env.REACT_APP_BACKEND_URL, {})}) : dsnpLink.createContext();
+const dsnpLinkCtx = process.env.REACT_APP_BACKEND_URL
+  ? dsnpLink.createContext({ serverConfiguration: new ServerConfiguration(process.env.REACT_APP_BACKEND_URL, {}) })
+  : dsnpLink.createContext();
 
 interface LoginScreenProps {
   onLogin: (account: UserAccount, providerInfo: dsnpLink.ProviderResponse) => void;
