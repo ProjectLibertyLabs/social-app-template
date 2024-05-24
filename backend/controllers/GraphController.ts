@@ -4,6 +4,7 @@ import { HttpStatusCode } from 'axios';
 import { GraphService } from '../services/GraphService';
 import { HttpError } from '../types/HttpError';
 import { validateAuthToken } from '../services/TokenAuth';
+import logger from '../logger';
 
 export class GraphController extends BaseController {
   constructor(app: Express) {
@@ -34,7 +35,7 @@ export class GraphController extends BaseController {
       const follows = await GraphService.getInstance().then((service) => service.getPublicFollows(msaId));
       return res.status(HttpStatusCode.Ok).send(follows);
     } catch (err) {
-      console.error('Error getting user follows', err);
+      logger.error(`Error getting user follows: ${err}`);
       if (err instanceof HttpError) {
         return res.status(err.code).send(err.message);
       }
@@ -56,10 +57,10 @@ export class GraphController extends BaseController {
     }
 
     try {
-      await GraphService.getInstance().then((service) => service.follow(msaId, parseInt(msaToFollow)));
+      await GraphService.getInstance().then((service) => service.postFollow(msaId, parseInt(msaToFollow)));
       return res.status(HttpStatusCode.Created).send();
     } catch (err: any) {
-      console.error('Error changing user graph: follow', err);
+      logger.error(`Error changing user graph: follow:(${err})`);
       if (err instanceof HttpError) {
         return res.status(err.code).send(err.message);
       }
@@ -80,11 +81,11 @@ export class GraphController extends BaseController {
     }
 
     try {
-      await GraphService.getInstance().then((service) => service.unfollow(msaId, parseInt(msaToUnfollow)));
+      await GraphService.getInstance().then((service) => service.postUnfollow(msaId, parseInt(msaToUnfollow)));
 
       return res.status(HttpStatusCode.Created).send();
     } catch (err: any) {
-      console.error('Error changing user graph: unfollow', err);
+      logger.error(`Error changing user graph: unfollow ${err}`);
       if (err instanceof HttpError) {
         return res.status(err.code).send(err.message);
       }

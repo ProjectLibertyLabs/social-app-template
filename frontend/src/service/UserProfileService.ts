@@ -15,6 +15,7 @@ const profileToUser = (profile: dsnpLink.Profile): User => {
       name: contentParsed.name || '',
     };
   }
+  console.log(`REMOVE: DEBUG: UserProfileService: profileToUser: profile.displayHandle(${profile.displayHandle})`)
   return {
     handle: profile.displayHandle || 'Anonymous',
     msaId: profile.fromId,
@@ -24,12 +25,13 @@ const profileToUser = (profile: dsnpLink.Profile): User => {
 
 export const getUserProfile = (msaId: string): Promise<User | null> => {
   // Check if the profile is already cached
+  console.log(`REMOVE: DEBUG: getUserProfile:(${msaId})`)
   const cached = profileCache.get(msaId);
   if (cached) return cached;
 
   // Profile not found in cache, fetch from the server
   try {
-    const profile = dsnpLink.getProfile(getContext(), { dsnpId: msaId }).then(profileToUser);
+    const profile = dsnpLink.getProfile(getContext(), { msaId: msaId }).then(profileToUser);
     profileCache.set(msaId, profile);
     return profile;
   } catch (error) {

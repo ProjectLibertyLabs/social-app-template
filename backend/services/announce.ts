@@ -4,6 +4,7 @@ import { ParquetWriter } from '@dsnp/parquetjs';
 import { ChainType, getApi, getChainType, getNonce, getProviderKey } from './frequency.js';
 import { ipfsPin } from './ipfs.js';
 import { AnnouncementType, BroadcastAnnouncement, ReplyAnnouncement } from './dsnp.js';
+import logger from '../logger.js';
 
 const TestnetSchemas = (type: AnnouncementType): number => {
   switch (type) {
@@ -55,7 +56,7 @@ export const getSchemaId = (type: AnnouncementType): number => {
 
 // TODO: Implement something to abstract the Frequency RPC calls
 export const publish = async <T extends BroadcastAnnouncement | ReplyAnnouncement>(announcements: Array<T>) => {
-  console.log(`Preparing to publish a batch of announcements. Count: ${announcements.length}`);
+  logger.info(`Preparing to publish a batch of announcements. Count: ${announcements.length}`);
   const chainApi = await getApi();
 
   const announcementType = announcements[0].announcementType;
@@ -95,7 +96,7 @@ export const publish = async <T extends BroadcastAnnouncement | ReplyAnnouncemen
       if (dispatchError) {
         console.error('ERROR: ', dispatchError.toHuman());
       } else if (status.isInBlock || status.isFinalized) {
-        console.log('Message Posted', status.toHuman());
+        logger.info('Message Posted', status.toHuman());
       }
     });
   return;

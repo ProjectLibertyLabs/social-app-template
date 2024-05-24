@@ -2,7 +2,7 @@
   "openapi": "3.0.0",
   "servers": [
     {
-      "url": "http://localhost:3000"
+      "url": "http://localhost:3004"
     }
   ],
   "info": {
@@ -576,7 +576,7 @@
         }
       }
     },
-    "/profiles/{dsnpId}": {
+    "/profiles/{msaId}": {
       "get": {
         "operationId": "getProfile",
         "summary": "Get profile information for a specific user",
@@ -587,7 +587,7 @@
         ],
         "parameters": [
           {
-            "name": "dsnpId",
+            "name": "msaId",
             "in": "path",
             "required": true,
             "schema": {

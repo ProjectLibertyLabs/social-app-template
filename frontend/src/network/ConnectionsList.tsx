@@ -34,7 +34,7 @@ const ConnectionsList = ({
 
     const list: User[] = await Promise.all(
       accountFollowingList.map((msaId) =>
-        dsnpLink.getProfile(ctx, { dsnpId: msaId }).then(({ displayHandle, fromId, content }) => {
+        dsnpLink.getProfile(ctx, { msaId: msaId }).then(({ displayHandle, fromId, content }) => {
           try {
             const profile = content ? JSON.parse(content) : {};
             return {

@@ -18,13 +18,24 @@ interface UserAvatarProps {
 }
 
 const UserAvatar = ({ user, avatarSize }: UserAvatarProps): ReactElement => {
-  const iconURL = user
-    ? user.profile?.icon ||
-      React.useMemo(
-        () => `data:image/svg+xml;utf8,${encodeURIComponent(minidenticon(user.msaId))}`,
+  let iconURL = '';
+  if (user) {
+    if (user.profile?.icon) {
+      iconURL = user.profile.icon;
+    } else {
+      console.log(`REMOVE: DEBUG: UserAvatar:msaId(${user.msaId})`);
+      let msaIdString: string;
+      if (typeof user.msaId !== 'string') {
+        msaIdString = '';
+      } else {
+        msaIdString = user.msaId;
+      }
+      iconURL = React.useMemo(
+        () => `data:image/svg+xml;utf8,${encodeURIComponent(minidenticon(msaIdString))}`,
         [user.msaId]
-      )
-    : '';
+      );
+    }
+  }
 
   return (
     <Avatar

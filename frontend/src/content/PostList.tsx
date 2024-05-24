@@ -38,19 +38,21 @@ const PostList = ({ feedType, user, refreshTrigger, goToProfile, resetFeed, netw
     appendOrPrepend: 'append' | 'prepend',
     priorFeed: FeedItem[]
   ) => {
+    // REMOVE: fix result.posts is not iterable error
+    const posts = Array.isArray(result.posts) ? result.posts : [];
     setOldestBlockNumber(Math.min(oldestBlockNumber || result.oldestBlockNumber, result.oldestBlockNumber));
     setNewestBlockNumber(Math.max(newestBlockNumber || result.newestBlockNumber, result.newestBlockNumber));
     if (appendOrPrepend === 'append') {
       // Older stuff
-      setCurrentFeed([...priorFeed, ...result.posts]);
+      setCurrentFeed([...priorFeed, ...posts]);
     } else {
       // Newer stuff
-      setCurrentFeed([...result.posts, ...priorFeed]);
+      setCurrentFeed([...posts, ...priorFeed]);
     }
 
     if (
       appendOrPrepend === 'append' &&
-      result.posts.length === 0 &&
+      posts.length === 0 &&
       result.oldestBlockNumber > OLDEST_BLOCK_TO_GO_TO[network]
     ) {
       // Keep going back in time
