@@ -12,6 +12,7 @@ const ENV_SCHEMA = Joi.object({
   ACCOUNT_SERVICE_URL: Joi.string().uri().required(),
   CONTENT_PUBLISHER_URL: Joi.string().uri().required(),
   CONTENT_WATCHER_URL: Joi.string().uri().required(),
+  GRAPH_SERVICE_URL: Joi.string().uri().required(),
   CHAIN_ENVIRONMENT: Joi.string()
     .valid(...['dev', 'rococo', 'testnet', 'mainnet'])
     .required(),
@@ -93,6 +94,10 @@ export class Config {
 
   public get contentWatcherUrl() {
     return this.configValues['CONTENT_WATCHER_URL'];
+  }
+
+  public get graphServiceUrl() {
+    return this.configValues['GRAPH_SERVICE_URL'];
   }
 
   public get chainType() {

@@ -2,7 +2,7 @@
   "openapi": "3.0.0",
   "servers": [
     {
-      "url": "http://localhost:3000"
+      "url": "http://localhost:3004"
     }
   ],
   "info": {
@@ -478,7 +478,7 @@
         }
       }
     },
-    "/graph/{dsnpId}/following": {
+    "/graph/{msaId}/following": {
       "get": {
         "operationId": "userFollowing",
         "summary": "Get a list of users that a specific user follows",
@@ -489,7 +489,7 @@
         ],
         "parameters": [
           {
-            "name": "dsnpId",
+            "name": "msaId",
             "in": "path",
             "required": true,
             "schema": {
@@ -518,7 +518,7 @@
         }
       }
     },
-    "/graph/{dsnpId}/follow": {
+    "/graph/{msaId}/follow": {
       "post": {
         "operationId": "graphFollow",
         "summary": "Follow a user",
@@ -529,7 +529,7 @@
         ],
         "parameters": [
           {
-            "name": "dsnpId",
+            "name": "msaId",
             "in": "path",
             "required": true,
             "schema": {
@@ -547,7 +547,7 @@
         }
       }
     },
-    "/graph/{dsnpId}/unfollow": {
+    "/graph/{msaId}/unfollow": {
       "post": {
         "operationId": "graphUnfollow",
         "summary": "Unfollow a user",
@@ -558,7 +558,7 @@
         ],
         "parameters": [
           {
-            "name": "dsnpId",
+            "name": "msaId",
             "in": "path",
             "required": true,
             "schema": {
@@ -576,7 +576,7 @@
         }
       }
     },
-    "/profiles/{dsnpId}": {
+    "/profiles/{msaId}": {
       "get": {
         "operationId": "getProfile",
         "summary": "Get profile information for a specific user",
@@ -587,7 +587,7 @@
         ],
         "parameters": [
           {
-            "name": "dsnpId",
+            "name": "msaId",
             "in": "path",
             "required": true,
             "schema": {

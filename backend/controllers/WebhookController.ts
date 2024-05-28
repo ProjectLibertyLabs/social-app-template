@@ -5,6 +5,7 @@ import { AccountServiceWebhook } from '../services/AccountWebhookService';
 import { HttpError } from '../types/HttpError';
 import logger from '../logger';
 import * as ContentRepository from '../repositories/ContentRepository';
+import { GraphServiceWebhook } from '../services/GraphWebhookService';
 
 export class WebhookController extends BaseController {
   constructor(app: Express) {
@@ -14,6 +15,7 @@ export class WebhookController extends BaseController {
   protected initializeRoutes(): void {
     this.router.post('/account-service', this.accountServiceWebhook.bind(this));
     this.router.post('/content-watcher/announcements', this.postAnnouncementsWebhook.bind(this));
+    this.router.post('/graph-service', this.graphServiceWebhook.bind(this));
   }
 
   /**
@@ -28,12 +30,25 @@ export class WebhookController extends BaseController {
         service.accountServiceWebhook(req.body)
       );
       res.send(response).end();
-    } catch (e) {
-      logger.error(`Error handling account service webhook: ${e}`);
-      if (e instanceof HttpError) {
-        res.status(e.code).send(e.message).end();
+    } catch (err) {
+      logger.error({ err }, 'Error handling account service webhook:');
+      if (err instanceof HttpError) {
+        res.status(err.code).send(err.message).end();
       } else {
-        res.status(HttpStatusCode.InternalServerError).send(e).end();
+        res.status(HttpStatusCode.InternalServerError).send(err).end();
+      }
+    }
+  }
+  public async graphServiceWebhook(req: Request, res: Response) {
+    try {
+      const response = await GraphServiceWebhook.getInstance().then((service) => service.graphServiceWebhook(req.body));
+      res.send(response).end();
+    } catch (err) {
+      logger.error({ err }, 'Error handling graph service webhook');
+      if (err instanceof HttpError) {
+        res.status(err.code).send(err.message).end();
+      } else {
+        res.status(HttpStatusCode.InternalServerError).send(err).end();
       }
     }
   }

@@ -97,7 +97,7 @@ services:
     networks:
       - social-app-backend
 
-  graph-service:
+  graph-service-api:
     image: amplicalabs/graph-service:latest
     platform: linux/amd64
     ports:
@@ -107,6 +107,22 @@ services:
         required: true
       - path: .env.graph-service
         required: false
+    depends_on:
+      - redis
+      - frequency
+    networks:
+      - social-app-backend
+
+  graph-service-worker:
+    image: amplicalabs/graph-service:latest
+    platform: linux/amd64
+    env_file:
+      - path: .env.common.docker
+        required: true
+      - path: .env.graph-service
+        required: false
+    environment:
+      - START_PROCESS=worker
     depends_on:
       - redis
       - frequency
@@ -142,7 +158,6 @@ services:
     depends_on:
       - redis
       - frequency
-
     networks:
       - social-app-backend
 
@@ -176,7 +191,8 @@ services:
       - content-publishing-service-worker
       - account-service-api
       - account-service-worker
-      - graph-service
+      - graph-service-api
+      - graph-service-worker
 
 volumes:
   ipfs_data:

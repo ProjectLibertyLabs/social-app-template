@@ -21,7 +21,7 @@ export class AssestsController extends BaseController {
   public async postAssets(req: Request, res: Response) {
     const { files } = req;
     if (!Array.isArray(files) || !files.length) {
-      return res.status(HttpStatusCode.Accepted).send({});
+      return res.status(HttpStatusCode.Accepted).send('No files were uploaded.');
     }
 
     try {

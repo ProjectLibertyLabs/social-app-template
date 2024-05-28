@@ -35,7 +35,7 @@ export async function getFollowingContent(msaId: string, { newestBlockNumber, ol
   const oldest = Math.max(1, oldestBlockNumber || 1, newest - 45_000); // 45k blocks at a time max
 
   try {
-    const following = await GraphService.instance().then((service) => service.getPublicFollows(msaId));
+    const following = await GraphService.getInstance().then((service) => service.getPublicFollows(msaId));
 
     const posts = await getPostsInRange(newest, oldest);
     const response: T.Paths.GetFeed.Responses.$200 = {

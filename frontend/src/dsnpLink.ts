@@ -202,7 +202,7 @@ export function configureAuth(params?: r.CreateContextParams<AuthMethods>["authP
     return { tokenAuth: params?.tokenAuth && new r.HttpBearerSecurityAuthentication(params.tokenAuth) };
 }
 export function createContext<FetcherData>(params?: r.CreateContextParams<AuthMethods, FetcherData>): r.Context<AuthMethods, FetcherData> { return new r.Context<AuthMethods, FetcherData>({
-    serverConfiguration: new r.ServerConfiguration('http://localhost:3000', {}),
+    serverConfiguration: new r.ServerConfiguration('http://localhost:3004', {}),
     authMethods: configureAuth(params?.authProviders),
     ...params
 }); }
@@ -404,10 +404,10 @@ export async function editContent<FetcherData>(ctx: r.Context<AuthMethods, Fetch
  * Get a list of users that a specific user follows
  */
 export async function userFollowing<FetcherData>(ctx: r.Context<AuthMethods, FetcherData>, params: {
-    dsnpId: string;
+    msaId: string;
 }, opts?: FetcherData): Promise<string[]> {
     const req = await ctx.createRequest({
-        path: '/graph/{dsnpId}/following',
+        path: '/graph/{msaId}/following',
         params,
         method: r.HttpMethod.GET,
         auth: ["tokenAuth"]
@@ -419,10 +419,10 @@ export async function userFollowing<FetcherData>(ctx: r.Context<AuthMethods, Fet
  * Follow a user
  */
 export async function graphFollow<FetcherData>(ctx: r.Context<AuthMethods, FetcherData>, params: {
-    dsnpId: string;
+    msaId: string;
 }, opts?: FetcherData): Promise<any> {
     const req = await ctx.createRequest({
-        path: '/graph/{dsnpId}/follow',
+        path: '/graph/{msaId}/follow',
         params,
         method: r.HttpMethod.POST,
         auth: ["tokenAuth"]
@@ -434,10 +434,10 @@ export async function graphFollow<FetcherData>(ctx: r.Context<AuthMethods, Fetch
  * Unfollow a user
  */
 export async function graphUnfollow<FetcherData>(ctx: r.Context<AuthMethods, FetcherData>, params: {
-    dsnpId: string;
+    msaId: string;
 }, opts?: FetcherData): Promise<any> {
     const req = await ctx.createRequest({
-        path: '/graph/{dsnpId}/unfollow',
+        path: '/graph/{msaId}/unfollow',
         params,
         method: r.HttpMethod.POST,
         auth: ["tokenAuth"]
@@ -449,10 +449,10 @@ export async function graphUnfollow<FetcherData>(ctx: r.Context<AuthMethods, Fet
  * Get profile information for a specific user
  */
 export async function getProfile<FetcherData>(ctx: r.Context<AuthMethods, FetcherData>, params: {
-    dsnpId: string;
+    msaId: string;
 }, opts?: FetcherData): Promise<Profile> {
     const req = await ctx.createRequest({
-        path: '/profiles/{dsnpId}',
+        path: '/profiles/{msaId}',
         params,
         method: r.HttpMethod.GET,
         auth: ["tokenAuth"]
@@ -467,7 +467,7 @@ export async function createProfile<FetcherData>(ctx: r.Context<AuthMethods, Fet
     dsnpId: string;
 }, body: EditProfileRequest, opts?: FetcherData): Promise<Profile> {
     const req = await ctx.createRequest({
-        path: '/profiles/{dsnpId}',
+        path: '/profiles/{msaId}',
         params,
         method: r.HttpMethod.PUT,
         body,

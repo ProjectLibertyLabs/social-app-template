@@ -6,7 +6,7 @@ import { getLoginOrRegistrationPayload, setConfig } from '@amplica-labs/siwf';
 import * as dsnpLink from '../dsnpLink';
 import { UserAccount } from '../types';
 import styles from './Login.module.css';
-import { getContext, setAccessToken } from '../service/AuthService';
+import { getContext } from '../service/AuthService';
 
 /**
  * Props for the Login component.

@@ -3,9 +3,7 @@ import { OpenAPIClientAxios, type Document } from 'openapi-client-axios';
 import openapiJson from '../openapi-specs/account-service.json' assert { type: 'json' };
 import * as Config from '../config/config';
 import { HttpStatusCode } from 'axios';
-import { Response } from 'express';
 import logger from '../logger';
-import { WebhookController } from '../controllers/WebhookController';
 import { HttpError } from '../types/HttpError';
 
 type AccountServiceWebhookResponse = {
