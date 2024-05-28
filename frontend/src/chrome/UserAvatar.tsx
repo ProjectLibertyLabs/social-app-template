@@ -23,7 +23,8 @@ const UserAvatar = ({ user, avatarSize }: UserAvatarProps): ReactElement => {
     if (user.profile?.icon) {
       iconURL = user.profile.icon;
     } else {
-      console.log(`REMOVE: DEBUG: UserAvatar:msaId(${user.msaId})`);
+      // Used to trace conditions when msaId is undefined
+      // console.log(`REMOVE: DEBUG: UserAvatar:msaId(${user.msaId})`);
       let msaIdString: string;
       if (typeof user.msaId !== 'string') {
         msaIdString = '';

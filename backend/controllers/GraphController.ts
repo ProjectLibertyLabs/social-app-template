@@ -60,7 +60,7 @@ export class GraphController extends BaseController {
       await GraphService.getInstance().then((service) => service.postFollow(msaId, parseInt(msaToFollow)));
       return res.status(HttpStatusCode.Created).send();
     } catch (err: any) {
-      logger.error(`Error changing user graph: follow:(${err})`);
+      logger.error({ err }, 'Error changing user graph: follow');
       if (err instanceof HttpError) {
         return res.status(err.code).send(err.message);
       }

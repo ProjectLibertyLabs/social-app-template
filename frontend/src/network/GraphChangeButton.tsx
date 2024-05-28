@@ -23,7 +23,6 @@ const GraphChangeButton = ({ user, relationshipStatus, triggerGraphRefresh }: Gr
     if (isFollowing) {
       await dsnpLink.graphUnfollow(getContext(), { msaId: user.msaId });
     } else {
-      console.log(`REMOVE: DEBUG: request to follow user msaId:(${user.msaId})`);
       await dsnpLink.graphFollow(getContext(), { msaId: user.msaId });
     }
     // Defined in App.tsx to refreshFollowing, triggers an api call to /graph/{msaId}/following

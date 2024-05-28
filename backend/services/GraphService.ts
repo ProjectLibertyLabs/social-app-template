@@ -1,30 +1,12 @@
-import zlib from 'node:zlib';
-import { getSchemaId } from './announce.js';
-import { AnnouncementType } from './dsnp.js';
-import { getApi, getNonce, getProviderKey } from './frequency.js';
-import { dsnp } from '@dsnp/frequency-schemas';
-import avro from 'avro-js';
 import { Components, Client as GraphServiceClient } from '../types/openapi-graph-service';
 import { OpenAPIClientAxios, type Document } from 'openapi-client-axios';
 import openapiJson from '../openapi-specs/graph-service.json' assert { type: 'json' };
 import * as Config from '../config/config';
-import { getMsaforPublicKey } from '@amplica-labs/siwf';
 import logger from '../logger.js';
 
 type GraphsQueryParamsDto = Components.Schemas.GraphsQueryParamsDto;
-type GraphKeyPairDto = Components.Schemas.GraphKeyPairDto;
 type UserGraphDto = Components.Schemas.UserGraphDto;
 type ProviderGraphDto = Components.Schemas.ProviderGraphDto;
-
-// { userId, since }
-const publicFollowsAvro = avro.parse(dsnp.userPublicFollows.types[0]);
-// { compressedPublicGraph: bytes }
-const publicFollowsCompressed = avro.parse(dsnp.userPublicFollows);
-
-interface GraphEdge {
-  userId: number;
-  since: number;
-}
 
 export class GraphService {
   private static instance: GraphService;
@@ -62,31 +44,6 @@ export class GraphService {
   }
 
   /**
-   * Inflates a payload string and returns an array of GraphEdge objects.
-   * @param payload - The payload string to be inflated.
-   * @returns An array of GraphEdge objects.
-   */
-  private inflatePage(payload: string): GraphEdge[] {
-    if (!payload) return [];
-    try {
-      const buf = Buffer.from(payload.substring(2), 'hex');
-      const container = publicFollowsCompressed.fromBuffer(buf);
-      const data = zlib.inflateSync(container.compressedPublicGraph);
-      const graphEdges = publicFollowsAvro.fromBuffer(data);
-      return graphEdges;
-    } catch (e) {
-      logger.error(`Error parsing page: ${e}`);
-      return [];
-    }
-  }
-
-  private deflatePage(edges: GraphEdge[]) {
-    const inside = publicFollowsAvro.toBuffer(edges);
-    const compressedPublicGraph = zlib.deflateSync(inside);
-    return publicFollowsCompressed.toBuffer({ compressedPublicGraph });
-  }
-
-  /**
    * Retrieves the list of public follows for a given MSA ID.
    * @param msaId - The MSA ID for which to retrieve the public follows.
    * @returns A promise that resolves to an array of strings representing the user IDs of the public follows.
@@ -97,15 +54,14 @@ export class GraphService {
       privacyType: 'public',
       graphKeyPairs: [],
     };
-    logger.debug({ msaId, graphsQueryParamsDto }, 'GraphService: getPublicFollows');
+    logger.debug({ msaId, graphsQueryParamsDto }, 'GraphService: getPublicFollows: data from API call');
     const resp = await this.client.ApiController_getGraphs(null, graphsQueryParamsDto);
     const userGraphDto: UserGraphDto[] = resp.data;
-    logger.warn(userGraphDto, 'GraphService: getPublicFollows');
     const followList: string[] = userGraphDto
       .map((userGraph) => userGraph.dsnpGraphEdges?.map((edge) => edge.userId.toString()))
       .filter((item): item is string[] => item !== undefined)
       .flat();
-    logger.debug(followList, 'GraphService: getPublicFollows');
+    logger.debug({ followList }, 'GraphService: getPublicFollows: processed followList');
     return followList;
   }
 
@@ -135,7 +91,7 @@ export class GraphService {
     // Here we get the reference Id from the BullMQ worker queue
     // We can setup a webhook to listen for the response when the block with this txn is finalized
     // REMOVE: For now we will just assume that the transaction is successful in about 14 seconds
-    logger.debug({ response: response.data }, 'REMOVE: DEBUG: Follow Response');
+    logger.debug({ response: resp.data }, 'REMOVE: DEBUG: Follow Response');
   }
 
   public async postUnfollow(actorId: string, objectId: number): Promise<void> {
