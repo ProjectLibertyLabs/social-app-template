@@ -17,16 +17,8 @@ const ENV_SCHEMA = Joi.object({
     .valid(...['dev', 'rococo', 'testnet', 'mainnet'])
     .required(),
   DEBUG: Joi.string(),
-  IPFS_ENDPOINT: Joi.string().uri().required(),
-  IPFS_BASIC_AUTH_USER: Joi.string(),
-  IPFS_BASIC_AUTH_SECRET: Joi.string(),
-  IPFS_GATEWAY_URL: Joi.string()
-    .pattern(/\[CID\]/)
-    .required()
-    .custom((value, helpers) => {
-      const ret = Joi.string().uri().validate(value.replace('[CID]', 'cid'));
-      return ret?.error ? helpers.error(ret.error.details[0].type) : value;
-    }),
+  IPFS_GATEWAY_URL: Joi.string().uri(),
+  IPFS_UA_GATEWAY_URL: Joi.string().uri(),
   FREQUENCY_URL: Joi.string().uri().required(),
   FREQUENCY_HTTP_URL: Joi.string().uri().required(),
   PROVIDER_ID: Joi.number()
@@ -108,24 +100,12 @@ export class Config {
     return this.configValues?.['DEBUG'] ?? false;
   }
 
-  public get ipfsEndpoint() {
-    return this.configValues['IPFS_ENDPOINT'];
-  }
-
-  public get ipfsBasicAuthUser() {
-    return this.configValues?.['IPFS_BASIC_AUTH_USER'];
-  }
-
-  public get ipfsBasicAuthSecret() {
-    return this.configValues?.['IPFS_BASIC_AUTH_SECRET'];
-  }
-
   public get ipfsGatewayUrl() {
     return this.configValues['IPFS_GATEWAY_URL'];
   }
 
-  public getIpfsContentUrl(cid: string) {
-    return this.ipfsGatewayUrl.replace('[CID]', cid);
+  public get ipfsUserAgentGatewayUrl() {
+    return this.configValues['IPFS_UA_GATEWAY_URL'] || this.ipfsGatewayUrl;
   }
 
   public get frequencyUrl() {
