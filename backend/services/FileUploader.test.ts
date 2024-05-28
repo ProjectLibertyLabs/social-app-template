@@ -37,7 +37,7 @@ describe('FileUploader', () => {
     });
 
     const responseData = {
-      assetIds: ['asset1', 'asset2']
+      assetIds: ['asset1', 'asset2'],
     };
 
     (

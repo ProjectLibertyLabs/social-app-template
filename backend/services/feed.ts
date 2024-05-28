@@ -29,7 +29,7 @@ async function getPostsForBlockRange({ from, to }: BlockRange): Promise<[number,
 
   // Return the posts
   return posts;
-};
+}
 
 async function getPostContent(msg: AnnouncementResponse): Promise<[number, Post] | undefined> {
   try {

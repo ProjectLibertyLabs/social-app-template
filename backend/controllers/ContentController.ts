@@ -3,7 +3,11 @@ import { BaseController } from './BaseController';
 import { HttpStatusCode } from 'axios';
 import * as ContentService from '../services/ContentService';
 import { HttpError } from '../types/HttpError';
-import { RequestAccount, debugAuthToken as validateAuthToken, debugMsaAuth as validateMsaAuth } from '../services/TokenAuth';
+import {
+  RequestAccount,
+  validateAuthToken,
+  validateMsaAuth,
+} from '../services/TokenAuth';
 import logger from '../logger';
 
 export class ContentController extends BaseController {
@@ -16,14 +20,8 @@ export class ContentController extends BaseController {
     this.router.get('/feed', validateAuthToken, validateMsaAuth, this.getFeed.bind(this));
     this.router.get('/discover', validateAuthToken, validateMsaAuth, this.getDiscover.bind(this));
     this.router.get('/:msaId', this.getContent.bind(this));
-    // this.router.post('/create', validateAuthToken, validateMsaAuth, this.postContentCreate.bind(this));
 
-    this.router.get(
-      '/:msaId/:contentHash',
-      validateAuthToken,
-      validateMsaAuth,
-      this.getSpecificUserContent.bind(this)
-    );
+    this.router.get('/:msaId/:contentHash', validateAuthToken, validateMsaAuth, this.getSpecificUserContent.bind(this));
     this.router.put(
       '/:contentType/:contentHash',
       validateAuthToken,
@@ -114,10 +112,10 @@ export class ContentController extends BaseController {
     }
 
     try {
-    const content = await ContentService.getContent(msaId, contentHash);
-    return res.status(HttpStatusCode.Found).send(content).end();
+      const content = await ContentService.getContent(msaId, contentHash);
+      return res.status(HttpStatusCode.Found).send(content).end();
     } catch (err: any) {
-      logger.error({ err , msaId, contentHash }, 'Error fetching content');
+      logger.error({ err, msaId, contentHash }, 'Error fetching content');
       if (err instanceof HttpError) {
         return res.status(err.code).send(err.message);
       }

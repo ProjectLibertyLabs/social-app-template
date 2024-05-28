@@ -6,7 +6,6 @@ import { GraphService } from './GraphService.js';
 import { HttpError } from '../types/HttpError.js';
 import { HttpStatusCode } from 'axios';
 
-
 export interface IFeedRange {
   newestBlockNumber?: number;
   oldestBlockNumber?: number;
@@ -79,7 +78,7 @@ export async function getContent(msaId: string, contentHash: string): Promise<Po
     throw new HttpError(HttpStatusCode.NoContent, 'Specified content not found');
   }
   return content;
-};
+}
 
 export const editContent: Handler<T.Paths.EditContent.RequestBody> = async (
   // , T.Paths.EditContent.PathParameters

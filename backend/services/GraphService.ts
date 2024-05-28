@@ -166,7 +166,7 @@ export class GraphService {
       .payWithCapacity(tx)
       .signAndSend(getProviderKey(), { nonce: await getNonce() }, ({ status, dispatchError }) => {
         if (dispatchError) {
-          logger.error(dispatchError.toJSON(), 'Graph ERROR',);
+          logger.error(dispatchError.toJSON(), 'Graph ERROR');
         } else if (status.isInBlock || status.isFinalized) {
           logger.info(status.toJSON(), 'Graph Updated');
         }

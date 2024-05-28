@@ -47,7 +47,7 @@ const httpLogOptions: Options = {
     }),
   },
   customReceivedMessage: (req) => `RECV: ${req.method} ${req.url}`,
-  customSuccessMessage: (req, res) => `RESP: ${req.method} ${req.url} ${res.statusCode}`
+  customSuccessMessage: (req, res) => `RESP: ${req.method} ${req.url} ${res.statusCode}`,
 };
 
 const publicApp = express();
