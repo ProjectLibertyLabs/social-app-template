@@ -35,7 +35,7 @@ export class GraphController extends BaseController {
       const follows = await GraphService.getInstance().then((service) => service.getPublicFollows(msaId));
       return res.status(HttpStatusCode.Ok).send(follows);
     } catch (err) {
-      logger.error(`Error getting user follows: ${err}`);
+      logger.error({ err }, 'Error getting user follows');
       if (err instanceof HttpError) {
         return res.status(err.code).send(err.message);
       }
@@ -85,7 +85,7 @@ export class GraphController extends BaseController {
 
       return res.status(HttpStatusCode.Created).send();
     } catch (err: any) {
-      logger.error(`Error changing user graph: unfollow ${err}`);
+      logger.error({ err }, 'Error changing user graph: unfollow');
       if (err instanceof HttpError) {
         return res.status(err.code).send(err.message);
       }

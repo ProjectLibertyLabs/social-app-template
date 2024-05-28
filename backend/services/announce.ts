@@ -96,7 +96,7 @@ export const publish = async <T extends BroadcastAnnouncement | ReplyAnnouncemen
       if (dispatchError) {
         console.error('ERROR: ', dispatchError.toHuman());
       } else if (status.isInBlock || status.isFinalized) {
-        logger.info('Message Posted', status.toHuman());
+        logger.info({ status: status.toJson() }, 'Message Posted');
       }
     });
   return;

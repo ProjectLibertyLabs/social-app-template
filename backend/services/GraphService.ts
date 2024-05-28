@@ -97,17 +97,15 @@ export class GraphService {
       privacyType: 'public',
       graphKeyPairs: [],
     };
-    logger.debug(
-      `GraphService: getPublicFollows: msaId(${msaId}), graphsQueryParamsDto:(${JSON.stringify(graphsQueryParamsDto)}`
-    );
+    logger.debug({ msaId, graphsQueryParamsDto }, 'GraphService: getPublicFollows');
     const resp = await this.client.ApiController_getGraphs(null, graphsQueryParamsDto);
     const userGraphDto: UserGraphDto[] = resp.data;
-    logger.warn(`GraphService: getPublicFollows userGraphDto:(${JSON.stringify(userGraphDto)})`);
+    logger.warn(userGraphDto, 'GraphService: getPublicFollows');
     const followList: string[] = userGraphDto
       .map((userGraph) => userGraph.dsnpGraphEdges?.map((edge) => edge.userId.toString()))
       .filter((item): item is string[] => item !== undefined)
       .flat();
-    logger.debug(`GraphService: getPublicFollows followList:(${followList})`);
+    logger.debug(followList, 'GraphService: getPublicFollows');
     return followList;
   }
 
@@ -119,7 +117,7 @@ export class GraphService {
    * @returns A Promise that resolves to void.
    */
   public async postFollow(actorId: string, objectId: number): Promise<void> {
-    logger.debug(`Follow Request: actorId:(${actorId}), objectId:(${objectId})`);
+    logger.debug({ actorId, objectId }, 'Follow Request');
     const providerGraphDto: ProviderGraphDto = {
       dsnpId: actorId,
       connections: {
@@ -137,11 +135,11 @@ export class GraphService {
     // Here we get the reference Id from the BullMQ worker queue
     // We can setup a webhook to listen for the response when the block with this txn is finalized
     // REMOVE: For now we will just assume that the transaction is successful in about 14 seconds
-    logger.debug(`REMOVE: DEBUG: Follow Response: resp:(${JSON.stringify(resp.data)})`);
+    logger.debug({ response: response.data }, 'REMOVE: DEBUG: Follow Response');
   }
 
   public async postUnfollow(actorId: string, objectId: number): Promise<void> {
-    logger.debug(`Unfollow Request: actorId:(${actorId}), objectId:(${objectId})`);
+    logger.debug({ actorId, objectId }, 'Unfollow Request');
     const providerGraphDto: ProviderGraphDto = {
       dsnpId: actorId,
       connections: {
@@ -159,6 +157,6 @@ export class GraphService {
     // Here we get the reference Id from the BullMQ worker queue
     // We can setup a webhook to listen for the response when the block with this txn is finalized
     // REMOVE: For now we will just assume that the transaction is successful in about 14 seconds
-    logger.debug(`REMOVE: DEBUG: Unfollow Response: resp:( ${JSON.stringify(resp.data)} )`);
+    logger.debug({ response: resp.data }, 'REMOVE: DEBUG: Unfollow Response');
   }
 }
