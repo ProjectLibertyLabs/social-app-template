@@ -1,6 +1,7 @@
 import FormData from 'form-data';
 import { ContentPublisherService } from './ContentPublisherService.js';
 import { Components } from '../types/openapi-content-publishing-service.js';
+import logger from '../logger.js';
 
 type File = Express.Multer.File;
 type UploadAssetResponse = Components.Schemas.UploadResponseDto;
@@ -19,9 +20,9 @@ export class AssetsService {
       const repository = await ContentPublisherService.getInstance();
       const response = await repository.uploadAsset(formData);
       return response;
-    } catch (error) {
-      console.error(error);
-      throw error;
+    } catch (err) {
+      logger.error({ err });
+      throw err;
     }
   }
 }

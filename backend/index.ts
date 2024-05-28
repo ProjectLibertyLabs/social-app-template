@@ -3,7 +3,7 @@ import 'dotenv/config';
 // Augment Polkadot Types First
 import '@frequency-chain/api-augment';
 import express, { Request, Response, NextFunction } from 'express';
-import pinoHttp from 'pino-http';
+import pinoHttp, { Options } from 'pino-http';
 import swaggerUi from 'swagger-ui-express';
 import cors from 'cors';
 
@@ -19,6 +19,8 @@ import { BroadcastsController } from './controllers/BroadcastsController';
 import { MulterError } from 'multer';
 import logger from './logger';
 import { WebhookController } from './controllers/WebhookController';
+import { ContentWatcherService } from './services/ContentWatcherService';
+import { AnnouncementType } from './types/content-announcement';
 
 // Support BigInt JSON
 (BigInt.prototype as any).toJSON = function () {
@@ -27,15 +29,36 @@ import { WebhookController } from './controllers/WebhookController';
 
 Config.init(process.env);
 
+const httpLogOptions: Options = {
+  logger,
+  autoLogging: false,
+  serializers: {
+    req: (req: Request) => ({
+      method: req.method,
+      url: req.url,
+      query: req.query,
+      params: req.params,
+      body: req.body,
+    }),
+    res: (res: any) => ({
+      statusCode: res.statusCode,
+      status: res.status,
+      data: res?.data,
+    }),
+  },
+  customReceivedMessage: (req) => `RECV: ${req.method} ${req.url}`,
+  customSuccessMessage: (req, res) => `RESP: ${req.method} ${req.url} ${res.statusCode}`,
+};
+
 const publicApp = express();
 publicApp.use(express.json());
 publicApp.use(cors());
-publicApp.use(pinoHttp({ logger }));
+publicApp.use(pinoHttp(httpLogOptions));
 
 const privateApp = express();
 privateApp.use(express.json());
 privateApp.use(cors());
-privateApp.use(pinoHttp({ logger }));
+privateApp.use(pinoHttp(httpLogOptions));
 
 const _controllers = [
   new AuthController(publicApp),
@@ -49,15 +72,26 @@ const _controllers = [
   new WebhookController(privateApp),
 ];
 
+ContentWatcherService.getInstance().then((service) => {
+  service.registerWebhook(
+    `${Config.instance().webhookBaseUrl}/content-watcher/announcements`,
+    Object.values(AnnouncementType)
+      .filter((v) => typeof v !== 'string')
+      .map((v) => v as AnnouncementType)
+  );
+
+  service.resetScanner({ immediate: true, rewindOffset: 14_400 });
+});
+
 // Swagger UI
 publicApp.use('/docs', swaggerUi.serve, swaggerUi.setup(openapiJson));
 
-publicApp.use((err: any, req: Request, res: Response, next: NextFunction) => {
+publicApp.use((err: any, _req: Request, res: Response, next: NextFunction) => {
   if (res.headersSent) {
     return next(err);
   }
 
-  console.error(err);
+  logger.error({ err });
 
   if (err instanceof MulterError) {
     return res.status(400).json({ error: err.message });
@@ -68,7 +102,7 @@ publicApp.use((err: any, req: Request, res: Response, next: NextFunction) => {
   return res.status(500).json({ error: 'An internal server error occurred.' });
 });
 
-const { port, privatePort, privateHost } = Config.instance();
+const { port, webhookPort: privatePort, webhookHost: privateHost } = Config.instance();
 if (process.env.NODE_ENV != 'test') {
   // start server
   publicApp.listen(port, () => {

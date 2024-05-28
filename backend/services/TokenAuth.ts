@@ -65,8 +65,8 @@ export async function getMsaByPublicKey(publicKey: string): Promise<string | nul
   //   const response = await AccountService.getInstance().then((service) =>
   //     service.getAccount(publicKey),
   //   );
-  // } catch (e) {
-  //   console.error("Failed to get MSA ID: ", e);
+  // } catch (err) {
+  //   logger.error({ err }, "Failed to get MSA ID");
   //   return null;
   // }
 

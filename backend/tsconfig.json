@@ -16,7 +16,7 @@
     "strict": true,
     "skipLibCheck": true,
     "target": "ESNext",
-    "typeRoots": ["node_modules/@types", "./types"]
+    "typeRoots": ["node_modules/@types"]
   },
   "ts-node": {
     "experimentalSpecifierResolution": "node"

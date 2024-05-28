@@ -4,6 +4,7 @@ import { HttpStatusCode } from 'axios';
 import { AccountServiceWebhook } from '../services/AccountWebhookService';
 import { HttpError } from '../types/HttpError';
 import logger from '../logger';
+import * as ContentRepository from '../repositories/ContentRepository';
 import { GraphServiceWebhook } from '../services/GraphWebhookService';
 
 export class WebhookController extends BaseController {
@@ -13,6 +14,7 @@ export class WebhookController extends BaseController {
 
   protected initializeRoutes(): void {
     this.router.post('/account-service', this.accountServiceWebhook.bind(this));
+    this.router.post('/content-watcher/announcements', this.postAnnouncementsWebhook.bind(this));
     this.router.post('/graph-service', this.graphServiceWebhook.bind(this));
   }
 
@@ -49,5 +51,10 @@ export class WebhookController extends BaseController {
         res.status(HttpStatusCode.InternalServerError).send(err).end();
       }
     }
+  }
+  public postAnnouncementsWebhook(req: Request, res: Response) {
+    ContentRepository.add(req.body);
+
+    return res.status(HttpStatusCode.Created).send();
   }
 }

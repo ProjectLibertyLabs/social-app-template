@@ -1,4 +1,3 @@
-import axios from 'axios';
 import FormData from 'form-data';
 import { AssetsService } from './AssetsService.js';
 import { describe, vi, expect, test, afterEach, MockedFunction } from 'vitest';
@@ -37,19 +36,19 @@ describe('FileUploader', () => {
       contentType: files[1].mimetype,
     });
 
-    const responseData = ['asset1', 'asset2'];
+    const responseData = {
+      assetIds: ['asset1', 'asset2'],
+    };
 
     (
       ContentPublisherService.getInstance as MockedFunction<typeof ContentPublisherService.getInstance>
     ).mockResolvedValueOnce({
-      uploadAsset: vi.fn().mockResolvedValueOnce({
-        assetIds: responseData,
-      }),
+      uploadAsset: vi.fn().mockResolvedValueOnce(responseData),
     } as any);
 
     const result = await AssetsService.create(files);
 
-    expect(result.assetIds).toEqual(responseData);
+    expect(result).toEqual(responseData);
   });
 
   test('throws an error if the request fails', async () => {
