@@ -3,11 +3,7 @@ import { BaseController } from './BaseController';
 import { HttpStatusCode } from 'axios';
 import * as ContentService from '../services/ContentService';
 import { HttpError } from '../types/HttpError';
-import {
-  RequestAccount,
-  validateAuthToken,
-  validateMsaAuth,
-} from '../services/TokenAuth';
+import { RequestAccount, validateAuthToken, validateMsaAuth } from '../services/TokenAuth';
 import logger from '../logger';
 
 export class ContentController extends BaseController {
