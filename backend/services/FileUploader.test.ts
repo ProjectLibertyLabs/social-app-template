@@ -48,7 +48,7 @@ describe('FileUploader', () => {
 
     const result = await AssetsService.create(files);
 
-    expect(result.assetIds).toEqual(responseData);
+    expect(result).toEqual(responseData);
   });
 
   test('throws an error if the request fails', async () => {
