@@ -49,7 +49,7 @@ describe('FileUploader', () => {
 
     const result = await AssetsService.create(files);
 
-    expect(result).toEqual(responseData);
+    expect(result.assetIds).toEqual(responseData);
   });
 
   test('throws an error if the request fails', async () => {

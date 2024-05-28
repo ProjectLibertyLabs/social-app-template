@@ -6,6 +6,7 @@ import FormData from 'form-data';
 import { extension as getExtension } from 'mime-types';
 import { toMultibase } from '@dsnp/activity-content/hash';
 import * as Config from '../config/config';
+import logger from '../logger';
 
 export interface FilePin {
   cid: string;
@@ -56,7 +57,7 @@ const ipfsPinBuffer = async (filename: string, contentType: string, fileBuffer: 
   // Convert to CID v1 base58btc
   const cid = CID.parse(data.Hash).toV1();
 
-  console.log('Pinned to IPFS: ' + cid);
+  logger.info({ cid }, 'CID Pinned to IPFS: ');
   return {
     cid: cid.toString(bases.base58btc),
     cidBytes: cid.bytes,

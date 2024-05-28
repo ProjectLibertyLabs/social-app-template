@@ -4,6 +4,7 @@ import { ParquetWriter } from '@dsnp/parquetjs';
 import { ChainType, getApi, getChainType, getNonce, getProviderKey } from './frequency.js';
 import { ipfsPin } from './ipfs.js';
 import { AnnouncementType, BroadcastAnnouncement, ReplyAnnouncement } from './dsnp.js';
+import logger from '../logger.js';
 
 const TestnetSchemas = (type: AnnouncementType): number => {
   switch (type) {
@@ -53,9 +54,10 @@ export const getSchemaId = (type: AnnouncementType): number => {
   }
 };
 
+// TODO: Implement something to abstract the Frequency RPC calls
 export const publish = async <T extends BroadcastAnnouncement | ReplyAnnouncement>(announcements: Array<T>) => {
-  console.log(`Preparing to publish a batch of announcements. Count: ${announcements.length}`);
-  const api = await getApi();
+  logger.info('Preparing to publish a batch of announcements. Count:(%d)', announcements.length);
+  const chainApi = await getApi();
 
   const announcementType = announcements[0].announcementType;
 
@@ -85,16 +87,16 @@ export const publish = async <T extends BroadcastAnnouncement | ReplyAnnouncemen
   // Pin to IPFS
   const { cid, size } = await ipfsPin('application/octet-stream', buf);
   const schemaId = getSchemaId(announcementType);
-  const tx = api.tx.messages.addIpfsMessage(schemaId, cid, size);
+  const tx = chainApi.tx.messages.addIpfsMessage(schemaId, cid, size);
 
   // Do NOT wait for all the callbacks. Assume for now that it will work...
-  await api.tx.frequencyTxPayment
+  await chainApi.tx.frequencyTxPayment
     .payWithCapacity(tx)
     .signAndSend(getProviderKey(), { nonce: await getNonce() }, ({ status, dispatchError }) => {
       if (dispatchError) {
         console.error('ERROR: ', dispatchError.toHuman());
       } else if (status.isInBlock || status.isFinalized) {
-        console.log('Message Posted', status.toHuman());
+        logger.info({ status: status.toJSON() }, 'Message Posted');
       }
     });
   return;
