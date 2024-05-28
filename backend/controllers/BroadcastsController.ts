@@ -4,6 +4,7 @@ import * as BroadcastsHandler from '../handlers/BroadcastsHandler';
 import { HttpStatusCode } from 'axios';
 import { HttpError } from '../types/HttpError';
 import { RequestAccount, validateAuthToken, validateMsaAuth } from '../services/TokenAuth';
+import logger from '../logger';
 // uncomment below for easy dev/debug usage
 // import { RequestAccount, debugAuthToken as validateAuthToken, debugMsaAuth as validateMsaAuth } from "../services/TokenAuth";
 
@@ -21,9 +22,9 @@ export class BroadcastsController extends BaseController {
     const { msaId } = req.headers as Required<RequestAccount>;
     try {
       const response = await BroadcastsHandler.postBroadcastHandler(msaId, req.body);
-      return res.status(HttpStatusCode.Created).send(response);
+      return res.status(HttpStatusCode.Created).send(response).end();
     } catch (err: any) {
-      console.error('Error posting broadcast: ', err);
+      logger.error({ err }, 'Error posting broadcast');
       if (err instanceof HttpError) {
         return res.status(err.code).send(err.message);
       }

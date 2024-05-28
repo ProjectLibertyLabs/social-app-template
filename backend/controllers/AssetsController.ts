@@ -4,6 +4,7 @@ import * as AssetsHandler from '../handlers/AssetsHandler';
 import { HttpStatusCode } from 'axios';
 import multer from 'multer';
 import { HttpError } from '../types/HttpError';
+import logger from '../logger';
 
 export class AssestsController extends BaseController {
   private upload: multer.Multer;
@@ -27,7 +28,7 @@ export class AssestsController extends BaseController {
       const response = await AssetsHandler.postAssetsHandler(files);
       res.status(HttpStatusCode.Created).send(response);
     } catch (err: any) {
-      console.error(err.message);
+      logger.error({ err });
       if (err instanceof HttpError) {
         return res.status(err.code).send(err.message);
       }

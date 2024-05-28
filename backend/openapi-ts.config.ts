@@ -1,16 +1,16 @@
-import { defineConfig, UserConfig } from "@hey-api/openapi-ts";
+import { defineConfig, UserConfig } from '@hey-api/openapi-ts';
 
 export default defineConfig({
-  client: "axios",
+  client: 'axios',
   exportCore: false,
   output: {
-    format: "prettier",
-    lint: "eslint",
-    path: "types",
+    format: 'prettier',
+    lint: 'eslint',
+    path: 'types',
   },
   schemas: false,
   services: false,
   types: {
-    enums: "typescript",
+    enums: 'typescript',
   },
 } as UserConfig);

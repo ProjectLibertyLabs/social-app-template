@@ -13,10 +13,7 @@ export class WebhookController extends BaseController {
 
   protected initializeRoutes(): void {
     this.router.post('/account-service', this.accountServiceWebhook.bind(this));
-    this.router.post(
-      "/content-watcher/announcements",
-      this.postAnnouncementsWebhook.bind(this),
-    );
+    this.router.post('/content-watcher/announcements', this.postAnnouncementsWebhook.bind(this));
   }
 
   /**
@@ -39,7 +36,7 @@ export class WebhookController extends BaseController {
         res.status(HttpStatusCode.InternalServerError).send(e).end();
       }
     }
-}
+  }
   public postAnnouncementsWebhook(req: Request, res: Response) {
     ContentRepository.add(req.body);
 

@@ -13,11 +13,11 @@ declare namespace Components {
        * Specific schema ids to watch for
        * example:
        * [
-       *   "1",
-       *   "19"
+       *   1,
+       *   19
        * ]
        */
-      schemaIds: string[];
+      schemaIds: number[];
       /**
        * Specific dsnpIds (msa_id) to watch for
        * example:
@@ -34,13 +34,13 @@ declare namespace Components {
        * example:
        * 100
        */
-      startBlock: string;
+      startBlock: number;
       /**
        * The ending block number to search to
        * example:
        * 101
        */
-      endBlock: string;
+      endBlock: number;
       /**
        * The schemaIds/dsnpIds to filter by
        */
@@ -49,11 +49,11 @@ declare namespace Components {
          * Specific schema ids to watch for
          * example:
          * [
-         *   "1",
-         *   "19"
+         *   1,
+         *   19
          * ]
          */
-        schemaIds: string[];
+        schemaIds: number[];
         /**
          * Specific dsnpIds (msa_id) to watch for
          * example:
@@ -64,6 +64,7 @@ declare namespace Components {
          */
         dsnpIds: string[];
       };
+      id: string;
     }
     export interface ResetScannerDto {
       /**
@@ -71,7 +72,19 @@ declare namespace Components {
        * example:
        * 0
        */
-      blockNumber: string;
+      blockNumber?: number;
+      /**
+       * Number of blocks to rewind the scanner to (from `blockNumber` if supplied; else from latest block
+       * example:
+       * 100
+       */
+      rewindOffset?: number;
+      /**
+       * Whether to schedule the new scan immediately or wait for the next scheduled interval
+       * example:
+       * true
+       */
+      immediate?: boolean;
     }
     export interface WebhookRegistrationDto {
       /**
@@ -125,7 +138,7 @@ declare namespace Paths {
   namespace ApiControllerResetScanner {
     export type RequestBody = Components.Schemas.ResetScannerDto;
     namespace Responses {
-      export interface $201 {}
+      export type $201 = string;
     }
   }
   namespace ApiControllerSearch {
@@ -141,6 +154,12 @@ declare namespace Paths {
     }
   }
   namespace ApiControllerStartScanner {
+    namespace Parameters {
+      export type _ = boolean;
+    }
+    export interface QueryParameters {
+      ''?: Parameters._;
+    }
     namespace Responses {
       export interface $201 {}
     }
@@ -184,7 +203,7 @@ export interface OperationMethods {
    * ApiController_startScanner
    */
   'ApiController_startScanner'(
-    parameters?: Parameters<UnknownParamsObject> | null,
+    parameters?: Parameters<Paths.ApiControllerStartScanner.QueryParameters> | null,
     data?: any,
     config?: AxiosRequestConfig
   ): OperationResponse<Paths.ApiControllerStartScanner.Responses.$201>;
@@ -268,7 +287,7 @@ export interface PathsDictionary {
      * ApiController_startScanner
      */
     'post'(
-      parameters?: Parameters<UnknownParamsObject> | null,
+      parameters?: Parameters<Paths.ApiControllerStartScanner.QueryParameters> | null,
       data?: any,
       config?: AxiosRequestConfig
     ): OperationResponse<Paths.ApiControllerStartScanner.Responses.$201>;

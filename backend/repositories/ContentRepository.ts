@@ -4,20 +4,11 @@
  * This one is horribly inefficient and does not scale!
  */
 
-import { createHash } from "crypto";
-import {
-  AnnouncementType,
-  type AnnouncementResponse,
-} from "../types/content-announcement";
-import "../types/content-announcement/type.augment";
-import {
-  isBroadcast,
-  isProfile,
-  isReply,
-  isTombstone,
-  isUpdate,
-} from "../types/content-announcement/type.augment";
-import logger from "../logger";
+import { createHash } from 'crypto';
+import { AnnouncementType, type AnnouncementResponse } from '../types/content-announcement';
+import '../types/content-announcement/type.augment';
+import { isBroadcast, isProfile, isReply, isTombstone, isUpdate } from '../types/content-announcement/type.augment';
+import logger from '../logger';
 
 export type ContentSearchParametersType = {
   msaIds?: string[];
@@ -25,25 +16,19 @@ export type ContentSearchParametersType = {
   announcementTypes?: AnnouncementType[];
   blockFrom?: number;
   blockTo?: number;
+  contentHash?: string;
 };
 
 const contentMap = new Map<string, AnnouncementResponse>();
 
 function getContentHash(contentAnnouncement: AnnouncementResponse) {
   const { announcement } = contentAnnouncement;
-  if (
-    isBroadcast(announcement) ||
-    isProfile(announcement) ||
-    isReply(announcement) ||
-    isUpdate(announcement)
-  ) {
+  if (isBroadcast(announcement) || isProfile(announcement) || isReply(announcement) || isUpdate(announcement)) {
     return announcement.contentHash;
   } else if (isTombstone(announcement)) {
     return announcement.targetContentHash;
   } else {
-    return createHash("sha256")
-      .update(JSON.stringify(announcement))
-      .digest("base64url");
+    return createHash('sha256').update(JSON.stringify(announcement)).digest('base64url');
   }
 }
 
@@ -59,25 +44,18 @@ function getKey(contentAnnouncement: AnnouncementResponse) {
 
 export function add(content: AnnouncementResponse) {
   const key = getKey(content);
-  logger.debug({ key, content }, "Storing content");
+  logger.debug({ key, content }, 'Storing content');
   contentMap.set(key, content);
 }
 
-export function get(
-  options?: ContentSearchParametersType,
-): AnnouncementResponse[] {
+export function get(options?: ContentSearchParametersType): AnnouncementResponse[] {
   return [...contentMap.values()].filter((content) => {
     if (options) {
       if (options.schemaIds && !options.schemaIds.includes(content.schemaId)) {
         return false;
       }
 
-      if (
-        options.announcementTypes &&
-        !options.announcementTypes.includes(
-          content.announcement.announcementType,
-        )
-      ) {
+      if (options.announcementTypes && !options.announcementTypes.includes(content.announcement.announcementType)) {
         return false;
       }
 
@@ -89,6 +67,14 @@ export function get(
         if (options.blockTo && content.blockNumber > options.blockTo) {
           return false;
         }
+      }
+
+      if (options.msaIds && options.msaIds.length > 0 && !options.msaIds.includes(content.announcement.fromId)) {
+        return false;
+      }
+
+      if (options?.contentHash && options.contentHash !== getContentHash(content)) {
+        return false;
       }
 
       return true;

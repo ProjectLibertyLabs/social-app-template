@@ -1,9 +1,10 @@
-import zlib from "node:zlib";
-import { getSchemaId } from "./announce.js";
-import { getApi, getNonce, getProviderKey } from "./frequency.js";
-import { dsnp } from "@dsnp/frequency-schemas";
-import avro from "avro-js";
-import { AnnouncementType } from "../types/content-announcement";
+import zlib from 'node:zlib';
+import { getSchemaId } from './announce.js';
+import { getApi, getNonce, getProviderKey } from './frequency.js';
+import { dsnp } from '@dsnp/frequency-schemas';
+import avro from 'avro-js';
+import { AnnouncementType } from '../types/content-announcement';
+import logger from '../logger.js';
 
 // TODO: Remove all graph logic in favor of proxy to `graph-service`
 
@@ -38,8 +39,8 @@ export class GraphService {
       const data = zlib.inflateSync(container.compressedPublicGraph);
       const graphEdges = publicFollowsAvro.fromBuffer(data);
       return graphEdges;
-    } catch (e) {
-      console.log('Error parsing page', e);
+    } catch (err) {
+      logger.error({ err }, 'Error parsing page');
       return [];
     }
   }
@@ -59,8 +60,8 @@ export class GraphService {
         return this.inflatePage(page.toJSON().payload).map((x: { userId: number; since: number }) =>
           x.userId.toString()
         );
-      } catch (e) {
-        console.error('Failed to parse public follows...', e);
+      } catch (err) {
+        logger.error({ err }, 'Failed to parse public follows');
         return [];
       }
     });
@@ -69,7 +70,7 @@ export class GraphService {
   }
 
   public async follow(actorId: string, objectId: number): Promise<void> {
-    console.log('Follow Request', { actorId, objectId });
+    logger.info({ actorId, objectId }, 'Follow Request');
     const api = await getApi();
     const schemaId = getSchemaId(AnnouncementType.PublicFollows);
     const resp = await api.rpc.statefulStorage.getPaginatedStorage(actorId, schemaId);
@@ -79,8 +80,8 @@ export class GraphService {
     const followPages = pages.map((page) => {
       try {
         return this.inflatePage(page.payload).map((x: GraphEdge) => x.userId);
-      } catch (e) {
-        console.error('Failed to parse public follows...', e);
+      } catch (err) {
+        logger.error({ err }, 'Failed to parse public follows');
         return [];
       }
     });
@@ -109,7 +110,7 @@ export class GraphService {
       userId: objectId,
       since: Math.floor(Date.now() / 1000),
     });
-    console.log('upsertEdges', upsertEdges);
+    logger.debug(upsertEdges, 'upsertEdges');
 
     const encodedPage = this.deflatePage(upsertEdges);
     const payload = '0x' + encodedPage.toString('hex');
@@ -120,15 +121,15 @@ export class GraphService {
       .payWithCapacity(tx)
       .signAndSend(getProviderKey(), { nonce: await getNonce() }, ({ status, dispatchError }) => {
         if (dispatchError) {
-          console.error('Graph ERROR: ', dispatchError.toHuman());
+          logger.error(dispatchError.toJSON(), 'Graph ERROR');
         } else if (status.isInBlock || status.isFinalized) {
-          console.log('Graph Updated: ', status.toHuman());
+          logger.info(status.toJSON(), 'Graph Updated');
         }
       });
   }
 
   public async unfollow(actorId: string, objectId: number): Promise<void> {
-    console.log('Unfollow Request', { actorId, objectId });
+    logger.info({ actorId, objectId }, 'Unfollow Request');
     const api = await getApi();
     const schemaId = getSchemaId(AnnouncementType.PublicFollows);
     const resp = await api.rpc.statefulStorage.getPaginatedStorage(actorId, schemaId);
@@ -138,8 +139,8 @@ export class GraphService {
     const followPages = pages.map((page) => {
       try {
         return this.inflatePage(page.payload).map((x: GraphEdge) => x.userId);
-      } catch (e) {
-        console.error('Failed to parse public follows...', e);
+      } catch (err) {
+        logger.error({ err }, 'Failed to parse public follows');
         return [];
       }
     });
@@ -154,7 +155,7 @@ export class GraphService {
     const hash = editPage.content_hash;
 
     const upsertEdges = originalEdges.filter(({ userId }) => userId !== objectId);
-    console.log('upsertEdges', upsertEdges, 'Length Difference: ', originalEdges.length - upsertEdges.length);
+    logger.debug(`upsertEdges: ${upsertEdges} Length Difference: ${originalEdges.length - upsertEdges.length}`);
 
     const encodedPage = this.deflatePage(upsertEdges);
     const payload = '0x' + encodedPage.toString('hex');
@@ -165,9 +166,9 @@ export class GraphService {
       .payWithCapacity(tx)
       .signAndSend(getProviderKey(), { nonce: await getNonce() }, ({ status, dispatchError }) => {
         if (dispatchError) {
-          console.error('Graph ERROR: ', dispatchError.toHuman());
+          logger.error(dispatchError.toJSON(), 'Graph ERROR',);
         } else if (status.isInBlock || status.isFinalized) {
-          console.log('Graph Updated: ', status.toHuman());
+          logger.info(status.toJSON(), 'Graph Updated');
         }
       });
   }

@@ -7,7 +7,7 @@ import {
   ReactionAnnouncement,
   ReplyAnnouncement,
   TombstoneAnnouncement,
-} from "../types/content-announcement";
+} from '../types/content-announcement';
 
 /**
  * createTombstone() generates a tombstone announcement from a given URL and
@@ -76,7 +76,7 @@ export const createReaction = (
   fromId: string,
   emoji: string,
   inReplyTo: string,
-  apply: number,
+  apply: number
 ): ReactionAnnouncement => ({
   announcementType: AnnouncementType.Reaction,
   emoji,

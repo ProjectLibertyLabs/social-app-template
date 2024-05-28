@@ -1,6 +1,7 @@
 import { Handler } from 'openapi-backend';
 import type * as T from '../types/openapi.js';
 import { getApi } from '../services/frequency.js';
+import logger from '../logger.js';
 
 export const getProfile: Handler<object> = async (c, _req, res) => {
   // T.Paths.GetProfile.PathParameters
@@ -27,8 +28,8 @@ export const getProfile: Handler<object> = async (c, _req, res) => {
       displayHandle,
     };
     return res.status(200).json(response);
-  } catch (e) {
-    console.error(e);
+  } catch (err) {
+    logger.error({ err });
     return res.status(500).send();
   }
 };

@@ -1,9 +1,11 @@
-import { Client as ContentWatcherClient } from "../types/openapi-content-watcher-service";
-import openapiJson from "../openapi-specs/content-watcher-service.json" with { type: "json" };
-import { OpenAPIClientAxios, type Document } from "openapi-client-axios";
-import * as Config from "../config/config";
-import logger from "../logger";
-import { AnnouncementType } from "../types/content-announcement";
+import { Client as ContentWatcherClient, Components } from '../types/openapi-content-watcher-service';
+import openapiJson from '../openapi-specs/content-watcher-service.json' with { type: 'json' };
+import { OpenAPIClientAxios, type Document } from 'openapi-client-axios';
+import * as Config from '../config/config';
+import logger from '../logger';
+import { AnnouncementType } from '../types/content-announcement';
+
+type ResetScannerDto = Components.Schemas.ResetScannerDto;
 
 export class ContentWatcherService {
   private static instance: ContentWatcherService;
@@ -36,37 +38,32 @@ export class ContentWatcherService {
 
   private get client() {
     if (this._client === undefined) {
-      throw new Error("API not initialized");
+      throw new Error('API not initialized');
     }
 
     return this._client;
   }
 
-  public async registerWebhook(
-    url: string,
-    announcementTypes: AnnouncementType[],
-  ) {
+  public async registerWebhook(url: string, announcementTypes: AnnouncementType[]) {
     try {
-      let registeredWebhooks =
-        await this.client.ApiController_getRegisteredWebhooks();
-      logger.debug(
-        registeredWebhooks.data,
-        "Currently registered webhooks for content-watcher-service:",
-      );
+      let registeredWebhooks = await this.client.ApiController_getRegisteredWebhooks();
+      logger.debug(registeredWebhooks.data, 'Currently registered webhooks for content-watcher-service:');
       await this.client.ApiController_registerWebhook(null, {
         url,
-        announcementTypes: announcementTypes.map((prop) =>
-          AnnouncementType[prop].toLowerCase(),
-        ),
+        announcementTypes: announcementTypes.map((prop) => AnnouncementType[prop].toLowerCase()),
       });
-      registeredWebhooks =
-        await this.client.ApiController_getRegisteredWebhooks();
-      logger.debug(
-        registeredWebhooks.data,
-        "Updated registered webhooks for content-watcher-service:",
-      );
+      registeredWebhooks = await this.client.ApiController_getRegisteredWebhooks();
+      logger.debug(registeredWebhooks.data, 'Updated registered webhooks for content-watcher-service:');
     } catch (err) {
-      logger.error(err, "Error registering content-watcher webhook");
+      logger.error(err, 'Error registering content-watcher webhook');
+    }
+  }
+
+  public async resetScanner(options: ResetScannerDto) {
+    try {
+      await this.client.ApiController_resetScanner(null, options);
+    } catch (err) {
+      logger.error(err, 'Error resetting content-watcher scan');
     }
   }
 }

@@ -71,16 +71,16 @@ export class Config {
   }
 
   public get webhookPort() {
-    const port = parseInt(this.configValues["WEBHOOK_PORT"]);
+    const port = parseInt(this.configValues['WEBHOOK_PORT']);
     return port || this.port + 1;
   }
 
   public get webhookHost() {
-    return this.configValues["WEBHOOK_HOST"];
+    return this.configValues['WEBHOOK_HOST'];
   }
 
   public get webhookBaseUrl() {
-    return this.configValues["WEBHOOK_BASE_URL"];
+    return this.configValues['WEBHOOK_BASE_URL'];
   }
 
   public get accountServiceUrl() {
@@ -92,7 +92,7 @@ export class Config {
   }
 
   public get contentWatcherUrl() {
-    return this.configValues["CONTENT_WATCHER_URL"];
+    return this.configValues['CONTENT_WATCHER_URL'];
   }
 
   public get chainType() {

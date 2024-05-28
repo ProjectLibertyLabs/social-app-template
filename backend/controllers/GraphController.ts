@@ -4,6 +4,7 @@ import { HttpStatusCode } from 'axios';
 import { GraphService } from '../services/GraphService';
 import { HttpError } from '../types/HttpError';
 import { validateAuthToken } from '../services/TokenAuth';
+import logger from '../logger';
 
 export class GraphController extends BaseController {
   constructor(app: Express) {
@@ -27,7 +28,7 @@ export class GraphController extends BaseController {
       const follows = await GraphService.instance().then((service) => service.getPublicFollows(msaId));
       return res.status(HttpStatusCode.Ok).send(follows);
     } catch (err) {
-      console.error('Error getting user follows', err);
+      logger.error({ err }, 'Error getting user follows');
       if (err instanceof HttpError) {
         return res.status(err.code).send(err.message);
       }
@@ -52,7 +53,7 @@ export class GraphController extends BaseController {
       await GraphService.instance().then((service) => service.follow(msaId, parseInt(msaToFollow)));
       return res.status(HttpStatusCode.Created).send();
     } catch (err: any) {
-      console.error('Error changing user graph: follow', err);
+      logger.error({ err }, 'Error changing user graph: follow');
       if (err instanceof HttpError) {
         return res.status(err.code).send(err.message);
       }
@@ -77,7 +78,7 @@ export class GraphController extends BaseController {
 
       return res.status(HttpStatusCode.Created).send();
     } catch (err: any) {
-      console.error('Error changing user graph: unfollow', err);
+      logger.error({ err }, 'Error changing user graph: unfollow');
       if (err instanceof HttpError) {
         return res.status(err.code).send(err.message);
       }

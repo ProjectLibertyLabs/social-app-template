@@ -3,7 +3,8 @@ import { BaseController } from './BaseController';
 import { HttpStatusCode } from 'axios';
 import * as ContentService from '../services/ContentService';
 import { HttpError } from '../types/HttpError';
-import { RequestAccount, validateAuthToken, validateMsaAuth } from '../services/TokenAuth';
+import { RequestAccount, debugAuthToken as validateAuthToken, debugMsaAuth as validateMsaAuth } from '../services/TokenAuth';
+import logger from '../logger';
 
 export class ContentController extends BaseController {
   constructor(app: Express) {
@@ -14,11 +15,11 @@ export class ContentController extends BaseController {
   protected initializeRoutes(): void {
     this.router.get('/feed', validateAuthToken, validateMsaAuth, this.getFeed.bind(this));
     this.router.get('/discover', validateAuthToken, validateMsaAuth, this.getDiscover.bind(this));
-    this.router.get('/:dsnpId', this.getContent.bind(this));
-    this.router.post('/create', validateAuthToken, validateMsaAuth, this.postContentCreate.bind(this));
+    this.router.get('/:msaId', this.getContent.bind(this));
+    // this.router.post('/create', validateAuthToken, validateMsaAuth, this.postContentCreate.bind(this));
 
     this.router.get(
-      '/:dsnpId/:contentHash',
+      '/:msaId/:contentHash',
       validateAuthToken,
       validateMsaAuth,
       this.getSpecificUserContent.bind(this)
@@ -32,9 +33,28 @@ export class ContentController extends BaseController {
   }
 
   public async getContent(req: Request, res: Response) {
-    const { dsnpId: msaId } = req.params;
     const { newestBlockNumber: endStr, oldestBlockNumber: startStr } = req.query;
-    res.status(HttpStatusCode.Ok).send();
+    const { msaId } = req.params;
+
+    try {
+      const oldestBlockNumber = startStr && typeof startStr === 'string' ? parseInt(startStr) : undefined;
+      const newestBlockNumber = endStr && typeof endStr === 'string' ? parseInt(endStr) : undefined;
+      const response = await ContentService.getOwnContent(msaId, {
+        newestBlockNumber,
+        oldestBlockNumber,
+      });
+      res.status(HttpStatusCode.Ok).send(response).end();
+    } catch (err: any) {
+      logger.error({ err }, 'Error: unable to get own content: ');
+      if (err instanceof HttpError) {
+        return res.status(err.code).send(err.message || 'Caught error getting feed for current user');
+      }
+
+      return res
+        .status(HttpStatusCode.InternalServerError)
+        .send(err.message || 'Caught error getting feed')
+        .end();
+    }
   }
 
   public async getFeed(req: Request, res: Response) {
@@ -44,13 +64,13 @@ export class ContentController extends BaseController {
     try {
       const oldestBlockNumber = startStr && typeof startStr === 'string' ? parseInt(startStr) : undefined;
       const newestBlockNumber = endStr && typeof endStr === 'string' ? parseInt(endStr) : undefined;
-      const response = await ContentService.getUserFeed(msaId, {
+      const response = await ContentService.getFollowingContent(msaId, {
         newestBlockNumber,
         oldestBlockNumber,
       });
       res.status(HttpStatusCode.Ok).send(response).end();
     } catch (err: any) {
-      console.error('Error: unable to discover content: ', err);
+      logger.error({ err }, 'Error: unable to discover content: ');
       if (err instanceof HttpError) {
         return res.status(err.code).send(err.message || 'Caught error getting feed for current user');
       }
@@ -64,18 +84,18 @@ export class ContentController extends BaseController {
 
   public async getDiscover(req: Request, res: Response) {
     const { newestBlockNumber: endStr, oldestBlockNumber: startStr } = req.query;
+    const { msaId } = req.headers as Required<RequestAccount>;
     try {
       const oldestBlockNumber = startStr && typeof startStr === 'string' ? parseInt(startStr) : undefined;
       const newestBlockNumber = endStr && typeof endStr === 'string' ? parseInt(endStr) : undefined;
-      const response = await ContentService.getDiscover({
+      const response = await ContentService.getDiscover(msaId, {
         newestBlockNumber,
         oldestBlockNumber,
       });
-      console.dir(response);
 
       res.status(HttpStatusCode.Ok).send(response).end();
     } catch (err: any) {
-      console.error('Error: unable to discover content: ', err);
+      logger.error({ err }, 'Error: unable to discover content: ');
       if (err instanceof HttpError) {
         return res
           .status(err.code)
@@ -87,41 +107,54 @@ export class ContentController extends BaseController {
     }
   }
 
-  public async postContentCreate(req: Request, res: Response) {
-    const { msaId } = req.headers;
-    if (!msaId || typeof msaId !== 'string') {
-      return res.status(HttpStatusCode.BadRequest).send('Missing/invalid MSA ID');
+  // public async postContentCreate(req: Request, res: Response) {
+  //   const { msaId } = req.headers;
+  //   if (!msaId || typeof msaId !== 'string') {
+  //     return res.status(HttpStatusCode.BadRequest).send('Missing/invalid MSA ID');
+  //   }
+
+  //   try {
+  //     const response = await ContentService.createBroadcast(msaId, req);
+  //     return res.status(HttpStatusCode.Created).end();
+  //   } catch (err: any) {
+  //     logger.error({ err }, 'Error creating a post');
+  //     if (err instanceof HttpError) {
+  //       return res.status(err.code).send(err.message);
+  //     }
+
+  //     return res.status(HttpStatusCode.InternalServerError).send(err.message);
+  //   }
+  // }
+
+  public async getSpecificUserContent(req: Request, res: Response) {
+    const { msaId, contentHash } = req.params;
+    if (!msaId || typeof msaId !== 'string' || (contentHash && typeof contentHash !== 'string')) {
+      return res.status(HttpStatusCode.BadRequest).send().end();
     }
 
     try {
-      const response = await ContentService.createBroadcast(msaId, req);
+    const content = await ContentService.getContent(msaId, contentHash);
+    return res.status(HttpStatusCode.Found).send(content).end();
     } catch (err: any) {
-      console.error('Error creating a post: ', err);
+      logger.error({ err , msaId, contentHash }, 'Error fetching content');
       if (err instanceof HttpError) {
         return res.status(err.code).send(err.message);
       }
 
-      return res.status(HttpStatusCode.InternalServerError).send(err.message);
-    }
-  }
-
-  public getSpecificUserContent(req: Request, res: Response) {
-    const { dsnpId, contentHash } = req.params;
-    if (!dsnpId || typeof dsnpId !== 'string' || (contentHash && typeof contentHash !== 'string')) {
-      return res.status(HttpStatusCode.BadRequest).send().end();
+      return res.status(HttpStatusCode.InternalServerError).send(err.message).end();
     }
 
     // Stub
-    res
-      .status(HttpStatusCode.Ok)
-      .send({
-        fromId: dsnpId,
-        contentHash: contentHash || '0xabcd',
-        content: '',
-        timestamp: new Date().toISOString(),
-        replies: [],
-      })
-      .end();
+    // res
+    //   .status(HttpStatusCode.Ok)
+    //   .send({
+    //     fromId: msaId,
+    //     contentHash: contentHash || '0xabcd',
+    //     content: '',
+    //     timestamp: new Date().toISOString(),
+    //     replies: [],
+    //   })
+    //   .end();
   }
 
   public putSpecificContentType() {}

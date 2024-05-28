@@ -1,19 +1,10 @@
-import { PassThrough } from "node:stream";
-import { parquet } from "@dsnp/frequency-schemas";
-import { ParquetWriter } from "@dsnp/parquetjs";
-import {
-  ChainType,
-  getApi,
-  getChainType,
-  getNonce,
-  getProviderKey,
-} from "./frequency.js";
-import { ipfsPin } from "./ipfs.js";
-import {
-  AnnouncementType,
-  BroadcastAnnouncement,
-  ReplyAnnouncement,
-} from "../types/content-announcement";
+import { PassThrough } from 'node:stream';
+import { parquet } from '@dsnp/frequency-schemas';
+import { ParquetWriter } from '@dsnp/parquetjs';
+import { ChainType, getApi, getChainType, getNonce, getProviderKey } from './frequency.js';
+import { ipfsPin } from './ipfs.js';
+import { AnnouncementType, BroadcastAnnouncement, ReplyAnnouncement } from '../types/content-announcement';
+import logger from '../logger.js';
 
 const TestnetSchemas = (type: AnnouncementType): number => {
   switch (type) {
@@ -32,7 +23,7 @@ const TestnetSchemas = (type: AnnouncementType): number => {
     case AnnouncementType.PublicFollows:
       return 13;
     default:
-      throw new Error("Unknown Announcement Type");
+      throw new Error('Unknown Announcement Type');
   }
 };
 
@@ -53,7 +44,7 @@ const MainnetSchemas = (type: AnnouncementType): number => {
     case AnnouncementType.PublicFollows:
       return 8;
     default:
-      throw new Error("Unknown Announcement Type");
+      throw new Error('Unknown Announcement Type');
   }
 };
 
@@ -66,7 +57,7 @@ export const getSchemaId = (type: AnnouncementType): number => {
 };
 
 export const publish = async <T extends BroadcastAnnouncement | ReplyAnnouncement>(announcements: Array<T>) => {
-  console.log(`Preparing to publish a batch of announcements. Count: ${announcements.length}`);
+  logger.info(`Preparing to publish a batch of announcements. Count: ${announcements.length}`);
   const api = await getApi();
 
   const announcementType = announcements[0].announcementType;
@@ -104,9 +95,9 @@ export const publish = async <T extends BroadcastAnnouncement | ReplyAnnouncemen
     .payWithCapacity(tx)
     .signAndSend(getProviderKey(), { nonce: await getNonce() }, ({ status, dispatchError }) => {
       if (dispatchError) {
-        console.error('ERROR: ', dispatchError.toHuman());
+        logger.error(dispatchError.toJSON(), 'ERROR');
       } else if (status.isInBlock || status.isFinalized) {
-        console.log('Message Posted', status.toHuman());
+        logger.info(status.toJSON(), 'Message Posted');
       }
     });
   return;

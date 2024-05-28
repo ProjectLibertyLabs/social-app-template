@@ -1,6 +1,7 @@
 import { ContentPublisherService } from './ContentPublisherService.js';
 import { PostBroadcastRequest, PostBroadcastResponse } from '../types/types.js';
 import { BroadcastDataBuilder } from './BroadcastDataBuilder.js';
+import logger from '../logger.js';
 
 export class BroadcastService {
   public static async create(msaId: string, params: PostBroadcastRequest): Promise<PostBroadcastResponse> {
@@ -21,9 +22,9 @@ export class BroadcastService {
         content: data.content.content,
         published: data.content.published,
       };
-    } catch (e) {
-      console.error('Failed to create broadcast:', e);
-      throw e;
+    } catch (err) {
+      logger.error({ err }, 'Failed to create broadcast');
+      throw err;
     }
   }
 }

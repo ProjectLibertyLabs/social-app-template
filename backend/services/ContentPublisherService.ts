@@ -3,6 +3,7 @@ import openapiJson from '../openapi-specs/content-publishing-service.json' with 
 import { OpenAPIClientAxios, type Document } from 'openapi-client-axios';
 import FormData from 'form-data';
 import * as Config from '../config/config';
+import logger from '../logger';
 
 type AnnouncementResponseDto = Components.Schemas.AnnouncementResponseDto;
 type BroadcastDto = Components.Schemas.BroadcastDto;
@@ -50,9 +51,9 @@ export class ContentPublisherService {
     try {
       const res = await this.client.ApiController_broadcast(msaId, data);
       return res.data;
-    } catch (e) {
-      console.error('Failed to post broadcast:', e);
-      throw e;
+    } catch (err) {
+      logger.error({ err }, 'Failed to post broadcast');
+      throw err;
     }
   }
 
@@ -60,9 +61,9 @@ export class ContentPublisherService {
     try {
       const res = await this.client.ApiController_reply(msaId, data);
       return res.data;
-    } catch (e) {
-      console.error('Failed to post broadcast reply:', e);
-      throw e;
+    } catch (err) {
+      logger.error({ err }, 'Failed to post broadcast reply');
+      throw err;
     }
   }
 
@@ -74,9 +75,9 @@ export class ContentPublisherService {
         },
       });
       return response.data;
-    } catch (e) {
-      console.error('Failed to upload asset:', e);
-      throw e;
+    } catch (err) {
+      logger.error({ err }, 'Failed to upload asset');
+      throw err;
     }
   }
 }
