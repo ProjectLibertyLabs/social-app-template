@@ -124,7 +124,6 @@ export async function getSpecificContent(msaId: string, contentHash: string): Pr
   const maxBlock = Math.max(...allContentBlocks);
 
   const allPosts = await getPostsInRange(minBlock, maxBlock);
-  logger.debug({ allPosts, minBlock, maxBlock, msaId, contentHash }, 'getSpecificContent');
 
   return allPosts.find((p) => p.fromId === msaId && p.contentHash === contentHash);
 }

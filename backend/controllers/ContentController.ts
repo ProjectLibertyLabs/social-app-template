@@ -107,25 +107,6 @@ export class ContentController extends BaseController {
     }
   }
 
-  // public async postContentCreate(req: Request, res: Response) {
-  //   const { msaId } = req.headers;
-  //   if (!msaId || typeof msaId !== 'string') {
-  //     return res.status(HttpStatusCode.BadRequest).send('Missing/invalid MSA ID');
-  //   }
-
-  //   try {
-  //     const response = await ContentService.createBroadcast(msaId, req);
-  //     return res.status(HttpStatusCode.Created).end();
-  //   } catch (err: any) {
-  //     logger.error({ err }, 'Error creating a post');
-  //     if (err instanceof HttpError) {
-  //       return res.status(err.code).send(err.message);
-  //     }
-
-  //     return res.status(HttpStatusCode.InternalServerError).send(err.message);
-  //   }
-  // }
-
   public async getSpecificUserContent(req: Request, res: Response) {
     const { msaId, contentHash } = req.params;
     if (!msaId || typeof msaId !== 'string' || (contentHash && typeof contentHash !== 'string')) {
@@ -143,18 +124,6 @@ export class ContentController extends BaseController {
 
       return res.status(HttpStatusCode.InternalServerError).send(err.message).end();
     }
-
-    // Stub
-    // res
-    //   .status(HttpStatusCode.Ok)
-    //   .send({
-    //     fromId: msaId,
-    //     contentHash: contentHash || '0xabcd',
-    //     content: '',
-    //     timestamp: new Date().toISOString(),
-    //     replies: [],
-    //   })
-    //   .end();
   }
 
   public putSpecificContentType() {}

@@ -1,25 +1,11 @@
 import { Handler } from 'openapi-backend';
-import Busboy from 'busboy';
 import type * as T from '../types/openapi.js';
-import { ipfsPin } from './ipfs.js';
-import { createImageAttachment, createImageLink, createNote } from '@dsnp/activity-content/factories';
-import { publish } from './announce.js';
 import { Post, getPostsInRange, getSpecificContent } from './feed.js';
 import { getCurrentBlockNumber } from './frequency.js';
 import { GraphService } from './GraphService.js';
-import * as Config from '../config/config.js';
 import { HttpError } from '../types/HttpError.js';
 import { HttpStatusCode } from 'axios';
-import { Request } from 'express';
-import * as dsnp from './dsnp';
-import logger from '../logger.js';
 
-type Fields = Record<string, string>;
-type File = {
-  name: string;
-  file: Buffer;
-  info: Busboy.FileInfo;
-};
 
 export interface IFeedRange {
   newestBlockNumber?: number;
@@ -87,82 +73,11 @@ export async function getDiscover(
   return response;
 }
 
-// export async function createBroadcast(msaId: string, req: Request) {
-//   try {
-//     const bb = Busboy({ headers: req.headers });
-
-//     const formAsync: Promise<[Fields, File[]]> = new Promise((resolve, reject) => {
-//       const files: File[] = [];
-//       const fields: Fields = {};
-//       bb.on('file', (name, file, info) => {
-//         // Take the file to a in memory buffer. This might be a bad idea.
-//         const chunks: Buffer[] = [];
-//         file
-//           .on('data', (chunk) => {
-//             chunks.push(chunk);
-//           })
-//           .on('close', () => {
-//             files.push({
-//               name,
-//               file: Buffer.concat(chunks),
-//               info,
-//             });
-//           });
-//       })
-//         .on('field', (name, val, _info) => {
-//           fields[name] = val;
-//         })
-//         .on('error', (e) => {
-//           reject(e);
-//         })
-//         .on('close', () => {
-//           resolve([fields, files]);
-//         });
-//     });
-//     req.pipe(bb);
-//     const [fields, files] = await formAsync;
-
-//     const attachment = await Promise.all(
-//       files
-//         .filter((x) => x.name === 'images')
-//         .map(async (image) => {
-//           const { cid, hash } = await ipfsPin(image.info.mimeType, image.file);
-//           return createImageAttachment([
-//             createImageLink(Config.instance().getIpfsContentUrl(cid), image.info.mimeType, [hash]),
-//           ]);
-//         })
-//     );
-
-//     const note = createNote(fields.content, new Date(), { attachment });
-//     const noteString = JSON.stringify(note);
-//     const { cid, hash: contentHash } = await ipfsPin('application/json', Buffer.from(noteString, 'utf8'));
-
-//     const announcement = fields.inReplyTo
-//       ? dsnp.createReply(msaId!, Config.instance().getIpfsContentUrl(cid), contentHash, fields.inReplyTo)
-//       : dsnp.createBroadcast(msaId!, Config.instance().getIpfsContentUrl(cid), contentHash);
-
-//     // Add it to the batch and publish
-//     await publish([announcement]);
-
-//     const response: T.Paths.CreateBroadcast.Responses.$200 = {
-//       ...announcement,
-//       fromId: announcement.fromId.toString(),
-//       content: noteString,
-//       timestamp: note.published,
-//       replies: [],
-//     };
-//     return response;
-//   } catch (e) {
-//     throw new HttpError(HttpStatusCode.InternalServerError, 'Error creating content broadcast', { cause: e });
-//   }
-// }
-
 export async function getContent(msaId: string, contentHash: string): Promise<Post> {
   const content = await getSpecificContent(msaId, contentHash);
   if (!content) {
     throw new HttpError(HttpStatusCode.NoContent, 'Specified content not found');
   }
-  logger.debug(content, 'getContent');
   return content;
 };
 
