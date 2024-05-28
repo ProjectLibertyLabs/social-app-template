@@ -57,7 +57,7 @@ const ipfsPinBuffer = async (filename: string, contentType: string, fileBuffer: 
   // Convert to CID v1 base58btc
   const cid = CID.parse(data.Hash).toV1();
 
-  logger.info('Pinned to IPFS: ' + cid);
+  logger.info({ cid }, 'CID Pinned to IPFS: ');
   return {
     cid: cid.toString(bases.base58btc),
     cidBytes: cid.bytes,

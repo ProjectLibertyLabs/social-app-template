@@ -56,7 +56,7 @@ export const getSchemaId = (type: AnnouncementType): number => {
 
 // TODO: Implement something to abstract the Frequency RPC calls
 export const publish = async <T extends BroadcastAnnouncement | ReplyAnnouncement>(announcements: Array<T>) => {
-  logger.info(`Preparing to publish a batch of announcements. Count: ${announcements.length}`);
+  logger.info('Preparing to publish a batch of announcements. Count:(%d)', announcements.length);
   const chainApi = await getApi();
 
   const announcementType = announcements[0].announcementType;
@@ -96,7 +96,7 @@ export const publish = async <T extends BroadcastAnnouncement | ReplyAnnouncemen
       if (dispatchError) {
         console.error('ERROR: ', dispatchError.toHuman());
       } else if (status.isInBlock || status.isFinalized) {
-        logger.info({ status: status.toJson() }, 'Message Posted');
+        logger.info({ status: status.toJSON() }, 'Message Posted');
       }
     });
   return;
