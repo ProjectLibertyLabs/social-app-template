@@ -3,6 +3,7 @@ import axios from 'axios';
 import * as ContentRepository from '../repositories/ContentRepository';
 import { AnnouncementResponse, AnnouncementType, BroadcastAnnouncement } from '../types/content-announcement';
 import logger from '../logger.js';
+import { translateContentUrl } from '../utils/url-transation.js';
 
 export type Post = T.Components.Schemas.BroadcastExtended;
 interface CachedPosts {
@@ -35,7 +36,7 @@ async function getPostContent(msg: AnnouncementResponse): Promise<[number, Post]
   try {
     const announcement = msg.announcement as BroadcastAnnouncement;
     // TODO: Validate Hash
-    const postResp = await axios.get(announcement.url, {
+    const postResp = await axios.get(translateContentUrl(announcement.url), {
       responseType: 'text',
       timeout: 10000,
     });

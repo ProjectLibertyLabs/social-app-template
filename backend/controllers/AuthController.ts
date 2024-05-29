@@ -38,7 +38,7 @@ export class AuthController extends BaseController {
       .send({
         siwfUrl: payload.siwfUrl,
         nodeUrl: payload.frequencyRpcUrl,
-        ipfsGateway: Config.instance().ipfsGatewayUrl,
+        ipfsGateway: Config.instance().ipfsUserAgentGatewayUrl,
         providerId: payload.providerId,
         schemas: [1, 2, 3, 4, 5, 6, 8],
         network: Config.instance().chainType,
