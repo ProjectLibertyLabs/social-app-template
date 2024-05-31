@@ -744,17 +744,6 @@
           "network"
         ]
       },
-      "ChallengeResponse": {
-        "type": "object",
-        "properties": {
-          "challenge": {
-            "type": "string"
-          }
-        },
-        "required": [
-          "challenge"
-        ]
-      },
       "LoginRequest": {
         "type": "object",
         "properties": {
@@ -775,17 +764,13 @@
           },
           "publicKey": {
             "type": "string"
-          },
-          "challenge": {
-            "type": "string"
           }
         },
         "required": [
           "algo",
           "encodedValue",
           "encoding",
-          "publicKey",
-          "challenge"
+          "publicKey"
         ]
       },
       "WalletLoginResponse": {

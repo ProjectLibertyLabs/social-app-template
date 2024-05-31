@@ -28,15 +28,11 @@ export type ProviderResponse = {
     schemas: number[];
     network: 'local' | 'testnet' | 'mainnet';
 };
-export type ChallengeResponse = {
-    challenge: string;
-};
 export type LoginRequest = {
     algo: 'SR25519';
     encoding: 'hex';
     encodedValue: string;
     publicKey: string;
-    challenge: string;
 };
 export type WalletLoginResponse = {
     referenceId: string;

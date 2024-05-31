@@ -99,9 +99,6 @@ export interface components {
       /** @enum {string} */
       network: 'local' | 'testnet' | 'mainnet';
     };
-    ChallengeResponse: {
-      challenge: string;
-    };
     LoginRequest: {
       /** @enum {string} */
       algo: 'SR25519';
@@ -109,7 +106,6 @@ export interface components {
       encoding: 'hex';
       encodedValue: string;
       publicKey: string;
-      challenge: string;
     };
     WalletLoginResponse: {
       accessToken: string;
