@@ -4,75 +4,72 @@ import type {
   UnknownParamsObject,
   OperationResponse,
   AxiosRequestConfig,
-} from 'openapi-client-axios'; 
+} from 'openapi-client-axios';
 
 declare namespace Components {
-    namespace Schemas {
-        export interface ConnectionDto {
-            dsnpId: string;
-            privacyType: "private" | "public";
-            direction: "connectionTo" | "connectionFrom" | "bidirectional" | "disconnect";
-            connectionType: "follow" | "friendship";
-        }
-        export interface DsnpGraphEdge {
-            userId: string;
-            since: number;
-        }
-        export interface GraphChangeRepsonseDto {
-        }
-        export interface GraphKeyPairDto {
-            publicKey: string;
-            privateKey: string;
-            keyType: "X25519";
-        }
-        export interface GraphsQueryParamsDto {
-            dsnpIds: string[];
-            privacyType: "private" | "public";
-            graphKeyPairs: GraphKeyPairDto[];
-        }
-        export interface ProviderGraphDto {
-            dsnpId: string;
-            connections: {
-                data?: ConnectionDto[];
-            };
-            graphKeyPairs?: GraphKeyPairDto[];
-        }
-        export interface UserGraphDto {
-            dsnpId: string;
-            dsnpGraphEdges?: DsnpGraphEdge[];
-        }
-        export interface WatchGraphsDto {
-            dsnpIds: string[];
-            webhookEndpoint: string;
-        }
+  namespace Schemas {
+    export interface ConnectionDto {
+      dsnpId: string;
+      privacyType: 'private' | 'public';
+      direction: 'connectionTo' | 'connectionFrom' | 'bidirectional' | 'disconnect';
+      connectionType: 'follow' | 'friendship';
     }
+    export interface DsnpGraphEdge {
+      userId: string;
+      since: number;
+    }
+    export interface GraphChangeRepsonseDto {}
+    export interface GraphKeyPairDto {
+      publicKey: string;
+      privateKey: string;
+      keyType: 'X25519';
+    }
+    export interface GraphsQueryParamsDto {
+      dsnpIds: string[];
+      privacyType: 'private' | 'public';
+      graphKeyPairs: GraphKeyPairDto[];
+    }
+    export interface ProviderGraphDto {
+      dsnpId: string;
+      connections: {
+        data?: ConnectionDto[];
+      };
+      graphKeyPairs?: GraphKeyPairDto[];
+    }
+    export interface UserGraphDto {
+      dsnpId: string;
+      dsnpGraphEdges?: DsnpGraphEdge[];
+    }
+    export interface WatchGraphsDto {
+      dsnpIds: string[];
+      webhookEndpoint: string;
+    }
+  }
 }
 declare namespace Paths {
-    namespace ApiControllerGetGraphs {
-        export type RequestBody = Components.Schemas.GraphsQueryParamsDto;
-        namespace Responses {
-            export type $200 = Components.Schemas.UserGraphDto[];
-        }
+  namespace ApiControllerGetGraphs {
+    export type RequestBody = Components.Schemas.GraphsQueryParamsDto;
+    namespace Responses {
+      export type $200 = Components.Schemas.UserGraphDto[];
     }
-    namespace ApiControllerHealth {
-        namespace Responses {
-            export interface $200 {
-            }
-        }
+  }
+  namespace ApiControllerHealth {
+    namespace Responses {
+      export interface $200 {}
     }
-    namespace ApiControllerUpdateGraph {
-        export type RequestBody = Components.Schemas.ProviderGraphDto;
-        namespace Responses {
-            export type $201 = Components.Schemas.GraphChangeRepsonseDto;
-        }
+  }
+  namespace ApiControllerUpdateGraph {
+    export type RequestBody = Components.Schemas.ProviderGraphDto;
+    namespace Responses {
+      export type $201 = Components.Schemas.GraphChangeRepsonseDto;
     }
-    namespace ApiControllerWatchGraphs {
-        export type RequestBody = Components.Schemas.WatchGraphsDto;
-        namespace Responses {
-            export interface $200 {
-            }
-        }
+  }
+  namespace ApiControllerWatchGraphs {
+    export type RequestBody = Components.Schemas.WatchGraphsDto;
+    namespace Responses {
+      export interface $200 {}
     }
+  }
 }
 
 export interface OperationMethods {
@@ -82,32 +79,32 @@ export interface OperationMethods {
   'ApiController_health'(
     parameters?: Parameters<UnknownParamsObject> | null,
     data?: any,
-    config?: AxiosRequestConfig  
-  ): OperationResponse<Paths.ApiControllerHealth.Responses.$200>
+    config?: AxiosRequestConfig
+  ): OperationResponse<Paths.ApiControllerHealth.Responses.$200>;
   /**
    * ApiController_getGraphs - Post a request to fetch graphs for specified dsnpIds and blockNumber
    */
   'ApiController_getGraphs'(
     parameters?: Parameters<UnknownParamsObject> | null,
     data?: Paths.ApiControllerGetGraphs.RequestBody,
-    config?: AxiosRequestConfig  
-  ): OperationResponse<Paths.ApiControllerGetGraphs.Responses.$200>
+    config?: AxiosRequestConfig
+  ): OperationResponse<Paths.ApiControllerGetGraphs.Responses.$200>;
   /**
    * ApiController_updateGraph - Request an update to given users graph
    */
   'ApiController_updateGraph'(
     parameters?: Parameters<UnknownParamsObject> | null,
     data?: Paths.ApiControllerUpdateGraph.RequestBody,
-    config?: AxiosRequestConfig  
-  ): OperationResponse<Paths.ApiControllerUpdateGraph.Responses.$201>
+    config?: AxiosRequestConfig
+  ): OperationResponse<Paths.ApiControllerUpdateGraph.Responses.$201>;
   /**
    * ApiController_watchGraphs - Watch graphs for specified dsnpIds and receive updates
    */
   'ApiController_watchGraphs'(
     parameters?: Parameters<UnknownParamsObject> | null,
     data?: Paths.ApiControllerWatchGraphs.RequestBody,
-    config?: AxiosRequestConfig  
-  ): OperationResponse<Paths.ApiControllerWatchGraphs.Responses.$200>
+    config?: AxiosRequestConfig
+  ): OperationResponse<Paths.ApiControllerWatchGraphs.Responses.$200>;
 }
 
 export interface PathsDictionary {
@@ -118,9 +115,9 @@ export interface PathsDictionary {
     'get'(
       parameters?: Parameters<UnknownParamsObject> | null,
       data?: any,
-      config?: AxiosRequestConfig  
-    ): OperationResponse<Paths.ApiControllerHealth.Responses.$200>
-  }
+      config?: AxiosRequestConfig
+    ): OperationResponse<Paths.ApiControllerHealth.Responses.$200>;
+  };
   ['/api/graphs']: {
     /**
      * ApiController_getGraphs - Post a request to fetch graphs for specified dsnpIds and blockNumber
@@ -128,9 +125,9 @@ export interface PathsDictionary {
     'put'(
       parameters?: Parameters<UnknownParamsObject> | null,
       data?: Paths.ApiControllerGetGraphs.RequestBody,
-      config?: AxiosRequestConfig  
-    ): OperationResponse<Paths.ApiControllerGetGraphs.Responses.$200>
-  }
+      config?: AxiosRequestConfig
+    ): OperationResponse<Paths.ApiControllerGetGraphs.Responses.$200>;
+  };
   ['/api/update-graph']: {
     /**
      * ApiController_updateGraph - Request an update to given users graph
@@ -138,9 +135,9 @@ export interface PathsDictionary {
     'post'(
       parameters?: Parameters<UnknownParamsObject> | null,
       data?: Paths.ApiControllerUpdateGraph.RequestBody,
-      config?: AxiosRequestConfig  
-    ): OperationResponse<Paths.ApiControllerUpdateGraph.Responses.$201>
-  }
+      config?: AxiosRequestConfig
+    ): OperationResponse<Paths.ApiControllerUpdateGraph.Responses.$201>;
+  };
   ['/api/watch-graphs']: {
     /**
      * ApiController_watchGraphs - Watch graphs for specified dsnpIds and receive updates
@@ -148,9 +145,9 @@ export interface PathsDictionary {
     'put'(
       parameters?: Parameters<UnknownParamsObject> | null,
       data?: Paths.ApiControllerWatchGraphs.RequestBody,
-      config?: AxiosRequestConfig  
-    ): OperationResponse<Paths.ApiControllerWatchGraphs.Responses.$200>
-  }
+      config?: AxiosRequestConfig
+    ): OperationResponse<Paths.ApiControllerWatchGraphs.Responses.$200>;
+  };
 }
 
-export type Client = OpenAPIClient<OperationMethods, PathsDictionary>
+export type Client = OpenAPIClient<OperationMethods, PathsDictionary>;

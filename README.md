@@ -1,6 +1,6 @@
 # Social App Template
 
-The Social Application Template(SAT) is an example client app that demonstrates how to use [Gateway Services](https://github.com/AmplicaLabs/gateway).
+The Social Application Template (SAT) is an example client app that demonstrates how to use [Gateway Services](https://github.com/AmplicaLabs/gateway).
 
 <!-- TABLE OF CONTENTS -->
 
@@ -17,15 +17,14 @@ The Social Application Template(SAT) is an example client app that demonstrates 
     - [Setup](#setup)
     - [Deployment](#deployment)
 - [🤝 Contributing](#-contributing)
-- [⭐️ Show your support](#-support)
 - [❓FAQ](#faq)
 - [📝 License](#-license)
 
-<!-- PROJECT DESCRIPTION -->
+<!-- PROJECT DESCRIPTION -->The Social Application Template (SAT) is an example client app that demonstrates how to use [Gateway Services](https://github.com/AmplicaLabs/gateway).
 
 # 📖 Social Application Template (SAT) <a name="about-project"></a>
 
-The [Gateway](https://github.com/AmplicaLabs/gateway) is a suite of services designed to make interacting with [Frequency](https://github.com/frequency-chain/frequency) easy for applications integrating with [DSNP](https://dsnp.org/).
+The [Gateway Services](https://github.com/AmplicaLabs/gateway) are a suite of services designed to make interacting with [Frequency](https://github.com/frequency-chain/frequency) easy for applications integrating with [DSNP](https://dsnp.org/).
 The SAT is an example client that shows you how to use Gateway.
 
 Gateway enables web2 companies to use a simple gateway into web3 using tooling they are accustomed to. It aims to let service providers self-serve with minimal help outside of docs and tools, rather than
@@ -201,7 +200,7 @@ Key: * = coming soon
 
 ### Prerequisites
 
-In order to run this project you need to become a provider. To do so, visit our [Provider Dashboard](https://provider.frequency.xyz/)!
+In order to run this project you need to become a provider. To do so, visit the [Provider Dashboard](https://provider.frequency.xyz/)!
 
 ### Setup
 
@@ -216,7 +215,7 @@ Example commands:
 
 ### Deployment
 
-You can deploy using our containers. Check the [docker-compose.yaml](backend/docker-compose.yaml) file for more details.
+You can deploy using containers. Check the [docker-compose.yaml](backend/docker-compose.yaml) file for more details.
 
 <p align="right">(<a href="#-table-of-contents">back to top</a>)</p>
 
@@ -231,26 +230,18 @@ Contributions, issues, and feature requests are welcome!
 
 <p align="right">(<a href="#-table-of-contents">back to top</a>)</p>
 
-<!-- SUPPORT -->
-
-## ⭐️ Show your support
-
-
-If you like this project...join the Zoom calls or loom at the label for `good-first-issue`
-
-<p align="right">(<a href="#-table-of-contents">back to top</a>)</p>
-
 <!-- FAQ (optional) -->
 
 ## ❓FAQ
 
 - **Who is the Gateway built for?**
-  
-  - Social Media Providers. 
+
+- Developers wanting a better understanding of how DSNP/Frequency works.
+- Developers wanting an example of integrating Gateway Services.
   
 - **Who is a provider and how do you become one?**
   
-  - Visit our [Provider Dashboard](https://provider.frequency.xyz/)!
+  - Visit the [Provider Dashboard](https://provider.frequency.xyz/)!
 
 - **Do I need Web 3 experience?**
 
