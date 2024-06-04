@@ -155,10 +155,10 @@ declare namespace Paths {
   }
   namespace ApiControllerStartScanner {
     namespace Parameters {
-      export type _ = boolean;
+      export type Immediate = boolean;
     }
     export interface QueryParameters {
-      ''?: Parameters._;
+      immediate?: Parameters.Immediate;
     }
     namespace Responses {
       export interface $201 {}

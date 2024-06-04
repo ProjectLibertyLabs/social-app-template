@@ -46,9 +46,6 @@ declare namespace Components {
        */
       replies?: ReplyExtended[];
     }
-    export interface ChallengeResponse {
-      challenge: string;
-    }
     export interface CreateIdentityRequest {
       addProviderSignature: string;
       algo: 'SR25519';
@@ -94,7 +91,6 @@ declare namespace Components {
       encoding: 'hex';
       encodedValue: string;
       publicKey: string;
-      challenge: string;
     }
     export interface LoginResponse {
       accessToken: string;
