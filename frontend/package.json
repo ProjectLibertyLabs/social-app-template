@@ -31,8 +31,6 @@
     "eslint-plugin-import": "^2.29.1",
     "eslint-plugin-jest": "^27.9.0",
     "prettier": "^3.2.5",
-    "prettier-plugin-tailwindcss": "^0.5.14",
-    "tailwindcss": "^3.4.3",
     "typescript-eslint": "^7.3.1"
   },
   "scripts": {
