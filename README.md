@@ -212,7 +212,10 @@ Key: * = coming soon
 
 ### Prerequisites
 
-In order to run this project you need to become a provider. To do so, visit the [Provider Dashboard](https://provider.frequency.xyz/)!
+In order to run this project you need to...
+-  Become a provider. To do so, visit the [Provider Dashboard](https://provider.frequency.xyz/)!
+- [Get Docker](https://docs.docker.com/get-docker/)
+
 
 ### Setup
 

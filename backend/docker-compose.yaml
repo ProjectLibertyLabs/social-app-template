@@ -78,9 +78,8 @@ services:
       - social-app-backend
 
   content-watcher-service:
-    # image: amplicalabs/content-watcher-service:latest
-    image: content-watcher-service:latest
-    # platform: linux/amd64
+    image: amplicalabs/content-watcher-service:latest
+    platform: linux/amd64
     ports:
       - 3005:3000
     env_file:
@@ -92,8 +91,6 @@ services:
       - redis
       - frequency
       - kubo_ipfs
-    volumes:
-      - /Users/joecaputo/src/AmplicaLabs/content-watcher-service:/app
     networks:
       - social-app-backend
 
@@ -187,6 +184,37 @@ services:
     depends_on:
       - frequency
       - kubo_ipfs
+      - content-publishing-service-api
+      - content-publishing-service-worker
+      - account-service-api
+      - account-service-worker
+      - graph-service-api
+      - graph-service-worker
+
+  social-app-template-services:
+    pull_policy: never
+    image: social-app-backend
+    build:
+      context: .
+      dockerfile: dev.Dockerfile
+      tags:
+        - social-app-backend:latest
+    ports:
+      - 3004:3000
+      - 3006:3001
+    env_file:
+      - path: .env.common.docker
+        required: true
+      - path: .env.social-app-backend.docker
+        required: true
+    environment:
+      - NODE_ENV=development
+    volumes:
+      - .:/app
+      - node_cache:/app/node_modules
+    networks:
+      - social-app-backend
+    depends_on:
       - content-publishing-service-api
       - content-publishing-service-worker
       - account-service-api

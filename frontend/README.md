@@ -219,6 +219,10 @@ file is `.env.local`.
 
 A sample configuration file can be found [here](./env.template).
 
+```sh
+  cp ./env.template ./.env
+```
+
 ### Install
 
 Install this project with:
@@ -315,8 +319,6 @@ Contributions, issues, and feature requests are welcome!
 
 - [Contributing Guidelines](./CONTRIBUTING.md)
 - [Open Issues](https://github.com/AmplicaLabs/social-app-template/issues)
-
-<p align="right">(<a href="#-table-of-contents">back to top</a>)</p>
 
 <p align="right">(<a href="#-table-of-contents">back to top</a>)</p>
 

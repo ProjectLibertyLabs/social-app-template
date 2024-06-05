@@ -9,24 +9,24 @@ This is a prototype for a DSNP Gateway to allow for simple provider setup.
 - [📖 About the Project](#about-project)
 - [🔍 Arch Map](#-arch-maps)
 - [🛠 Built With](#-built-with)
-   - [Tech Stack](#tech-stack)
-   - [Key Features](#key-features)
+  - [Tech Stack](#tech-stack)
+  - [Key Features](#key-features)
 - [🚀 Live OpenAPI Docs](#-live-docs)
 - [💻 Getting Started](#-getting-started)
-   - [Prerequisites](#prerequisites)
-   - [Quick Start](#-quick-start)
-   - [Setup](#setup)
-     - [Clone Repo](#1-clone-this-repository-to-your-desired-folder)
-     - [Environment Variables](#2-environment-variables)
-     - [Install](#3-install)
-     - [Setup Chain](#4-setup-chain)
-     - [Start Backend](#5-start-backend)
-     - [Create Provider](#6-create-provider)
-     - [Generate Types](#7-generate-types)
-     - [Env Init](#8-env-init)
-     - [Build](#9-build)
-     - [Run Tests](#10-run-tests)
-     - [Deployment](#11-deployment)
+  - [Prerequisites](#prerequisites)
+  - [Quick Start](#-quick-start)
+  - [Setup](#setup)
+    - [Clone Repo](#1-clone-this-repository-to-your-desired-folder)
+    - [Environment Variables](#2-environment-variables)
+    - [Install](#3-install)
+    - [Setup Chain](#4-setup-chain)
+    - [Start Backend](#5-start-backend)
+    - [Create Provider](#6-create-provider)
+    - [Generate Types](#7-generate-types)
+    - [Env Init](#8-env-init)
+    - [Build](#9-build)
+    - [Run Tests](#10-run-tests)
+    - [Deployment](#11-deployment)
 - [📚 References](#-references)
 - [🤝 Contributing](#-contributing)
 - [❓FAQ](#faq)
@@ -162,7 +162,7 @@ linkStyle 21 stroke:#2962FF,fill:none
 <ul>
     <li>Framework: <a href="https://....">Node.js</a> with <a href="https://expressjs.com/">Express</a></li>
     <li>Language: <a href="https://www.typescriptlang.org/">Typescript</a></li>
-    <li>Testing Library:<a href="https://jestjs.io/">Vitest</a></li>
+    <li>Testing Library:<a href="https://github.com/vitest-dev/vitest">Vitest</a></li>
     <li>API Documentation: 
       <ul>
         <li><a href="https://swagger.io/">Swagger</a></li>
@@ -200,26 +200,13 @@ linkStyle 21 stroke:#2962FF,fill:none
 
 ### Prerequisites
 
-In order to run this project you need:
+In order to run this project you need to:
+-  Become a provider. To do so, visit the [Provider Dashboard](https://provider.frequency.xyz/)!
+- [Get Docker](https://docs.docker.com/get-docker/)
 
-- [Nodejs](https://nodejs.org)
+### Setup
 
-### ⚡ Quick Start
-
-Once your env is configured, to quickly start up a set of preconfigured services, including this sample backend Gateway, simply run the following:
-
-```sh
-npm install
-npm run env:init
-docker compose up -d
-npm run local:init
-```
-
-For more detailed instructions on configuring individual services, and running the Gateway backend locally, read on.
-
-### ⚙️ Setup
-
-### 1.  Clone this repository to your desired folder:
+Clone this repository to your desired folder:
 
 Example commands:
 
@@ -228,129 +215,106 @@ Example commands:
   cd social-app-template
 ```
 
-### 2. Environment Variables
-    
-The application is configured by way of environment variables. A complete list of available environment variables is
-[here](./ENVIRONMENT.md). Environment variables are supplied to the application through _environment files_.
+### Install
 
-The default scripts and images for this app are configured in a slightly different way from the usual method. Because
-this Gateway app is a template meant to be used with other services and built upon, the supplied scripts enable
-launching a full environment of all Frequency Gateway services needed by this Gateway application. To that end, each
-service has its own environment file, as well as a "common" environment file where shared config values can be specified
-for all services without the need to duplicate entries. The environment files are named as follows; use the _[.docker]_
-variants for running the main Gateway app under docker (the other Gateway services are set up to run under Docker by
-default).
-
-- .env.common[.docker]
-- .env.service[.docker]
-    - where < service > is one of: `account-service`, `content-publishing-service`, `content-watcher-service`, `graph-service`,
-      `social-app-backend`
-
-Sample configuration files can be found [here](./environment/)
-
-
-### 3. Install
-    
 Install NPM Dependencies:
 
 ```sh
   npm install
 ```
 
-### 4. Setup Chain
-- ### IPFS Endpoint
-    <details>
-    <summary>Setup Info</summary>
-    
-    Note: There are other options, but these are the simplest to get started with.
-    
-    #### Option 1: Infura IPFS Service
-    
-    This is best for Testnet interactions.
-    
-    1. Setup an [Infura Account](https://app.infura.io/register)
-       2. Generate an IPFS API Key
-       3. Setup the Environment Variables
-           - `IPFS_ENDPOINT="https://ipfs.infura.io:5001"`
-           - `IPFS_BASIC_AUTH_USER="Infura Project ID"`
-           - `IPFS_BASIC_AUTH_SECRET="Infura Secret Here"`
-           - `IPFS_GATEWAY_URL="https://ipfs.io/ipfs/[CID]"`
-    
-    #### Option 2: IPFS Kubo Node
-    
-    This is best for local only testing, and is the default provided in the included Docker Compose script.
-    
-    This uses a local IPFS node with the [Kubo API](https://docs.ipfs.tech/reference/kubo/rpc/).
-    
-    1. Launch the Kubo IPFS container
-    
-    ```sh
-    docker compose up -d kubo_ipfs
-    ```
-    
-    2. Setup the Environment Variables
-    
-        - `IPFS_ENDPOINT="http://kubo_ipfs:5001"`
-        - `IPFS_GATEWAY_URL="http://kubo_ipfs:8080/ipfs/[CID]"`
-    
-       Note, the `env.*.template` files are pre-configured for this setup.
-    
-    _Warning_: Never expose the RPC API to the public internet.
-    </details>
+### Environment Variables
 
-- ### Frequency Node
-    <details>
-    <summary>Setup Info</summary>
-    
-    Note: There are other options, but these are simplest to get started with.
-    
-    #### Option 1: Use Public Frequency Rococo Testnet Nodes
-    
-    This is best for Testnet interactions.
-    
-    1. Setup the Environment Variables
-        - `FREQUENCY_URL="wss://rpc.rococo.frequency.xyz"`
-        - `FREQUENCY_HTTP_URL="https://rpc.rococo.frequency.xyz"`
-    
-    #### Option 2: Local Network from Source
-    
-    This is for simple local development work.
-    
-    1. Run the provided Docker Compose script to launch a local Frequency node
-    
-    ```
-    docker compose up -d frequency
-    ```
-    
-    2. For more realistic scenario testing, run the node in Interval Sealing mode (see comments in
-       [docker-compose.yaml](./docker-compose.yaml)
-       3. Setup the Environment Variables
-    
-           - `FREQUENCY_URL="ws://frequency:9944"`
-           - `FREQUENCY_HTTP_URL="http://127.0.0.1:9944"`
-    
-          Note, the pre-configured `env.*.template` files are pre-configured for this scenario
-    </details>
+The application is configured by way of environment variables. A complete list of available environment variables is
+[here](./ENVIRONMENT.md). Environment variables are supplied to the application through _environment files_.
 
-### 5. Start Backend
+<details>
+  <summary>More Details</summary>
+  The default scripts and images for this app are configured in a slightly different way from the usual method. Because
+  this Gateway app is a template meant to be used with other services and built upon, the supplied scripts enable
+  launching a full environment of all Frequency Gateway services needed by this Gateway application. To that end, each
+  service has its own environment file, as well as a "common" environment file where shared config values can be specified
+  for all services without the need to duplicate entries. The environment files are named as follows; use the _[.docker]_
+  variants for running the main Gateway app under docker (the other Gateway services are set up to run under Docker by
+  default).
+  
+  - .env.common[.docker]
+    - .env.service[.docker]
+        - where < service > is one of: `account-service`, `content-publishing-service`, `content-watcher-service`,
+          `graph-service`, `social-app-backend`
+  
+  Sample configuration files can be found [here](./environment/).
+</details>
 
-- #### Bare Metal
+Initialize the env files using the templates:
 
-    Best for local backend development.
-    
-    ```sh
-    npm run start:dev
-    ```
+```sh
+npm run env:init
+```
 
-- #### Dockerized
-    Best for running only to support frontend development.
-    
-    ```sh
-    docker compose up -d social-app-template-backend`
-    ```
+### ⚡ Quick Start (Dockerized)
 
+This environment is the best for supporting frontend development.
 
-### 6. Create Provider
+To quickly start up a set of preconfigured services, including this sample backend Gateway, run:
+
+```sh
+docker compose up -d redis frequency
+npm run local:init
+docker compose up -d social-app-template-backend 
+```
+
+For more details on configuring and running the individual services, see [Usage](#usage).
+
+### ⚡ Quick Start (Bare Metal)
+
+This environment is the best for supporting local backend development.
+
+  ```sh
+  npm run start:dev
+  ```
+
+### Usage
+
+#### 1. Start Frequency Node
+
+Note: There are other options, but these are simplest to get started with.
+
+#### Option 1: Use Public Frequency Rococo Testnet Nodes
+
+This is best for Testnet interactions.
+
+Setup the Environment Variables:
+  - `FREQUENCY_URL="wss://rpc.paseo.frequency.xyz"`
+  - `FREQUENCY_HTTP_URL="https://rpc.paseo.frequency.xyz"`
+
+#### Option 2: Local Network from Source
+
+This is for simple local development work.
+
+Run the provided Docker Compose script to launch a local Frequency node:
+
+```sh
+docker compose up -d frequency
+```
+
+#### 2. Start Redis
+
+Start Redis using Docker to manage session data and provide caching functionality. Execute the following command to initialize and run a Redis container in the background:
+
+```sh
+docker compose up -d redis
+```
+
+#### 3. Start IPFS
+
+Start the IPFS protocol, which facilitates file storage. To start IPFS with Docker Compose, run the provided script:
+
+```sh
+docker compose up -d kubo_ipfs
+```
+
+#### 3. Create Provider
 
 Create Provider for `//Alice` on localhost Frequency node.
 
@@ -358,20 +322,58 @@ Note: There are other options, but these are simplest to get started with.
 
 - #### Option 1: Frequency Rococo Testnet
 
-    Follow the instructions on the Frequency Provider Dashboard (coming soon)
-
+  Follow the instructions on the Frequency Provider Dashboard (coming soon).
 
 - #### Option 2: Local Network
+  ```sh
+  npm run local:init
+  ```
 
-    Setup the Environment Variables\
-        - `PROVIDER_ACCOUNT_SEED_PHRASE="//Alice"`\
-        - `PROVIDER_ID="1"`
-    
-    ```sh
-    npm run local:init
-     ```
+#### 4. Start Gateway Services
 
-### 7. Generate Types
+```sh
+docker compose up -d social-app-template-services
+```
+
+#### 5. Build
+
+**Option 1:** Build a Docker image from the Dockerfile:
+
+```sh
+npm docker-build
+```
+
+--or--
+
+**Option 2:** Build Docker images from the docker-compose.yml file for dev:
+
+```sh
+npm docker-build:dev
+```
+
+## 📋 Testing
+
+### Run the tests
+
+Run the test script, which uses [Vitest](https://github.com/vitest-dev/vitest):
+
+```sh
+  npm test
+```
+
+### Linting
+
+```sh
+  npm run lint
+```
+
+### Auto-format
+
+```sh
+  npm run format
+```
+
+#### 4. Generate Types
 
 Generate types from `openapi.json`
 
@@ -379,48 +381,17 @@ Generate types from `openapi.json`
   npm run gen:types
 ```
 
-### 8. Env Init
+## 📋 Debugging
 
-Initialize a set of local environment files from the included environment templates:
+1. Stop all docker containers.
+    ```sh
+    docker compose down
+    ```
+2. Go to Docker and delete all Volumes.
+3. Rerun quickstart or usage commands.
+4. If that doesn't work, repeat step 1 and 2, delete the relative Containers and Images, then repeat step 3.
 
-```sh
-  npm run env:init
-```
-
-### 9. Build:
-
-Builds the TypeScript for `./dist`
-
-See the section about [deployment](https://facebook.github.io/create-react-app/docs/deployment) for more information.
-
-```sh
-  npm run build
-```
-
-### 10. Run Tests
-
-#### Tests:
-
-Launches the test runner in the interactive watch mode.\
-See the section about [running tests](https://facebook.github.io/create-react-app/docs/running-tests) for more information.
-
-```sh
-  npm test
-```
-
-#### Linting:
-
-```sh
-  npm run lint
-```
-
-#### Auto-format:
-
-```sh
-  npm run format
-```
-
-### 11. Deployment
+## Deployment
 
 You can deploy using containers. Check the [docker-compose.yaml](backend/docker-compose.yaml) file for more details.
 
@@ -432,7 +403,6 @@ You can deploy using containers. Check the [docker-compose.yaml](backend/docker-
 
 - [Frequency](https://github.com/LibertyDSNP/frequency)
 - [Schemas](https://github.com/LibertyDSNP/schemas/)
-
 
 <!-- CONTRIBUTING -->
 

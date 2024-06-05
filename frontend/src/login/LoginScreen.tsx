@@ -22,12 +22,15 @@ const LoginScreen = ({ onLogin }: LoginScreenProps): ReactElement => {
   useEffect(() => {
     const getProviderInfo = async () => {
       const fetched = await dsnpLink.authProvider(dsnpLinkCtx, {});
+      console.log(dsnpLinkCtx);
+      console.log({fetched});
       setProviderInfo(fetched);
       setIsLoading(false);
     };
     getProviderInfo();
   }, [setProviderInfo, setIsLoading]);
 
+  console.log(providerInfo);
   return (
     <div className={styles.root}>
       <Spin tip="Loading" size="large" spinning={isLoading}>
