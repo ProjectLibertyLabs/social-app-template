@@ -170,7 +170,7 @@ linkStyle 21 stroke:#2962FF,fill:none
 - **Create a comment on a post**
 - **View a feed**
 - **View other users' profiles**
-- **Follow a user**
+- **Follow/Unfollow a user**
 
 <p align="right">(<a href="#-table-of-contents">back to top</a>)</p>
 
