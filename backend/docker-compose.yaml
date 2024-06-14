@@ -190,6 +190,8 @@ services:
       - account-service-worker
       - graph-service-api
       - graph-service-worker
+    profiles:
+      - full
 
   social-app-template-services:
     pull_policy: never

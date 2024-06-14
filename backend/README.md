@@ -163,7 +163,7 @@ linkStyle 21 stroke:#2962FF,fill:none
     <li>Framework: <a href="https://....">Node.js</a> with <a href="https://expressjs.com/">Express</a></li>
     <li>Language: <a href="https://www.typescriptlang.org/">Typescript</a></li>
     <li>Testing Library:<a href="https://github.com/vitest-dev/vitest">Vitest</a></li>
-    <li>API Documentation: 
+    <li>API Documentation:
       <ul>
         <li><a href="https://swagger.io/">Swagger</a></li>
         <li><a href="https://learn.openapis.org/">OpenAPI</a></li>
@@ -237,12 +237,12 @@ The application is configured by way of environment variables. A complete list o
   for all services without the need to duplicate entries. The environment files are named as follows; use the _[.docker]_
   variants for running the main Gateway app under docker (the other Gateway services are set up to run under Docker by
   default).
-  
+
   - .env.common[.docker]
     - .env.service[.docker]
         - where < service > is one of: `account-service`, `content-publishing-service`, `content-watcher-service`,
           `graph-service`, `social-app-backend`
-  
+
   Sample configuration files can be found [here](./environment/).
 </details>
 
@@ -259,9 +259,9 @@ This environment is the best for supporting frontend development.
 To quickly start up a set of preconfigured services, including this sample backend Gateway, run:
 
 ```sh
-docker compose up -d redis frequency
+docker compose up -d frequency
 npm run local:init
-docker compose up -d social-app-template-backend 
+docker compose --profile full up -d
 ```
 
 For more details on configuring and running the individual services, see [Usage](#usage).
@@ -271,6 +271,9 @@ For more details on configuring and running the individual services, see [Usage]
 This environment is the best for supporting local backend development.
 
   ```sh
+  docker compose up -d frequency
+  npm run local:init
+  docker compose up -d
   npm run start:dev
   ```
 
