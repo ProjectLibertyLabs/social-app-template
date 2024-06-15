@@ -201,7 +201,8 @@ linkStyle 21 stroke:#2962FF,fill:none
 ### Prerequisites
 
 In order to run this project you need to:
--  Become a provider. To do so, visit the [Provider Dashboard](https://provider.frequency.xyz/)!
+
+- Become a provider. To do so, visit the [Provider Dashboard](https://provider.frequency.xyz/)!
 - [Get Docker](https://docs.docker.com/get-docker/)
 
 ### Setup
@@ -238,12 +239,13 @@ The application is configured by way of environment variables. A complete list o
   variants for running the main Gateway app under docker (the other Gateway services are set up to run under Docker by
   default).
 
-  - .env.common[.docker]
-    - .env.service[.docker]
-        - where < service > is one of: `account-service`, `content-publishing-service`, `content-watcher-service`,
-          `graph-service`, `social-app-backend`
+- .env.common[.docker]
+  - .env.service[.docker]
+    - where < service > is one of: `account-service`, `content-publishing-service`, `content-watcher-service`,
+      `graph-service`, `social-app-backend`
 
-  Sample configuration files can be found [here](./environment/).
+Sample configuration files can be found [here](./environment/).
+
 </details>
 
 Initialize the env files using the templates:
@@ -270,12 +272,12 @@ For more details on configuring and running the individual services, see [Usage]
 
 This environment is the best for supporting local backend development.
 
-  ```sh
-  docker compose up -d frequency
-  npm run local:init
-  docker compose up -d
-  npm run start:dev
-  ```
+```sh
+docker compose up -d frequency
+npm run local:init
+docker compose up -d
+npm run start:dev
+```
 
 ### Usage
 
@@ -288,8 +290,9 @@ Note: There are other options, but these are simplest to get started with.
 This is best for Testnet interactions.
 
 Setup the Environment Variables:
-  - `FREQUENCY_URL="wss://rpc.paseo.frequency.xyz"`
-  - `FREQUENCY_HTTP_URL="https://rpc.paseo.frequency.xyz"`
+
+- `FREQUENCY_URL="wss://rpc.paseo.frequency.xyz"`
+- `FREQUENCY_HTTP_URL="https://rpc.paseo.frequency.xyz"`
 
 #### Option 2: Local Network from Source
 
@@ -301,23 +304,7 @@ Run the provided Docker Compose script to launch a local Frequency node:
 docker compose up -d frequency
 ```
 
-#### 2. Start Redis
-
-Start Redis using Docker to manage session data and provide caching functionality. Execute the following command to initialize and run a Redis container in the background:
-
-```sh
-docker compose up -d redis
-```
-
-#### 3. Start IPFS
-
-Start the IPFS protocol, which facilitates file storage. To start IPFS with Docker Compose, run the provided script:
-
-```sh
-docker compose up -d kubo_ipfs
-```
-
-#### 3. Create Provider
+#### 2. Create Provider
 
 Create Provider for `//Alice` on localhost Frequency node.
 
@@ -332,13 +319,16 @@ Note: There are other options, but these are simplest to get started with.
   npm run local:init
   ```
 
-#### 4. Start Gateway Services
+#### 3. Start Gateway Services and dependencies
+
+Run the following command to start all Gateway Services and dependencies. For more info on what's included or if you
+want to run each service individually, check out the [docker compose file](./docker-compose.yaml).
 
 ```sh
-docker compose up -d social-app-template-services
+docker compose --profile full up -d
 ```
 
-#### 5. Build
+#### 4. Build
 
 **Option 1:** Build a Docker image from the Dockerfile:
 
@@ -376,7 +366,7 @@ Run the test script, which uses [Vitest](https://github.com/vitest-dev/vitest):
   npm run format
 ```
 
-#### 4. Generate Types
+### Generate Types
 
 Generate types from `openapi.json`
 
@@ -384,12 +374,12 @@ Generate types from `openapi.json`
   npm run gen:types
 ```
 
-## 📋 Debugging
+### Debugging
 
 1. Stop all docker containers.
-    ```sh
-    docker compose down
-    ```
+   ```sh
+   docker compose down
+   ```
 2. Go to Docker and delete all Volumes.
 3. Rerun quickstart or usage commands.
 4. If that doesn't work, repeat step 1 and 2, delete the relative Containers and Images, then repeat step 3.
