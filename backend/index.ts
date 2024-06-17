@@ -118,7 +118,6 @@ if (process.env.NODE_ENV != 'test') {
       logger.info('private api listening at http://%s:%d', privateHost, privatePort)
     );
   } else {
-    // TODO: Next line breaks it and I can't figure out how to fix it.
     privateApp.listen(privatePort, () => logger.info('private api listening at http://localhost%d', privatePort));
   }
 }
