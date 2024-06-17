@@ -78,9 +78,8 @@ services:
       - social-app-backend
 
   content-watcher-service:
-    # image: amplicalabs/content-watcher-service:latest
-    image: content-watcher-service:latest
-    # platform: linux/amd64
+    image: amplicalabs/content-watcher-service:latest
+    platform: linux/amd64
     ports:
       - 3005:3000
     env_file:
@@ -92,8 +91,6 @@ services:
       - redis
       - frequency
       - kubo_ipfs
-    volumes:
-      - /Users/joecaputo/src/AmplicaLabs/content-watcher-service:/app
     networks:
       - social-app-backend
 
@@ -193,7 +190,8 @@ services:
       - account-service-worker
       - graph-service-api
       - graph-service-worker
-
+    profiles:
+      - full
 volumes:
   ipfs_data:
   chainstorage:

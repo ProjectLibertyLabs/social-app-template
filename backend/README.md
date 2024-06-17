@@ -1,79 +1,189 @@
-# DSNP Gateway Prototype
+# Social App Template Backend
 
 This is a prototype for a DSNP Gateway to allow for simple provider setup.
 
-## Quick Start
+<!-- TABLE OF CONTENTS -->
 
-To quickly start up a set of preconfigured services, including this sample backend Gateway, simply run the following:
+# 📗 Table of Contents
+
+- [📖 About the Project](#about-project)
+- [🔍 Arch Map](#-arch-maps)
+- [🛠 Built With](#-built-with)
+  - [Tech Stack](#tech-stack)
+  - [Key Features](#key-features)
+- [🚀 Live OpenAPI Docs](#-live-docs)
+- [💻 Getting Started](#-getting-started)
+  - [Prerequisites](#prerequisites)
+  - [Setup](#setup)
+  - [Install](#install)
+  - [Environment Variables](#environment-variables)
+  - [⚡ Quick Start (Dockerized)](#-quick-start-dockerized)
+  - [⚡ Quick Start (Bare Meta)](#-quick-start-bare-metal)
+  - [Usage](#usage)
+- [📋 Testing & Development](#-testing--development)
+  - [Run the tests](#run-the-tests)
+  - [Linting](#linting)
+  - [Auto-format](#auto-format)
+  - [Generate Types](#generate-types)
+  - [Swagger UI](#swagger-ui)
+  - [Debugging Tips](#debugging-tips)
+  - [Deployment](#deployment)
+- [📚 References](#-references)
+- [🤝 Contributing](#-contributing)
+- [❓FAQ](#faq)
+- [📝 License](#-license)
+
+<!-- PROJECT DESCRIPTION -->
+
+# 📖 Social Application Template (SAT) <a name="about-project"></a>
+
+The [Gateway Services](https://github.com/AmplicaLabs/gateway) are a suite of services designed to make interacting with
+[Frequency](https://github.com/frequency-chain/frequency) easy for applications integrating with
+[DSNP](https://dsnp.org/). The SAT is an example client that shows you how to use Gateway.
+
+Gateway enables web2 companies to use a simple gateway into web3 using tooling they are accustomed to. It aims to let
+service providers self-serve with minimal help outside of docs and tools, rather than interacting with Frequency
+directly. Providers no longer need to fully understand blockchain tooling to build on DSNP over Frequency.
+
+<!-- Mermaid Arch maps -->
+
+## 🔭 Arch Maps
+
+### Overview of the Social App Template in relation to Gateway Services.
+
+![Arch Map](../docs/social_app_template_arch.drawio.png)
+
+Key: \* = coming soon
+
+<p align="right">(<a href="#-table-of-contents">back to top</a>)</p>
+
+## 🛠 Built With <a name="built-with"></a>
+
+### Tech Stack <a name="tech-stack"></a>
+
+<ul>
+    <li>Framework: <a href="https://....">Node.js</a> with <a href="https://expressjs.com/">Express</a></li>
+    <li>Language: <a href="https://www.typescriptlang.org/">Typescript</a></li>
+    <li>Testing Library:<a href="https://github.com/vitest-dev/vitest">Vitest</a></li>
+    <li>API Documentation:
+      <ul>
+        <li><a href="https://swagger.io/">Swagger</a></li>
+        <li><a href="https://learn.openapis.org/">OpenAPI</a></li>
+      </ul>
+    </li>
+</ul>
+
+<!-- Features -->
+
+### Key Features
+
+- **[Sign in with Frequency](https://github.com/AmplicaLabs/siwf)**
+- **Create a post**
+- **Create a comment on a post**
+- **Get feed data**
+- **Get users' profile data**
+- **Post graph data (i.e. follow/unfollow)**
+- **Get graph data (i.e.follow list)**
+
+<p align="right">(<a href="#-table-of-contents">back to top</a>)</p>
+
+<!-- LIVE Docs -->
+
+## 🚀 Live Docs
+
+- [Gateway Live Docs](https://amplicalabs.github.io/gateway/)
+- Open Api docs coming soon...
+
+<p align="right">(<a href="#-table-of-contents">back to top</a>)</p>
+
+<!-- GETTING STARTED -->
+
+## 💻 Getting Started
+
+### Prerequisites
+
+In order to run this project you need to:
+
+- Become a provider. To do so, visit the [Provider Dashboard](https://provider.frequency.xyz/)!
+- [Get Docker](https://docs.docker.com/get-docker/)
+
+### Setup
+
+Clone this repository to your desired folder:
+
+Example commands:
 
 ```sh
-npm run env:init
-docker compose up -d
-npm run local:init
+  git clone git@github.com:AmplicaLabs/social-app-template.git
+  cd social-app-template
 ```
 
-For more detailed instructions on configuring individual services, and running the Gateway backend locally, read on.
+### Install
 
-## Setup
+Install NPM Dependencies:
+
+```sh
+  npm install
+```
 
 ### Environment Variables
 
 The application is configured by way of environment variables. A complete list of available environment variables is
 [here](./ENVIRONMENT.md). Environment variables are supplied to the application through _environment files_.
 
-The default scripts and images for this app are configured in a slightly different way from the usual method. Because
-this Gateway app is a template meant to be used with other services and built upon, the supplied scripts enable
-launching a full environment of all Frequency Gateway services needed by this Gateway application. To that end, each
-service has its own environment file, as well as a "common" environment file where shared config values can be specified
-for all services without the need to duplicate entries. The environment files are named as follows; use the _[.docker]_
-variants for running the main Gateway app under docker (the other Gateway services are set up to run under Docker by
-default).
+<details>
+  <summary>More Details</summary>
+  The default scripts and images for this app are configured in a slightly different way from the usual method. Because
+  this Gateway app is a template meant to be used with other services and built upon, the supplied scripts enable
+  launching a full environment of all Frequency Gateway services needed by this Gateway application. To that end, each
+  service has its own environment file, as well as a "common" environment file where shared config values can be specified
+  for all services without the need to duplicate entries. The environment files are named as follows; use the _[.docker]_
+  variants for running the main Gateway app under docker (the other Gateway services are set up to run under Docker by
+  default).
 
 - .env.common[.docker]
-- .env.service[.docker]
-  - where <service> is one of: account-service, content-publishing-service, content-watcher-service, graph-service,
-    social-app-backend
+  - .env.service[.docker]
+    - where < service > is one of: `account-service`, `content-publishing-service`, `content-watcher-service`,
+      `graph-service`, `social-app-backend`
 
-Sample configuration files can be found [here](./environment/)
+Sample configuration files can be found [here](./environment/).
 
-### IPFS Endpoint
+</details>
 
-Note: There are other options, but these are the simplest to get started with.
-
-#### Option 1: Infura IPFS Service
-
-This is best for Testnet interactions.
-
-1. Setup an [Infura Account](https://app.infura.io/register)
-2. Generate an IPFS API Key
-3. Setup the Environment Variables
-   - `IPFS_ENDPOINT="https://ipfs.infura.io:5001"`
-   - `IPFS_BASIC_AUTH_USER="Infura Project ID"`
-   - `IPFS_BASIC_AUTH_SECRET="Infura Secret Here"`
-   - `IPFS_GATEWAY_URL="https://ipfs.io/ipfs/[CID]"`
-
-#### Option 2: IPFS Kubo Node
-
-This is best for local only testing, and is the default provided in the included Docker Compose script.
-
-This uses a local IPFS node with the [Kubo API](https://docs.ipfs.tech/reference/kubo/rpc/).
-
-1. Launch the Kubo IPFS container
+Initialize the env files using the templates:
 
 ```sh
-docker compose up -d kubo_ipfs
+npm run env:init
 ```
 
-2. Setup the Environment Variables
+### ⚡ Quick Start (Dockerized)
 
-   - `IPFS_ENDPOINT="http://kubo_ipfs:5001"`
-   - `IPFS_GATEWAY_URL="http://kubo_ipfs:8080/ipfs/[CID]"`
+This environment is the best for supporting frontend development.
 
-   Note, the `env.*.template` files are pre-configured for this setup.
+To quickly start up a set of preconfigured services, including this sample backend Gateway, run:
 
-_Warning_: Never expose the RPC API to the public internet.
+```sh
+docker compose up -d frequency
+npm run local:init
+docker compose --profile full up -d
+```
 
-### Frequency Node
+For more details on configuring and running the individual services, see [Usage](#usage).
+
+### ⚡ Quick Start (Bare Metal)
+
+This environment is the best for supporting local backend development.
+
+```sh
+docker compose up -d frequency
+npm run local:init
+docker compose up -d
+npm run start:dev
+```
+
+### Usage
+
+#### 1. Start Frequency Node
 
 Note: There are other options, but these are simplest to get started with.
 
@@ -81,68 +191,135 @@ Note: There are other options, but these are simplest to get started with.
 
 This is best for Testnet interactions.
 
-1. Setup the Environment Variables
-   - `FREQUENCY_URL="wss://rpc.rococo.frequency.xyz"`
-   - `FREQUENCY_HTTP_URL="https://rpc.rococo.frequency.xyz"`
+Setup the Environment Variables:
+
+- `FREQUENCY_URL="wss://rpc.paseo.frequency.xyz"`
+- `FREQUENCY_HTTP_URL="https://rpc.paseo.frequency.xyz"`
 
 #### Option 2: Local Network from Source
 
 This is for simple local development work.
 
-1. Run the provided Docker Compose script to launch a local Frequency node
+Run the provided Docker Compose script to launch a local Frequency node:
 
-```
+```sh
 docker compose up -d frequency
 ```
 
-2. For more realistic scenario testing, run the node in Interval Sealing mode (see comments in
-   [docker-compose.yaml](./docker-compose.yaml)
-3. Setup the Environment Variables
+#### 2. Create Provider
 
-   - `FREQUENCY_URL="ws://frequency:9944"`
-   - `FREQUENCY_HTTP_URL="http://127.0.0.1:9944"`
-
-   Note, the pre-configured `env.*.template` files are pre-configured for this scenario
-
-### Provider Setup
+Create Provider for `//Alice` on localhost Frequency node.
 
 Note: There are other options, but these are simplest to get started with.
 
-#### Option 1: Frequency Rococo Testnet
+- #### Option 1: Frequency Rococo Testnet
 
-1. Follow the instructions on the Frequency Provider Dashboard (coming soon)
+  Follow the instructions on the Frequency Provider Dashboard (coming soon).
 
-#### Option 2: Local Network
+- #### Option 2: Local Network
+  ```sh
+  npm run local:init
+  ```
 
-1. Start the Frequency Node
-2. `npm run local:init`
-3. Setup the Environment Variables
-   - `PROVIDER_ACCOUNT_SEED_PHRASE="//Alice"`
-   - `PROVIDER_ID="1"`
+#### 3. Start Gateway Services and dependencies
 
-## Run DSNP Gateway Prototype
+Run the following command to start all Gateway Services and dependencies. For more info on what's included or if you
+want to run each service individually, check out the [docker compose file](./docker-compose.yaml).
 
-### Bare Metal (best for local backend development)
+```sh
+docker compose --profile full up -d
+```
 
-1. `npm install`
-2. `npm run start:dev`
+#### 4. Build
 
-### Dockerized (best for running only to support frontend development)
+**Option 1:** Build a Docker image from the Dockerfile:
 
-`docker compose up -d social-app-template-backend`
+```sh
+npm docker-build
+```
 
-### Development Commands
+--or--
 
-- `npm test`: Currently Failing
-- `npm run build`: Builds the TypeScript for `./dist`
-- `npm run format`: Format code
-- `npm run lint`: Lint code and styles
-- `npm run gen:types`: Generate types from `openapi.json`
-- `npm run local:init`: Create Provider for `//Alice` on localhost Frequency node.
-- `npm run env:init`: Initialize a set of local environment files from the included environment templates
+**Option 2:** Build Docker images from the docker-compose.yml file for dev:
 
-## References
+```sh
+npm docker-build:dev
+```
+
+## 📋 Testing & Development
+
+### Run the tests
+
+Run the test script, which uses [Vitest](https://github.com/vitest-dev/vitest):
+
+```sh
+npm test
+```
+
+### Linting
+
+```sh
+npm run lint
+```
+
+### Auto-format
+
+```sh
+npm run format
+```
+
+### Generate Types
+
+Generate types from `openapi.json`
+
+```sh
+npm run gen:types
+```
+
+### Swagger UI
+
+Check out the Swagger UI hosted on the app instance at
+[\<base url>/api/docs/swagger](http://localhost:3000/api/docs/swagger) to view the API documentation and submit requests
+to the service.
+
+### Debugging Tips
+
+1. Stop all docker containers.
+   ```sh
+   docker compose down
+   ```
+2. Go to Docker and delete all Volumes.
+3. Rerun quickstart or usage commands.
+4. If that doesn't work, repeat step 1 and 2, delete the relative Containers and Images, then repeat step 3.
+
+### Deployment
+
+You can deploy using containers. Check the [docker-compose.yaml](backend/docker-compose.yaml) file for more details.
+
+<p align="right">(<a href="#-table-of-contents">back to top</a>)</p>
+
+<!-- REFERENCES -->
+
+## 📚 References
 
 - [Frequency](https://github.com/LibertyDSNP/frequency)
-- [Social Web Example Client](https://github.com/AmplicaLabs/social-web-demo)
 - [Schemas](https://github.com/LibertyDSNP/schemas/)
+
+<!-- CONTRIBUTING -->
+
+## 🤝 Contributing
+
+Contributions, issues, and feature requests are welcome!
+
+- [Contributing Guidelines](./CONTRIBUTING.md)
+- [Open Issues](https://github.com/AmplicaLabs/social-app-template/issues)
+
+<p align="right">(<a href="#-table-of-contents">back to top</a>)</p>
+
+<!-- LICENSE -->
+
+## 📝 License
+
+This project is [Apache 2.0](./LICENSE) licensed.
+
+<p align="right">(<a href="#-table-of-contents">back to top</a>)</p>
