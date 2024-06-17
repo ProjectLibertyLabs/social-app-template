@@ -14,19 +14,20 @@ This is a prototype for a DSNP Gateway to allow for simple provider setup.
 - [🚀 Live OpenAPI Docs](#-live-docs)
 - [💻 Getting Started](#-getting-started)
   - [Prerequisites](#prerequisites)
-  - [Quick Start](#-quick-start)
   - [Setup](#setup)
-    - [Clone Repo](#1-clone-this-repository-to-your-desired-folder)
-    - [Environment Variables](#2-environment-variables)
-    - [Install](#3-install)
-    - [Setup Chain](#4-setup-chain)
-    - [Start Backend](#5-start-backend)
-    - [Create Provider](#6-create-provider)
-    - [Generate Types](#7-generate-types)
-    - [Env Init](#8-env-init)
-    - [Build](#9-build)
-    - [Run Tests](#10-run-tests)
-    - [Deployment](#11-deployment)
+  - [Install](#install)
+  - [Environment Variables](#environment-variables)
+  - [⚡ Quick Start (Dockerized)](#-quick-start-dockerized)
+  - [⚡ Quick Start (Bare Meta)](#-quick-start-bare-metal)
+  - [Usage](#usage)
+- [📋 Testing & Development](#-testing--development)
+  - [Run the tests](#run-the-tests)
+  - [Linting](#linting)
+  - [Auto-format](#auto-format)
+  - [Generate Types](#generate-types)
+  - [Swagger UI](#swagger-ui)
+  - [Debugging Tips](#debugging-tips)
+  - [Deployment](#deployment)
 - [📚 References](#-references)
 - [🤝 Contributing](#-contributing)
 - [❓FAQ](#faq)
@@ -50,108 +51,9 @@ directly. Providers no longer need to fully understand blockchain tooling to bui
 
 ### Overview of the Social App Template in relation to Gateway Services.
 
-```mermaid
-flowchart LR
-    subgraph SAT["SAT Endpoints"]
-        A((("social-app-template")))
-    end
-    subgraph Interface["Gateway OpenAPI Endpoints"]
-        B("Gateway Open API")
-        BA("Accounts/Auth API")
-        BG("Graph API")
-        BC("Content API")
-        BB("Broadcast API")
-        BAS("Assets API")
-        ASW("Account Service Webhook")
-        GSW("Graph Service Webhook")
-        CWW("Content Watcher Serive Webhook")
-    end
-    subgraph GHCH["Gateway Handlers"]
-        GH[["Graph Handlers"]]
-        CH[["Content Handlers"]]
-        GC[("Graph Cache")]
-        PC[("Post Cache")]
-    end
-    subgraph GMS["Gateway Micro Services"]
-        AS["Account Service"]
-        GS["Graph Service"]
-        CPS["Content Publishing Service"]
-        CW("Content Watcher")
-    end
-    A -- /auth/siwf\n/auth/account\n/auth/logout\n*/auth/login\n*/auth/handles\n*/auth/delegate\n*/auth/provider --> BA
-    A -- /profiles/msaId --> BA
-    A -- /graph/msaId/following\n/graph/msaId/follow\n/graph/msaId/unfollow --> BG
-    A -- /content/\n/content/discover\n/content/msaId\n/content/create\n/content/type/contentHash\n/content/msaId/conentHash --> BC
-    A -- /broadcasts --> BB
-    A -- /assets --> BAS
-    ASW -. /webhooks/account-service .-> A
-    GSW -. /webhooks/graph-service .-> A
-    CWW -. /webhooks/content-watcher/announcements .-> A
-    BG --> GH
-    BA --> AS
-    BC --> CH
-    BB --> CH
-    BAS --> CH
-    GH ==> GC
-    GH --> GS
-    CH ==> PC
-    CH --> CPS
-    CW <==> FC(("Frequency Chain"))
-    AS ==> FC
-    GS ==> FC
-    CPS ==> FC
-%%{
-        init: {
-            'theme': 'base',
-                'themeVariables': {
-                'primaryColor': '#ECECFF',
-                'primaryTextColor': '#000',
-                'primaryBorderColor': '#9999FF',
-                'lineColor': '#858585',
-                'secondaryColor': '#FFFDF0',
-                'tertiaryColor': '#fff'
-                }
-        }
-    }%%
-style A stroke:#FFD600,fill:#FFF9C4
-style B stroke:#FFD600,fill:#FFF9C4
-style BA stroke:#00C853,fill:#C8E6C9
-style BG fill:#FFE0B2,stroke:#FF6D00
-style BC fill:#BBDEFB,stroke:#2962FF
-style BB fill:#BBDEFB,stroke:#2962FF
-style BAS fill:#BBDEFB,stroke:#2962FF
-style GH stroke:#FF6D00,fill:#FFE0B2
-style CH stroke:#2962FF,color:#000000,fill:#BBDEFB
-style GC stroke:#FF6D00,fill:#FFE0B2
-style PC color:#000000,fill:#BBDEFB,stroke:#2962FF
-style AS stroke:#00C853,fill:#C8E6C9
-style GS fill:#FFE0B2,stroke:#FF6D00
-style CPS fill:#BBDEFB,stroke:#2962FF
-style CW stroke:#AA00FF,fill:#E1BEE7
-style FC stroke:#FFD600,fill:#FFF9C4
-linkStyle 0 stroke:#00C853,fill:none
-linkStyle 1 stroke:#00C853,fill:none
-linkStyle 2 stroke:#FF6D00,fill:none
-linkStyle 3 stroke:#2962FF,fill:none
-linkStyle 4 stroke:#2962FF,fill:none
-linkStyle 5 stroke:#2962FF,fill:none
-linkStyle 6 stroke:#00C853,fill:none
-linkStyle 7 stroke:#FF6D00,fill:none
-linkStyle 8 stroke:#2962FF,fill:none
-linkStyle 9 stroke:#FF6D00,fill:none
-linkStyle 10 stroke:#00C853,fill:none
-linkStyle 11 stroke:#2962FF,fill:none
-linkStyle 12 stroke:#2962FF,fill:none
-linkStyle 13 stroke:#2962FF,fill:none
-linkStyle 14 stroke:#FF6D00,fill:none
-linkStyle 15 stroke:#FF6D00,fill:none
-linkStyle 16 stroke:#2962FF,fill:none
-linkStyle 17 stroke:#2962FF,fill:none
-linkStyle 18 stroke:#AA00FF,fill:none
-linkStyle 19 stroke:#00C853,fill:none
-linkStyle 20 stroke:#FF6D00,fill:none
-linkStyle 21 stroke:#2962FF,fill:none
-```
+![Arch Map](../docs/social_app_template_arch.drawio.png)
+
+Key: * = coming soon
 
 <p align="right">(<a href="#-table-of-contents">back to top</a>)</p>
 
@@ -344,26 +246,26 @@ npm docker-build
 npm docker-build:dev
 ```
 
-## 📋 Testing
+## 📋 Testing & Development
 
 ### Run the tests
 
 Run the test script, which uses [Vitest](https://github.com/vitest-dev/vitest):
 
 ```sh
-  npm test
+npm test
 ```
 
 ### Linting
 
 ```sh
-  npm run lint
+npm run lint
 ```
 
 ### Auto-format
 
 ```sh
-  npm run format
+npm run format
 ```
 
 ### Generate Types
@@ -371,10 +273,15 @@ Run the test script, which uses [Vitest](https://github.com/vitest-dev/vitest):
 Generate types from `openapi.json`
 
 ```sh
-  npm run gen:types
+npm run gen:types
 ```
 
-### Debugging
+### Swagger UI
+
+Check out the Swagger UI hosted on the app instance at [\<base url>/api/docs/swagger](http://localhost:3000/api/docs/swagger) to view the API documentation and submit requests to the service.
+
+
+### Debugging Tips
 
 1. Stop all docker containers.
    ```sh
@@ -384,7 +291,7 @@ Generate types from `openapi.json`
 3. Rerun quickstart or usage commands.
 4. If that doesn't work, repeat step 1 and 2, delete the relative Containers and Images, then repeat step 3.
 
-## Deployment
+### Deployment
 
 You can deploy using containers. Check the [docker-compose.yaml](backend/docker-compose.yaml) file for more details.
 
@@ -408,7 +315,7 @@ Contributions, issues, and feature requests are welcome!
 
 <p align="right">(<a href="#-table-of-contents">back to top</a>)</p>
 
-<!-- LICENSE -->
+<!-- LICENSE --> 
 
 ## 📝 License
 
