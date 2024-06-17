@@ -23,7 +23,7 @@ const LoginScreen = ({ onLogin }: LoginScreenProps): ReactElement => {
     const getProviderInfo = async () => {
       const fetched = await dsnpLink.authProvider(dsnpLinkCtx, {});
       console.log(dsnpLinkCtx);
-      console.log({fetched});
+      console.log({ fetched });
       setProviderInfo(fetched);
       setIsLoading(false);
     };

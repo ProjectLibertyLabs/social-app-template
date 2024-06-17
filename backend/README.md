@@ -53,7 +53,7 @@ directly. Providers no longer need to fully understand blockchain tooling to bui
 
 ![Arch Map](../docs/social_app_template_arch.drawio.png)
 
-Key: * = coming soon
+Key: \* = coming soon
 
 <p align="right">(<a href="#-table-of-contents">back to top</a>)</p>
 
@@ -278,8 +278,9 @@ npm run gen:types
 
 ### Swagger UI
 
-Check out the Swagger UI hosted on the app instance at [\<base url>/api/docs/swagger](http://localhost:3000/api/docs/swagger) to view the API documentation and submit requests to the service.
-
+Check out the Swagger UI hosted on the app instance at
+[\<base url>/api/docs/swagger](http://localhost:3000/api/docs/swagger) to view the API documentation and submit requests
+to the service.
 
 ### Debugging Tips
 
@@ -315,7 +316,7 @@ Contributions, issues, and feature requests are welcome!
 
 <p align="right">(<a href="#-table-of-contents">back to top</a>)</p>
 
-<!-- LICENSE --> 
+<!-- LICENSE -->
 
 ## 📝 License
 
