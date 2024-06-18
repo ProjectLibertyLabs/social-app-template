@@ -92,7 +92,13 @@ export async function fetchAndCachePosts(newestBlockNumber: number, oldestBlockN
     // Cache the posts for each range and apply to the cache
     const posts = await getPostsForBlockRange(range);
     for (let i = range.from; i <= range.to; i++) {
-      cache[i] = posts.filter(([n]) => n === i);
+      const blockPosts = posts.filter(([n]) => n === i);
+      // Do not cache empty blocks
+      // Post announcements (a trigger for storing content) can come after the block is initially fetched.
+      // If cached while empty, the new posts will not be found and then not show in the feed.
+      if (blockPosts.length > 0) {
+        cache[i] = blockPosts;
+      }
     }
   }
 }
@@ -109,7 +115,7 @@ export async function getPostsInRange(newestBlockNumber: number, oldestBlockNumb
     const blockPosts = (cache?.[i] || []).map(([_x, p]) => p);
     posts.push(...blockPosts);
   }
-  logger.debug(posts, 'getPostsInRange');
+  logger.debug({ newestBlockNumber, oldestBlockNumber, posts }, 'getPostsInRange');
   return posts;
 }
 
