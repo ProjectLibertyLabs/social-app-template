@@ -1,0 +1,196 @@
+x-bare-metal-common-environment: &common-environment
+  FREQUENCY_URL: 'ws://frequency:9944'
+  PROVIDER_ID: 1
+  WEBHOOK_BASE_URL: 'http://host.docker.internal:3002/webhooks'
+  REDIS_URL: 'redis://redis:6379'
+  PROVIDER_ACCOUNT_SEED_PHRASE: '//Alice'
+  WEBHOOK_FAILURE_THRESHOLD: 3
+  WEBHOOK_RETRY_INTERVAL_SECONDS: 10
+  HEALTH_CHECK_MAX_RETRIES: 4
+  HEALTH_CHECK_MAX_RETRY_INTERVAL_SECONDS: 10
+  HEALTH_CHECK_SUCCESS_THRESHOLD: 10
+  CAPACITY_LIMIT: '{"type":"percentage", "value":80}'
+  SIWF_URL: 'https://amplicalabs.github.io/siwf/ui'
+  SIWF_DOMAIN: 'localhost'
+  IPFS_ENDPOINT: http://ipfs:5001
+  DEBUG: false
+
+x-content-publishing-env: &content-publishing-env
+  START_PROCESS: api
+  IPFS_GATEWAY_URL: https://ipfs.io/ipfs/[CID]
+  CAPACITY_LIMIT: '{"type":"percentage", "value":80}'
+  CHAIN_ENVIRONMENT: dev
+  FILE_UPLOAD_MAX_SIZE_IN_BYTES: 2000000000
+  ASSET_EXPIRATION_INTERVAL_SECONDS: 300
+  BATCH_INTERVAL_SECONDS: 12
+  BATCH_MAX_COUNT: 1000
+  ASSET_UPLOAD_VERIFICATION_DELAY_SECONDS: 5
+
+x-content-watcher-env: &content-watcher-env
+  IPFS_BASIC_AUTH_SECRET:
+  IPFS_GATEWAY_URL: 'http://ipfs:8080/ipfs/[CID]'
+  STARTING_BLOCK: 1
+  BLOCKCHAIN_SCAN_INTERVAL_MINUTES: 1
+  QUEUE_HIGH_WATER: 1000
+  WEBHOOK_FAILURE_THRESHOLD: 4
+  WEBHOOK_RETRY_INTERVAL_SECONDS: 10
+  PROVIDER_BASE_URL: 'http://docker.host.internal:3002/webhooks/content-watcher/announcements'
+
+x-graph-service-env: &graph-service-env
+  QUEUE_HIGH_WATER: 1000
+  DEBOUNCE_SECONDS: 10
+  CAPACITY_LIMIT: '{"type":"percentage", "value":80}'
+  GRAPH_ENVIRONMENT_TYPE: Mainnet
+  PROVIDER_ACCOUNT_SEED_PHRASE: '//Alice'
+  RECONNECTION_SERVICE_REQUIRED: false
+  PROVIDER_BASE_URL: 'http://host.docker.internal:3002/webhooks/graph-service'
+
+x-account-service-env: &account-service-env
+  FREQUENCY_HTTP_URL: 'http://localhost:9944'
+  PROVIDER_BASE_URL: 'http://host.docker.internal:3002/webhooks/account-service'
+
+services:
+  redis:
+    image: redis:latest
+    ports:
+      - 6379:6379
+    networks:
+      - social-app-backend
+    volumes:
+      - redis_data:/data/redis
+
+  frequency:
+    image: dsnp/instant-seal-node-with-deployed-schemas:latest
+    # We need to specify the platform because it's the only image
+    # built by Frequency at the moment, and auto-pull won't work otherwise
+    platform: linux/amd64
+    # Uncomment SEALING_MODE and SEALING_INTERVAL if you want to use interval sealing.
+    # Other options you may want to add depending on your test scenario.
+    environment:
+      - SEALING_MODE=interval
+      - SEALING_INTERVAL=1
+    #   - CREATE_EMPTY_BLOCKS=true
+    # The 'command' may contain additional CLI options to the Frequency node,
+    # such as:
+    # --state-pruning=archive
+    command: --offchain-worker=always --enable-offchain-indexing=true
+    ports:
+      - 9944:9944
+    networks:
+      - social-app-backend
+    volumes:
+      - chainstorage:/data
+
+  ipfs:
+    image: ipfs/kubo:latest
+    ports:
+      - 4001:4001
+      - 5001:5001
+      - 8080:8080
+    networks:
+      - social-app-backend
+    volumes:
+      - ipfs_data:/data/ipfs
+
+  content-publishing-service-api:
+    image: amplicalabs/content-publishing-service:latest
+    platform: linux/amd64
+    ports:
+      - 3010:3000
+    environment:
+      <<: [*common-environment, *content-publishing-env]
+    depends_on:
+      - redis
+      - frequency
+      - ipfs
+    networks:
+      - social-app-backend
+
+  content-publishing-service-worker:
+    image: amplicalabs/content-publishing-service:latest
+    platform: linux/amd64
+    environment:
+      <<: [*common-environment, *content-publishing-env]
+      START_PROCESS: worker
+    depends_on:
+      - redis
+      - frequency
+      - ipfs
+    networks:
+      - social-app-backend
+
+  content-watcher-service:
+    image: amplicalabs/content-watcher-service:latest
+    platform: linux/amd64
+    ports:
+      - 3011:3000
+    environment:
+      <<: [*common-environment, *content-watcher-env]
+    depends_on:
+      - redis
+      - frequency
+      - ipfs
+    networks:
+      - social-app-backend
+
+  graph-service-api:
+    image: amplicalabs/graph-service:latest
+    platform: linux/amd64
+    ports:
+      - 3012:3000
+    environment:
+      <<: [*common-environment, *graph-service-env]
+      START_PROCESS: api
+    depends_on:
+      - redis
+      - frequency
+    networks:
+      - social-app-backend
+
+  graph-service-worker:
+    image: amplicalabs/graph-service:latest
+    platform: linux/amd64
+    environment:
+      <<: [*common-environment, *graph-service-env]
+      START_PROCESS: worker
+    depends_on:
+      - redis
+      - frequency
+    networks:
+      - social-app-backend
+
+  account-service-api:
+    image: amplicalabs/account-service:latest
+    platform: linux/amd64
+    ports:
+      - 3013:3000
+    command: api
+    environment:
+      <<: [*common-environment, *account-service-env]
+    depends_on:
+      - redis
+      - frequency
+    networks:
+      - social-app-backend
+
+  account-service-worker:
+    image: amplicalabs/account-service:latest
+    platform: linux/amd64
+    command: worker
+    environment:
+      <<: [*common-environment, *account-service-env]
+    depends_on:
+      - redis
+      - frequency
+    networks:
+      - social-app-backend
+
+volumes:
+  ipfs_data:
+  chainstorage:
+    external: false
+  node_cache:
+  redis_data:
+
+networks:
+  social-app-backend:
