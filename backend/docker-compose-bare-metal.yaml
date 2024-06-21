@@ -12,8 +12,8 @@ x-bare-metal-common-environment: &common-environment
   CAPACITY_LIMIT: '{"type":"percentage", "value":80}'
   SIWF_URL: 'https://amplicalabs.github.io/siwf/ui'
   SIWF_DOMAIN: 'localhost'
-  IPFS_ENDPOINT: http://ipfs:5001
-  IPFS_GATEWAY_URL: https://ipfs.io/ipfs/[CID]
+  IPFS_ENDPOINT: 'http://ipfs:5001'
+  IPFS_GATEWAY_URL: 'https://ipfs.io/ipfs/[CID]'
   QUEUE_HIGH_WATER: 1000
   DEBUG: false
 

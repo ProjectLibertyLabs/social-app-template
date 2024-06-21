@@ -13,14 +13,14 @@ x-common-environment: &common-environment
   CAPACITY_LIMIT: '{"type":"percentage", "value":80}'
   SIWF_URL: 'https://amplicalabs.github.io/siwf/ui'
   SIWF_DOMAIN: 'localhost'
-  IPFS_ENDPOINT: http://ipfs:5001
+  IPFS_ENDPOINT: 'http://ipfs:5001'
+  IPFS_GATEWAY_URL: 'https://ipfs.io/ipfs/[CID]'
   QUEUE_HIGH_WATER: 1000
   CHAIN_ENVIRONMENT: dev
   DEBUG: false
 
 x-content-publishing-env: &content-publishing-env
   START_PROCESS: api
-  IPFS_GATEWAY_URL: https://ipfs.io/ipfs/[CID]
   FILE_UPLOAD_MAX_SIZE_IN_BYTES: 2000000000
   ASSET_EXPIRATION_INTERVAL_SECONDS: 300
   BATCH_INTERVAL_SECONDS: 12
@@ -29,7 +29,6 @@ x-content-publishing-env: &content-publishing-env
 
 x-content-watcher-env: &content-watcher-env
   IPFS_BASIC_AUTH_SECRET:
-  IPFS_GATEWAY_URL: 'http://ipfs:8080/ipfs/[CID]'
   STARTING_BLOCK: 1
   BLOCKCHAIN_SCAN_INTERVAL_MINUTES: 1
   WEBHOOK_FAILURE_THRESHOLD: 4
@@ -49,7 +48,7 @@ x-social-app-template-backend: &social-app-template-backend
   CONTENT_PUBLISHER_URL: 'http://content-publishing-service-api:3000'
   CONTENT_WATCHER_URL: 'http://content-watcher-service:3000'
   GRAPH_SERVICE_URL: 'http://graph-service-api:3000'
-  IPFS_UA_GATEWAY_URL: 'http://ipfs:8080'
+  IPFS_UA_GATEWAY_URL: 'http://localhost:8080'
   NODE_ENV: development
 
 services:
@@ -199,9 +198,10 @@ services:
     ports:
       - 3001:3000
       - 3002:3001
-      
+
     environment:
       <<: [*common-environment, *social-app-template-backend]
+      IPFS_GATEWAY_URL: 'http://ipfs:8080'
     volumes:
       - .:/app
       - node_cache:/app/node_modules
