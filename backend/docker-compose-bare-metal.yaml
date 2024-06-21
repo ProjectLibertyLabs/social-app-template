@@ -1,9 +1,9 @@
 x-bare-metal-common-environment: &common-environment
   FREQUENCY_URL: 'ws://frequency:9944'
-  PROVIDER_ID: 1
-  WEBHOOK_BASE_URL: 'http://host.docker.internal:3002/webhooks'
   REDIS_URL: 'redis://redis:6379'
+  PROVIDER_ID: 1
   PROVIDER_ACCOUNT_SEED_PHRASE: '//Alice'
+  WEBHOOK_BASE_URL: 'http://host.docker.internal:3002/webhooks'
   WEBHOOK_FAILURE_THRESHOLD: 3
   WEBHOOK_RETRY_INTERVAL_SECONDS: 10
   HEALTH_CHECK_MAX_RETRIES: 4
@@ -13,12 +13,12 @@ x-bare-metal-common-environment: &common-environment
   SIWF_URL: 'https://amplicalabs.github.io/siwf/ui'
   SIWF_DOMAIN: 'localhost'
   IPFS_ENDPOINT: http://ipfs:5001
+  IPFS_GATEWAY_URL: https://ipfs.io/ipfs/[CID]
+  QUEUE_HIGH_WATER: 1000
   DEBUG: false
 
 x-content-publishing-env: &content-publishing-env
   START_PROCESS: api
-  IPFS_GATEWAY_URL: https://ipfs.io/ipfs/[CID]
-  CAPACITY_LIMIT: '{"type":"percentage", "value":80}'
   CHAIN_ENVIRONMENT: dev
   FILE_UPLOAD_MAX_SIZE_IN_BYTES: 2000000000
   ASSET_EXPIRATION_INTERVAL_SECONDS: 300
@@ -28,20 +28,14 @@ x-content-publishing-env: &content-publishing-env
 
 x-content-watcher-env: &content-watcher-env
   IPFS_BASIC_AUTH_SECRET:
-  IPFS_GATEWAY_URL: 'http://ipfs:8080/ipfs/[CID]'
   STARTING_BLOCK: 1
   BLOCKCHAIN_SCAN_INTERVAL_MINUTES: 1
-  QUEUE_HIGH_WATER: 1000
   WEBHOOK_FAILURE_THRESHOLD: 4
-  WEBHOOK_RETRY_INTERVAL_SECONDS: 10
   PROVIDER_BASE_URL: 'http://docker.host.internal:3002/webhooks/content-watcher/announcements'
 
 x-graph-service-env: &graph-service-env
-  QUEUE_HIGH_WATER: 1000
   DEBOUNCE_SECONDS: 10
-  CAPACITY_LIMIT: '{"type":"percentage", "value":80}'
   GRAPH_ENVIRONMENT_TYPE: Mainnet
-  PROVIDER_ACCOUNT_SEED_PHRASE: '//Alice'
   RECONNECTION_SERVICE_REQUIRED: false
   PROVIDER_BASE_URL: 'http://host.docker.internal:3002/webhooks/graph-service'
 

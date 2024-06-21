@@ -1,3 +1,57 @@
+x-common-environment: &common-environment
+  FREQUENCY_URL: 'ws://frequency:9944'
+  FREQUENCY_HTTP_URL: 'http://localhost:9944'
+  REDIS_URL: 'redis://redis:6379'
+  PROVIDER_ID: 1
+  PROVIDER_ACCOUNT_SEED_PHRASE: '//Alice'
+  WEBHOOK_BASE_URL: 'http://social-app-template-backend:3001/webhooks'
+  WEBHOOK_FAILURE_THRESHOLD: 3
+  WEBHOOK_RETRY_INTERVAL_SECONDS: 10
+  HEALTH_CHECK_MAX_RETRIES: 4
+  HEALTH_CHECK_MAX_RETRY_INTERVAL_SECONDS: 10
+  HEALTH_CHECK_SUCCESS_THRESHOLD: 10
+  CAPACITY_LIMIT: '{"type":"percentage", "value":80}'
+  SIWF_URL: 'https://amplicalabs.github.io/siwf/ui'
+  SIWF_DOMAIN: 'localhost'
+  IPFS_ENDPOINT: http://ipfs:5001
+  QUEUE_HIGH_WATER: 1000
+  CHAIN_ENVIRONMENT: dev
+  DEBUG: false
+
+x-content-publishing-env: &content-publishing-env
+  START_PROCESS: api
+  IPFS_GATEWAY_URL: https://ipfs.io/ipfs/[CID]
+  FILE_UPLOAD_MAX_SIZE_IN_BYTES: 2000000000
+  ASSET_EXPIRATION_INTERVAL_SECONDS: 300
+  BATCH_INTERVAL_SECONDS: 12
+  BATCH_MAX_COUNT: 1000
+  ASSET_UPLOAD_VERIFICATION_DELAY_SECONDS: 5
+
+x-content-watcher-env: &content-watcher-env
+  IPFS_BASIC_AUTH_SECRET:
+  IPFS_GATEWAY_URL: 'http://ipfs:8080/ipfs/[CID]'
+  STARTING_BLOCK: 1
+  BLOCKCHAIN_SCAN_INTERVAL_MINUTES: 1
+  WEBHOOK_FAILURE_THRESHOLD: 4
+  PROVIDER_BASE_URL: 'http://social-app-template-backend:3001/webhooks/content-watcher/announcements'
+
+x-graph-service-env: &graph-service-env
+  DEBOUNCE_SECONDS: 10
+  GRAPH_ENVIRONMENT_TYPE: Mainnet
+  RECONNECTION_SERVICE_REQUIRED: false
+  PROVIDER_BASE_URL: 'http://social-app-template-backend:3001/webhooks/graph-service'
+
+x-account-service-env: &account-service-env
+  PROVIDER_BASE_URL: 'http://social-app-template-backend:3001/webhooks/account-service'
+
+x-social-app-template-backend: &social-app-template-backend
+  ACCOUNT_SERVICE_URL: 'http://account-service-api:3000'
+  CONTENT_PUBLISHER_URL: 'http://content-publishing-service-api:3000'
+  CONTENT_WATCHER_URL: 'http://content-watcher-service:3000'
+  GRAPH_SERVICE_URL: 'http://graph-service-api:3000'
+  IPFS_UA_GATEWAY_URL: 'http://ipfs:8080'
+  NODE_ENV: development
+
 services:
   redis:
     image: redis:latest
@@ -15,9 +69,9 @@ services:
     platform: linux/amd64
     # Uncomment SEALING_MODE and SEALING_INTERVAL if you want to use interval sealing.
     # Other options you may want to add depending on your test scenario.
-    # environment:
-    #   - SEALING_MODE=interval
-    #   - SEALING_INTERVAL=3
+    environment:
+      - SEALING_MODE=interval
+      - SEALING_INTERVAL=1
     #   - CREATE_EMPTY_BLOCKS=true
     # The 'command' may contain additional CLI options to the Frequency node,
     # such as:
@@ -30,7 +84,7 @@ services:
     volumes:
       - chainstorage:/data
 
-  kubo_ipfs:
+  ipfs:
     image: ipfs/kubo:latest
     ports:
       - 4001:4001
@@ -45,35 +99,26 @@ services:
     image: amplicalabs/content-publishing-service:latest
     platform: linux/amd64
     ports:
-      - 3001:3000
-    env_file:
-      - path: .env.common.docker
-        required: true
-      - path: '.env.content-publishing-service'
-        required: false
+      - 3010:3000
     environment:
-      - START_PROCESS=api
+      <<: [*common-environment, *content-publishing-env]
     depends_on:
       - redis
       - frequency
-      - kubo_ipfs
+      - ipfs
     networks:
       - social-app-backend
 
   content-publishing-service-worker:
     image: amplicalabs/content-publishing-service:latest
     platform: linux/amd64
-    env_file:
-      - path: .env.common.docker
-        required: true
-      - path: '.env.content-publishing-service'
-        required: false
     environment:
-      - START_PROCESS=worker
+      <<: [*common-environment, *content-publishing-env]
+      START_PROCESS: worker
     depends_on:
       - redis
       - frequency
-      - kubo_ipfs
+      - ipfs
     networks:
       - social-app-backend
 
@@ -81,16 +126,13 @@ services:
     image: amplicalabs/content-watcher-service:latest
     platform: linux/amd64
     ports:
-      - 3005:3000
-    env_file:
-      - path: .env.common.docker
-        required: true
-      - path: .env.content-watcher-service
-        required: false
+      - 3011:3000
+    environment:
+      <<: [*common-environment, *content-watcher-env]
     depends_on:
       - redis
       - frequency
-      - kubo_ipfs
+      - ipfs
     networks:
       - social-app-backend
 
@@ -98,12 +140,10 @@ services:
     image: amplicalabs/graph-service:latest
     platform: linux/amd64
     ports:
-      - 3002:3000
-    env_file:
-      - path: .env.common.docker
-        required: true
-      - path: .env.graph-service
-        required: false
+      - 3012:3000
+    environment:
+      <<: [*common-environment, *graph-service-env]
+      START_PROCESS: api
     depends_on:
       - redis
       - frequency
@@ -113,13 +153,9 @@ services:
   graph-service-worker:
     image: amplicalabs/graph-service:latest
     platform: linux/amd64
-    env_file:
-      - path: .env.common.docker
-        required: true
-      - path: .env.graph-service
-        required: false
     environment:
-      - START_PROCESS=worker
+      <<: [*common-environment, *graph-service-env]
+      START_PROCESS: worker
     depends_on:
       - redis
       - frequency
@@ -130,13 +166,10 @@ services:
     image: amplicalabs/account-service:latest
     platform: linux/amd64
     ports:
-      - 3003:3000
+      - 3013:3000
     command: api
-    env_file:
-      - path: .env.common.docker
-        required: true
-      - path: .env.account-service
-        required: false
+    environment:
+      <<: [*common-environment, *account-service-env]
     depends_on:
       - redis
       - frequency
@@ -147,11 +180,8 @@ services:
     image: amplicalabs/account-service:latest
     platform: linux/amd64
     command: worker
-    env_file:
-      - path: .env.common.docker
-        required: true
-      - path: .env.account-service
-        required: false
+    environment:
+      <<: [*common-environment, *account-service-env]
     depends_on:
       - redis
       - frequency
@@ -167,15 +197,11 @@ services:
       tags:
         - social-app-backend:latest
     ports:
-      - 3004:3000
-      - 3006:3001
-    env_file:
-      - path: .env.common.docker
-        required: true
-      - path: .env.social-app-backend.docker
-        required: true
+      - 3001:3000
+      - 3002:3001
+      
     environment:
-      - NODE_ENV=development
+      <<: [*common-environment, *social-app-template-backend]
     volumes:
       - .:/app
       - node_cache:/app/node_modules
@@ -183,7 +209,7 @@ services:
       - social-app-backend
     depends_on:
       - frequency
-      - kubo_ipfs
+      - ipfs
       - content-publishing-service-api
       - content-publishing-service-worker
       - account-service-api

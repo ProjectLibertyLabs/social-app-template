@@ -118,7 +118,7 @@ if (process.env.NODE_ENV != 'test') {
       logger.info('private api listening at http://%s:%d', privateHost, privatePort)
     );
   } else {
-    privateApp.listen(privatePort, () => logger.info('private api listening at http://localhost%d', privatePort));
+    privateApp.listen(privatePort, () => logger.info('private api listening at http://localhost:%d', privatePort));
   }
 }
 

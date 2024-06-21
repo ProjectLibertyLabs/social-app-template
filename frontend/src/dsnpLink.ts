@@ -198,7 +198,7 @@ export function configureAuth(params?: r.CreateContextParams<AuthMethods>["authP
     return { tokenAuth: params?.tokenAuth && new r.HttpBearerSecurityAuthentication(params.tokenAuth) };
 }
 export function createContext<FetcherData>(params?: r.CreateContextParams<AuthMethods, FetcherData>): r.Context<AuthMethods, FetcherData> { return new r.Context<AuthMethods, FetcherData>({
-    serverConfiguration: new r.ServerConfiguration('http://localhost:3004', {}),
+    serverConfiguration: new r.ServerConfiguration('http://localhost:3001', {}),
     authMethods: configureAuth(params?.authProviders),
     ...params
 }); }
