@@ -97,8 +97,6 @@ services:
   content-publishing-service-api:
     image: amplicalabs/content-publishing-service:latest
     platform: linux/amd64
-    ports:
-      - 3010:3000
     environment:
       <<: [*common-environment, *content-publishing-env]
     depends_on:
@@ -124,8 +122,6 @@ services:
   content-watcher-service:
     image: amplicalabs/content-watcher-service:latest
     platform: linux/amd64
-    ports:
-      - 3011:3000
     environment:
       <<: [*common-environment, *content-watcher-env]
     depends_on:
@@ -138,8 +134,6 @@ services:
   graph-service-api:
     image: amplicalabs/graph-service:latest
     platform: linux/amd64
-    ports:
-      - 3012:3000
     environment:
       <<: [*common-environment, *graph-service-env]
       START_PROCESS: api
@@ -164,8 +158,6 @@ services:
   account-service-api:
     image: amplicalabs/account-service:latest
     platform: linux/amd64
-    ports:
-      - 3013:3000
     command: api
     environment:
       <<: [*common-environment, *account-service-env]

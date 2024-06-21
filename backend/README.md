@@ -163,9 +163,7 @@ This environment is the best for supporting frontend development.
 To quickly start up a set of preconfigured services, including this sample backend Gateway, run:
 
 ```sh
-docker compose up -d frequency
-npm run local:init
-docker compose --profile full up -d
+./scripts/restart-chain-docker.sh
 ```
 
 For more details on configuring and running the individual services, see [Usage](#usage).
@@ -175,9 +173,7 @@ For more details on configuring and running the individual services, see [Usage]
 This environment is the best for supporting local backend development.
 
 ```sh
-docker compose up -d frequency
-npm run local:init
-docker compose up -d
+./scripts/restart-chain-bare-metal.sh
 npm run start:dev
 ```
 
