@@ -2,7 +2,7 @@
   "openapi": "3.0.0",
   "servers": [
     {
-      "url": "http://localhost:3004"
+      "url": "http://localhost:3001"
     }
   ],
   "info": {

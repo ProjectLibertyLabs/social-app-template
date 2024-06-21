@@ -4,7 +4,7 @@
 echo "Stopping and removing containers, networks..."
 docker compose down
 
-# Remove specified volumes
+# Remove specified volumes to remove all state and start fresh
 echo "Removing specified volumes..."
 docker volume rm backend_redis_data
 docker volume rm backend_chainstorage
