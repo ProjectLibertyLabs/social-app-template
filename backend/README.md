@@ -136,16 +136,9 @@ The application is configured by way of environment variables. A complete list o
   The default scripts and images for this app are configured in a slightly different way from the usual method. Because
   this Gateway app is a template meant to be used with other services and built upon, the supplied scripts enable
   launching a full environment of all Frequency Gateway services needed by this Gateway application. To that end, each
-  service has its own environment file, as well as a "common" environment file where shared config values can be specified
-  for all services without the need to duplicate entries. The environment files are named as follows; use the _[.docker]_
-  variants for running the main Gateway app under docker (the other Gateway services are set up to run under Docker by
-  default).
-
-- .env.common[.docker]
-  - .env.service[.docker]
-    - where < service > is one of: `account-service`, `content-publishing-service`, `content-watcher-service`,
-      `graph-service`, `social-app-backend`
-
+  service has its own environment, which are specified in the `docker-compose-bare-metal.yaml` and `docker-compose.yaml` files.
+  Additionally, when running in bare-metal mode, `npm run env:init` will create the necessary `.env.social-app-backend` file from the `env.social-app-backend.template` file.
+  
 Sample configuration files can be found [here](./environment/).
 
 </details>
