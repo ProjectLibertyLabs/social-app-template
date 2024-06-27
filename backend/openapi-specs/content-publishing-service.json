@@ -1,20 +1,10 @@
 {
   "openapi": "3.0.0",
   "paths": {
-    "/api/health": {
-      "get": {
-        "operationId": "ApiController_health",
-        "parameters": [],
-        "responses": {
-          "200": {
-            "description": ""
-          }
-        }
-      }
-    },
-    "/api/asset/upload": {
+    "/v1/asset/upload": {
       "put": {
-        "operationId": "ApiController_assetUpload",
+        "operationId": "AssetController_assetUpload",
+        "summary": "Upload Asset Files",
         "parameters": [],
         "requestBody": {
           "required": true,
@@ -38,12 +28,14 @@
               }
             }
           }
-        }
+        },
+        "tags": ["asset"]
       }
     },
-    "/api/content/{userDsnpId}/broadcast": {
+    "/v1/content/{userDsnpId}/broadcast": {
       "post": {
-        "operationId": "ApiController_broadcast",
+        "operationId": "ContentController_broadcast",
+        "summary": "Create DSNP Broadcast for User",
         "parameters": [
           {
             "name": "userDsnpId",
@@ -75,12 +67,14 @@
               }
             }
           }
-        }
+        },
+        "tags": ["content"]
       }
     },
-    "/api/content/{userDsnpId}/reply": {
+    "/v1/content/{userDsnpId}/reply": {
       "post": {
-        "operationId": "ApiController_reply",
+        "operationId": "ContentController_reply",
+        "summary": "Create DSNP Reply for User",
         "parameters": [
           {
             "name": "userDsnpId",
@@ -112,12 +106,14 @@
               }
             }
           }
-        }
+        },
+        "tags": ["content"]
       }
     },
-    "/api/content/{userDsnpId}/reaction": {
+    "/v1/content/{userDsnpId}/reaction": {
       "post": {
-        "operationId": "ApiController_reaction",
+        "operationId": "ContentController_reaction",
+        "summary": "Create DSNP Reaction for User",
         "parameters": [
           {
             "name": "userDsnpId",
@@ -149,12 +145,14 @@
               }
             }
           }
-        }
+        },
+        "tags": ["content"]
       }
     },
-    "/api/content/{userDsnpId}": {
+    "/v1/content/{userDsnpId}": {
       "put": {
-        "operationId": "ApiController_update",
+        "operationId": "ContentController_update",
+        "summary": "Update DSNP Content for User",
         "parameters": [
           {
             "name": "userDsnpId",
@@ -186,10 +184,12 @@
               }
             }
           }
-        }
+        },
+        "tags": ["content"]
       },
       "delete": {
-        "operationId": "ApiController_delete",
+        "operationId": "ContentController_delete",
+        "summary": "Delete DSNP Content for User",
         "parameters": [
           {
             "name": "userDsnpId",
@@ -221,12 +221,53 @@
               }
             }
           }
-        }
+        },
+        "tags": ["content"]
       }
     },
-    "/api/profile/{userDsnpId}": {
+    "/healthz": {
+      "get": {
+        "operationId": "HealthController_healthz",
+        "summary": "Check the health status of the service",
+        "parameters": [],
+        "responses": {
+          "200": {
+            "description": "Service is healthy"
+          }
+        },
+        "tags": ["health"]
+      }
+    },
+    "/livez": {
+      "get": {
+        "operationId": "HealthController_livez",
+        "summary": "Check the live status of the service",
+        "parameters": [],
+        "responses": {
+          "200": {
+            "description": "Service is live"
+          }
+        },
+        "tags": ["health"]
+      }
+    },
+    "/readyz": {
+      "get": {
+        "operationId": "HealthController_readyz",
+        "summary": "Check the ready status of the service",
+        "parameters": [],
+        "responses": {
+          "200": {
+            "description": "Service is ready"
+          }
+        },
+        "tags": ["health"]
+      }
+    },
+    "/v1/profile/{userDsnpId}": {
       "put": {
-        "operationId": "ApiController_profile",
+        "operationId": "ProfileController_profile",
+        "summary": "Update a user's Profile",
         "parameters": [
           {
             "name": "userDsnpId",
@@ -258,7 +299,8 @@
               }
             }
           }
-        }
+        },
+        "tags": ["profile"]
       }
     }
   },
