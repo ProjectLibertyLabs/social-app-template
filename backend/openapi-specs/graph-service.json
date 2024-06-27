@@ -1,22 +1,9 @@
 {
   "openapi": "3.0.0",
   "paths": {
-    "/api/health": {
-      "get": {
-        "operationId": "ApiController_health",
-        "summary": "Check the health status of the service",
-        "parameters": [],
-        "responses": {
-          "200": {
-            "description": "Service is healthy"
-          }
-        },
-        "tags": ["graph-service"]
-      }
-    },
-    "/api/graphs": {
+    "/v1/graphs": {
       "put": {
-        "operationId": "ApiController_getGraphs",
+        "operationId": "GraphController_getGraphs",
         "summary": "Post a request to fetch graphs for specified dsnpIds and blockNumber",
         "parameters": [],
         "requestBody": {
@@ -44,12 +31,12 @@
             }
           }
         },
-        "tags": ["graph-service"]
+        "tags": ["v1/graph"]
       }
     },
-    "/api/update-graph": {
+    "/v1/update-graph": {
       "post": {
-        "operationId": "ApiController_updateGraph",
+        "operationId": "GraphController_updateGraph",
         "summary": "Request an update to given users graph",
         "parameters": [],
         "requestBody": {
@@ -74,12 +61,12 @@
             }
           }
         },
-        "tags": ["graph-service"]
+        "tags": ["v1/graph"]
       }
     },
-    "/api/watch-graphs": {
+    "/v1/watch-graphs": {
       "put": {
-        "operationId": "ApiController_watchGraphs",
+        "operationId": "GraphController_watchGraphs",
         "summary": "Watch graphs for specified dsnpIds and receive updates",
         "parameters": [],
         "requestBody": {
@@ -97,7 +84,46 @@
             "description": "Successfully started watching graphs"
           }
         },
-        "tags": ["graph-service"]
+        "tags": ["v1/graph"]
+      }
+    },
+    "/healthz": {
+      "get": {
+        "operationId": "HealthController_healthz",
+        "summary": "Check the health status of the service",
+        "parameters": [],
+        "responses": {
+          "200": {
+            "description": "Service is healthy"
+          }
+        },
+        "tags": ["health"]
+      }
+    },
+    "/livez": {
+      "get": {
+        "operationId": "HealthController_livez",
+        "summary": "Check the live status of the service",
+        "parameters": [],
+        "responses": {
+          "200": {
+            "description": "Service is live"
+          }
+        },
+        "tags": ["health"]
+      }
+    },
+    "/readyz": {
+      "get": {
+        "operationId": "HealthController_readyz",
+        "summary": "Check the ready status of the service",
+        "parameters": [],
+        "responses": {
+          "200": {
+            "description": "Service is ready"
+          }
+        },
+        "tags": ["health"]
       }
     }
   },
@@ -201,12 +227,7 @@
           },
           "direction": {
             "type": "string",
-            "enum": [
-              "connectionTo",
-              "connectionFrom",
-              "bidirectional",
-              "disconnect"
-            ]
+            "enum": ["connectionTo", "connectionFrom", "bidirectional", "disconnect"]
           },
           "connectionType": {
             "type": "string",
