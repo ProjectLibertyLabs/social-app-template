@@ -31,7 +31,9 @@
             }
           }
         },
-        "tags": ["v1/graph"]
+        "tags": [
+          "v1/graph"
+        ]
       }
     },
     "/v1/update-graph": {
@@ -61,7 +63,9 @@
             }
           }
         },
-        "tags": ["v1/graph"]
+        "tags": [
+          "v1/graph"
+        ]
       }
     },
     "/v1/watch-graphs": {
@@ -84,7 +88,9 @@
             "description": "Successfully started watching graphs"
           }
         },
-        "tags": ["v1/graph"]
+        "tags": [
+          "v1/graph"
+        ]
       }
     },
     "/healthz": {
@@ -97,7 +103,9 @@
             "description": "Service is healthy"
           }
         },
-        "tags": ["health"]
+        "tags": [
+          "health"
+        ]
       }
     },
     "/livez": {
@@ -110,7 +118,9 @@
             "description": "Service is live"
           }
         },
-        "tags": ["health"]
+        "tags": [
+          "health"
+        ]
       }
     },
     "/readyz": {
@@ -123,7 +133,9 @@
             "description": "Service is ready"
           }
         },
-        "tags": ["health"]
+        "tags": [
+          "health"
+        ]
       }
     }
   },
@@ -161,10 +173,16 @@
           },
           "keyType": {
             "type": "string",
-            "enum": ["X25519"]
+            "enum": [
+              "X25519"
+            ]
           }
         },
-        "required": ["publicKey", "privateKey", "keyType"]
+        "required": [
+          "publicKey",
+          "privateKey",
+          "keyType"
+        ]
       },
       "GraphsQueryParamsDto": {
         "type": "object",
@@ -177,7 +195,10 @@
           },
           "privacyType": {
             "type": "string",
-            "enum": ["private", "public"]
+            "enum": [
+              "private",
+              "public"
+            ]
           },
           "graphKeyPairs": {
             "type": "array",
@@ -186,7 +207,11 @@
             }
           }
         },
-        "required": ["dsnpIds", "privacyType", "graphKeyPairs"]
+        "required": [
+          "dsnpIds",
+          "privacyType",
+          "graphKeyPairs"
+        ]
       },
       "DsnpGraphEdge": {
         "type": "object",
@@ -198,7 +223,10 @@
             "type": "number"
           }
         },
-        "required": ["userId", "since"]
+        "required": [
+          "userId",
+          "since"
+        ]
       },
       "UserGraphDto": {
         "type": "object",
@@ -213,7 +241,9 @@
             }
           }
         },
-        "required": ["dsnpId"]
+        "required": [
+          "dsnpId"
+        ]
       },
       "ConnectionDto": {
         "type": "object",
@@ -223,18 +253,34 @@
           },
           "privacyType": {
             "type": "string",
-            "enum": ["private", "public"]
+            "enum": [
+              "private",
+              "public"
+            ]
           },
           "direction": {
             "type": "string",
-            "enum": ["connectionTo", "connectionFrom", "bidirectional", "disconnect"]
+            "enum": [
+              "connectionTo",
+              "connectionFrom",
+              "bidirectional",
+              "disconnect"
+            ]
           },
           "connectionType": {
             "type": "string",
-            "enum": ["follow", "friendship"]
+            "enum": [
+              "follow",
+              "friendship"
+            ]
           }
         },
-        "required": ["dsnpId", "privacyType", "direction", "connectionType"]
+        "required": [
+          "dsnpId",
+          "privacyType",
+          "direction",
+          "connectionType"
+        ]
       },
       "ProviderGraphDto": {
         "type": "object",
@@ -261,7 +307,10 @@
             }
           }
         },
-        "required": ["dsnpId", "connections"]
+        "required": [
+          "dsnpId",
+          "connections"
+        ]
       },
       "GraphChangeRepsonseDto": {
         "type": "object",
@@ -280,7 +329,10 @@
             "type": "string"
           }
         },
-        "required": ["dsnpIds", "webhookEndpoint"]
+        "required": [
+          "dsnpIds",
+          "webhookEndpoint"
+        ]
       }
     }
   }
