@@ -25,8 +25,10 @@ download_oopenapi_specs() {
 cd openapi-specs
 
 # Download the swagger.json files from the microservices repositories
-download_oopenapi_specs "AmplicaLabs" "account-service" "main" "swagger.json" "account-service.json"
-download_oopenapi_specs "AmplicaLabs" "content-watcher-service" "main" "content-announcement.openapi.json" "content-announcement.openapi.json"
-download_oopenapi_specs "AmplicaLabs" "content-publishing-service" "main" "swagger.json" "content-publishing-service.json"
-download_oopenapi_specs "AmplicaLabs" "content-watcher-service" "main" "swagger.json" "content-watcher-service.json"
-download_oopenapi_specs "AmplicaLabs" "graph-service" "main" "swagger.json" "graph-service.json"
+ORG_NAME="AmplicaLabs"
+BRANCH="main"
+download_oopenapi_specs "${ORG_NAME}" "account-service" "${BRANCH}" "swagger.json" "account-service.json"
+download_oopenapi_specs "${ORG_NAME}" "content-watcher-service" "${BRANCH}" "content-announcement.openapi.json" "content-announcement.openapi.json"
+download_oopenapi_specs "${ORG_NAME}" "content-publishing-service" "${BRANCH}" "swagger.json" "content-publishing-service.json"
+download_oopenapi_specs "${ORG_NAME}" "content-watcher-service" "${BRANCH}" "swagger.json" "content-watcher-service.json"
+download_oopenapi_specs "${ORG_NAME}" "graph-service" "${BRANCH}" "swagger.json" "graph-service.json"
