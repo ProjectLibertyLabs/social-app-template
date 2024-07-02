@@ -22,7 +22,7 @@ download_oopenapi_specs() {
     fi
 }
 
-cd openapi-specs
+cd ../openapi-specs
 
 # Download the swagger.json files from the microservices repositories
 ORG_NAME="AmplicaLabs"
