@@ -1,6 +1,12 @@
-import type {Handle, ProviderResponse} from './dsnpLink';
+import type { ProviderResponse } from './dsnpLink';
 
 export type Network = ProviderResponse['network'];
+
+export type Handle = {
+  base_handle: string;
+  canonical_base: string;
+  suffix: number;
+};
 
 export type UserAccount = {
   expires: number;
@@ -8,7 +14,7 @@ export type UserAccount = {
 } & User;
 
 export type User = {
-  handle: Handle;
+  handle?: Handle;
   msaId: string;
   profile?: {
     icon: string;

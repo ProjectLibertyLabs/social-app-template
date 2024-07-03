@@ -7,7 +7,7 @@ import type { UploadFile } from 'antd/es/upload/interface';
 import * as dsnpLink from '../dsnpLink';
 import { getContext } from '../service/AuthService';
 import FormData from 'form-data';
-import {makeDisplayHandle} from "../helpers/DisplayHandle";
+import { makeDisplayHandle } from '../helpers/DisplayHandle';
 
 interface NewPostProps {
   onSuccess: () => void;

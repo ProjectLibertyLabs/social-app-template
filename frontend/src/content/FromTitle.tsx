@@ -2,7 +2,7 @@ import React, { ReactElement } from 'react';
 import { User } from '../types';
 import styles from './FromTitle.module.css';
 import Title from 'antd/es/typography/Title';
-import {makeDisplayHandle} from "../helpers/DisplayHandle";
+import { makeDisplayHandle } from '../helpers/DisplayHandle';
 
 interface FromTitleProps {
   user: User;
@@ -13,7 +13,6 @@ interface FromTitleProps {
 
 export const FromTitle = ({ user, goToProfile, isReply, level }: FromTitleProps): ReactElement => {
   const primary = makeDisplayHandle(user.handle);
-  console.log("USER", user);
   const secondary = user?.profile?.name || '';
 
   return (

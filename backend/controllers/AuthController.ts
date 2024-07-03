@@ -50,7 +50,7 @@ export class AuthController extends BaseController {
    * Retrieves the account information based on the provided request headers.
    * @param req - The request object. The request headers must contain the msaId or the referenceId.
    * @param res - The response object.
-   * @returns The account information: displayHandle and msaId.
+   * @returns The account information: handle and msaId.
    */
   public async getAccount(req: Request, res: Response) {
     // Check if msaId or referenceId is provided in the request headers

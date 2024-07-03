@@ -113,7 +113,7 @@ export class AccountService {
           expires: Date.now() + 24 * 60 * 60 * 1_000,
           referenceId: referenceId,
           msaId: accountData.msaId,
-          handle: { displayHandle: accountData.displayHandle },
+          handle: accountData.handle,
         };
       }
     } catch (e) {

@@ -1,4 +1,5 @@
 import * as r from '@typoas/runtime';
+import {Handle} from "./types";
 /**
  * Schema defining the request payload for uploading assets. Requires a list of files to upload.
  */
@@ -37,7 +38,7 @@ export type LoginRequest = {
 export type WalletLoginResponse = {
     referenceId: string;
     msaId?: string;
-    handle?: string;
+    handle?: Handle;
 };
 export type WalletLoginRequest = {
     signIn?: {
@@ -99,13 +100,6 @@ export type HandlesResponse = {
     publicKey: string;
     handle: Handle;
 };
-
-export type Handle = {
-    base_handle: string;
-    canonical_base: string;
-    suffix: number;
-}
-
 export type PaginatedBroadcast = {
     newestBlockNumber: number;
     oldestBlockNumber: number;

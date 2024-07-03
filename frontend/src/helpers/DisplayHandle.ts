@@ -1,5 +1,5 @@
-import {Handle} from "../dsnpLink";
+import { Handle } from '../types';
 
 export const makeDisplayHandle = (handle?: Handle) => {
-    return handle ? `${handle.base_handle}.${handle.suffix}` : 'Anonymous';
-}
+  return handle ? `${handle.base_handle}.${handle.suffix}` : 'Anonymous';
+};

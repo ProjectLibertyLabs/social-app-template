@@ -5,7 +5,7 @@ import UserMenu from './UserMenu';
 import type { UserAccount } from '../types';
 import styles from './Header.module.css';
 import Title from 'antd/es/typography/Title';
-import {makeDisplayHandle} from "../helpers/DisplayHandle";
+import { makeDisplayHandle } from '../helpers/DisplayHandle';
 
 type HeaderProps = {
   account?: UserAccount;

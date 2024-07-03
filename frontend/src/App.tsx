@@ -64,7 +64,6 @@ const App = (): ReactElement => {
 
   const goToProfile = async (msaId?: string) => {
     setLoading(true);
-    console.log("userAccount:", userAccount);
     if (msaId) {
       const profile = userAccount.msaId === msaId ? userAccount : await getUserProfile(msaId);
       setFeedUser(profile || undefined);
