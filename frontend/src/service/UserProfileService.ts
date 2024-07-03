@@ -3,10 +3,12 @@ import { ActivityContentProfile } from '@dsnp/activity-content/types';
 import * as dsnpLink from '../dsnpLink';
 import { User } from '../types';
 import { getContext } from './AuthService';
+import { makeDisplayHandle } from '../helpers/DisplayHandle';
 
 const profileCache: Map<string, Promise<User>> = new Map();
 
 const profileToUser = (profile: dsnpLink.Profile): User => {
+  console.log("profile:", profile);
   let userProfile: User['profile'] | undefined = undefined;
   if (profile.content) {
     const contentParsed = JSON.parse(profile.content) as ActivityContentProfile;
@@ -16,7 +18,7 @@ const profileToUser = (profile: dsnpLink.Profile): User => {
     };
   }
   return {
-    handle: profile.displayHandle || 'Anonymous',
+    handle: profile.handle!,
     msaId: profile.fromId,
     profile: userProfile,
   };
@@ -25,6 +27,8 @@ const profileToUser = (profile: dsnpLink.Profile): User => {
 export const getUserProfile = (msaId: string): Promise<User | null> => {
   // Check if the profile is already cached
   const cached = profileCache.get(msaId);
+  console.log("cached profile:", cached);
+
   if (cached) return cached;
 
   // Profile not found in cache, fetch from the server
@@ -38,7 +42,15 @@ export const getUserProfile = (msaId: string): Promise<User | null> => {
   }
 };
 
-const loadingUser = { handle: 'Loading', msaId: '' };
+const loadingUser: User = { handle: { base_handle: 'Loading', canonical_base: 'Loading', suffix: 0 }, msaId: '' };
+const unknownUser: User = {
+  handle: {
+    base_handle: 'Unknown',
+    canonical_base: 'Unknown',
+    suffix: 0,
+  },
+  msaId: '',
+};
 
 type UseGetUserResp = { user: User; isLoading: boolean; error: string };
 export const useGetUser = (msaId: string): UseGetUserResp => {
@@ -50,10 +62,7 @@ export const useGetUser = (msaId: string): UseGetUserResp => {
     getUserProfile(msaId)
       .then((resp) => {
         if (resp === null) {
-          setUser({
-            handle: 'unknown',
-            msaId: '',
-          });
+          setUser(unknownUser);
           setError('Unknown User');
         } else {
           setUser(resp);

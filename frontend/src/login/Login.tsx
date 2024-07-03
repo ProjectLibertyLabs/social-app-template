@@ -7,6 +7,7 @@ import * as dsnpLink from '../dsnpLink';
 import { UserAccount } from '../types';
 import styles from './Login.module.css';
 import { getContext } from '../service/AuthService';
+import {makeDisplayHandle} from "../helpers/DisplayHandle";
 
 /**
  * Props for the Login component.
@@ -154,7 +155,7 @@ const Login = ({ onLogin, providerId, nodeUrl, siwfUrl }: LoginProps): ReactElem
               accessToken: resp.accessToken,
               expires: resp.expires,
               msaId: resp.msaId,
-              handle: resp.displayHandle,
+              handle: resp.handle,
             });
           }, timeout);
         });

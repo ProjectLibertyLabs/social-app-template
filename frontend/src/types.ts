@@ -1,4 +1,4 @@
-import type { ProviderResponse } from './dsnpLink';
+import type {Handle, ProviderResponse} from './dsnpLink';
 
 export type Network = ProviderResponse['network'];
 
@@ -8,7 +8,7 @@ export type UserAccount = {
 } & User;
 
 export type User = {
-  handle: string;
+  handle: Handle;
   msaId: string;
   profile?: {
     icon: string;

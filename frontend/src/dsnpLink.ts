@@ -83,7 +83,7 @@ export type AuthAccountResponse = {
     expires: number;
     referenceId?: string;
     msaId: string;
-    handle?: any;
+    handle?: Handle;
 };
 export type DelegateRequest = {
     algo: 'SR25519';
@@ -97,8 +97,15 @@ export type DelegateResponse = {
 };
 export type HandlesResponse = {
     publicKey: string;
-    handle: string;
+    handle: Handle;
 };
+
+export type Handle = {
+    base_handle: string;
+    canonical_base: string;
+    suffix: number;
+}
+
 export type PaginatedBroadcast = {
     newestBlockNumber: number;
     oldestBlockNumber: number;
@@ -187,7 +194,7 @@ export type Profile = {
      * Timestamp of the post
      */
     timestamp: string;
-    displayHandle?: string;
+    handle?: Handle;
 };
 export type EditProfileRequest = {
     content: string;
