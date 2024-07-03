@@ -63,7 +63,7 @@ export class AccountService {
    */
   public async getSWIFConfig(): Promise<WalletLoginConfigResponse> {
     try {
-      const response = await this.client.AccountsController_getSIWFConfig();
+      const response = await this.client.AccountsControllerV1_getSIWFConfig();
       return response.data;
     } catch (e) {
       logger.error('Failed to get SIWF config: ', e);
@@ -79,13 +79,13 @@ export class AccountService {
    */
   public async getAccount(msaId: string): Promise<AccountResponse> {
     try {
-      const response = await this.client.AccountsController_getAccount(msaId);
+      const response = await this.client.AccountsControllerV1_getAccount(msaId);
       logger.debug(
         `AccountService: getAccount: Got account for msaID:(${msaId}), data:(${JSON.stringify(response.data)})`
       );
       return {
-        msaId: parseInt(msaId),
-        displayHandle: response.data.displayHandle,
+        msaId: msaId,
+        handle: response.data.handle,
       };
     } catch (e) {
       logger.error(`Failed to get account for msaID:(${msaId}) error:${e}`);
@@ -111,7 +111,7 @@ export class AccountService {
           accessToken: createAuthToken(accountData.accountId),
           expires: Date.now() + 24 * 60 * 60 * 1_000,
           referenceId: referenceId,
-          msaId: parseInt(accountData.msaId),
+          msaId: accountData.msaId,
           displayHandle: accountData.displayHandle,
         };
       }
@@ -160,7 +160,7 @@ export class AccountService {
     }
     try {
       const { publicKey } = await validateSignup(chainApi, signUp, Config.instance().providerId);
-      const response = await this.client.AccountsController_postSignInWithFrequency(null, payload);
+      const response = await this.client.AccountsControllerV1_postSignInWithFrequency(null, payload);
 
       logger.debug(`AccountService: signUp: Account signup processed, referenceId: ${response.data.referenceId}`);
       return {
