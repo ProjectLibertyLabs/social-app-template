@@ -951,17 +951,18 @@
           "expires": {
             "type": "integer"
           },
+          "referenceId": {
+            "type": "string"
+          },
           "msaId": {
             "type": "string"
           },
-          "displayHandle": {
-            "type": "string"
+          "handle": {
+            "type": "object"
           }
         },
         "required": [
-          "msaId",
-          "accessToken",
-          "expires"
+          "msaId"
         ]
       },
       "DelegateRequest": {

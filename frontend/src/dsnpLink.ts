@@ -79,10 +79,11 @@ export type CreateIdentityResponse = {
     expires: number;
 };
 export type AuthAccountResponse = {
-    accessToken: string;
-    expires: number;
+    accessToken?: string;
+    expires?: number;
+    referenceId?: string;
     msaId: string;
-    displayHandle?: string;
+    handle?: any;
 };
 export type DelegateRequest = {
     algo: 'SR25519';

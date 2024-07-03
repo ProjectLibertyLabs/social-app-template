@@ -12,7 +12,9 @@ declare namespace Components {
   }
   namespace Schemas {
     export interface AuthAccountResponse {
-      dsnpId: string;
+      accessToken: string;
+      expires: number;
+      msaId: string;
       displayHandle?: string;
     }
     export interface Broadcast {

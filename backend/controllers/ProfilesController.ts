@@ -21,10 +21,10 @@ export class ProfilesController extends BaseController {
       fromId: _req.params.msaId,
     };
     // Use account service to get display handle
-    const { displayHandle } = await AccountService.getInstance().then((service) =>
+    const { handle } = await AccountService.getInstance().then((service) =>
       service.getAccount(_req.params.msaId)
     );
-    Profile.displayHandle = displayHandle;
+    Profile.displayHandle = handle?.displayHandle;
     return res.status(HttpStatusCode.Ok).send(Profile);
   }
 

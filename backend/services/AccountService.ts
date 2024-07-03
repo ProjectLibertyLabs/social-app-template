@@ -10,8 +10,9 @@ import { HttpError } from '../types/HttpError';
 import { Request } from 'express';
 import logger from '../logger';
 import { AccountServiceWebhook } from './AccountWebhookService';
+import { Components as BackendComponents  } from '../types/api';
 
-type AccountResponse = Components.Schemas.AccountResponse;
+type AuthAccountResponse = BackendComponents.Schemas.AuthAccountResponse;
 type WalletLoginRequestDto = Components.Schemas.WalletLoginRequestDto;
 type WalletLoginConfigResponse = Components.Schemas.WalletLoginConfigResponse;
 type WalletLoginResponse = Components.Schemas.WalletLoginResponse;
@@ -74,10 +75,10 @@ export class AccountService {
   /**
    * Retrieves the account information for a given MSA ID.
    * @param msaId - The MSA ID of the account to retrieve.
-   * @returns A Promise that resolves to an AccountResponse object containing the account information.
+   * @returns A Promise that resolves to an AuthAccountResponse object containing the account information.
    * @throws If there was an error retrieving the account information.
    */
-  public async getAccount(msaId: string): Promise<AccountResponse> {
+  public async getAccount(msaId: string): Promise<AuthAccountResponse> {
     try {
       const response = await this.client.AccountsControllerV1_getAccount(msaId);
       logger.debug(
@@ -96,10 +97,10 @@ export class AccountService {
   /**
    * Retrieves an account based on the provided reference ID.
    * @param referenceId - The reference ID used to correlate the data from the blockchain transaction to the account.
-   * @returns A Promise that resolves to an AccountResponse object if the account is found, or undefined if not found.
+   * @returns A Promise that resolves to an AuthAccountResponse object if the account is found, or undefined if not found.
    * @throws Throws an error if there was an issue retrieving the account.
    */
-  public async getAccountByReferenceId(referenceId: string): Promise<AccountResponse | undefined> {
+  public async getAccountByReferenceId(referenceId: string): Promise<AuthAccountResponse | undefined> {
     // In this case, we're using the referenceId to get the account
     // Check the webhook and see if the referenceId has been processed
     logger.debug(`AccountService: getAccountByReferenceId: Looking for account for referenceId:(${referenceId})`);
@@ -112,7 +113,7 @@ export class AccountService {
           expires: Date.now() + 24 * 60 * 60 * 1_000,
           referenceId: referenceId,
           msaId: accountData.msaId,
-          displayHandle: accountData.displayHandle,
+          handle: { displayHandle:  accountData.displayHandle },
         };
       }
     } catch (e) {
