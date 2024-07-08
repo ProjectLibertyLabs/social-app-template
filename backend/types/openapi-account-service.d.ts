@@ -9,16 +9,17 @@ import type {
 declare namespace Components {
   namespace Schemas {
     export interface AccountResponse {
-      accessToken?: string;
-      expires?: number;
-      referenceId?: string;
-      msaId: number;
-      displayHandle?: string;
+      msaId: string;
+      handle?: {
+        [key: string]: any;
+      };
     }
     export interface EncodedExtrinsicDto {
       pallet: string;
       extrinsicName: string;
-      encodedExtrinsic: string;
+      encodedExtrinsic: {
+        [key: string]: any;
+      };
     }
     export interface ErrorResponseDto {
       message: string;
@@ -30,16 +31,22 @@ declare namespace Components {
     export interface HandleRequest {
       accountId: string;
       payload: HandlePayload;
-      proof: string;
+      proof: {
+        [key: string]: any;
+      };
     }
     export interface KeysRequest {
       msaOwnerAddress: string;
-      msaOwnerSignature: string;
-      newKeyOwnerSignature: string;
+      msaOwnerSignature: {
+        [key: string]: any;
+      };
+      newKeyOwnerSignature: {
+        [key: string]: any;
+      };
       payload: KeysRequestPayload;
     }
     export interface KeysRequestPayload {
-      msaId: number;
+      msaId: string;
       expiration: number;
       newPublicKey: string;
     }
@@ -53,7 +60,9 @@ declare namespace Components {
     }
     export interface SiwsPayloadDto {
       message: string;
-      signature: string;
+      signature: {
+        [key: string]: any;
+      };
     }
     export interface WalletLoginConfigResponse {
       providerId: string;
@@ -88,9 +97,9 @@ declare namespace Components {
   }
 }
 declare namespace Paths {
-  namespace AccountsControllerGetAccount {
+  namespace AccountsControllerV1GetAccount {
     namespace Parameters {
-      export type MsaId = number;
+      export type MsaId = string;
     }
     export interface PathParameters {
       msaId: Parameters.MsaId;
@@ -99,25 +108,20 @@ declare namespace Paths {
       export type $200 = Components.Schemas.AccountResponse;
     }
   }
-  namespace AccountsControllerGetSIWFConfig {
+  namespace AccountsControllerV1GetSIWFConfig {
     namespace Responses {
       export type $200 = Components.Schemas.WalletLoginConfigResponse;
     }
   }
-  namespace AccountsControllerPostSignInWithFrequency {
+  namespace AccountsControllerV1PostSignInWithFrequency {
     export type RequestBody = Components.Schemas.WalletLoginRequestDto;
     namespace Responses {
       export type $201 = Components.Schemas.WalletLoginResponse;
     }
   }
-  namespace ApiControllerHealth {
-    namespace Responses {
-      export interface $200 {}
-    }
-  }
-  namespace DelegationControllerGetDelegation {
+  namespace DelegationControllerV1GetDelegation {
     namespace Parameters {
-      export type MsaId = number;
+      export type MsaId = string;
     }
     export interface PathParameters {
       msaId: Parameters.MsaId;
@@ -126,21 +130,21 @@ declare namespace Paths {
       export interface $200 {}
     }
   }
-  namespace HandlesControllerChangeHandle {
+  namespace HandlesControllerV1ChangeHandle {
     export type RequestBody = Components.Schemas.HandleRequest;
     namespace Responses {
       export interface $200 {}
     }
   }
-  namespace HandlesControllerCreateHandle {
+  namespace HandlesControllerV1CreateHandle {
     export type RequestBody = Components.Schemas.HandleRequest;
     namespace Responses {
       export interface $200 {}
     }
   }
-  namespace HandlesControllerGetHandle {
+  namespace HandlesControllerV1GetHandle {
     namespace Parameters {
-      export type MsaId = number;
+      export type MsaId = string;
     }
     export interface PathParameters {
       msaId: Parameters.MsaId;
@@ -149,15 +153,30 @@ declare namespace Paths {
       export interface $200 {}
     }
   }
-  namespace KeysControllerAddKey {
+  namespace HealthControllerHealthz {
+    namespace Responses {
+      export interface $200 {}
+    }
+  }
+  namespace HealthControllerLivez {
+    namespace Responses {
+      export interface $200 {}
+    }
+  }
+  namespace HealthControllerReadyz {
+    namespace Responses {
+      export interface $200 {}
+    }
+  }
+  namespace KeysControllerV1AddKey {
     export type RequestBody = Components.Schemas.KeysRequest;
     namespace Responses {
       export interface $200 {}
     }
   }
-  namespace KeysControllerGetKeys {
+  namespace KeysControllerV1GetKeys {
     namespace Parameters {
-      export type MsaId = number;
+      export type MsaId = string;
     }
     export interface PathParameters {
       msaId: Parameters.MsaId;
@@ -170,185 +189,221 @@ declare namespace Paths {
 
 export interface OperationMethods {
   /**
-   * ApiController_health - Check the health status of the service
+   * AccountsControllerV1_getSIWFConfig - Get the Sign-In With Frequency Configuration
    */
-  'ApiController_health'(
+  'AccountsControllerV1_getSIWFConfig'(
     parameters?: Parameters<UnknownParamsObject> | null,
     data?: any,
     config?: AxiosRequestConfig
-  ): OperationResponse<Paths.ApiControllerHealth.Responses.$200>;
+  ): OperationResponse<Paths.AccountsControllerV1GetSIWFConfig.Responses.$200>;
   /**
-   * AccountsController_getSIWFConfig - Get the Sign-In With Frequency Configuration
+   * AccountsControllerV1_postSignInWithFrequency - Request to sign in with Frequency
    */
-  'AccountsController_getSIWFConfig'(
+  'AccountsControllerV1_postSignInWithFrequency'(
+    parameters?: Parameters<UnknownParamsObject> | null,
+    data?: Paths.AccountsControllerV1PostSignInWithFrequency.RequestBody,
+    config?: AxiosRequestConfig
+  ): OperationResponse<Paths.AccountsControllerV1PostSignInWithFrequency.Responses.$201>;
+  /**
+   * AccountsControllerV1_getAccount - Fetch an account given an msaId.
+   */
+  'AccountsControllerV1_getAccount'(
+    parameters: Parameters<Paths.AccountsControllerV1GetAccount.PathParameters>,
+    data?: any,
+    config?: AxiosRequestConfig
+  ): OperationResponse<Paths.AccountsControllerV1GetAccount.Responses.$200>;
+  /**
+   * DelegationControllerV1_getDelegation - Get the delegation information associated with an msaId.
+   */
+  'DelegationControllerV1_getDelegation'(
+    parameters: Parameters<Paths.DelegationControllerV1GetDelegation.PathParameters>,
+    data?: any,
+    config?: AxiosRequestConfig
+  ): OperationResponse<Paths.DelegationControllerV1GetDelegation.Responses.$200>;
+  /**
+   * HandlesControllerV1_createHandle - Request to create a new handle for an account
+   */
+  'HandlesControllerV1_createHandle'(
+    parameters?: Parameters<UnknownParamsObject> | null,
+    data?: Paths.HandlesControllerV1CreateHandle.RequestBody,
+    config?: AxiosRequestConfig
+  ): OperationResponse<Paths.HandlesControllerV1CreateHandle.Responses.$200>;
+  /**
+   * HandlesControllerV1_changeHandle - Request to change a handle
+   */
+  'HandlesControllerV1_changeHandle'(
+    parameters?: Parameters<UnknownParamsObject> | null,
+    data?: Paths.HandlesControllerV1ChangeHandle.RequestBody,
+    config?: AxiosRequestConfig
+  ): OperationResponse<Paths.HandlesControllerV1ChangeHandle.Responses.$200>;
+  /**
+   * HandlesControllerV1_getHandle - Fetch a handle given an msaId.
+   */
+  'HandlesControllerV1_getHandle'(
+    parameters: Parameters<Paths.HandlesControllerV1GetHandle.PathParameters>,
+    data?: any,
+    config?: AxiosRequestConfig
+  ): OperationResponse<Paths.HandlesControllerV1GetHandle.Responses.$200>;
+  /**
+   * KeysControllerV1_addKey - add new control keys for an MSA ID
+   */
+  'KeysControllerV1_addKey'(
+    parameters?: Parameters<UnknownParamsObject> | null,
+    data?: Paths.KeysControllerV1AddKey.RequestBody,
+    config?: AxiosRequestConfig
+  ): OperationResponse<Paths.KeysControllerV1AddKey.Responses.$200>;
+  /**
+   * KeysControllerV1_getKeys - Fetch public keys given an msaId.
+   */
+  'KeysControllerV1_getKeys'(
+    parameters: Parameters<Paths.KeysControllerV1GetKeys.PathParameters>,
+    data?: any,
+    config?: AxiosRequestConfig
+  ): OperationResponse<Paths.KeysControllerV1GetKeys.Responses.$200>;
+  /**
+   * HealthController_healthz - Check the health status of the service
+   */
+  'HealthController_healthz'(
     parameters?: Parameters<UnknownParamsObject> | null,
     data?: any,
     config?: AxiosRequestConfig
-  ): OperationResponse<Paths.AccountsControllerGetSIWFConfig.Responses.$200>;
+  ): OperationResponse<Paths.HealthControllerHealthz.Responses.$200>;
   /**
-   * AccountsController_postSignInWithFrequency - Request to sign in with Frequency
+   * HealthController_livez - Check the live status of the service
    */
-  'AccountsController_postSignInWithFrequency'(
+  'HealthController_livez'(
     parameters?: Parameters<UnknownParamsObject> | null,
-    data?: Paths.AccountsControllerPostSignInWithFrequency.RequestBody,
-    config?: AxiosRequestConfig
-  ): OperationResponse<Paths.AccountsControllerPostSignInWithFrequency.Responses.$201>;
-  /**
-   * AccountsController_getAccount - Fetch an account given an msaId.
-   */
-  'AccountsController_getAccount'(
-    parameters: Parameters<Paths.AccountsControllerGetAccount.PathParameters>,
     data?: any,
     config?: AxiosRequestConfig
-  ): OperationResponse<Paths.AccountsControllerGetAccount.Responses.$200>;
+  ): OperationResponse<Paths.HealthControllerLivez.Responses.$200>;
   /**
-   * DelegationController_getDelegation - Get the delegation information associated with an msaId.
+   * HealthController_readyz - Check the ready status of the service
    */
-  'DelegationController_getDelegation'(
-    parameters: Parameters<Paths.DelegationControllerGetDelegation.PathParameters>,
+  'HealthController_readyz'(
+    parameters?: Parameters<UnknownParamsObject> | null,
     data?: any,
     config?: AxiosRequestConfig
-  ): OperationResponse<Paths.DelegationControllerGetDelegation.Responses.$200>;
-  /**
-   * KeysController_addKey - add new control keys for an MSA ID
-   */
-  'KeysController_addKey'(
-    parameters?: Parameters<UnknownParamsObject> | null,
-    data?: Paths.KeysControllerAddKey.RequestBody,
-    config?: AxiosRequestConfig
-  ): OperationResponse<Paths.KeysControllerAddKey.Responses.$200>;
-  /**
-   * KeysController_getKeys - Fetch public keys given an msaId.
-   */
-  'KeysController_getKeys'(
-    parameters: Parameters<Paths.KeysControllerGetKeys.PathParameters>,
-    data?: any,
-    config?: AxiosRequestConfig
-  ): OperationResponse<Paths.KeysControllerGetKeys.Responses.$200>;
-  /**
-   * HandlesController_createHandle - Request to create a new handle for an account
-   */
-  'HandlesController_createHandle'(
-    parameters?: Parameters<UnknownParamsObject> | null,
-    data?: Paths.HandlesControllerCreateHandle.RequestBody,
-    config?: AxiosRequestConfig
-  ): OperationResponse<Paths.HandlesControllerCreateHandle.Responses.$200>;
-  /**
-   * HandlesController_changeHandle - Request to change a handle
-   */
-  'HandlesController_changeHandle'(
-    parameters?: Parameters<UnknownParamsObject> | null,
-    data?: Paths.HandlesControllerChangeHandle.RequestBody,
-    config?: AxiosRequestConfig
-  ): OperationResponse<Paths.HandlesControllerChangeHandle.Responses.$200>;
-  /**
-   * HandlesController_getHandle - Fetch a handle given an msaId.
-   */
-  'HandlesController_getHandle'(
-    parameters: Parameters<Paths.HandlesControllerGetHandle.PathParameters>,
-    data?: any,
-    config?: AxiosRequestConfig
-  ): OperationResponse<Paths.HandlesControllerGetHandle.Responses.$200>;
+  ): OperationResponse<Paths.HealthControllerReadyz.Responses.$200>;
 }
 
 export interface PathsDictionary {
-  ['/api/health']: {
+  ['/v1/accounts/siwf']: {
     /**
-     * ApiController_health - Check the health status of the service
+     * AccountsControllerV1_getSIWFConfig - Get the Sign-In With Frequency Configuration
      */
     'get'(
       parameters?: Parameters<UnknownParamsObject> | null,
       data?: any,
       config?: AxiosRequestConfig
-    ): OperationResponse<Paths.ApiControllerHealth.Responses.$200>;
-  };
-  ['/accounts/siwf']: {
+    ): OperationResponse<Paths.AccountsControllerV1GetSIWFConfig.Responses.$200>;
     /**
-     * AccountsController_getSIWFConfig - Get the Sign-In With Frequency Configuration
-     */
-    'get'(
-      parameters?: Parameters<UnknownParamsObject> | null,
-      data?: any,
-      config?: AxiosRequestConfig
-    ): OperationResponse<Paths.AccountsControllerGetSIWFConfig.Responses.$200>;
-    /**
-     * AccountsController_postSignInWithFrequency - Request to sign in with Frequency
+     * AccountsControllerV1_postSignInWithFrequency - Request to sign in with Frequency
      */
     'post'(
       parameters?: Parameters<UnknownParamsObject> | null,
-      data?: Paths.AccountsControllerPostSignInWithFrequency.RequestBody,
+      data?: Paths.AccountsControllerV1PostSignInWithFrequency.RequestBody,
       config?: AxiosRequestConfig
-    ): OperationResponse<Paths.AccountsControllerPostSignInWithFrequency.Responses.$201>;
+    ): OperationResponse<Paths.AccountsControllerV1PostSignInWithFrequency.Responses.$201>;
   };
-  ['/accounts/{msaId}']: {
+  ['/v1/accounts/{msaId}']: {
     /**
-     * AccountsController_getAccount - Fetch an account given an msaId.
+     * AccountsControllerV1_getAccount - Fetch an account given an msaId.
      */
     'get'(
-      parameters: Parameters<Paths.AccountsControllerGetAccount.PathParameters>,
+      parameters: Parameters<Paths.AccountsControllerV1GetAccount.PathParameters>,
       data?: any,
       config?: AxiosRequestConfig
-    ): OperationResponse<Paths.AccountsControllerGetAccount.Responses.$200>;
+    ): OperationResponse<Paths.AccountsControllerV1GetAccount.Responses.$200>;
   };
-  ['/delegation/{msaId}']: {
+  ['/v1/delegation/{msaId}']: {
     /**
-     * DelegationController_getDelegation - Get the delegation information associated with an msaId.
+     * DelegationControllerV1_getDelegation - Get the delegation information associated with an msaId.
      */
     'get'(
-      parameters: Parameters<Paths.DelegationControllerGetDelegation.PathParameters>,
+      parameters: Parameters<Paths.DelegationControllerV1GetDelegation.PathParameters>,
       data?: any,
       config?: AxiosRequestConfig
-    ): OperationResponse<Paths.DelegationControllerGetDelegation.Responses.$200>;
+    ): OperationResponse<Paths.DelegationControllerV1GetDelegation.Responses.$200>;
   };
-  ['/keys/add']: {
+  ['/v1/handles']: {
     /**
-     * KeysController_addKey - add new control keys for an MSA ID
+     * HandlesControllerV1_createHandle - Request to create a new handle for an account
      */
     'post'(
       parameters?: Parameters<UnknownParamsObject> | null,
-      data?: Paths.KeysControllerAddKey.RequestBody,
+      data?: Paths.HandlesControllerV1CreateHandle.RequestBody,
       config?: AxiosRequestConfig
-    ): OperationResponse<Paths.KeysControllerAddKey.Responses.$200>;
+    ): OperationResponse<Paths.HandlesControllerV1CreateHandle.Responses.$200>;
   };
-  ['/keys/{msaId}']: {
+  ['/v1/handles/change']: {
     /**
-     * KeysController_getKeys - Fetch public keys given an msaId.
-     */
-    'get'(
-      parameters: Parameters<Paths.KeysControllerGetKeys.PathParameters>,
-      data?: any,
-      config?: AxiosRequestConfig
-    ): OperationResponse<Paths.KeysControllerGetKeys.Responses.$200>;
-  };
-  ['/handles']: {
-    /**
-     * HandlesController_createHandle - Request to create a new handle for an account
+     * HandlesControllerV1_changeHandle - Request to change a handle
      */
     'post'(
       parameters?: Parameters<UnknownParamsObject> | null,
-      data?: Paths.HandlesControllerCreateHandle.RequestBody,
+      data?: Paths.HandlesControllerV1ChangeHandle.RequestBody,
       config?: AxiosRequestConfig
-    ): OperationResponse<Paths.HandlesControllerCreateHandle.Responses.$200>;
+    ): OperationResponse<Paths.HandlesControllerV1ChangeHandle.Responses.$200>;
   };
-  ['/handles/change']: {
+  ['/v1/handles/{msaId}']: {
     /**
-     * HandlesController_changeHandle - Request to change a handle
+     * HandlesControllerV1_getHandle - Fetch a handle given an msaId.
+     */
+    'get'(
+      parameters: Parameters<Paths.HandlesControllerV1GetHandle.PathParameters>,
+      data?: any,
+      config?: AxiosRequestConfig
+    ): OperationResponse<Paths.HandlesControllerV1GetHandle.Responses.$200>;
+  };
+  ['/v1/keys/add']: {
+    /**
+     * KeysControllerV1_addKey - add new control keys for an MSA ID
      */
     'post'(
       parameters?: Parameters<UnknownParamsObject> | null,
-      data?: Paths.HandlesControllerChangeHandle.RequestBody,
+      data?: Paths.KeysControllerV1AddKey.RequestBody,
       config?: AxiosRequestConfig
-    ): OperationResponse<Paths.HandlesControllerChangeHandle.Responses.$200>;
+    ): OperationResponse<Paths.KeysControllerV1AddKey.Responses.$200>;
   };
-  ['/handles/{msaId}']: {
+  ['/v1/keys/{msaId}']: {
     /**
-     * HandlesController_getHandle - Fetch a handle given an msaId.
+     * KeysControllerV1_getKeys - Fetch public keys given an msaId.
      */
     'get'(
-      parameters: Parameters<Paths.HandlesControllerGetHandle.PathParameters>,
+      parameters: Parameters<Paths.KeysControllerV1GetKeys.PathParameters>,
       data?: any,
       config?: AxiosRequestConfig
-    ): OperationResponse<Paths.HandlesControllerGetHandle.Responses.$200>;
+    ): OperationResponse<Paths.KeysControllerV1GetKeys.Responses.$200>;
+  };
+  ['/healthz']: {
+    /**
+     * HealthController_healthz - Check the health status of the service
+     */
+    'get'(
+      parameters?: Parameters<UnknownParamsObject> | null,
+      data?: any,
+      config?: AxiosRequestConfig
+    ): OperationResponse<Paths.HealthControllerHealthz.Responses.$200>;
+  };
+  ['/livez']: {
+    /**
+     * HealthController_livez - Check the live status of the service
+     */
+    'get'(
+      parameters?: Parameters<UnknownParamsObject> | null,
+      data?: any,
+      config?: AxiosRequestConfig
+    ): OperationResponse<Paths.HealthControllerLivez.Responses.$200>;
+  };
+  ['/readyz']: {
+    /**
+     * HealthController_readyz - Check the ready status of the service
+     */
+    'get'(
+      parameters?: Parameters<UnknownParamsObject> | null,
+      data?: any,
+      config?: AxiosRequestConfig
+    ): OperationResponse<Paths.HealthControllerReadyz.Responses.$200>;
   };
 }
 

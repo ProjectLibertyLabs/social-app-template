@@ -12,10 +12,13 @@ declare namespace Components {
   }
   namespace Schemas {
     export interface AuthAccountResponse {
-      accessToken: string;
-      expires: number;
+      accessToken?: string;
+      expires?: number;
+      referenceId?: string;
       msaId: string;
-      displayHandle?: string;
+      handle?: {
+        [key: string]: any;
+      };
     }
     export interface Broadcast {
       fromId: string;
@@ -97,7 +100,7 @@ declare namespace Components {
     export interface LoginResponse {
       accessToken: string;
       expires: number;
-      dsnpId: string;
+      msaId: string;
     }
     export interface PaginatedBroadcast {
       newestBlockNumber: number;
@@ -199,25 +202,33 @@ declare namespace Components {
       };
     }
     export interface WalletLoginResponse {
-      accessToken: string;
-      expires: number;
-      dsnpId?: string;
+      referenceId: string;
+      msaId?: string;
       handle?: string;
     }
   }
 }
 declare namespace Paths {
   namespace AuthAccount {
+    namespace Parameters {
+      export type MsaId = string;
+      export type ReferenceId = string;
+    }
+    export interface QueryParameters {
+      msaId?: Parameters.MsaId;
+      referenceId?: Parameters.ReferenceId;
+    }
     namespace Responses {
       export type $200 = Components.Schemas.AuthAccountResponse;
       export interface $202 {}
-      export type $401 = Components.Responses.UnauthorizedError;
     }
   }
-  namespace AuthLogin2 {
+  namespace AuthLogin {
     export type RequestBody = Components.Schemas.WalletLoginRequest;
     namespace Responses {
       export type $200 = Components.Schemas.WalletLoginResponse;
+      export interface $202 {}
+      export type $401 = Components.Responses.UnauthorizedError;
     }
   }
   namespace AuthLogout {
@@ -311,10 +322,10 @@ declare namespace Paths {
   }
   namespace GetProfile {
     namespace Parameters {
-      export type DsnpId = string;
+      export type MsaId = string;
     }
     export interface PathParameters {
-      dsnpId: Parameters.DsnpId;
+      msaId: Parameters.MsaId;
     }
     namespace Responses {
       export type $200 = Components.Schemas.Profile;
@@ -341,10 +352,10 @@ declare namespace Paths {
   }
   namespace GraphFollow {
     namespace Parameters {
-      export type DsnpId = string;
+      export type MsaId = string;
     }
     export interface PathParameters {
-      dsnpId: Parameters.DsnpId;
+      msaId: Parameters.MsaId;
     }
     namespace Responses {
       export interface $201 {}
@@ -353,10 +364,10 @@ declare namespace Paths {
   }
   namespace GraphUnfollow {
     namespace Parameters {
-      export type DsnpId = string;
+      export type MsaId = string;
     }
     export interface PathParameters {
-      dsnpId: Parameters.DsnpId;
+      msaId: Parameters.MsaId;
     }
     namespace Responses {
       export interface $201 {}
@@ -384,10 +395,10 @@ declare namespace Paths {
   }
   namespace UserFollowing {
     namespace Parameters {
-      export type DsnpId = string;
+      export type MsaId = string;
     }
     export interface PathParameters {
-      dsnpId: Parameters.DsnpId;
+      msaId: Parameters.MsaId;
     }
     namespace Responses {
       export type $200 = string[];
@@ -424,13 +435,13 @@ export interface OperationMethods {
     config?: AxiosRequestConfig
   ): OperationResponse<Paths.AuthProvider.Responses.$200>;
   /**
-   * authLogin2 - Use Wallet Proxy to login
+   * authLogin - Use Sign In With Frequency to login
    */
-  'authLogin2'(
+  'authLogin'(
     parameters?: Parameters<UnknownParamsObject> | null,
-    data?: Paths.AuthLogin2.RequestBody,
+    data?: Paths.AuthLogin.RequestBody,
     config?: AxiosRequestConfig
-  ): OperationResponse<Paths.AuthLogin2.Responses.$200>;
+  ): OperationResponse<Paths.AuthLogin.Responses.$200 | Paths.AuthLogin.Responses.$202>;
   /**
    * authLogout - Logout and invalidate the access token
    */
@@ -443,7 +454,7 @@ export interface OperationMethods {
    * authAccount - For polling to get the created account as authCreate can take time
    */
   'authAccount'(
-    parameters?: Parameters<UnknownParamsObject> | null,
+    parameters?: Parameters<Paths.AuthAccount.QueryParameters> | null,
     data?: any,
     config?: AxiosRequestConfig
   ): OperationResponse<Paths.AuthAccount.Responses.$200 | Paths.AuthAccount.Responses.$202>;
@@ -560,7 +571,7 @@ export interface PathsDictionary {
       config?: AxiosRequestConfig
     ): OperationResponse<Paths.PostBroadcastHandler.Responses.$202>;
   };
-  ['/auth/provider']: {
+  ['/auth/siwf']: {
     /**
      * authProvider - Return the delegation and provider information
      */
@@ -572,13 +583,13 @@ export interface PathsDictionary {
   };
   ['/auth/login']: {
     /**
-     * authLogin2 - Use Wallet Proxy to login
+     * authLogin - Use Sign In With Frequency to login
      */
     'post'(
       parameters?: Parameters<UnknownParamsObject> | null,
-      data?: Paths.AuthLogin2.RequestBody,
+      data?: Paths.AuthLogin.RequestBody,
       config?: AxiosRequestConfig
-    ): OperationResponse<Paths.AuthLogin2.Responses.$200>;
+    ): OperationResponse<Paths.AuthLogin.Responses.$200 | Paths.AuthLogin.Responses.$202>;
   };
   ['/auth/logout']: {
     /**
@@ -595,7 +606,7 @@ export interface PathsDictionary {
      * authAccount - For polling to get the created account as authCreate can take time
      */
     'get'(
-      parameters?: Parameters<UnknownParamsObject> | null,
+      parameters?: Parameters<Paths.AuthAccount.QueryParameters> | null,
       data?: any,
       config?: AxiosRequestConfig
     ): OperationResponse<Paths.AuthAccount.Responses.$200 | Paths.AuthAccount.Responses.$202>;
@@ -660,7 +671,7 @@ export interface PathsDictionary {
       config?: AxiosRequestConfig
     ): OperationResponse<Paths.EditContent.Responses.$200>;
   };
-  ['/graph/{dsnpId}/following']: {
+  ['/graph/{msaId}/following']: {
     /**
      * userFollowing - Get a list of users that a specific user follows
      */
@@ -670,7 +681,7 @@ export interface PathsDictionary {
       config?: AxiosRequestConfig
     ): OperationResponse<Paths.UserFollowing.Responses.$200>;
   };
-  ['/graph/{dsnpId}/follow']: {
+  ['/graph/{msaId}/follow']: {
     /**
      * graphFollow - Follow a user
      */
@@ -680,7 +691,7 @@ export interface PathsDictionary {
       config?: AxiosRequestConfig
     ): OperationResponse<Paths.GraphFollow.Responses.$201>;
   };
-  ['/graph/{dsnpId}/unfollow']: {
+  ['/graph/{msaId}/unfollow']: {
     /**
      * graphUnfollow - Unfollow a user
      */
@@ -690,7 +701,7 @@ export interface PathsDictionary {
       config?: AxiosRequestConfig
     ): OperationResponse<Paths.GraphUnfollow.Responses.$201>;
   };
-  ['/profiles/{dsnpId}']: {
+  ['/profiles/{msaId}']: {
     /**
      * getProfile - Get profile information for a specific user
      */

@@ -81,8 +81,9 @@ export type CreateIdentityResponse = {
 export type AuthAccountResponse = {
     accessToken: string;
     expires: number;
+    referenceId?: string;
     msaId: string;
-    displayHandle?: string;
+    handle?: any;
 };
 export type DelegateRequest = {
     algo: 'SR25519';
