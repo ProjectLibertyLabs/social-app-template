@@ -161,7 +161,10 @@ export class AccountService {
     }
     try {
       const { publicKey } = await validateSignup(chainApi, signUp, Config.instance().providerId);
-      const response = await this.client.AccountsControllerV1_postSignInWithFrequency(null, payload as WalletLoginRequestDto);
+      const response = await this.client.AccountsControllerV1_postSignInWithFrequency(
+        null,
+        payload as WalletLoginRequestDto
+      );
 
       logger.debug(`AccountService: signUp: Account signup processed, referenceId: ${response.data.referenceId}`);
       return {
