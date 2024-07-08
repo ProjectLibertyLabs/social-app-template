@@ -783,7 +783,27 @@
             "type": "string"
           },
           "handle": {
-            "type": "string"
+            "type": "object",
+            "minProperties": 1,
+            "maxProperties": 1,
+            "additionalProperties": false,
+            "properties": {
+              "base_handle": {
+                "type": "string"
+              },
+              "canonical_base": {
+                "type": "string"
+              },
+              "suffix": {
+                "type": "number"
+              }
+            },
+            "required": [
+              "base_handle",
+              "canonical_base",
+              "suffix"
+            ]
+
           }
         },
         "required": [
@@ -958,7 +978,26 @@
             "type": "string"
           },
           "handle": {
-            "type": "object"
+            "type": "object",
+            "minProperties": 1,
+            "maxProperties": 1,
+            "additionalProperties": false,
+            "properties": {
+              "base_handle": {
+                "type": "string"
+              },
+              "canonical_base": {
+                "type": "string"
+              },
+              "suffix": {
+                "type": "number"
+              }
+            },
+            "required": [
+              "base_handle",
+              "canonical_base",
+              "suffix"
+            ]
           }
         },
         "required": [
@@ -1018,7 +1057,27 @@
             "type": "string"
           },
           "handle": {
-            "type": "string"
+            "type": "object",
+            "minProperties": 1,
+            "maxProperties": 1,
+            "additionalProperties": false,
+            "properties": {
+              "base_handle": {
+                "type": "string"
+              },
+              "canonical_base": {
+                "type": "string"
+              },
+              "suffix": {
+                "type": "number"
+              }
+            },
+            "required": [
+              "base_handle",
+              "canonical_base",
+              "suffix"
+            ]
+
           }
         },
         "required": [
@@ -1235,8 +1294,28 @@
             "type": "string",
             "description": "Timestamp of the post"
           },
-          "displayHandle": {
-            "type": "string"
+          "handle": {
+            "type": "object",
+            "minProperties": 1,
+            "maxProperties": 1,
+            "additionalProperties": false,
+            "properties": {
+              "base_handle": {
+                "type": "string"
+              },
+              "canonical_base": {
+                "type": "string"
+              },
+              "suffix": {
+                "type": "number"
+              }
+            },
+            "required": [
+              "base_handle",
+              "canonical_base",
+              "suffix"
+            ]
+
           }
         },
         "required": [

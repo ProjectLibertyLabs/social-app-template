@@ -4,10 +4,10 @@ import Title from 'antd/es/typography/Title';
 import { getLoginOrRegistrationPayload, setConfig } from '@amplica-labs/siwf';
 
 import * as dsnpLink from '../dsnpLink';
-import { UserAccount } from '../types';
+import { Handle, UserAccount } from '../types';
 import styles from './Login.module.css';
 import { getContext } from '../service/AuthService';
-import {makeDisplayHandle} from "../helpers/DisplayHandle";
+import { makeDisplayHandle } from '../helpers/DisplayHandle';
 
 /**
  * Props for the Login component.
@@ -94,7 +94,7 @@ const Login = ({ onLogin, providerId, nodeUrl, siwfUrl }: LoginProps): ReactElem
 
       // In the Sign Up flow, poll the backend for completion of the account creation
       // In the Sign In flow, we have the accessToken and can skip the polling
-      let accountResp: dsnpLink.AuthAccountResponse | null = null;
+      let accountResp: Pick<dsnpLink.AuthAccountResponse, 'accessToken' | 'expires' | 'msaId' | 'handle'>;
       // Check to see if we are in the sign-in flow
       // If so, we have the accessToken and can skip the polling
       if (accessToken && expires && msaId) {
@@ -160,22 +160,22 @@ const Login = ({ onLogin, providerId, nodeUrl, siwfUrl }: LoginProps): ReactElem
           }, timeout);
         });
       console.log(`Start polling for SIWF account creation... timeout:(0)`);
-      accountResp = await getMsaIdAndHandle(referenceId, 0);
+      let SIWFAccountResp = await getMsaIdAndHandle(referenceId, 0);
       let tries = 1;
-      while (accountResp === null && tries < 10) {
+      while (SIWFAccountResp === null && tries < 10) {
         console.log('Waiting another 3 seconds before getting the account again...');
-        accountResp = await getMsaIdAndHandle(referenceId, 3_000);
+        SIWFAccountResp = await getMsaIdAndHandle(referenceId, 3_000);
         tries++;
       }
-      if (accountResp === null) {
+      if (SIWFAccountResp === null) {
         throw new Error('Account Creation timed out');
       }
 
       onLogin({
-        handle: accountResp.handle,
-        expires: accountResp.expires,
-        accessToken: accountResp.accessToken,
-        msaId: accountResp.msaId,
+        handle: SIWFAccountResp.handle,
+        expires: SIWFAccountResp.expires,
+        accessToken: SIWFAccountResp.accessToken,
+        msaId: SIWFAccountResp.msaId,
       });
     } catch (e) {
       console.error(e);

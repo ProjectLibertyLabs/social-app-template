@@ -1,5 +1,4 @@
 import * as r from '@typoas/runtime';
-import {Handle} from "./types";
 /**
  * Schema defining the request payload for uploading assets. Requires a list of files to upload.
  */
@@ -38,7 +37,11 @@ export type LoginRequest = {
 export type WalletLoginResponse = {
     referenceId: string;
     msaId?: string;
-    handle?: Handle;
+    handle?: {
+        base_handle: string;
+        canonical_base: string;
+        suffix: number;
+    };
 };
 export type WalletLoginRequest = {
     signIn?: {
@@ -84,7 +87,11 @@ export type AuthAccountResponse = {
     expires: number;
     referenceId?: string;
     msaId: string;
-    handle?: Handle;
+    handle?: {
+        base_handle: string;
+        canonical_base: string;
+        suffix: number;
+    };
 };
 export type DelegateRequest = {
     algo: 'SR25519';
@@ -98,7 +105,11 @@ export type DelegateResponse = {
 };
 export type HandlesResponse = {
     publicKey: string;
-    handle: Handle;
+    handle: {
+        base_handle: string;
+        canonical_base: string;
+        suffix: number;
+    };
 };
 export type PaginatedBroadcast = {
     newestBlockNumber: number;
@@ -188,7 +199,11 @@ export type Profile = {
      * Timestamp of the post
      */
     timestamp: string;
-    handle?: Handle;
+    handle?: {
+        base_handle: string;
+        canonical_base: string;
+        suffix: number;
+    };
 };
 export type EditProfileRequest = {
     content: string;
