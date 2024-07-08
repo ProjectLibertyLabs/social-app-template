@@ -85,7 +85,7 @@ const Login = ({ onLogin, providerId, nodeUrl, siwfUrl }: LoginProps): ReactElem
 
       // Initiate the SIWF login process with the backend
       // This will return a referenceId that we can use to correlate with the webhook callback response from the backend
-      const { msaId, referenceId, accessToken, expires } = await dsnpLink.authLogin(
+      const { msaId, referenceId, accessToken, expires, handle } = await dsnpLink.authLogin(
         dsnpLinkNoTokenCtx,
         {},
         authPayload as dsnpLink.WalletLoginRequest
@@ -101,7 +101,7 @@ const Login = ({ onLogin, providerId, nodeUrl, siwfUrl }: LoginProps): ReactElem
           accessToken: accessToken,
           expires: expires,
           msaId: msaId,
-          displayHandle: '',
+          handle: handle,
         };
         let resp;
         try {
@@ -109,13 +109,13 @@ const Login = ({ onLogin, providerId, nodeUrl, siwfUrl }: LoginProps): ReactElem
             referenceId: referenceId,
             msaId: msaId,
           });
-          accountResp.displayHandle = resp.displayHandle;
+          accountResp.handle = resp.handle;
         } catch (e) {
           console.error(`Login.tsx::handleLogin: dsnpLink.authAccount: error: ${e}`);
           throw new Error(`Account Sign In Failed: (${e})`);
         }
         onLogin({
-          handle: accountResp.displayHandle || 'Anonymous',
+          handle: accountResp.handle,
           expires: accountResp.expires,
           accessToken: accountResp.accessToken,
           msaId: accountResp.msaId,
@@ -154,7 +154,7 @@ const Login = ({ onLogin, providerId, nodeUrl, siwfUrl }: LoginProps): ReactElem
               accessToken: resp.accessToken,
               expires: resp.expires,
               msaId: resp.msaId,
-              displayHandle: resp.displayHandle,
+              handle: resp.displayHandle,
             });
           }, timeout);
         });
@@ -171,7 +171,7 @@ const Login = ({ onLogin, providerId, nodeUrl, siwfUrl }: LoginProps): ReactElem
       }
 
       onLogin({
-        handle: accountResp.displayHandle || 'Anonymous',
+        handle: accountResp.handle,
         expires: accountResp.expires,
         accessToken: accountResp.accessToken,
         msaId: accountResp.msaId,

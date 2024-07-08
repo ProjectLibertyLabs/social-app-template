@@ -962,7 +962,9 @@
           }
         },
         "required": [
-          "msaId"
+          "msaId",
+          "accessToken",
+          "expires"
         ]
       },
       "DelegateRequest": {

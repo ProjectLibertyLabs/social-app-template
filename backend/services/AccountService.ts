@@ -10,7 +10,7 @@ import { HttpError } from '../types/HttpError';
 import { Request } from 'express';
 import logger from '../logger';
 import { AccountServiceWebhook } from './AccountWebhookService';
-import { Components as BackendComponents  } from '../types/api';
+import { Components as BackendComponents } from '../types/api';
 
 type AuthAccountResponse = BackendComponents.Schemas.AuthAccountResponse;
 type WalletLoginRequestDto = Components.Schemas.WalletLoginRequestDto;
@@ -113,7 +113,7 @@ export class AccountService {
           expires: Date.now() + 24 * 60 * 60 * 1_000,
           referenceId: referenceId,
           msaId: accountData.msaId,
-          handle: { displayHandle:  accountData.displayHandle },
+          handle: { displayHandle: accountData.displayHandle },
         };
       }
     } catch (e) {
