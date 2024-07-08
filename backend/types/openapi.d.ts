@@ -15,7 +15,7 @@ declare namespace Components {
       accessToken: string;
       expires: number;
       msaId: string;
-      displayHandle?: string;
+      handle?: Handle;
     }
     export interface Broadcast {
       fromId: string;
@@ -130,7 +130,7 @@ declare namespace Components {
        * Timestamp of the post
        */
       timestamp: string;
-      displayHandle?: string;
+      handle?: Handle;
     }
     export interface ProviderResponse {
       nodeUrl: string;
