@@ -129,7 +129,7 @@ export class AccountService {
    * @returns A promise that resolves to a `WalletLoginResponse` object.
    * @throws If there is an error during the sign in or sign up process.
    */
-  public async signInOrSignUp(request: WalletLoginRequestDto): Promise<WalletLoginResponse> {
+  public async signInOrSignUp(request: WalletProxyResponse): Promise<WalletLoginResponse> {
     const { signIn, signUp } = request;
     let response: Partial<WalletLoginResponse> = {};
     try {
@@ -152,7 +152,7 @@ export class AccountService {
    * @returns A Promise that resolves to an object with the referenceId, accessToken, and expires properties.
    * @throws {HttpError} If the signup payload is invalid or if signup validation fails.
    */
-  public async signUp(payload: WalletLoginRequestDto): Promise<any> {
+  public async signUp(payload: WalletProxyResponse): Promise<any> {
     const chainApi = await getApi();
     const { signUp } = payload;
 
@@ -161,7 +161,7 @@ export class AccountService {
     }
     try {
       const { publicKey } = await validateSignup(chainApi, signUp, Config.instance().providerId);
-      const response = await this.client.AccountsControllerV1_postSignInWithFrequency(null, payload);
+      const response = await this.client.AccountsControllerV1_postSignInWithFrequency(null, payload as WalletLoginRequestDto);
 
       logger.debug(`AccountService: signUp: Account signup processed, referenceId: ${response.data.referenceId}`);
       return {
