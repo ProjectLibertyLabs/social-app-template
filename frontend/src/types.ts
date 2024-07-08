@@ -2,13 +2,19 @@ import type { ProviderResponse } from './dsnpLink';
 
 export type Network = ProviderResponse['network'];
 
+export type Handle = {
+  base_handle: string;
+  canonical_base: string;
+  suffix: number;
+};
+
 export type UserAccount = {
   expires: number;
   accessToken: string;
 } & User;
 
 export type User = {
-  handle: string;
+  handle?: Handle;
   msaId: string;
   profile?: {
     icon: string;

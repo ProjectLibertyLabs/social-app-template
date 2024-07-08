@@ -15,18 +15,14 @@ export const getProfile: Handler<object> = async (c, _req, res) => {
   try {
     const chainApi = await getApi();
 
-    let displayHandle = '';
     const handle = await chainApi.rpc.handles.getHandleForMsa(msaId);
-    if (handle.isSome) {
-      displayHandle = `${handle.value.base_handle}.${handle.value.suffix}`;
-    }
 
     const response: T.Paths.GetProfile.Responses.$200 = {
       fromId: msaId,
       contentHash: '',
       content: '',
       timestamp: new Date().toISOString(),
-      displayHandle,
+      handle,
     };
     return res.status(200).json(response);
   } catch (err) {

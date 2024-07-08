@@ -5,17 +5,18 @@ import * as Config from '../config/config';
 import { HttpStatusCode } from 'axios';
 import logger from '../logger';
 import { HttpError } from '../types/HttpError';
+import { HandleResponse } from '@frequency-chain/api-augment/interfaces';
 
 type AccountServiceWebhookResponse = {
   referenceId: string;
-  handle: string;
+  handle: HandleResponse;
   msaId: string;
   accountId: string;
 };
 
 type SIWFTransactionData = {
   msaId: string;
-  displayHandle: string;
+  handle: HandleResponse;
   accountId: string;
 };
 
@@ -65,7 +66,7 @@ export class AccountServiceWebhook {
     if (referenceId && handle && msaId && accountId) {
       AccountServiceWebhook.referenceIdsReceived.set(referenceId, {
         msaId,
-        displayHandle: handle,
+        handle,
         accountId,
       });
       logger.debug(`WebhookController:authServiceWebhook: received referenceId: ${referenceId}`);

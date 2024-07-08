@@ -7,6 +7,7 @@ import type { UploadFile } from 'antd/es/upload/interface';
 import * as dsnpLink from '../dsnpLink';
 import { getContext } from '../service/AuthService';
 import FormData from 'form-data';
+import { makeDisplayHandle } from '../helpers/DisplayHandle';
 
 interface NewPostProps {
   onSuccess: () => void;
@@ -61,7 +62,7 @@ const NewPost = ({ onSuccess, onCancel, account }: NewPostProps): ReactElement =
       <Form form={form} onFinish={createPost}>
         <Form.Item>
           <UserAvatar user={account} avatarSize={'medium'} />
-          Posting as @{account.handle}
+          Posting as @{makeDisplayHandle(account.handle)}
         </Form.Item>
         <Form.Item name="message" required={true}>
           <Input.TextArea rows={4} placeholder="Enter your message" />

@@ -11,6 +11,7 @@ import { Request } from 'express';
 import logger from '../logger';
 import { AccountServiceWebhook } from './AccountWebhookService';
 import { Components as BackendComponents } from '../types/api';
+import type { HandleResponse } from '@frequency-chain/api-augment/interfaces';
 
 type AuthAccountResponse = BackendComponents.Schemas.AuthAccountResponse;
 type WalletLoginRequestDto = Components.Schemas.WalletLoginRequestDto;
@@ -107,13 +108,17 @@ export class AccountService {
     try {
       const accountData = AccountServiceWebhook.referenceIdsReceived.get(referenceId);
       if (accountData) {
+        // REMOVE: When account service webhook is fixed to return the HandleResponse
+        const response = await this.client.AccountsControllerV1_getAccount(accountData.msaId);
+        accountData.handle = response.data.handle as HandleResponse;
+        // END REMOVE:
         logger.debug(`Found account for referenceId:(${referenceId})`);
         return {
           accessToken: createAuthToken(accountData.accountId),
           expires: Date.now() + 24 * 60 * 60 * 1_000,
           referenceId: referenceId,
           msaId: accountData.msaId,
-          handle: { displayHandle: accountData.displayHandle },
+          handle: accountData.handle,
         };
       }
     } catch (e) {

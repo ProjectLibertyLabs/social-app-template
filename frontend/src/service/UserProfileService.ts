@@ -16,7 +16,7 @@ const profileToUser = (profile: dsnpLink.Profile): User => {
     };
   }
   return {
-    handle: profile.displayHandle || 'Anonymous',
+    handle: profile.handle,
     msaId: profile.fromId,
     profile: userProfile,
   };
@@ -38,7 +38,15 @@ export const getUserProfile = (msaId: string): Promise<User | null> => {
   }
 };
 
-const loadingUser = { handle: 'Loading', msaId: '' };
+const loadingUser: User = { handle: { base_handle: 'Loading', canonical_base: 'Loading', suffix: 0 }, msaId: '' };
+const unknownUser: User = {
+  handle: {
+    base_handle: 'Unknown',
+    canonical_base: 'Unknown',
+    suffix: 0,
+  },
+  msaId: '',
+};
 
 type UseGetUserResp = { user: User; isLoading: boolean; error: string };
 export const useGetUser = (msaId: string): UseGetUserResp => {
@@ -50,10 +58,7 @@ export const useGetUser = (msaId: string): UseGetUserResp => {
     getUserProfile(msaId)
       .then((resp) => {
         if (resp === null) {
-          setUser({
-            handle: 'unknown',
-            msaId: '',
-          });
+          setUser(unknownUser);
           setError('Unknown User');
         } else {
           setUser(resp);

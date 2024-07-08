@@ -5,6 +5,7 @@ import UserMenu from './UserMenu';
 import type { UserAccount } from '../types';
 import styles from './Header.module.css';
 import Title from 'antd/es/typography/Title';
+import { makeDisplayHandle } from '../helpers/DisplayHandle';
 
 type HeaderProps = {
   account?: UserAccount;
@@ -26,7 +27,7 @@ const Header = ({ account, logout }: HeaderProps): ReactElement => {
             content={<UserMenu logout={logout} />}
           >
             <UserAvatar user={account} avatarSize="small" />
-            {account.handle}
+            {makeDisplayHandle(account.handle)}
           </Popover>
         )}
       </div>

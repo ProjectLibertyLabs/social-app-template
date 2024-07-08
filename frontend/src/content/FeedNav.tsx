@@ -2,6 +2,7 @@ import styles from '../Feed.module.css';
 import { FeedTypes, User } from '../types';
 import { ArrowLeftOutlined } from '@ant-design/icons';
 import React from 'react';
+import { makeDisplayHandle } from '../helpers/DisplayHandle';
 
 interface FeedNavProps {
   feedType: FeedTypes;
@@ -24,7 +25,9 @@ const FeedNav = ({ feedType, setFeedType, resetFeed, goToMyFeed, user }: FeedNav
           <div className={styles.backArrow} onClick={resetFeed}>
             <ArrowLeftOutlined />
           </div>
-          <div className={feedNavClassName(FeedTypes.DISPLAY_ID_POSTS)}>@{user.handle}&nbsp;Posts</div>
+          <div className={feedNavClassName(FeedTypes.DISPLAY_ID_POSTS)}>
+            @{makeDisplayHandle(user.handle)}&nbsp;Posts
+          </div>
         </>
       )}
       <div className={feedNavClassName(FeedTypes.DISCOVER)} onClick={() => setFeedType(FeedTypes.DISCOVER)}>

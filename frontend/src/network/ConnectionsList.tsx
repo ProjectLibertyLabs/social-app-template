@@ -1,5 +1,5 @@
 import React, { ReactElement, useEffect, useState } from 'react';
-import { Button, Spin } from 'antd';
+import { Spin } from 'antd';
 import ConnectionsListProfiles from './ConnectionsListProfiles';
 import styles from './ConnectionsList.module.css';
 import { User, UserAccount } from '../types';
@@ -34,18 +34,18 @@ const ConnectionsList = ({
 
     const list: User[] = await Promise.all(
       accountFollowingList.map((msaId) =>
-        dsnpLink.getProfile(ctx, { msaId: msaId }).then(({ displayHandle, fromId, content }) => {
+        dsnpLink.getProfile(ctx, { msaId: msaId }).then(({ handle, fromId, content }) => {
           try {
             const profile = content ? JSON.parse(content) : {};
             return {
-              handle: displayHandle || '',
+              handle: handle!,
               msaId: fromId,
               profile: profile,
             };
           } catch (e) {
             console.error(e);
             return {
-              handle: displayHandle || '',
+              handle: handle!,
               msaId: fromId,
               profile: {},
             };

@@ -22,7 +22,7 @@ export class ProfilesController extends BaseController {
     };
     // Use account service to get display handle
     const { handle } = await AccountService.getInstance().then((service) => service.getAccount(_req.params.msaId));
-    Profile.displayHandle = handle?.displayHandle;
+    Profile.handle = handle;
     return res.status(HttpStatusCode.Ok).send(Profile);
   }
 
