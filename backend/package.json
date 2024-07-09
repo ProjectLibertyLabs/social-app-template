@@ -23,7 +23,7 @@
     "generate-types-content-announcement": "npx @hey-api/openapi-ts -i openapi-specs/content-announcement.openapi.json -o types/content-announcement",
     "generate-types-content-watcher": "npx openapi-client-axios-typegen openapi-specs/content-watcher-service.json > types/openapi-content-watcher-service.d.ts",
     "generate-types-content-publisher": "npx openapi-client-axios-typegen openapi-specs/content-publishing-service.json > types/openapi-content-publishing-service.d.ts",
-    "generate-types": "npm run generate-types-account-service ; npm run generate-types-graph-service ; npm run generate-types-content-watcher ; npm run generate-types-content-publisher",
+    "generate-types": "npm run generate-types-account-service ; npm run generate-types-graph-service ; npm run generate-types-content-watcher ; npm run generate-types-content-publisher ; npm run generate-types-backend",
     "local:init": "node scripts/local-init.cjs",
     "env:init": "sh scripts/init-environment.sh"
   },

@@ -80,7 +80,7 @@ ContentWatcherService.getInstance().then((service) => {
       .map((v) => v as AnnouncementType)
   );
 
-  service.resetScanner({ immediate: true, rewindOffset: 14_400 });
+  service.resetScanner({ immediate: true, rewindOffset: 600 });
 });
 
 // Swagger UI
