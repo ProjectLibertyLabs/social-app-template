@@ -51,6 +51,10 @@ x-social-app-template-backend: &social-app-template-backend
   IPFS_UA_GATEWAY_URL: 'http://localhost:8080'
   NODE_ENV: development
 
+x-social-app-template-frontend: &social-app-template-frontend
+  REACT_APP_BACKEND_URL: 'http://localhost:3001'
+
+
 services:
   redis:
     image: redis:latest
@@ -154,7 +158,7 @@ services:
     pull_policy: never
     image: social-app-backend
     build:
-      context: .
+      context: ./backend
       dockerfile: dev.Dockerfile
       tags:
         - social-app-backend:latest
@@ -166,8 +170,8 @@ services:
       <<: [*common-environment, *social-app-template-backend]
       IPFS_GATEWAY_URL: 'http://ipfs:8080'
     volumes:
-      - .:/app
-      - node_cache:/app/node_modules
+      - ./backend:/app
+      - backend_node_cache:/app/node_modules
     networks:
       - social-app-backend
     depends_on:
@@ -182,9 +186,41 @@ services:
     profiles:
       - full
 
+  social-app-template-frontend:
+    pull_policy: never
+    image: social-app-frontend
+    build:
+      context: ./frontend
+      dockerfile: dev.Dockerfile
+      tags:
+        - social-app-frontend:latest
+    ports:
+      - 3000:3000
+
+    environment:
+      <<: *social-app-template-frontend
+    volumes:
+      - ./frontend:/app
+      - frontend_node_cache:/app/node_modules
+    networks:
+      - social-app-backend
+    depends_on:
+      - ipfs
+      - content-publishing-service-api
+      - content-publishing-service-worker
+      - content-watcher-service
+      - account-service-api
+      - account-service-worker
+      - graph-service-api
+      - graph-service-worker
+      - social-app-template-backend
+    profiles:
+      - full
+
 volumes:
   ipfs_data:
-  node_cache:
+  backend_node_cache:
+  frontend_node_cache:
   redis_data:
 
 networks:

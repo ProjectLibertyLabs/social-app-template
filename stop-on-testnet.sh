@@ -2,12 +2,9 @@
 # Stop all services and optionally remove specified volumes to remove all state and start fresh
 
 # Export the variables that are used in the docker-compose-testnet.yaml file
-# The values are not used for shutdown, but cause error messages if missing
-export FREQUENCY_URL=${FREQUENCY_URL:-wss://0.rpc.testnet.amplica.io}
-export FREQUENCY_HTTP_URL=${FREQUENCY_HTTP_URL:-https://0.rpc.testnet.amplica.io}
-export PROVIDER_ID=${PROVIDER_ID:-729}
-export PROVIDER_ACCOUNT_SEED_PHRASE=${PROVIDER_ACCOUNT_SEED_PHRASE:-//Alice}
-export IPFS_VOLUME=${IPFS_VOLUME:-/data/ipfs}
+if [ -f .env-testnet ]; then
+    set -a; source .env-testnet; set +a
+fi
 
 # Shutting down any running services
 echo "Shutting down any running services..."
@@ -20,9 +17,12 @@ read REMOVE_VOLUMES
 if [[ $REMOVE_VOLUMES =~ ^[Yy]$ ]]
 then
     echo "Removing specified volumes..."
-    docker volume rm backend_redis_data
-    docker volume rm backend_ipfs_data
-    docker volume rm backend_node_cache
+    # Docker volume names are lowercase versions of the directory name
+    # In the root directory of the repository, we get from the system directory name
+    docker volume rm $(basename "$(pwd)" | tr '[:upper:]' '[:lower:]')_redis_data
+    docker volume rm $(basename "$(pwd)" | tr '[:upper:]' '[:lower:]')_ipfs_data
+    docker volume rm $(basename "$(pwd)" | tr '[:upper:]' '[:lower:]')_backend_node_cache
+    docker volume rm $(basename "$(pwd)" | tr '[:upper:]' '[:lower:]')_frontend_node_cache
 else
     echo "Not removing specified volumes..."
 fi

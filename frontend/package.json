@@ -40,7 +40,8 @@
     "eject": "react-scripts eject",
     "format": "eslint --fix . && prettier --write .",
     "lint": "eslint . && prettier --check .",
-    "gen:client": "npx @typoas/cli generate -i ../backend/openapi.json -o src/dsnpLink.ts"
+    "gen:client": "npx @typoas/cli generate -i ../backend/openapi.json -o src/dsnpLink.ts",
+    "container-run:dev": "npm install && npm run start"
   },
   "browserslist": {
     "production": [
