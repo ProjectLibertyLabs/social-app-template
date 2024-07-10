@@ -72,7 +72,27 @@ const _controllers = [
   new WebhookController(privateApp),
 ];
 
-ContentWatcherService.getInstance().then((service) => {
+async function waitForContentWatcherService(service: ContentWatcherService, maxWaitTime: number): Promise<void> {
+  let isReady = false;
+  for (let i = 0; i < maxWaitTime; i++) {
+    isReady = await service.getScannerReadyStatus();
+    if (isReady) {
+      break;
+    }
+    await new Promise((resolve) => setTimeout(resolve, 1000));
+  }
+
+  if (!isReady) {
+    logger.error(`Content Watcher Service not ready after ${maxWaitTime} seconds. Exiting app.`);
+    throw new Error('Content Watcher Service not ready');
+  }
+}
+
+const MAX_SCANNER_WAIT_TIME_SECONDS = 15;
+ContentWatcherService.getInstance().then(async (service) => {
+  // content-watcher-service may take a few seconds to start up
+  await waitForContentWatcherService(service, MAX_SCANNER_WAIT_TIME_SECONDS);
+
   service.registerWebhook(
     `${Config.instance().webhookBaseUrl}/content-watcher/announcements`,
     Object.values(AnnouncementType)

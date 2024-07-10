@@ -1,23 +1,30 @@
 #!/bin/bash
+# Script to start all SAT services on the Frequency Paseo Testnet
 
-# Stop and remove containers, networks
-echo "Stopping and removing containers, networks..."
-docker compose -f docker-compose-testnet.yaml --profile full down
+# Ask for the Frequency Testnet RPC URL
+echo "Enter the Frequency Testnet RPC URL [wss://0.rpc.testnet.amplica.io]: "
+read FREQUENCY_URL
+export FREQUENCY_URL=${FREQUENCY_URL:-wss://0.rpc.testnet.amplica.io}
 
-# Remove specified volumes to remove all state and start fresh
-echo "Removing specified volumes..."
-docker volume rm backend_redis_data
-docker volume rm backend_chainstorage
-docker volume rm backend_ipfs_data
-docker volume rm backend_node_cache
+# Ask for the Frequency HTTP Testnet RPC URL
+echo "Enter the Frequency HTTP Testnet RPC URL [https://0.rpc.testnet.amplica.io]: "
+read FREQUENCY_HTTP_URL
+export FREQUENCY_HTTP_URL=${FREQUENCY_HTTP_URL:-https://0.rpc.testnet.amplica.io}
 
-# Ask for Provider ID and Provider Seed Phrase
-read -p "Enter Provider ID: " PROVIDER_ID
-read -p "Enter Provider Seed Phrase: " PROVIDER_ACCOUNT_SEED_PHRASE
+# Ask for Provider ID
+echo "Enter Provider ID [729]: "
+read PROVIDER_ID
+export PROVIDER_ID=${PROVIDER_ID:-729}
 
-# Export the variables
-export PROVIDER_ID
-export PROVIDER_ACCOUNT_SEED_PHRASE
+# Ask for Provider Seed Phrase
+echo "Enter Provider Seed Phrase [DEFAULT seed phrase needed]: "
+read PROVIDER_ACCOUNT_SEED_PHRASE
+export PROVIDER_ACCOUNT_SEED_PHRASE=${PROVIDER_ACCOUNT_SEED_PHRASE:-//Alice}
+
+# Ask for the IPFS volume
+echo "Enter the IPFS volume [/data/ipfs]: "
+read IPFS_VOLUME
+export IPFS_VOLUME=${IPFS_VOLUME:-/data/ipfs}
 
 # Start all services in detached mode
 echo "Starting all services..."
