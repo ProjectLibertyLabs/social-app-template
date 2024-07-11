@@ -19,28 +19,34 @@ fi
 
 # Load existing .env-testnet file if it exists
 if [ -f .env-testnet ]; then
-    echo -e "****************************************************************************************"
-    echo -e "* Loading existing .env-testnet file environment values...                             *"
-    echo -e "****************************************************************************************\n"
-    set -a; source .env-testnet; set +a
+    cat << EOI
+****************************************************************************************
+* Loading existing .env-testnet file environment values...                             *
+****************************************************************************************
+EOI
 else 
     # Create .env-testnet file to store environment variables
-    echo -e "****************************************************************************************"
-    echo -e "* Creating .env-testnet file to store environment variables...                         *"
-    echo -e "****************************************************************************************"
-    > .env-testnet
+    cat << EOI
+****************************************************************************************
+* Creating .env-testnet file to store environment variables...                         *
+****************************************************************************************
+EOI
+    touch .env-testnet
 
     ask_and_save "FREQUENCY_URL" "Enter the Frequency Testnet RPC URL" "wss://0.rpc.testnet.amplica.io"
     ask_and_save "FREQUENCY_HTTP_URL" "Enter the Frequency HTTP Testnet RPC URL" "https://0.rpc.testnet.amplica.io"
-    echo -e "\n*************************************************************************************************"
-    echo -e   "* A Provider is required to start the services.                                                 *"
-    echo -e   "* If you need to become a provider, visit https://provider.frequency.xyz/ to get a Provider ID. *"
-    echo -e   "*************************************************************************************************"
+    cat << EOI
+
+*************************************************************************************************
+* A Provider is required to start the services.                                                 *
+* If you need to become a provider, visit https://provider.frequency.xyz/ to get a Provider ID. *
+*************************************************************************************************
+EOI
     ask_and_save "PROVIDER_ID" "Enter Provider ID" "729"
     ask_and_save "PROVIDER_ACCOUNT_SEED_PHRASE" "Enter Provider Seed Phrase" "DEFAULT seed phrase needed"
     ask_and_save "IPFS_VOLUME" "Enter the IPFS volume" "/data/ipfs"
-    set -a; source .env-testnet; set +a
 fi
+set -a; source .env-testnet; set +a
 
 # Start all services in detached mode
 echo -e "\nStarting all services..."
