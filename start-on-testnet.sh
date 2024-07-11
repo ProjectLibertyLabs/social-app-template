@@ -6,8 +6,7 @@ ask_and_save() {
     local var_name=$1
     local prompt=$2
     local default_value=$3
-    printf "\n%s [%s]: " "$prompt" "$default_value"
-    read -r input
+    read -rp $'\n'"${prompt} [${default_value}]: " input
     local value=${input:-$default_value}
     echo "export $var_name=\"$value\"" >> .env-testnet
 }
