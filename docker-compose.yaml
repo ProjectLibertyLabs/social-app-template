@@ -54,7 +54,6 @@ x-social-app-template-backend: &social-app-template-backend
 x-social-app-template-frontend: &social-app-template-frontend
   REACT_APP_BACKEND_URL: 'http://localhost:3001'
 
-
 services:
   redis:
     image: redis:latest
@@ -64,6 +63,30 @@ services:
       - social-app-backend
     volumes:
       - redis_data:/data/redis
+
+  frequency:
+    image: dsnp/instant-seal-node-with-deployed-schemas:latest
+    # We need to specify the platform because it's the only image
+    # built by Frequency at the moment, and auto-pull won't work otherwise
+    platform: linux/amd64
+    # Uncomment SEALING_MODE and SEALING_INTERVAL if you want to use interval sealing.
+    # Other options you may want to add depending on your test scenario.
+    environment:
+      - SEALING_MODE=interval
+      - SEALING_INTERVAL=1
+    #   - CREATE_EMPTY_BLOCKS=true
+    # The 'command' may contain additional CLI options to the Frequency node,
+    # such as:
+    # --state-pruning=archive
+    command: --offchain-worker=always --enable-offchain-indexing=true
+    ports:
+      - 9944:9944
+    networks:
+      - social-app-backend
+    volumes:
+      - chainstorage:/data
+    profiles:
+      - local-node
 
   ipfs:
     image: ipfs/kubo:latest
@@ -184,7 +207,7 @@ services:
       - graph-service-api
       - graph-service-worker
     profiles:
-      - full
+      - backend
 
   social-app-template-frontend:
     pull_policy: never
@@ -215,13 +238,15 @@ services:
       - graph-service-worker
       - social-app-template-backend
     profiles:
-      - full
+      - frontend
 
 volumes:
   ipfs_data:
   backend_node_cache:
   frontend_node_cache:
   redis_data:
+  chainstorage:
+    external: false
 
 networks:
   social-app-backend:
