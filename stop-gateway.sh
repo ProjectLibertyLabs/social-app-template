@@ -2,8 +2,8 @@
 # Stop all services and optionally remove specified volumes to remove all state and start fresh
 
 # Export the variables that are used in the docker-compose.yaml file
-if [ -f .env-testnet ]; then
-    set -a; source .env-testnet; set +a
+if [ -f .env-saved ]; then
+    set -a; source .env-saved; set +a
 fi
 
 # Shutting down any running services
@@ -23,7 +23,10 @@ then
     docker volume rm $(basename "$(pwd)" | tr '[:upper:]' '[:lower:]')_ipfs_data
     docker volume rm $(basename "$(pwd)" | tr '[:upper:]' '[:lower:]')_backend_node_cache
     docker volume rm $(basename "$(pwd)" | tr '[:upper:]' '[:lower:]')_frontend_node_cache
-    docker volume rm $(basename "$(pwd)" | tr '[:upper:]' '[:lower:]')_chainstorage
+    if [[ ! $TESTNET_ENV =~ ^[Yy]$ ]]
+    then
+        docker volume rm $(basename "$(pwd)" | tr '[:upper:]' '[:lower:]')_chainstorage
+    fi
 else
     echo "Not removing specified volumes..."
 fi

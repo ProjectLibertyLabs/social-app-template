@@ -15,6 +15,7 @@ The Social Application Template (SAT) is an example client app that demonstrates
 - [💻 Getting Started](#-getting-started)
     - [Prerequisites](#prerequisites)
     - [Setup](#setup)
+    - [Quick Start](#quick-start)
     - [Deployment](#deployment)
 - [🤝 Contributing](#-contributing)
 - [❓FAQ](#faq)
@@ -125,6 +126,14 @@ Example commands:
 ```sh
   git clone git@github.com:AmplicaLabs/social-app-template.git
   cd social-app-template
+```
+
+### Quick Start
+
+Enter the following command and answer the prompts. Press <ENTER> to accept the default values.
+
+```sh
+  ./start-gateway.sh
 ```
 
 ### Deployment
