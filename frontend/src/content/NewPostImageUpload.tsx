@@ -3,6 +3,7 @@ import { PlusOutlined } from '@ant-design/icons';
 import type { RcFile, UploadProps } from 'antd/es/upload';
 import type { UploadFile } from 'antd/es/upload/interface';
 import React, { ReactElement } from 'react';
+import styles from '../NewPost.module.css';
 
 const getBase64 = (file: RcFile): Promise<string> =>
   new Promise((resolve, reject) => {
@@ -60,7 +61,7 @@ const NewPostImageUpload = ({ onChange }: NewPostImageUploadProps): ReactElement
         name="images"
         valuePropName="fileList"
         help={errorMsg}
-        noStyle
+        className={styles.uploadItems}
       >
         <Upload
           name="media-upload"

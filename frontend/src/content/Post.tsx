@@ -19,9 +19,10 @@ type FeedItem = dsnpLink.BroadcastExtended;
 type PostProps = {
   feedItem: FeedItem;
   showReplyInput: boolean;
+  isProfile?: boolean;
 };
 
-const Post = ({ feedItem, showReplyInput }: PostProps): ReactElement => {
+const Post = ({ feedItem, showReplyInput, isProfile }: PostProps): ReactElement => {
   const navigate = useNavigate();
   const { user, isLoading } = useGetUser(feedItem.fromId);
 
@@ -32,18 +33,20 @@ const Post = ({ feedItem, showReplyInput }: PostProps): ReactElement => {
   const attachments: ActivityContentAttachment[] = content.attachment || [];
 
   return (
-    <Card key={feedItem.contentHash} className={styles.root} bordered={true}>
+    <Card key={feedItem.contentHash} className={styles.card} bordered={true}>
       <Spin tip="Loading" size="large" spinning={isLoading}>
-        <div onClick={() => navigate(`/profile/${feedItem.fromId}`)} className={styles.metaBlock}>
-          <Card.Meta
-            className={styles.metaInnerBlock}
-            avatar={<UserAvatar user={user} avatarSize={'medium'} />}
-            title={<FromTitle user={user} />}
-          />
-        </div>
+        {!isProfile && (
+          <div onClick={() => navigate(`/profile/${feedItem.fromId}`)} className={styles.metaBlock}>
+            <Card.Meta
+              className={styles.metaInnerBlock}
+              avatar={<UserAvatar user={user} avatarSize={'medium'} />}
+              title={<FromTitle user={user} />}
+            />
+          </div>
+        )}
         <div className={styles.time}>
-          {content?.published && <RelativeTime published={content?.published} postStyle={true} />}
           <PostHashDropdown hash={feedItem.contentHash} fromId={feedItem.fromId} />
+          {content?.published && <RelativeTime published={content?.published} />}
         </div>
         <>
           {content && (

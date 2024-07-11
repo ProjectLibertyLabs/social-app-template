@@ -38,7 +38,7 @@ const FeedNav = ({ handleIsPosting, loggedInAccount }: FeedNavProps) => {
 
   return (
     <nav className={styles.navigation}>
-      <Flex gap={'middle'} vertical={true}>
+      <Flex gap={'large'} vertical={true}>
         <div className={feedNavClassName('/')} onClick={() => navigate('/')}>
           <Flex gap={'small'}>
             <CompassOutlined />

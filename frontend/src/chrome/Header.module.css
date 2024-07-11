@@ -5,9 +5,9 @@
 .root {
   display: flex;
   justify-content: center;
-  background-color: transparent;
   position: relative;
   border-bottom: 2px solid;
+  background-color: #fff;
 }
 
 .container {

@@ -5,8 +5,9 @@ import * as dsnpLink from '../dsnpLink';
 import { User, FeedTypes, Network } from '../types';
 import { getContext } from '../service/AuthService';
 import styles from './Post.module.css';
-import { Button, Space, Spin } from 'antd';
+import { Button, Flex, Space, Spin } from 'antd';
 import { useNavigate } from 'react-router-dom';
+import { getUserProfile } from '../service/UserProfileService';
 
 const OLDEST_BLOCK_TO_GO_TO: Record<Network, number> = {
   local: 1,
@@ -20,11 +21,12 @@ type PostListProps = {
   // Uses Date.now to trigger an update
   refreshTrigger: number;
   network: Network;
+  showReplyInput: boolean;
 };
 
 type FeedItem = dsnpLink.BroadcastExtended;
 
-const PostList = ({ feedType, profile, refreshTrigger, network }: PostListProps): ReactElement => {
+const PostList = ({ feedType, profile, refreshTrigger, network, showReplyInput }: PostListProps): ReactElement => {
   const [priorTrigger, setPriorTrigger] = React.useState<number>(refreshTrigger);
   const [priorFeedType, setPriorFeedType] = React.useState<number>(feedType);
   const [priorFeed, setPriorFeed] = React.useState<FeedItem[]>([]);
@@ -44,8 +46,7 @@ const PostList = ({ feedType, profile, refreshTrigger, network }: PostListProps)
     const posts = Array.isArray(result.posts) ? result.posts : [];
     setOldestBlockNumber(Math.min(oldestBlockNumber || result.oldestBlockNumber, result.oldestBlockNumber));
     setNewestBlockNumber(Math.max(newestBlockNumber || result.newestBlockNumber, result.newestBlockNumber));
-    console.log('POSTS: ', posts);
-    console.log('PRIOR FEED: ', priorFeed);
+
     if (appendOrPrepend === 'append') {
       // Older stuff
       setCurrentFeed([...priorFeed, ...posts]);
@@ -69,14 +70,8 @@ const PostList = ({ feedType, profile, refreshTrigger, network }: PostListProps)
 
   useEffect(() => {
     const getOlder = refreshTrigger === priorTrigger;
-    console.log('fetchData');
     fetchData(getOlder);
   }, [feedType, profile, refreshTrigger, priorTrigger, network]);
-
-  useEffect(() => {
-    console.log('setPriorFeed');
-    setPriorFeed([]);
-  }, [profile]);
 
   const fetchData = async (getOlder: boolean) => {
     const isAddingMore = priorFeedType === feedType;
@@ -92,6 +87,7 @@ const PostList = ({ feedType, profile, refreshTrigger, network }: PostListProps)
 
     setPriorFeed(priorFeedType === feedType ? currentFeed : []);
     setPriorTrigger(refreshTrigger);
+
     setPriorFeedType(feedType);
     setIsLoading(true);
     const appendOrPrepend = getOlder ? 'append' : 'prepend';
@@ -108,8 +104,6 @@ const PostList = ({ feedType, profile, refreshTrigger, network }: PostListProps)
           navigate('/');
           return;
         }
-        console.log('GETTING POSTS FOR:', profile.msaId);
-
         postGetPosts(
           await dsnpLink.getUserFeed(getContext(), {
             dsnpId: profile.msaId,
@@ -128,9 +122,14 @@ const PostList = ({ feedType, profile, refreshTrigger, network }: PostListProps)
     <div className={styles.root}>
       <Spin size="large" spinning={isLoading} className={styles.spinner} />
       {oldestBlockNumber !== undefined && (
-        <>
+        <Flex gap={'middle'} vertical={true}>
           {currentFeed.map((feedItem, index) => (
-            <Post key={index} feedItem={feedItem} showReplyInput={true} />
+            <Post
+              key={index}
+              feedItem={feedItem}
+              showReplyInput={showReplyInput}
+              isProfile={feedType === FeedTypes.MY_PROFILE || feedType === FeedTypes.OTHER_PROFILE}
+            />
           ))}
           <Space />
           {hasMore && (
@@ -150,7 +149,7 @@ const PostList = ({ feedType, profile, refreshTrigger, network }: PostListProps)
               <Title level={4}>That's all there is!</Title>
             </div>
           )}
-        </>
+        </Flex>
       )}
     </div>
   );

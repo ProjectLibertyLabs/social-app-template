@@ -6,6 +6,7 @@ import * as dsnpLink from '../dsnpLink';
 import { getContext } from '../service/AuthService';
 import { getUserProfile } from '../service/UserProfileService';
 import { useLocation } from 'react-router-dom';
+import { Spin } from 'antd';
 
 interface ProfilePageProps {
   loggedInAccount: UserAccount;
@@ -15,26 +16,26 @@ interface ProfilePageProps {
 }
 
 const ProfilePage = ({ loggedInAccount, network, isPosting, refreshTrigger }: ProfilePageProps) => {
-  let location = useLocation();
+  const location = useLocation();
 
   const getCurMsa = () => {
     const pathnameParts = window.location.pathname.split('/');
     return pathnameParts.length === 3 && pathnameParts[1] === 'profile' ? pathnameParts[2] : null;
   };
 
-  const [msaId, setMsaId] = useState(getCurMsa());
   const [profile, setProfile] = useState<UserAccount>();
   const [accountFollowing, setAccountFollowing] = useState<string[]>();
   const [isLoading, setIsLoading] = useState<boolean>(false);
 
   const getGraph = async () => {
-    if (msaId) {
-      const following = await dsnpLink.userFollowing(getContext(), { msaId });
+    if (profile?.msaId) {
+      const following = await dsnpLink.userFollowing(getContext(), { msaId: profile.msaId });
       setAccountFollowing(following);
     }
   };
 
   useEffect(() => {
+    const msaId = getCurMsa();
     const fetchUserProfile = async () => {
       if (msaId) {
         setIsLoading(true);
@@ -46,17 +47,12 @@ const ProfilePage = ({ loggedInAccount, network, isPosting, refreshTrigger }: Pr
 
     fetchUserProfile();
     setIsLoading(false);
-  }, [msaId]);
-
-  useEffect(() => {
-    const newMsaId = getCurMsa();
-    setMsaId(newMsaId);
   }, [location]);
 
-  if (!profile) return <>{`User with msaId ${msaId} was not found.`}</>;
+  if (!profile) return <>{`User was not found.`}</>;
 
   return (
-    <>
+    <Spin tip="Loading" size="large" spinning={isLoading}>
       <Profile
         loggedInAccount={loggedInAccount}
         profile={profile}
@@ -67,11 +63,11 @@ const ProfilePage = ({ loggedInAccount, network, isPosting, refreshTrigger }: Pr
       <Feed
         profile={profile}
         network={network}
-        feedType={loggedInAccount.msaId === msaId ? FeedTypes.MY_PROFILE : FeedTypes.OTHER_PROFILE}
+        feedType={loggedInAccount.msaId === profile.msaId ? FeedTypes.MY_PROFILE : FeedTypes.OTHER_PROFILE}
         isPosting={isPosting}
         refreshTrigger={refreshTrigger}
       />
-    </>
+    </Spin>
   );
 };
 

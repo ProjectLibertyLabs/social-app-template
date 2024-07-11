@@ -23,6 +23,7 @@ const PageRoutes = ({ loggedInAccount, network, isPosting, refreshTrigger }: Pag
               feedType={FeedTypes.DISCOVER}
               isPosting={isPosting}
               refreshTrigger={refreshTrigger}
+              showReplyInput={!!loggedInAccount}
             />
           }
         />

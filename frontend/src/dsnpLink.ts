@@ -313,7 +313,6 @@ export async function getUserFeed<FetcherData>(ctx: r.Context<AuthMethods, Fetch
     newestBlockNumber?: number;
     oldestBlockNumber?: number;
 }, opts?: FetcherData): Promise<PaginatedBroadcast> {
-    console.log('DSNPID: ', params.dsnpId);
     const req = await ctx.createRequest({
         path: '/content/{dsnpId}',
         params,

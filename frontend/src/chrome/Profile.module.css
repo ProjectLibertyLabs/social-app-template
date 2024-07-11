@@ -3,8 +3,6 @@
 }
 
 .root {
-  background-color: var(--profile-bg);
-  /*border-radius: 10px;*/
   padding: 16px;
   display: flex;
   flex-direction: column;
