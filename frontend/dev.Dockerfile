@@ -8,7 +8,7 @@
 
 ARG NODE_VERSION=20.12.2
 
-FROM node:${NODE_VERSION}-alpine
+FROM node:${NODE_VERSION}
 
 # Use production node environment by default.
 ENV NODE_ENV production
@@ -33,5 +33,6 @@ EXPOSE 3000
 
 # Source files are mounted as a volume to allow for live reload.
 VOLUME [ "/app" ]
+
 # Run the application.
 CMD npm start

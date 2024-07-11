@@ -30,7 +30,7 @@ x-content-publishing-env: &content-publishing-env
 x-content-watcher-env: &content-watcher-env
   IPFS_BASIC_AUTH_SECRET:
   STARTING_BLOCK: 759882
-  BLOCKCHAIN_SCAN_INTERVAL_MINUTES: 1
+  BLOCKCHAIN_SCAN_INTERVAL_SECONDS: 6
   WEBHOOK_FAILURE_THRESHOLD: 4
   PROVIDER_BASE_URL: 'http://social-app-template-backend:3001/webhooks/content-watcher/announcements'
 
