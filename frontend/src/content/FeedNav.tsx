@@ -8,8 +8,6 @@ import NewPost from '../NewPost';
 import { useNavigate } from 'react-router-dom';
 
 interface FeedNavProps {
-  // feedType: FeedTypes;
-  // goToMyFeed: () => void;
   handleIsPosting: () => void;
   loggedInAccount: UserAccount;
 }
