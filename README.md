@@ -136,6 +136,8 @@ Enter the following command and answer the prompts. Press <ENTER> to accept the 
   ./start-gateway.sh
 ```
 
+Note: When connecting to a local Frequency node, you will need to execute `cd backend && npm install` to install the necessary dependencies. See the [Backend Readme](./backend/README.md) for more details.
+
 ### Deployment
 
 You can deploy using containers. Check the [docker-compose.yaml](backend/docker-compose.yaml) file for more details.
