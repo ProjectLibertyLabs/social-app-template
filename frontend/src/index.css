@@ -18,7 +18,6 @@ body {
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
   padding: 0;
-  background-color: var(--main-bg-color);
 }
 
 h1,

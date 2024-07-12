@@ -30,7 +30,14 @@ const GraphChangeButton = ({ user, relationshipStatus, triggerGraphRefresh }: Gr
   };
 
   return (
-    <Button className={styles.root} name={buttonText()} size="small" onClick={changeGraphState} loading={isUpdating}>
+    <Button
+      className={styles.root}
+      name={buttonText()}
+      size="large"
+      type={'default'}
+      onClick={changeGraphState}
+      loading={isUpdating}
+    >
       {buttonText()}
     </Button>
   );

@@ -25,11 +25,10 @@ const getRelativeTime = (postTime: string) => {
 
 interface RelativeTimeProps {
   published: string;
-  postStyle: boolean;
 }
 
-const RelativeTime = ({ published, postStyle }: RelativeTimeProps): ReactElement => {
-  return <p className={`RelativeTime ${postStyle ? 'RelativeTime--post' : ''}`}>{getRelativeTime(published)}</p>;
+const RelativeTime = ({ published }: RelativeTimeProps): ReactElement => {
+  return <span>{getRelativeTime(published)}</span>;
 };
 
 export default RelativeTime;

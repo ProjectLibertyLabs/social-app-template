@@ -1,0 +1,19 @@
+.header {
+  display: flex;
+  justify-content: space-between;
+}
+
+.newPostButton {
+  font-weight: bold;
+  width: 100%;
+}
+
+.title {
+  font-size: large;
+  font-weight: bold;
+}
+
+.fromTitle {
+  font-size: medium;
+  font-weight: bold;
+}

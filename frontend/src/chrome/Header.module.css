@@ -3,19 +3,18 @@
 }
 
 .root {
-  background-color: var(--header-bg);
-  padding: 0 16px;
   display: flex;
-  align-items: center;
   justify-content: center;
+  position: relative;
+  border-bottom: 2px solid;
+  background-color: #fff;
 }
 
 .container {
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  max-width: 1300px;
+  padding: 10px;
+  max-width: 1300px !important;
   width: 100%;
+  margin: 0 auto;
 }
 
 .title {
@@ -24,4 +23,6 @@
 
 .user {
   cursor: pointer;
+  font-size: large;
+  font-weight: bold;
 }

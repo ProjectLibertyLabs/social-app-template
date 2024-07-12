@@ -1,36 +1,51 @@
-import React, { ReactElement } from 'react';
+import React, { ReactElement, useEffect } from 'react';
 import UserAvatar from './UserAvatar';
-import { Popover } from 'antd';
+import { Flex, Popover } from 'antd';
 import UserMenu from './UserMenu';
 import type { UserAccount } from '../types';
 import styles from './Header.module.css';
 import Title from 'antd/es/typography/Title';
+import LoginScreen from '../login/LoginScreen';
+import * as dsnpLink from '../dsnpLink';
 import { makeDisplayHandle } from '../helpers/DisplayHandle';
+import { useNavigate } from 'react-router-dom';
 
 type HeaderProps = {
-  account?: UserAccount;
+  loggedInAccount?: UserAccount;
+  login: (account: UserAccount, providerInfo: dsnpLink.ProviderResponse) => void;
   logout?: () => void;
 };
 
-const Header = ({ account, logout }: HeaderProps): ReactElement => {
+const Header = ({ loggedInAccount, login, logout }: HeaderProps): ReactElement => {
+  const navigate = useNavigate();
+
+  const handleLogout = () => {
+    if (logout) {
+      navigate('/');
+      logout();
+    }
+  };
+
   return (
     <div className={styles.root}>
-      <div className={styles.container}>
+      <Flex align={'center'} justify={'space-between'} className={styles.container}>
         <Title level={1} className={styles.title}>
           Social Web Demo
         </Title>
-        {account && logout && (
+        {loggedInAccount && logout ? (
           <Popover
             className={styles.user}
             placement="bottomRight"
             trigger="click"
-            content={<UserMenu logout={logout} />}
+            content={<UserMenu logout={handleLogout} />}
           >
-            <UserAvatar user={account} avatarSize="small" />
-            {makeDisplayHandle(account.handle)}
+            <UserAvatar user={loggedInAccount} avatarSize="small" />
+            {makeDisplayHandle(loggedInAccount.handle)}
           </Popover>
+        ) : (
+          <LoginScreen onLogin={login} />
         )}
-      </div>
+      </Flex>
     </div>
   );
 };

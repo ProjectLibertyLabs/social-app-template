@@ -29,22 +29,16 @@ const LoginScreen = ({ onLogin }: LoginScreenProps): ReactElement => {
   }, [setProviderInfo, setIsLoading]);
 
   return (
-    <div className={styles.root}>
-      <Spin tip="Loading" size="large" spinning={isLoading}>
-        <Row className={styles.content}>
-          {providerInfo && (
-            <Col span={24}>
-              <Login
-                providerId={providerInfo.providerId}
-                nodeUrl={providerInfo.nodeUrl}
-                siwfUrl={providerInfo.siwfUrl}
-                onLogin={(account) => onLogin(account, providerInfo)}
-              />
-            </Col>
-          )}
-        </Row>
-      </Spin>
-    </div>
+    <Spin tip="Loading" size="large" spinning={isLoading}>
+      {providerInfo && (
+        <Login
+          providerId={providerInfo.providerId}
+          nodeUrl={providerInfo.nodeUrl}
+          siwfUrl={providerInfo.siwfUrl}
+          onLogin={(account) => onLogin(account, providerInfo)}
+        />
+      )}
+    </Spin>
   );
 };
 

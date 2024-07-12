@@ -1,4 +1,4 @@
-import React, { ReactElement } from 'react';
+import React, { LegacyRef, ReactElement, useEffect } from 'react';
 import { Button, Modal, Input, Form } from 'antd';
 import UserAvatar from '../chrome/UserAvatar';
 import NewPostImageUpload from './NewPostImageUpload';
@@ -8,11 +8,13 @@ import * as dsnpLink from '../dsnpLink';
 import { getContext } from '../service/AuthService';
 import FormData from 'form-data';
 import { makeDisplayHandle } from '../helpers/DisplayHandle';
+import styles from '../NewPost.module.css';
+import { TextAreaRef } from 'antd/es/input/TextArea';
 
 interface NewPostProps {
   onSuccess: () => void;
   onCancel: () => void;
-  account: User;
+  loggedInAccount: User;
 }
 
 type NewPostValues = {
@@ -21,9 +23,17 @@ type NewPostValues = {
   images: UploadFile[];
 };
 
-const NewPost = ({ onSuccess, onCancel, account }: NewPostProps): ReactElement => {
+const NewPostModal = ({ onSuccess, onCancel, loggedInAccount }: NewPostProps): ReactElement => {
   const [form] = Form.useForm();
   const [saving, setSaving] = React.useState<boolean>(false);
+
+  const messageRef: LegacyRef<TextAreaRef> = React.createRef();
+
+  useEffect(() => {
+    if (messageRef.current) {
+      messageRef.current.focus();
+    }
+  }, [messageRef]);
 
   const success = () => {
     setSaving(false);
@@ -39,7 +49,6 @@ const NewPost = ({ onSuccess, onCancel, account }: NewPostProps): ReactElement =
       });
 
       const { assetIds } = await dsnpLink.postAssetsHandler(getContext(), {}, body);
-      console.log('postAssets', { assetIds });
       const response = await dsnpLink.postBroadcastHandler(
         getContext(),
         {},
@@ -58,14 +67,20 @@ const NewPost = ({ onSuccess, onCancel, account }: NewPostProps): ReactElement =
   };
 
   return (
-    <Modal title="New Post" open={true} onCancel={onCancel} footer={null} centered={true}>
+    <Modal
+      title={<div className={styles.title}>New Post</div>}
+      open={true}
+      onCancel={onCancel}
+      footer={null}
+      centered={true}
+    >
       <Form form={form} onFinish={createPost}>
         <Form.Item>
-          <UserAvatar user={account} avatarSize={'medium'} />
-          Posting as @{makeDisplayHandle(account.handle)}
+          <UserAvatar user={loggedInAccount} avatarSize={'small'} />
+          <span className={styles.fromTitle}>Posting as @{makeDisplayHandle(loggedInAccount.handle)}</span>
         </Form.Item>
         <Form.Item name="message" required={true}>
-          <Input.TextArea rows={4} placeholder="Enter your message" />
+          <Input.TextArea rows={4} placeholder="Enter your message" autoFocus={true} ref={messageRef} />
         </Form.Item>
         <NewPostImageUpload
           onChange={(fileList) => {
@@ -74,7 +89,7 @@ const NewPost = ({ onSuccess, onCancel, account }: NewPostProps): ReactElement =
           }}
         />
         <Form.Item>
-          <Button type="primary" htmlType="submit" loading={saving}>
+          <Button size={'large'} type={'primary'} className={styles.newPostButton} htmlType="submit" loading={saving}>
             Post
           </Button>
         </Form.Item>
@@ -83,4 +98,4 @@ const NewPost = ({ onSuccess, onCancel, account }: NewPostProps): ReactElement =
   );
 };
 
-export default NewPost;
+export default NewPostModal;

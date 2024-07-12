@@ -12,7 +12,6 @@ type ConnectionsListProps = {
   accountFollowing: string[];
   graphRootUser: User;
   triggerGraphRefresh: () => void;
-  goToProfile: (msaId?: string) => void;
 };
 
 const ConnectionsList = ({
@@ -20,7 +19,6 @@ const ConnectionsList = ({
   graphRootUser,
   accountFollowing,
   triggerGraphRefresh,
-  goToProfile,
 }: ConnectionsListProps): ReactElement => {
   const [isLoading, setIsLoading] = useState<boolean>(true);
   const [connectionsList, setConnectionsList] = useState<User[]>([]);
@@ -67,7 +65,6 @@ const ConnectionsList = ({
       <div className={styles.root}>
         <Title level={3}>Following ({connectionsList.length})</Title>
         <ConnectionsListProfiles
-          goToProfile={goToProfile}
           key={accountFollowing.length}
           triggerGraphRefresh={triggerGraphRefresh}
           account={account}
