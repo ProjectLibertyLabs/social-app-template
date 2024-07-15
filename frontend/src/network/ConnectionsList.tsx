@@ -55,7 +55,6 @@ const ConnectionsList = ({
 
   // Update again when accountFollowing changes.
   useEffect(() => {
-    console.log(profile);
     fetchConnections();
   }, [profile, loggedInAccountConnections, curProfileConnections]);
 

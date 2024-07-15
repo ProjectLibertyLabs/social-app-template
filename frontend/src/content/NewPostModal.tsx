@@ -57,8 +57,6 @@ const NewPostModal = ({ onSuccess, onCancel, loggedInAccount }: NewPostProps): R
           assets: assetIds,
         }
       );
-
-      console.log('postBroadcastHandler', { response });
       success();
     } catch (e) {
       console.error(e);
