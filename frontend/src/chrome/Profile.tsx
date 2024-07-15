@@ -1,6 +1,6 @@
 import React, { ReactElement, useEffect, useState } from 'react';
 import { RelationshipStatus, User, UserAccount } from '../types';
-import { Card, Spin } from 'antd';
+import { Card, Flex, Spin } from 'antd';
 import styles from './Profile.module.css';
 import UserAvatar from '../chrome/UserAvatar';
 import { FromTitle } from '../content/FromTitle';
@@ -44,13 +44,13 @@ export const Profile = ({
       {isLoading ? (
         <Spin />
       ) : (
-        <>
+        <Flex gap={'large'} vertical>
           <Card.Meta
             className={styles.metaInnerBlock}
             avatar={<UserAvatar user={profile} avatarSize={'medium'} />}
             title={<FromTitle level={2} user={profile} />}
           />
-          <div className={styles.profile}>{secondary ? secondary : 'No Profile'}</div>
+          <div>{secondary ? secondary : 'No Profile'}</div>
           {loggedInAccount.msaId !== profile.msaId && (
             <GraphChangeButton
               key={accountFollowing.length}
@@ -67,7 +67,7 @@ export const Profile = ({
             accountFollowingList={profileFollowingList || []}
             graphRootUser={profile}
           />
-        </>
+        </Flex>
       )}
     </div>
   );
