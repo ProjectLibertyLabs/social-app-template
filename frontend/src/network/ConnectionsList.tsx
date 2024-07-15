@@ -9,26 +9,24 @@ import { getContext } from '../service/AuthService';
 
 type ConnectionsListProps = {
   account: UserAccount;
-  accountFollowing: string[];
+  accountFollowingList: string[];
   graphRootUser: User;
   triggerGraphRefresh: () => void;
+  isModalOpen: boolean;
 };
 
 const ConnectionsList = ({
   account,
   graphRootUser,
-  accountFollowing,
+  accountFollowingList,
   triggerGraphRefresh,
+  isModalOpen,
 }: ConnectionsListProps): ReactElement => {
   const [isLoading, setIsLoading] = useState<boolean>(true);
   const [connectionsList, setConnectionsList] = useState<User[]>([]);
 
   const fetchConnections = async () => {
     const ctx = getContext();
-
-    const accountFollowingList = await dsnpLink.userFollowing(ctx, {
-      msaId: graphRootUser.msaId,
-    });
 
     const list: User[] = await Promise.all(
       accountFollowingList.map((msaId) =>
@@ -57,19 +55,18 @@ const ConnectionsList = ({
 
   // Update again when accountFollowing changes.
   useEffect(() => {
-    fetchConnections();
-  }, [graphRootUser, accountFollowing]);
+    if (isModalOpen) fetchConnections();
+  }, [graphRootUser, isModalOpen]);
 
   return (
     <Spin spinning={isLoading} tip="Loading" size="large">
       <div className={styles.root}>
-        <Title level={3}>Following ({connectionsList.length})</Title>
         <ConnectionsListProfiles
-          key={accountFollowing.length}
+          key={accountFollowingList.length}
           triggerGraphRefresh={triggerGraphRefresh}
           account={account}
           connectionsList={connectionsList}
-          accountFollowing={accountFollowing}
+          accountFollowingList={accountFollowingList}
         />
       </div>
     </Spin>

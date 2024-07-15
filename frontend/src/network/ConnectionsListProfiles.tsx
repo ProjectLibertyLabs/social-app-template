@@ -9,14 +9,14 @@ import { useNavigate } from 'react-router-dom';
 interface ConnectionsListProfilesProps {
   account: UserAccount;
   connectionsList: User[];
-  accountFollowing: string[];
+  accountFollowingList: string[];
   triggerGraphRefresh: () => void;
 }
 
 const ConnectionsListProfiles = ({
   account,
   connectionsList,
-  accountFollowing,
+  accountFollowingList,
   triggerGraphRefresh,
 }: ConnectionsListProfilesProps): ReactElement => {
   const navigate = useNavigate();
@@ -36,7 +36,7 @@ const ConnectionsListProfiles = ({
               triggerGraphRefresh={triggerGraphRefresh}
               user={user}
               relationshipStatus={
-                accountFollowing.includes(user.msaId) ? RelationshipStatus.FOLLOWING : RelationshipStatus.NONE
+                accountFollowingList.includes(user.msaId) ? RelationshipStatus.FOLLOWING : RelationshipStatus.NONE
               }
             />
           )}

@@ -9,6 +9,7 @@ import ConnectionsList from '../network/ConnectionsList';
 import { getUserProfile } from '../service/UserProfileService';
 import * as dsnpLink from '../dsnpLink';
 import { getContext } from '../service/AuthService';
+import Connections from '../network/Connections';
 
 interface ProfileProps {
   loggedInAccount: UserAccount;
@@ -27,15 +28,15 @@ export const Profile = ({
 }: ProfileProps): ReactElement => {
   const secondary = profile?.profile?.name || '';
 
-  const [loggedInAccountFollowing, setLoggedInAccountFollowing] = useState<string[]>([]);
+  const [profileFollowingList, setProfileFollowingList] = useState<string[]>([]);
 
-  const getLoggedInAccountGraph = async () => {
-    const following = await dsnpLink.userFollowing(getContext(), { msaId: loggedInAccount.msaId });
-    setLoggedInAccountFollowing(following);
+  const geProfileGraph = async () => {
+    const following = await dsnpLink.userFollowing(getContext(), { msaId: profile.msaId });
+    setProfileFollowingList(following);
   };
 
   useState(() => {
-    getLoggedInAccountGraph();
+    geProfileGraph();
   });
 
   return (
@@ -54,18 +55,16 @@ export const Profile = ({
             <GraphChangeButton
               key={accountFollowing.length}
               user={profile}
-              triggerGraphRefresh={getLoggedInAccountGraph}
+              triggerGraphRefresh={geProfileGraph}
               relationshipStatus={
-                loggedInAccountFollowing.includes(profile.msaId)
-                  ? RelationshipStatus.FOLLOWING
-                  : RelationshipStatus.NONE
+                profileFollowingList.includes(profile.msaId) ? RelationshipStatus.FOLLOWING : RelationshipStatus.NONE
               }
             />
           )}
-          <ConnectionsList
+          <Connections
             triggerGraphRefresh={getGraph}
             account={profile}
-            accountFollowing={accountFollowing || []}
+            accountFollowingList={profileFollowingList || []}
             graphRootUser={profile}
           />
         </>

@@ -35,3 +35,8 @@ export enum RelationshipStatus {
   FOLLOWING,
   NONE,
 }
+
+export enum ConnectionsType {
+  FOLLOWERS = 'FOLLOWERS',
+  FOLLOWING = 'FOLLOWING',
+}

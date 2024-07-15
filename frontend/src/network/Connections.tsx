@@ -1,38 +1,58 @@
-import { Button, Flex, Modal } from 'antd';
+import { Flex } from 'antd';
 import React, { useState } from 'react';
+import { ConnectionsType, User, UserAccount } from '../types';
+import ConnectionsModal from './ConnectionsModal';
+import styles from './ConnectionsList.module.css';
 
-const Connections = () => {
+interface ConnectionsProps {
+  account: UserAccount;
+  accountFollowingList: string[];
+  graphRootUser: User;
+  triggerGraphRefresh: () => void;
+}
+
+const Connections = ({ account, accountFollowingList, graphRootUser, triggerGraphRefresh }: ConnectionsProps) => {
   const [isModalOpen, setIsModalOpen] = useState<boolean>(false);
+  const [connectionsType, setConnectionsType] = useState<ConnectionsType>(ConnectionsType.FOLLOWERS);
 
-  const showModal = () => {
+  const showModal = (type: ConnectionsType) => {
     setIsModalOpen(true);
-  };
-
-  const handleOk = () => {
-    setIsModalOpen(false);
+    setConnectionsType(type);
   };
 
   const handleCancel = () => {
     setIsModalOpen(false);
   };
 
+  console.log('accountFollowing', accountFollowingList);
+
   return (
     <>
-      <Flex>
+      <Flex gap={'large'}>
         <div>
-          <span>31</span>
-          <span>Followers</span>
+          <span className={styles.ConnectionsCount}>{accountFollowingList.length}</span>
+          <span className={styles.ConnectionsOpenModal} onClick={() => showModal(ConnectionsType.FOLLOWING)}>
+            Following
+          </span>
         </div>
         <div>
-          <span>31</span>
-          <span>Following</span>
+          <span className={styles.ConnectionsCount}>?</span>
+          <span className={styles.ConnectionsOpenModal} onClick={() => showModal(ConnectionsType.FOLLOWERS)}>
+            Followers
+          </span>
         </div>
       </Flex>
 
-      <Button type="primary" onClick={showModal}>
-        Open Modal
-      </Button>
-      <Modal title="Basic Modal" open={isModalOpen} onOk={handleOk} onCancel={handleCancel}></Modal>
+      <ConnectionsModal
+        isModalOpen={isModalOpen}
+        handleCancel={handleCancel}
+        triggerGraphRefresh={triggerGraphRefresh}
+        account={account}
+        accountFollowingList={accountFollowingList}
+        connectionsType={connectionsType}
+        setConnectionsType={(type: ConnectionsType) => setConnectionsType(type)}
+        graphRootUser={graphRootUser}
+      />
     </>
   );
 };

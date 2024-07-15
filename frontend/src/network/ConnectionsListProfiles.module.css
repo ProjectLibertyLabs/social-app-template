@@ -8,4 +8,6 @@
   display: flex;
   flex: 1;
   cursor: pointer;
+  font-size: large;
+  font-weight: bold;
 }
