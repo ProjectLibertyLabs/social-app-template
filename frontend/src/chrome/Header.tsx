@@ -26,6 +26,11 @@ const Header = ({ loggedInAccount, login, logout }: HeaderProps): ReactElement =
     }
   };
 
+  const handleLogin = (account: UserAccount, providerInfo: dsnpLink.ProviderResponse) => {
+    navigate('/');
+    login(account, providerInfo);
+  };
+
   return (
     <div className={styles.root}>
       <Flex align={'center'} justify={'space-between'} className={styles.container}>
@@ -43,7 +48,7 @@ const Header = ({ loggedInAccount, login, logout }: HeaderProps): ReactElement =
             {makeDisplayHandle(loggedInAccount.handle)}
           </Popover>
         ) : (
-          <LoginScreen onLogin={login} />
+          <LoginScreen onLogin={handleLogin} />
         )}
       </Flex>
     </div>
