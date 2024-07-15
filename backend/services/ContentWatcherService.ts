@@ -44,6 +44,11 @@ export class ContentWatcherService {
     return this._client;
   }
 
+  /**
+   * Registers a webhook with the specified URL and announcement types.
+   * @param url - The URL of the webhook.
+   * @param announcementTypes - An array of announcement types.
+   */
   public async registerWebhook(url: string, announcementTypes: AnnouncementType[]) {
     try {
       let registeredWebhooks = await this.client.WebhookControllerV1_getRegisteredWebhooks();
@@ -59,11 +64,33 @@ export class ContentWatcherService {
     }
   }
 
+  /**
+   * Resets the scanner for content-watcher.
+   *
+   * @param options - The options for resetting the scanner.
+   */
   public async resetScanner(options: ResetScannerDto) {
     try {
       await this.client.ScanControllerV1_resetScanner(null, options);
     } catch (err) {
       logger.error(err, 'Error resetting content-watcher scan');
+    }
+  }
+
+  /**
+   * Retrieves the scanner ready status of the content-watcher.
+   * @returns A Promise that resolves to a boolean indicating whether the scanner is ready or not.
+   */
+  public async getScannerReadyStatus(): Promise<boolean> {
+    try {
+      const response = await this.client.HealthController_readyz(null);
+      if (response.status === 200) {
+        logger.debug('Content-watcher scanner is ready');
+      }
+      return true;
+    } catch (err) {
+      logger.error(err, 'Error getting content-watcher scanner ready status');
+      return false;
     }
   }
 }

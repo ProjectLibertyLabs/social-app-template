@@ -1,0 +1,259 @@
+x-common-environment: &common-environment
+  FREQUENCY_URL: ${FREQUENCY_URL}
+  FREQUENCY_HTTP_URL: ${FREQUENCY_HTTP_URL}
+  REDIS_URL: 'redis://redis:6379'
+  PROVIDER_ID: ${PROVIDER_ID}
+  PROVIDER_ACCOUNT_SEED_PHRASE: ${PROVIDER_ACCOUNT_SEED_PHRASE}
+  WEBHOOK_BASE_URL: 'http://social-app-template-backend:3001/webhooks'
+  WEBHOOK_FAILURE_THRESHOLD: 3
+  WEBHOOK_RETRY_INTERVAL_SECONDS: 10
+  HEALTH_CHECK_MAX_RETRIES: 4
+  HEALTH_CHECK_MAX_RETRY_INTERVAL_SECONDS: 10
+  HEALTH_CHECK_SUCCESS_THRESHOLD: 10
+  CAPACITY_LIMIT: '{"type":"percentage", "value":80}'
+  SIWF_URL: 'https://amplicalabs.github.io/siwf/ui'
+  SIWF_DOMAIN: 'localhost'
+  IPFS_ENDPOINT: 'http://ipfs:5001'
+  IPFS_GATEWAY_URL: 'https://ipfs.io/ipfs/[CID]'
+  QUEUE_HIGH_WATER: 1000
+  CHAIN_ENVIRONMENT: dev
+  DEBUG: true
+
+x-content-publishing-env: &content-publishing-env
+  START_PROCESS: api
+  FILE_UPLOAD_MAX_SIZE_IN_BYTES: 2000000000
+  ASSET_EXPIRATION_INTERVAL_SECONDS: 300
+  BATCH_INTERVAL_SECONDS: 12
+  BATCH_MAX_COUNT: 1000
+  ASSET_UPLOAD_VERIFICATION_DELAY_SECONDS: 5
+
+x-content-watcher-env: &content-watcher-env
+  IPFS_BASIC_AUTH_SECRET:
+  STARTING_BLOCK: 759882
+  BLOCKCHAIN_SCAN_INTERVAL_SECONDS: 6
+  WEBHOOK_FAILURE_THRESHOLD: 4
+
+x-graph-service-env: &graph-service-env
+  DEBOUNCE_SECONDS: 10
+  GRAPH_ENVIRONMENT_TYPE: Mainnet
+  RECONNECTION_SERVICE_REQUIRED: false
+  PROVIDER_BASE_URL: 'http://social-app-template-backend:3001/webhooks/graph-service'
+
+x-account-service-env: &account-service-env
+  PROVIDER_BASE_URL: 'http://social-app-template-backend:3001/webhooks/account-service'
+
+x-social-app-template-backend: &social-app-template-backend
+  ACCOUNT_SERVICE_URL: 'http://account-service-api:3000'
+  CONTENT_PUBLISHER_URL: 'http://content-publishing-service-api:3000'
+  CONTENT_WATCHER_URL: 'http://content-watcher-service:3000'
+  GRAPH_SERVICE_URL: 'http://graph-service-api:3000'
+  IPFS_UA_GATEWAY_URL: 'http://localhost:8080'
+  NODE_ENV: development
+
+x-social-app-template-frontend: &social-app-template-frontend
+  REACT_APP_BACKEND_URL: 'http://localhost:3001'
+
+services:
+  redis:
+    image: redis:latest
+    ports:
+      - 6379:6379
+    networks:
+      - social-app-backend
+    volumes:
+      - redis_data:/data/redis
+
+  frequency:
+    image: dsnp/instant-seal-node-with-deployed-schemas:latest
+    # We need to specify the platform because it's the only image
+    # built by Frequency at the moment, and auto-pull won't work otherwise
+    platform: linux/amd64
+    # Uncomment SEALING_MODE and SEALING_INTERVAL if you want to use interval sealing.
+    # Other options you may want to add depending on your test scenario.
+    environment:
+      - SEALING_MODE=interval
+      - SEALING_INTERVAL=12
+    #   - CREATE_EMPTY_BLOCKS=true
+    # The 'command' may contain additional CLI options to the Frequency node,
+    # such as:
+    # --state-pruning=archive
+    command: --offchain-worker=always --enable-offchain-indexing=true
+    ports:
+      - 9944:9944
+    networks:
+      - social-app-backend
+    volumes:
+      - chainstorage:/data
+    profiles:
+      - local-node
+
+  ipfs:
+    image: ipfs/kubo:latest
+    ports:
+      - 4001:4001
+      - 5001:5001
+      - 8080:8080
+    networks:
+      - social-app-backend
+    volumes:
+      - ipfs_data:${IPFS_VOLUME}
+
+  content-publishing-service-api:
+    image: amplicalabs/content-publishing-service:latest
+    platform: linux/amd64
+    ports:
+    - ${SERVICE_PORT_0}:3000
+    environment:
+      <<: [*common-environment, *content-publishing-env]
+    depends_on:
+      - redis
+      - ipfs
+    networks:
+      - social-app-backend
+
+  content-publishing-service-worker:
+    image: amplicalabs/content-publishing-service:latest
+    platform: linux/amd64
+    environment:
+      <<: [*common-environment, *content-publishing-env]
+      START_PROCESS: worker
+    depends_on:
+      - redis
+      - ipfs
+    networks:
+      - social-app-backend
+
+  content-watcher-service:
+    image: amplicalabs/content-watcher-service:latest
+    platform: linux/amd64
+    ports:
+    - ${SERVICE_PORT_1}:3000
+    environment:
+      <<: [*common-environment, *content-watcher-env]
+    depends_on:
+      - redis
+      - ipfs
+    networks:
+      - social-app-backend
+
+  graph-service-api:
+    image: amplicalabs/graph-service:latest
+    platform: linux/amd64
+    ports:
+    - ${SERVICE_PORT_2}:3000
+    environment:
+      <<: [*common-environment, *graph-service-env]
+      START_PROCESS: api
+    depends_on:
+      - redis
+    networks:
+      - social-app-backend
+
+  graph-service-worker:
+    image: amplicalabs/graph-service:latest
+    platform: linux/amd64
+    environment:
+      <<: [*common-environment, *graph-service-env]
+      START_PROCESS: worker
+    depends_on:
+      - redis
+    networks:
+      - social-app-backend
+
+  account-service-api:
+    image: amplicalabs/account-service:latest
+    platform: linux/amd64
+    ports:
+    - ${SERVICE_PORT_3}:3000
+    command: api
+    environment:
+      <<: [*common-environment, *account-service-env]
+    depends_on:
+      - redis
+    networks:
+      - social-app-backend
+
+  account-service-worker:
+    image: amplicalabs/account-service:latest
+    platform: linux/amd64
+    command: worker
+    environment:
+      <<: [*common-environment, *account-service-env]
+    depends_on:
+      - redis
+    networks:
+      - social-app-backend
+
+  social-app-template-backend:
+    pull_policy: never
+    image: social-app-backend
+    build:
+      context: ./backend
+      dockerfile: dev.Dockerfile
+      tags:
+        - social-app-backend:latest
+    ports:
+      - 3001:3000
+      - 3002:3001
+
+    environment:
+      <<: [*common-environment, *social-app-template-backend]
+      IPFS_GATEWAY_URL: 'http://ipfs:8080'
+    volumes:
+      - ./backend:/app
+      - backend_node_cache:/app/node_modules
+    networks:
+      - social-app-backend
+    depends_on:
+      - ipfs
+      - content-publishing-service-api
+      - content-publishing-service-worker
+      - content-watcher-service
+      - account-service-api
+      - account-service-worker
+      - graph-service-api
+      - graph-service-worker
+    profiles:
+      - backend
+
+  social-app-template-frontend:
+    pull_policy: never
+    image: social-app-frontend
+    build:
+      context: ./frontend
+      dockerfile: dev.Dockerfile
+      tags:
+        - social-app-frontend:latest
+    ports:
+      - 3000:3000
+
+    environment:
+      <<: *social-app-template-frontend
+    volumes:
+      - ./frontend:/app
+      - frontend_node_cache:/app/node_modules
+    networks:
+      - social-app-backend
+    depends_on:
+      - ipfs
+      - content-publishing-service-api
+      - content-publishing-service-worker
+      - content-watcher-service
+      - account-service-api
+      - account-service-worker
+      - graph-service-api
+      - graph-service-worker
+      - social-app-template-backend
+    profiles:
+      - frontend
+
+volumes:
+  ipfs_data:
+  backend_node_cache:
+  frontend_node_cache:
+  redis_data:
+  chainstorage:
+    external: false
+
+networks:
+  social-app-backend:

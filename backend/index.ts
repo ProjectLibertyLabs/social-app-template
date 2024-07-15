@@ -72,7 +72,19 @@ const _controllers = [
   new WebhookController(privateApp),
 ];
 
-ContentWatcherService.getInstance().then((service) => {
+async function waitForContentWatcherService(service: ContentWatcherService): Promise<void> {
+  let isReady = false;
+  while (!isReady) {
+    isReady = await service.getScannerReadyStatus();
+    await new Promise((resolve) => setTimeout(resolve, 1000));
+  }
+}
+
+ContentWatcherService.getInstance().then(async (service) => {
+  // content-watcher-service may take a few seconds to start up
+  // TODO: readyz should be implemented and wait for microservices to be ready
+  await waitForContentWatcherService(service);
+
   service.registerWebhook(
     `${Config.instance().webhookBaseUrl}/content-watcher/announcements`,
     Object.values(AnnouncementType)
@@ -80,7 +92,7 @@ ContentWatcherService.getInstance().then((service) => {
       .map((v) => v as AnnouncementType)
   );
 
-  service.resetScanner({ immediate: true, rewindOffset: 14_400 });
+  service.resetScanner({ immediate: true, rewindOffset: 600 });
 });
 
 // Swagger UI

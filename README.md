@@ -15,6 +15,7 @@ The Social Application Template (SAT) is an example client app that demonstrates
 - [💻 Getting Started](#-getting-started)
     - [Prerequisites](#prerequisites)
     - [Setup](#setup)
+    - [Quick Start](#quick-start)
     - [Deployment](#deployment)
 - [🤝 Contributing](#-contributing)
 - [❓FAQ](#faq)
@@ -126,6 +127,16 @@ Example commands:
   git clone git@github.com:AmplicaLabs/social-app-template.git
   cd social-app-template
 ```
+
+### Quick Start
+
+Enter the following command and answer the prompts. Press <ENTER> to accept the default values.
+
+```sh
+  ./start-gateway.sh
+```
+
+Note: When connecting to a local Frequency node, you will need to execute `cd backend && npm install` to install the necessary dependencies. See the [Backend Readme](./backend/README.md) for more details.
 
 ### Deployment
 
