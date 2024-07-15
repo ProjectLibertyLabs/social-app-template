@@ -8,19 +8,17 @@ import * as dsnpLink from '../dsnpLink';
 import { getContext } from '../service/AuthService';
 
 type ConnectionsListProps = {
-  account: UserAccount;
+  loggedInAccount: UserAccount;
   accountFollowingList: string[];
-  graphRootUser: User;
+  profile: User;
   triggerGraphRefresh: () => void;
-  isModalOpen: boolean;
 };
 
 const ConnectionsList = ({
-  account,
-  graphRootUser,
+  loggedInAccount,
+  profile,
   accountFollowingList,
   triggerGraphRefresh,
-  isModalOpen,
 }: ConnectionsListProps): ReactElement => {
   const [isLoading, setIsLoading] = useState<boolean>(true);
   const [connectionsList, setConnectionsList] = useState<User[]>([]);
@@ -32,11 +30,11 @@ const ConnectionsList = ({
       accountFollowingList.map((msaId) =>
         dsnpLink.getProfile(ctx, { msaId: msaId }).then(({ handle, fromId, content }) => {
           try {
-            const profile = content ? JSON.parse(content) : {};
+            const connectionProfile = content ? JSON.parse(content) : {};
             return {
               handle: handle!,
               msaId: fromId,
-              profile: profile,
+              profile: connectionProfile,
             };
           } catch (e) {
             console.error(e);
@@ -55,8 +53,8 @@ const ConnectionsList = ({
 
   // Update again when accountFollowing changes.
   useEffect(() => {
-    if (isModalOpen) fetchConnections();
-  }, [graphRootUser, isModalOpen]);
+    fetchConnections();
+  }, [profile]);
 
   return (
     <Spin spinning={isLoading} tip="Loading" size="large">
@@ -64,7 +62,7 @@ const ConnectionsList = ({
         <ConnectionsListProfiles
           key={accountFollowingList.length}
           triggerGraphRefresh={triggerGraphRefresh}
-          account={account}
+          loggedInAccount={loggedInAccount}
           connectionsList={connectionsList}
           accountFollowingList={accountFollowingList}
         />

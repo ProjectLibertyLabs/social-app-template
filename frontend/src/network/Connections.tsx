@@ -5,13 +5,13 @@ import ConnectionsModal from './ConnectionsModal';
 import styles from './ConnectionsList.module.css';
 
 interface ConnectionsProps {
-  account: UserAccount;
   accountFollowingList: string[];
-  graphRootUser: User;
+  loggedInAccount: UserAccount;
+  profile: UserAccount;
   triggerGraphRefresh: () => void;
 }
 
-const Connections = ({ account, accountFollowingList, graphRootUser, triggerGraphRefresh }: ConnectionsProps) => {
+const Connections = ({ loggedInAccount, accountFollowingList, profile, triggerGraphRefresh }: ConnectionsProps) => {
   const [isModalOpen, setIsModalOpen] = useState<boolean>(false);
   const [connectionsType, setConnectionsType] = useState<ConnectionsType>(ConnectionsType.FOLLOWERS);
 
@@ -47,11 +47,11 @@ const Connections = ({ account, accountFollowingList, graphRootUser, triggerGrap
         isModalOpen={isModalOpen}
         handleCancel={handleCancel}
         triggerGraphRefresh={triggerGraphRefresh}
-        account={account}
+        loggedInAccount={loggedInAccount}
         accountFollowingList={accountFollowingList}
         connectionsType={connectionsType}
         setConnectionsType={(type: ConnectionsType) => setConnectionsType(type)}
-        graphRootUser={graphRootUser}
+        profile={profile}
       />
     </>
   );

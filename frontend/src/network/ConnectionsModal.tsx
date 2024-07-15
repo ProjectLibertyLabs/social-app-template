@@ -8,9 +8,9 @@ import styles from './ConnectionsModal.module.css';
 interface ConnectionsModalProps {
   isModalOpen: boolean;
   handleCancel: () => void;
-  account: UserAccount;
+  loggedInAccount: UserAccount;
   accountFollowingList: string[];
-  graphRootUser: User;
+  profile: User;
   triggerGraphRefresh: () => void;
   connectionsType: ConnectionsType;
   setConnectionsType: (type: ConnectionsType) => void;
@@ -19,9 +19,9 @@ interface ConnectionsModalProps {
 const ConnectionsModal = ({
   isModalOpen,
   handleCancel,
-  account,
+  loggedInAccount,
   accountFollowingList,
-  graphRootUser,
+  profile,
   triggerGraphRefresh,
   connectionsType,
   setConnectionsType,
@@ -36,11 +36,10 @@ const ConnectionsModal = ({
       ),
       children: (
         <ConnectionsList
-          account={account}
+          loggedInAccount={loggedInAccount}
           accountFollowingList={accountFollowingList}
-          graphRootUser={graphRootUser}
+          profile={profile}
           triggerGraphRefresh={triggerGraphRefresh}
-          isModalOpen={isModalOpen}
         />
       ),
     },
@@ -53,7 +52,7 @@ const ConnectionsModal = ({
 
   return (
     <Modal
-      title={<span className={styles.title}>{makeDisplayHandle(account.handle)}</span>}
+      title={<span className={styles.title}>{makeDisplayHandle(profile.handle)}</span>}
       open={isModalOpen}
       onCancel={handleCancel}
       okButtonProps={{ style: { display: 'none' } }}

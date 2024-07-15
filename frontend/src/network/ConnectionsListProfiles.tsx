@@ -7,14 +7,14 @@ import styles from './ConnectionsListProfiles.module.css';
 import { useNavigate } from 'react-router-dom';
 
 interface ConnectionsListProfilesProps {
-  account: UserAccount;
+  loggedInAccount: UserAccount;
   connectionsList: User[];
   accountFollowingList: string[];
   triggerGraphRefresh: () => void;
 }
 
 const ConnectionsListProfiles = ({
-  account,
+  loggedInAccount,
   connectionsList,
   accountFollowingList,
   triggerGraphRefresh,
@@ -30,7 +30,7 @@ const ConnectionsListProfiles = ({
             <FromTitle user={user} />
           </div>
           {/* Skip change button for self */}
-          {user.msaId !== account.msaId && (
+          {user.msaId !== loggedInAccount.msaId && (
             <GraphChangeButton
               key={index}
               triggerGraphRefresh={triggerGraphRefresh}
