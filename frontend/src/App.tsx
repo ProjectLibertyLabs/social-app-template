@@ -1,51 +1,30 @@
-import React, { ReactElement, useEffect, useState } from 'react';
+import React, { ReactElement, useState } from 'react';
 import styles from './App.module.css';
-import LoginScreen from './login/LoginScreen';
 
 import useStickyState from './helpers/StickyState';
 
 import * as dsnpLink from './dsnpLink';
-import { Network, User, UserAccount } from './types';
+import { Network, UserAccount } from './types';
 import Header from './chrome/Header';
-import Feed from './Feed';
 import { Col, ConfigProvider, Layout, Row, Spin } from 'antd';
-import { getContext, setAccessToken } from './service/AuthService';
+import { setAccessToken } from './service/AuthService';
 import { Content } from 'antd/es/layout/layout';
-import { getUserProfile } from './service/UserProfileService';
-import { HeaderProfile } from './chrome/HeaderProfile';
 import { setIpfsGateway } from './service/IpfsService';
 import AuthErrorBoundary from './AuthErrorBoundary';
 import FrequencyWaves from './style/frequencyWaves.svg';
+import FeedNav from './content/FeedNav';
+import { BrowserRouter } from 'react-router-dom';
+import PageRoutes from './PageRoutes';
 
 const App = (): ReactElement => {
-  const _fakeUser = {
-    address: '0x',
-    expiresIn: 100,
-    accessToken: '23',
-    handle: 'handle-test',
-    msaId: 1,
-  };
-  const [userAccount, setUserAccount] = useStickyState<UserAccount | undefined>(undefined, 'user-account');
-  const [feedUser, setFeedUser] = useState<User | undefined>();
+  const [loggedInAccount, setLoggedInAccount] = useStickyState<UserAccount | undefined>(undefined, 'user-account');
   const [loading, setLoading] = useState<boolean>(false);
-  const [accountFollowing, setAccountFollowing] = useState<string[] | null>(null);
   const [network, setNetwork] = useState<Network>('testnet');
+  const [isPosting, setIsPosting] = useState<boolean>(false);
+  const [refreshTrigger, setRefreshTrigger] = useState<number>(Date.now());
 
-  const refreshFollowing = async (account: UserAccount) => {
-    const userAccountFollows = await dsnpLink.userFollowing(getContext(), {
-      msaId: account.msaId,
-    });
-    setAccountFollowing(userAccountFollows);
-  };
-
-  useEffect(() => {
-    if (userAccount) {
-      refreshFollowing(userAccount);
-    }
-  }, [userAccount]);
-
-  if (userAccount) {
-    setAccessToken(userAccount.accessToken, userAccount.expires);
+  if (loggedInAccount) {
+    setAccessToken(loggedInAccount.accessToken, loggedInAccount.expires);
   }
 
   const handleLogin = async (account: UserAccount, providerInfo: dsnpLink.ProviderResponse) => {
@@ -53,28 +32,20 @@ const App = (): ReactElement => {
     setAccessToken(account.accessToken, account.expires);
     providerInfo.ipfsGateway && setIpfsGateway(providerInfo.ipfsGateway);
     setNetwork(providerInfo.network);
-    setUserAccount(account);
-    refreshFollowing(account);
+    setLoggedInAccount(account);
     setLoading(false);
   };
 
   const handleLogout = () => {
-    setUserAccount(undefined);
+    setLoggedInAccount(undefined);
   };
 
-  const goToProfile = async (msaId?: string) => {
-    setLoading(true);
-    if (msaId) {
-      const profile = userAccount.msaId === msaId ? userAccount : await getUserProfile(msaId);
-      setFeedUser(profile || undefined);
-    } else {
-      setFeedUser(undefined);
-    }
-    setLoading(false);
-  };
-
-  const triggerGraphRefresh = () => {
-    setTimeout(() => refreshFollowing(userAccount), 14_000);
+  const handleIsPosting = () => {
+    setIsPosting(true);
+    setTimeout(() => {
+      setRefreshTrigger(Date.now());
+      setIsPosting(false);
+    }, 14_000);
   };
 
   return (
@@ -89,39 +60,39 @@ const App = (): ReactElement => {
         },
       }}
     >
-      <Layout className={styles.root}>
-        <Header account={userAccount} logout={handleLogout} />
-        {!userAccount && (
-          <Content className={styles.content}>
-            <LoginScreen onLogin={handleLogin} />
-          </Content>
-        )}
-        {userAccount && (
+      <BrowserRouter>
+        <Layout className={styles.root}>
+          <Header
+            loggedInAccount={loggedInAccount}
+            logout={handleLogout}
+            login={(account: UserAccount, providerInfo: dsnpLink.ProviderResponse) =>
+              handleLogin(account, providerInfo)
+            }
+          />
           <div className={styles.block}>
             <Content className={styles.content}>
               <Spin spinning={loading}>
-                <Row>
-                  <Col sm={24} md={12} lg={24 - 8}>
-                    <AuthErrorBoundary onError={handleLogout}>
-                      <Feed network={network} account={userAccount} user={feedUser} goToProfile={goToProfile} />
-                    </AuthErrorBoundary>
+                <Row gutter={20}>
+                  <Col span={6}>
+                    <FeedNav loggedInAccount={loggedInAccount} handleIsPosting={handleIsPosting} />
                   </Col>
-                  <Col sm={24} md={12} lg={8}>
-                    <HeaderProfile
-                      triggerGraphRefresh={triggerGraphRefresh}
-                      account={userAccount}
-                      accountFollowing={accountFollowing || []}
-                      user={feedUser}
-                      goToProfile={goToProfile}
-                    />
+                  <Col span={18}>
+                    <AuthErrorBoundary onError={() => setLoggedInAccount(undefined)}>
+                      <PageRoutes
+                        loggedInAccount={loggedInAccount}
+                        network={network}
+                        isPosting={isPosting}
+                        refreshTrigger={refreshTrigger}
+                      />
+                    </AuthErrorBoundary>
                   </Col>
                 </Row>
               </Spin>
             </Content>
           </div>
-        )}
-        <img src={FrequencyWaves} alt={'Frequency Waves'} className={styles.waves} />
-      </Layout>
+          <img src={FrequencyWaves} alt={'Frequency Waves'} className={styles.waves} />
+        </Layout>
+      </BrowserRouter>
     </ConfigProvider>
   );
 };

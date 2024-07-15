@@ -23,16 +23,8 @@ const UserAvatar = ({ user, avatarSize }: UserAvatarProps): ReactElement => {
     if (user.profile?.icon) {
       iconURL = user.profile.icon;
     } else {
-      // Used to trace conditions when msaId is undefined
-      // console.log(`REMOVE: DEBUG: UserAvatar:msaId(${user.msaId})`);
-      let msaIdString: string;
-      if (typeof user.msaId !== 'string') {
-        msaIdString = '';
-      } else {
-        msaIdString = user.msaId;
-      }
       iconURL = React.useMemo(
-        () => `data:image/svg+xml;utf8,${encodeURIComponent(minidenticon(msaIdString))}`,
+        () => `data:image/svg+xml;utf8,${encodeURIComponent(minidenticon(user.msaId))}`,
         [user.msaId]
       );
     }

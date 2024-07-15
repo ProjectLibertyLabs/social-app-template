@@ -6,8 +6,6 @@
 }
 
 .root {
-  background-color: var(--feed-bg);
-  border-radius: 10px;
   padding: 16px;
   display: flex;
   flex-direction: column;
@@ -20,30 +18,14 @@
 .header {
   display: flex;
   justify-content: space-between;
-  border-bottom: 2px solid var(--feed-fg);
-  padding-bottom: 12px;
-}
-
-.backArrow {
-  cursor: pointer;
-  background-color: transparent;
-  border-radius: 5px;
-  padding: 0 2px;
-  transition: background-color 0.3s;
-}
-
-.backArrow:hover {
-  background-color: var(--nav-fg);
 }
 
 .navigation {
-  display: flex;
-  align-items: center;
   font-weight: bold;
+  font-size: x-large;
 }
 
 .navigationItem {
-  padding: 0 10px;
   cursor: pointer;
 }
 

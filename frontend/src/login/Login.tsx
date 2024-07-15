@@ -1,11 +1,9 @@
 import React, { ReactElement, useState } from 'react';
 import { Button, Spin, Form } from 'antd';
-import Title from 'antd/es/typography/Title';
 import { getLoginOrRegistrationPayload, setConfig } from '@amplica-labs/siwf';
 
 import * as dsnpLink from '../dsnpLink';
-import { Handle, UserAccount } from '../types';
-import styles from './Login.module.css';
+import { UserAccount } from '../types';
 import { getContext } from '../service/AuthService';
 import { makeDisplayHandle } from '../helpers/DisplayHandle';
 
@@ -184,20 +182,15 @@ const Login = ({ onLogin, providerId, nodeUrl, siwfUrl }: LoginProps): ReactElem
   };
 
   return (
-    <div className={styles.root}>
-      <Title level={2}>Login / Signup to Get Started</Title>
-      <div>
-        <Form layout="vertical" size="large">
-          <Spin tip="Loading" size="large" spinning={isLoading}>
-            <Form.Item label="">
-              <Button type="primary" onClick={handleLogin}>
-                Signup / Login with Frequency
-              </Button>
-            </Form.Item>
-          </Spin>
-        </Form>
-      </div>
-    </div>
+    <Form layout="vertical" size="large">
+      <Spin tip="Loading" size="large" spinning={isLoading}>
+        <Form.Item label="">
+          <Button type="primary" onClick={handleLogin}>
+            Signup / Login with Frequency
+          </Button>
+        </Form.Item>
+      </Spin>
+    </Form>
   );
 };
 

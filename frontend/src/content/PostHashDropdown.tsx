@@ -1,6 +1,6 @@
 import React, { ReactElement, useState } from 'react';
 import { Dropdown } from 'antd';
-import { CopyOutlined, CheckCircleTwoTone } from '@ant-design/icons';
+import { CopyOutlined, CheckCircleTwoTone, EllipsisOutlined } from '@ant-design/icons';
 import { HexString } from '../types';
 import { buildDSNPContentURI } from '../helpers/dsnp';
 import styles from './PostHashDropdown.module.css';
@@ -23,7 +23,17 @@ const PostHashDropdown = ({ hash, fromId, isReply }: PostHashDropdownProps): Rea
     {
       key: '1',
       label: (
-        <div className={styles.menu}>
+        <div
+          className={styles.menu}
+          onClick={(e) => {
+            e.preventDefault();
+            navigator.clipboard.writeText(announcementURI);
+            setIsCopied(true);
+            setTimeout(function () {
+              setIsCopied(false);
+            }, 2000);
+          }}
+        >
           <div className={styles.title}>DSNP Announcement URI:</div>
           {announcementURI}
         </div>
@@ -33,7 +43,7 @@ const PostHashDropdown = ({ hash, fromId, isReply }: PostHashDropdownProps): Rea
 
   return (
     <Dropdown
-      className={isReply ? styles.replyRoot : styles.root}
+      className={styles.root}
       menu={{
         items,
       }}
@@ -41,19 +51,11 @@ const PostHashDropdown = ({ hash, fromId, isReply }: PostHashDropdownProps): Rea
       onOpenChange={(e) => setIsVisible(e)}
       placement="bottomRight"
     >
-      <button
-        className={styles.button}
-        onClick={(e) => {
-          e.preventDefault();
-          navigator.clipboard.writeText(announcementURI);
-          setIsCopied(true);
-          setTimeout(function () {
-            setIsCopied(false);
-          }, 2000);
-        }}
-      >
-        {isCopied ? <CheckCircleTwoTone twoToneColor="#1dcf76" /> : <CopyOutlined />} DSNP URI
-      </button>
+      {isCopied ? (
+        <CheckCircleTwoTone twoToneColor="#1dcf76" style={{ fontSize: '20px' }} />
+      ) : (
+        <EllipsisOutlined style={{ fontSize: '20px' }} />
+      )}
     </Dropdown>
   );
 };

@@ -25,8 +25,8 @@ export type User = {
 export enum FeedTypes {
   MY_FEED,
   DISCOVER,
-  DISPLAY_ID_POSTS,
-  MY_POSTS,
+  MY_PROFILE,
+  OTHER_PROFILE,
 }
 
 export type HexString = string;
