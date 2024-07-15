@@ -9,7 +9,8 @@ interface ConnectionsModalProps {
   isModalOpen: boolean;
   handleCancel: () => void;
   loggedInAccount: UserAccount;
-  accountFollowingList: string[];
+  loggedInAccountConnections: string[];
+  curProfileConnections: string[];
   profile: User;
   triggerGraphRefresh: () => void;
   connectionsType: ConnectionsType;
@@ -20,7 +21,8 @@ const ConnectionsModal = ({
   isModalOpen,
   handleCancel,
   loggedInAccount,
-  accountFollowingList,
+  loggedInAccountConnections,
+  curProfileConnections,
   profile,
   triggerGraphRefresh,
   connectionsType,
@@ -31,13 +33,14 @@ const ConnectionsModal = ({
       key: ConnectionsType.FOLLOWING,
       label: (
         <span>
-          Following <b>{accountFollowingList.length}</b>
+          Following <b>{curProfileConnections.length}</b>
         </span>
       ),
       children: (
         <ConnectionsList
           loggedInAccount={loggedInAccount}
-          accountFollowingList={accountFollowingList}
+          loggedInAccountConnections={loggedInAccountConnections}
+          curProfileConnections={curProfileConnections}
           profile={profile}
           triggerGraphRefresh={triggerGraphRefresh}
         />

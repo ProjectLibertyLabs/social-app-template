@@ -5,44 +5,47 @@ import { FromTitle } from '../content/FromTitle';
 import UserAvatar from '../chrome/UserAvatar';
 import styles from './ConnectionsListProfiles.module.css';
 import { useNavigate } from 'react-router-dom';
+import { Flex } from 'antd';
 
 interface ConnectionsListProfilesProps {
   loggedInAccount: UserAccount;
   connectionsList: User[];
-  accountFollowingList: string[];
+  loggedInAccountConnections: string[];
   triggerGraphRefresh: () => void;
 }
 
 const ConnectionsListProfiles = ({
   loggedInAccount,
   connectionsList,
-  accountFollowingList,
+  loggedInAccountConnections,
   triggerGraphRefresh,
 }: ConnectionsListProfilesProps): ReactElement => {
   const navigate = useNavigate();
 
   return (
-    <>
-      {connectionsList.map((user, index) => (
-        <div className={styles.profile} key={user.msaId}>
-          <UserAvatar user={user} avatarSize="small" />
-          <div className={styles.name} onClick={() => navigate(`/profile/${user.msaId}`)}>
-            <FromTitle user={user} />
+    <Flex gap={'small'} vertical>
+      {connectionsList.map((connectionAccount, index) => (
+        <div className={styles.profile} key={connectionAccount.msaId}>
+          <UserAvatar user={connectionAccount} avatarSize="small" />
+          <div className={styles.name} onClick={() => navigate(`/profile/${connectionAccount.msaId}`)}>
+            <FromTitle user={connectionAccount} />
           </div>
           {/* Skip change button for self */}
-          {user.msaId !== loggedInAccount.msaId && (
+          {connectionAccount.msaId !== loggedInAccount.msaId && (
             <GraphChangeButton
               key={index}
               triggerGraphRefresh={triggerGraphRefresh}
-              user={user}
+              connectionAccount={connectionAccount}
               relationshipStatus={
-                accountFollowingList.includes(user.msaId) ? RelationshipStatus.FOLLOWING : RelationshipStatus.NONE
+                loggedInAccountConnections.includes(connectionAccount.msaId)
+                  ? RelationshipStatus.FOLLOWING
+                  : RelationshipStatus.NONE
               }
             />
           )}
         </div>
       ))}
-    </>
+    </Flex>
   );
 };
 export default ConnectionsListProfiles;

@@ -24,15 +24,7 @@ const ProfilePage = ({ loggedInAccount, network, isPosting, refreshTrigger }: Pr
   };
 
   const [profile, setProfile] = useState<UserAccount>();
-  const [accountFollowing, setAccountFollowing] = useState<string[]>();
   const [isLoading, setIsLoading] = useState<boolean>(false);
-
-  const getGraph = async () => {
-    if (profile?.msaId) {
-      const following = await dsnpLink.userFollowing(getContext(), { msaId: profile.msaId });
-      setAccountFollowing(following);
-    }
-  };
 
   useEffect(() => {
     const msaId = getCurMsa();
@@ -41,7 +33,6 @@ const ProfilePage = ({ loggedInAccount, network, isPosting, refreshTrigger }: Pr
         setIsLoading(true);
         const curProfile = await getUserProfile(msaId);
         curProfile && setProfile(curProfile as UserAccount);
-        await getGraph();
       }
     };
 
@@ -53,13 +44,7 @@ const ProfilePage = ({ loggedInAccount, network, isPosting, refreshTrigger }: Pr
 
   return (
     <Spin tip="Loading" size="large" spinning={isLoading}>
-      <Profile
-        loggedInAccount={loggedInAccount}
-        profile={profile}
-        getGraph={getGraph}
-        isLoading={isLoading}
-        accountFollowing={accountFollowing ?? []}
-      />
+      <Profile loggedInAccount={loggedInAccount} profile={profile} isLoading={isLoading} />
       <Feed
         profile={profile}
         network={network}

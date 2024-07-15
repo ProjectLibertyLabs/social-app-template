@@ -5,6 +5,8 @@ import styles from './Profile.module.css';
 import UserAvatar from '../chrome/UserAvatar';
 import { FromTitle } from '../content/FromTitle';
 import GraphChangeButton from '../network/GraphChangeButton';
+import ConnectionsList from '../network/ConnectionsList';
+import { getUserProfile } from '../service/UserProfileService';
 import * as dsnpLink from '../dsnpLink';
 import { getContext } from '../service/AuthService';
 import Connections from '../network/Connections';
@@ -12,31 +14,31 @@ import Connections from '../network/Connections';
 interface ProfileProps {
   loggedInAccount: UserAccount;
   profile: UserAccount;
-  accountFollowing: string[];
-  getGraph: () => void;
   isLoading: boolean;
 }
 
-export const Profile = ({
-  loggedInAccount,
-  profile,
-  accountFollowing,
-  getGraph,
-  isLoading,
-}: ProfileProps): ReactElement => {
+export const Profile = ({ loggedInAccount, profile, isLoading }: ProfileProps): ReactElement => {
   const secondary = profile?.profile?.name || '';
 
-  const [profileFollowingList, setProfileFollowingList] = useState<string[]>([]);
+  const [loggedInAccountConnections, setLoggedInAccountConnections] = useState<string[]>([]);
+  const [curProfileConnections, setCurProfileConnections] = useState<string[]>([]);
 
-  const geProfileGraph = async () => {
-    console.log(profile.msaId);
-    const following = await dsnpLink.userFollowing(getContext(), { msaId: profile.msaId });
-    setProfileFollowingList(following);
+  const setGraph = async () => {
+    const loggedInAccountFollowing = await dsnpLink.userFollowing(getContext(), { msaId: loggedInAccount.msaId });
+    setLoggedInAccountConnections(loggedInAccountFollowing);
+
+    if (loggedInAccount.msaId === profile.msaId) {
+      setCurProfileConnections(loggedInAccountFollowing);
+      return;
+    } else {
+      const curProfileFollowing = await dsnpLink.userFollowing(getContext(), { msaId: profile.msaId });
+      setCurProfileConnections(curProfileFollowing);
+    }
   };
 
-  useState(() => {
-    geProfileGraph();
-  });
+  useEffect(() => {
+    setGraph();
+  }, [loggedInAccount, profile]);
 
   return (
     <div className={styles.root}>
@@ -52,19 +54,22 @@ export const Profile = ({
           <div>{secondary ? secondary : 'No Profile'}</div>
           {loggedInAccount.msaId !== profile.msaId && (
             <GraphChangeButton
-              key={accountFollowing.length}
-              user={profile}
-              triggerGraphRefresh={geProfileGraph}
+              key={loggedInAccountConnections.length}
+              connectionAccount={profile}
+              triggerGraphRefresh={setGraph}
               relationshipStatus={
-                profileFollowingList.includes(profile.msaId) ? RelationshipStatus.FOLLOWING : RelationshipStatus.NONE
+                loggedInAccountConnections.includes(profile.msaId)
+                  ? RelationshipStatus.FOLLOWING
+                  : RelationshipStatus.NONE
               }
             />
           )}
           <Connections
-            triggerGraphRefresh={getGraph}
+            loggedInAccountConnections={loggedInAccountConnections}
             loggedInAccount={loggedInAccount}
             profile={profile}
-            accountFollowingList={profileFollowingList || []}
+            curProfileConnections={curProfileConnections}
+            triggerGraphRefresh={setGraph}
           />
         </Flex>
       )}

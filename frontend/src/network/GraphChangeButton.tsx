@@ -6,12 +6,16 @@ import { RelationshipStatus, User } from '../types';
 import { getContext } from '../service/AuthService';
 
 interface GraphChangeButtonProps {
-  user: User;
+  connectionAccount: User;
   relationshipStatus: RelationshipStatus;
   triggerGraphRefresh: () => void;
 }
 
-const GraphChangeButton = ({ user, relationshipStatus, triggerGraphRefresh }: GraphChangeButtonProps): ReactElement => {
+const GraphChangeButton = ({
+  connectionAccount,
+  relationshipStatus,
+  triggerGraphRefresh,
+}: GraphChangeButtonProps): ReactElement => {
   const [isUpdating, setIsUpdating] = React.useState<boolean>(false);
 
   const isFollowing = relationshipStatus === RelationshipStatus.FOLLOWING;
@@ -21,9 +25,9 @@ const GraphChangeButton = ({ user, relationshipStatus, triggerGraphRefresh }: Gr
   const changeGraphState = async () => {
     setIsUpdating(true);
     if (isFollowing) {
-      await dsnpLink.graphUnfollow(getContext(), { msaId: user.msaId });
+      await dsnpLink.graphUnfollow(getContext(), { msaId: connectionAccount.msaId });
     } else {
-      await dsnpLink.graphFollow(getContext(), { msaId: user.msaId });
+      await dsnpLink.graphFollow(getContext(), { msaId: connectionAccount.msaId });
     }
     // Defined in App.tsx to refreshFollowing, triggers an api call to /graph/{msaId}/following
     triggerGraphRefresh();

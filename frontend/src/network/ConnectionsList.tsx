@@ -9,7 +9,8 @@ import { getContext } from '../service/AuthService';
 
 type ConnectionsListProps = {
   loggedInAccount: UserAccount;
-  accountFollowingList: string[];
+  loggedInAccountConnections: string[];
+  curProfileConnections: string[];
   profile: User;
   triggerGraphRefresh: () => void;
 };
@@ -17,7 +18,8 @@ type ConnectionsListProps = {
 const ConnectionsList = ({
   loggedInAccount,
   profile,
-  accountFollowingList,
+  loggedInAccountConnections,
+  curProfileConnections,
   triggerGraphRefresh,
 }: ConnectionsListProps): ReactElement => {
   const [isLoading, setIsLoading] = useState<boolean>(true);
@@ -27,14 +29,14 @@ const ConnectionsList = ({
     const ctx = getContext();
 
     const list: User[] = await Promise.all(
-      accountFollowingList.map((msaId) =>
+      curProfileConnections.map((msaId) =>
         dsnpLink.getProfile(ctx, { msaId: msaId }).then(({ handle, fromId, content }) => {
           try {
-            const connectionProfile = content ? JSON.parse(content) : {};
+            const profile = content ? JSON.parse(content) : {};
             return {
               handle: handle!,
               msaId: fromId,
-              profile: connectionProfile,
+              profile: profile,
             };
           } catch (e) {
             console.error(e);
@@ -53,18 +55,19 @@ const ConnectionsList = ({
 
   // Update again when accountFollowing changes.
   useEffect(() => {
+    console.log(profile);
     fetchConnections();
-  }, [profile]);
+  }, [profile, loggedInAccountConnections, curProfileConnections]);
 
   return (
     <Spin spinning={isLoading} tip="Loading" size="large">
       <div className={styles.root}>
         <ConnectionsListProfiles
-          key={accountFollowingList.length}
+          key={loggedInAccountConnections.length}
           triggerGraphRefresh={triggerGraphRefresh}
           loggedInAccount={loggedInAccount}
           connectionsList={connectionsList}
-          accountFollowingList={accountFollowingList}
+          loggedInAccountConnections={loggedInAccountConnections}
         />
       </div>
     </Spin>
