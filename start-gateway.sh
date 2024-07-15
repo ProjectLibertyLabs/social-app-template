@@ -8,7 +8,7 @@ ask_and_save() {
     local default_value=$3
     read -rp $'\n'"${prompt} [${default_value}]: " input
     local value=${input:-$default_value}
-    echo "export $var_name=\"$value\"" >> .env-saved
+    echo "$var_name=\"$value\"" >> .env-saved
 }
 
 # Check for Docker and Docker Compose
@@ -26,6 +26,15 @@ if [ -f .env-saved ]; then
 
 EOI
 else 
+    # Setup some variables for easy port management
+    STARTING_PORT=3010
+    for i in {0..10}
+    do
+    eval SERVICE_PORT_${i}=$(( STARTING_PORT + i ))
+    eval "export SERVICE_PORT_${i}=\${SERVICE_PORT_${i}}"
+    eval "echo SERVICE_PORT_${i}=\${SERVICE_PORT_${i}}" >> .env-saved
+    done
+
     # Create .env-saved file to store environment variables
     cat << EOI
 ****************************************************************************************
@@ -33,11 +42,11 @@ else
 ****************************************************************************************
 
 EOI
-    touch .env-saved
+    echo "COMPOSE_PROJECT_NAME='gateway'" >> .env-saved
     # Ask the user if they want to start on testnet or local
     echo "Do you want to start on Frequency Paseo Testnet [y/n]:"
     read TESTNET_ENV
-    echo "export TESTNET_ENV=\"$TESTNET_ENV\"" >> .env-saved
+    echo "TESTNET_ENV=\"$TESTNET_ENV\"" >> .env-saved
 
     if [[ $TESTNET_ENV =~ ^[Yy]$ ]]
     then

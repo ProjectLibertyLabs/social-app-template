@@ -19,10 +19,10 @@ then
     echo "Removing specified volumes..."
     # Docker volume names are lowercase versions of the directory name
     # In the root directory of the repository, we get from the system directory name
-    docker volume rm $(basename "$(pwd)" | tr '[:upper:]' '[:lower:]')_redis_data
-    docker volume rm $(basename "$(pwd)" | tr '[:upper:]' '[:lower:]')_ipfs_data
-    docker volume rm $(basename "$(pwd)" | tr '[:upper:]' '[:lower:]')_backend_node_cache
-    docker volume rm $(basename "$(pwd)" | tr '[:upper:]' '[:lower:]')_frontend_node_cache
+    docker volume rm ${COMPOSE_PROJECT_NAME}_redis_data
+    docker volume rm ${COMPOSE_PROJECT_NAME}_ipfs_data
+    docker volume rm ${COMPOSE_PROJECT_NAME}_backend_node_cache
+    docker volume rm ${COMPOSE_PROJECT_NAME}_frontend_node_cache
     if [[ ! $TESTNET_ENV =~ ^[Yy]$ ]]
     then
         docker volume rm $(basename "$(pwd)" | tr '[:upper:]' '[:lower:]')_chainstorage
