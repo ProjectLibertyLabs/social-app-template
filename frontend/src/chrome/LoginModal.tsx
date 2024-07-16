@@ -1,9 +1,9 @@
 import { Modal } from 'antd';
-import Login from '../login/Login';
 import React, { useState } from 'react';
 import { UserAccount } from '../types';
 import * as dsnpLink from '../dsnpLink';
 import LoginScreen from '../login/LoginScreen';
+import styles from './LoginModal.module.css';
 
 interface LoginModalProps {
   open: boolean;
@@ -20,7 +20,12 @@ const LoginModal = ({ open, onLogin, handleCancel }: LoginModalProps) => {
   };
 
   return (
-    <Modal open={open} title={'To proceed, please login.'} footer={null} onCancel={onCancel}>
+    <Modal
+      open={open}
+      title={<span className={styles.title}>To proceed, please login.</span>}
+      footer={null}
+      onCancel={onCancel}
+    >
       <LoginScreen onLogin={onLogin} loadingState={loadingState} />
     </Modal>
   );

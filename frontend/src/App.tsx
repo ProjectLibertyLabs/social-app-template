@@ -1,4 +1,4 @@
-import React, { ReactElement, useState } from 'react';
+import React, { ReactElement, useEffect, useState } from 'react';
 import styles from './App.module.css';
 
 import useStickyState from './helpers/StickyState';
@@ -53,6 +53,10 @@ const App = (): ReactElement => {
   const handleCancel = () => {
     setIsLoginModalOpen(false);
   };
+
+  useEffect(() => {
+    if (loggedInAccount) setIsLoginModalOpen(false);
+  }, [loggedInAccount]);
 
   return (
     <ConfigProvider

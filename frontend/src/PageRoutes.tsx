@@ -1,4 +1,4 @@
-import { Route, Routes } from 'react-router-dom';
+import { Navigate, Route, Routes } from 'react-router-dom';
 import Feed from './Feed';
 import { FeedTypes, Network, UserAccount } from './types';
 import ProfilePage from './chrome/ProfilePage';
@@ -29,28 +29,32 @@ const PageRoutes = ({ loggedInAccount, network, isPosting, refreshTrigger, showL
             />
           }
         />
-        <Route
-          path="/my-feed"
-          element={
-            <Feed
-              network={network}
-              feedType={FeedTypes.MY_FEED}
-              isPosting={isPosting}
-              refreshTrigger={refreshTrigger}
+        {loggedInAccount && (
+          <>
+            <Route
+              path="/my-feed"
+              element={
+                <Feed
+                  network={network}
+                  feedType={FeedTypes.MY_FEED}
+                  isPosting={isPosting}
+                  refreshTrigger={refreshTrigger}
+                />
+              }
             />
-          }
-        />
-        <Route
-          path="/profile/:dsnpId"
-          element={
-            <ProfilePage
-              network={network}
-              refreshTrigger={refreshTrigger}
-              isPosting={isPosting}
-              loggedInAccount={loggedInAccount}
+            <Route
+              path="/profile/:dsnpId"
+              element={
+                <ProfilePage
+                  network={network}
+                  refreshTrigger={refreshTrigger}
+                  isPosting={isPosting}
+                  loggedInAccount={loggedInAccount}
+                />
+              }
             />
-          }
-        />
+          </>
+        )}
       </Routes>
     </>
   );
