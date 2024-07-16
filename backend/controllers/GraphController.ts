@@ -44,33 +44,6 @@ export class GraphController extends BaseController {
     }
   }
 
-  /**
-   * Retrieves the list of users that follow a given user.
-   *
-   * @param req - The request object.
-   * @param res - The response object.
-   * @returns A Promise that resolves to the list of users that follow the given user.
-   */
-  public async getFollowers(req: Request, res: Response) {
-    const msaId = req.params?.msaId;
-
-    if (!msaId) {
-      return res.status(HttpStatusCode.NotFound).send();
-    }
-
-    try {
-      const followers = await GraphService.getInstance().then((service) => service.getPublicFollowers(msaId));
-      return res.status(HttpStatusCode.Ok).send(followers);
-    } catch (err) {
-      logger.error({ err }, 'Error getting user followers');
-      if (err instanceof HttpError) {
-        return res.status(err.code).send(err.message);
-      }
-
-      return res.status(HttpStatusCode.InternalServerError).send();
-    }
-  }
-
   public async postFollow(req: Request, res: Response) {
     const msaId = req.headers?.['msaId'];
 
