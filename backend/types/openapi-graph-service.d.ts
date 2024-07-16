@@ -119,6 +119,10 @@ declare namespace Components {
        * Optional array of graph encryption keypairs decrypting/encrypting the above-referenced users private graph
        */
       graphKeyPairs?: GraphKeyPairDto[];
+      /**
+       * Optional URL of a webhook to invoke when the request is complete
+       */
+      webhookUrl?: string;
     }
     export interface UserGraphDto {
       /**
@@ -143,7 +147,7 @@ declare namespace Components {
        *   "5"
        * ]
        */
-      dsnpIds: string[];
+      dsnpIds?: string[];
       /**
        * Webhook URL to call when graph changes for the referenced MSAs are detected
        * example:
@@ -215,10 +219,14 @@ declare namespace Paths {
   }
   namespace WebhooksControllerV1GetWebhooksForMsa {
     namespace Parameters {
+      export type IncludeAll = boolean;
       export type MsaId = string;
     }
     export interface PathParameters {
       msaId: Parameters.MsaId;
+    }
+    export interface QueryParameters {
+      includeAll?: Parameters.IncludeAll;
     }
     namespace Responses {
       export interface $200 {}
@@ -288,7 +296,10 @@ export interface OperationMethods {
    * WebhooksControllerV1_getWebhooksForMsa - Get all registered webhooks for a specific MSA ID
    */
   'WebhooksControllerV1_getWebhooksForMsa'(
-    parameters: Parameters<Paths.WebhooksControllerV1GetWebhooksForMsa.PathParameters>,
+    parameters: Parameters<
+      Paths.WebhooksControllerV1GetWebhooksForMsa.QueryParameters &
+        Paths.WebhooksControllerV1GetWebhooksForMsa.PathParameters
+    >,
     data?: any,
     config?: AxiosRequestConfig
   ): OperationResponse<Paths.WebhooksControllerV1GetWebhooksForMsa.Responses.$200>;
@@ -394,7 +405,10 @@ export interface PathsDictionary {
      * WebhooksControllerV1_getWebhooksForMsa - Get all registered webhooks for a specific MSA ID
      */
     'get'(
-      parameters: Parameters<Paths.WebhooksControllerV1GetWebhooksForMsa.PathParameters>,
+      parameters: Parameters<
+        Paths.WebhooksControllerV1GetWebhooksForMsa.QueryParameters &
+          Paths.WebhooksControllerV1GetWebhooksForMsa.PathParameters
+      >,
       data?: any,
       config?: AxiosRequestConfig
     ): OperationResponse<Paths.WebhooksControllerV1GetWebhooksForMsa.Responses.$200>;

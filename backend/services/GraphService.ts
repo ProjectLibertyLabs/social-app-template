@@ -1,4 +1,5 @@
 import { Components, Client as GraphServiceClient } from '../types/openapi-graph-service';
+import { GraphWebhookService } from './GraphWebhookService';
 import { OpenAPIClientAxios, type Document } from 'openapi-client-axios';
 import openapiJson from '../openapi-specs/graph-service.json' assert { type: 'json' };
 import * as Config from '../config/config';
@@ -7,6 +8,7 @@ import logger from '../logger.js';
 type GraphsQueryParamsDto = Components.Schemas.GraphsQueryParamsDto;
 type UserGraphDto = Components.Schemas.UserGraphDto;
 type ProviderGraphDto = Components.Schemas.ProviderGraphDto;
+type WatchGraphsDto = Components.Schemas.WatchGraphsDto;
 
 export class GraphService {
   private static instance: GraphService;
@@ -43,6 +45,24 @@ export class GraphService {
     return this._client;
   }
 
+  public async registerWebhook(webhookEndpoint: string, msaIds?: string[]): Promise<void> {
+    try {
+      const dto: WatchGraphsDto = {
+        webhookEndpoint,
+      };
+
+      if (msaIds && msaIds.length > 0) {
+        dto.dsnpIds = msaIds;
+      }
+
+      await this.client.WebhooksControllerV1_watchGraphs(null, dto);
+      const webhooks = await this.client.WebhooksControllerV1_getWebhooksForUrl({ url: webhookEndpoint });
+      logger.debug({ webhookEndpoint, watchedGraphs: webhooks.data }, 'Updated registered webhooks for graph-service:');
+    } catch (err: any) {
+      logger.error(`Error registering graph-service webhooks`, err, err?.stack);
+    }
+  }
+
   /**
    * Retrieves the list of public follows for a given MSA ID.
    * @param msaId - The MSA ID for which to retrieve the public follows.
@@ -76,6 +96,7 @@ export class GraphService {
     logger.debug({ actorId, objectId }, 'Follow Request');
     const providerGraphDto: ProviderGraphDto = {
       dsnpId: actorId,
+      webhookUrl: `${Config.instance().webhookBaseUrl}/graph-service/operation-status`,
       connections: {
         data: [
           {
@@ -92,12 +113,14 @@ export class GraphService {
     // We can setup a webhook to listen for the response when the block with this txn is finalized
     // REMOVE: For now we will just assume that the transaction is successful in about 14 seconds
     logger.debug({ response: resp.data }, 'REMOVE: DEBUG: Follow Response');
+    GraphWebhookService.updateOperationByRefId(resp.data.referenceId, 'pending');
   }
 
   public async postUnfollow(actorId: string, objectId: number): Promise<void> {
     logger.debug({ actorId, objectId }, 'Unfollow Request');
     const providerGraphDto: ProviderGraphDto = {
       dsnpId: actorId,
+      webhookUrl: `${Config.instance().webhookBaseUrl}/graph-service/operation-status`,
       connections: {
         data: [
           {
@@ -114,5 +137,6 @@ export class GraphService {
     // We can setup a webhook to listen for the response when the block with this txn is finalized
     // REMOVE: For now we will just assume that the transaction is successful in about 14 seconds
     logger.debug({ response: resp.data }, 'REMOVE: DEBUG: Unfollow Response');
+    GraphWebhookService.updateOperationByRefId(resp.data.referenceId, 'pending');
   }
 }

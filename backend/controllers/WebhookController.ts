@@ -5,7 +5,7 @@ import { AccountServiceWebhook } from '../services/AccountWebhookService';
 import { HttpError } from '../types/HttpError';
 import logger from '../logger';
 import * as ContentRepository from '../repositories/ContentRepository';
-import { GraphServiceWebhook } from '../services/GraphWebhookService';
+import { GraphWebhookService } from '../services/GraphWebhookService';
 
 export class WebhookController extends BaseController {
   constructor(app: Express) {
@@ -15,7 +15,8 @@ export class WebhookController extends BaseController {
   protected initializeRoutes(): void {
     this.router.post('/account-service', this.accountServiceWebhook.bind(this));
     this.router.post('/content-watcher/announcements', this.postAnnouncementsWebhook.bind(this));
-    this.router.post('/graph-service', this.graphServiceWebhook.bind(this));
+    this.router.post('/graph-service/notifications', this.graphServiceNotifications.bind(this));
+    this.router.post('/graph-service/operation-status', this.graphServiceOperationStatus.bind(this));
   }
 
   /**
@@ -39,9 +40,12 @@ export class WebhookController extends BaseController {
       }
     }
   }
-  public async graphServiceWebhook(req: Request, res: Response) {
+  public async graphServiceNotifications(req: Request, res: Response) {
     try {
-      const response = await GraphServiceWebhook.getInstance().then((service) => service.graphServiceWebhook(req.body));
+      logger.debug({ body: req.body }, 'GraphServiceWebhook body');
+      const response = await GraphWebhookService.getInstance().then((service) =>
+        service.processGraphUpdateNotification(req.body)
+      );
       res.send(response).end();
     } catch (err) {
       logger.error({ err }, 'Error handling graph service webhook');
@@ -52,6 +56,22 @@ export class WebhookController extends BaseController {
       }
     }
   }
+
+  public async graphServiceOperationStatus(req: Request, res: Response) {
+    try {
+      logger.debug({ body: req.body }, '/graph-service/operation-status body');
+      const response = await GraphWebhookService.getInstance().then((service) => service.requestRefIdWebhook(req.body));
+      res.send(response).end();
+    } catch (err) {
+      logger.error({ err }, 'Error handling graph-service operation status webhook');
+      if (err instanceof HttpError) {
+        res.status(err.code).send(err.message).end();
+      } else {
+        res.status(HttpStatusCode.InternalServerError).send(err).end();
+      }
+    }
+  }
+
   public postAnnouncementsWebhook(req: Request, res: Response) {
     ContentRepository.add(req.body);
 

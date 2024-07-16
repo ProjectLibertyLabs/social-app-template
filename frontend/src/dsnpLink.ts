@@ -360,7 +360,7 @@ export async function getDiscover<FetcherData>(ctx: r.Context<AuthMethods, Fetch
         queryParams: [
             "newestBlockNumber",
             "oldestBlockNumber"
-        ],
+        ]
     });
     const res = await ctx.sendRequest(req, opts);
     return ctx.handleResponse(res, {});
@@ -420,6 +420,30 @@ export async function userFollowing<FetcherData>(ctx: r.Context<AuthMethods, Fet
 }, opts?: FetcherData): Promise<string[]> {
     const req = await ctx.createRequest({
         path: '/graph/{msaId}/following',
+        params,
+        method: r.HttpMethod.GET,
+        auth: ["tokenAuth"]
+    });
+    const res = await ctx.sendRequest(req, opts);
+    return ctx.handleResponse(res, {});
+}
+/**
+ * Get the status of a previously submitted graph operation by its referenceId
+ */
+export async function graphOperationStatus<FetcherData>(ctx: r.Context<AuthMethods, FetcherData>, params: {
+    referenceId: string;
+}, opts?: FetcherData): Promise<{
+    /**
+     * ReferenceId from the request
+     */
+    referenceId: string;
+    /**
+     * status
+     */
+    status: 'pending' | 'expired' | 'failed' | 'succeeded';
+}> {
+    const req = await ctx.createRequest({
+        path: '/graph/operations/{referenceId}',
         params,
         method: r.HttpMethod.GET,
         auth: ["tokenAuth"]

@@ -21,6 +21,8 @@ import logger from './logger';
 import { WebhookController } from './controllers/WebhookController';
 import { ContentWatcherService } from './services/ContentWatcherService';
 import { AnnouncementType } from './types/content-announcement';
+import { GraphWebhookService } from './services/GraphWebhookService';
+import { GraphService } from './services/GraphService';
 
 // Support BigInt JSON
 (BigInt.prototype as any).toJSON = function () {

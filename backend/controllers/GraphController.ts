@@ -5,6 +5,7 @@ import { GraphService } from '../services/GraphService';
 import { HttpError } from '../types/HttpError';
 import { validateAuthToken } from '../services/TokenAuth';
 import logger from '../logger';
+import { GraphWebhookService } from '../services/GraphWebhookService';
 
 export class GraphController extends BaseController {
   constructor(app: Express) {
@@ -15,6 +16,7 @@ export class GraphController extends BaseController {
     this.router.get('/:msaId/following', validateAuthToken, this.getFollowing.bind(this));
     this.router.post('/:msaId/follow', validateAuthToken, this.postFollow.bind(this));
     this.router.post('/:msaId/unfollow', validateAuthToken, this.postUnfollow.bind(this));
+    this.router.get('/operations/:refId', validateAuthToken, this.getGraphOperationStatus.bind(this));
   }
 
   /**
@@ -90,6 +92,28 @@ export class GraphController extends BaseController {
         return res.status(err.code).send(err.message);
       }
       return res.status(HttpStatusCode.InternalServerError).send(err.message);
+    }
+  }
+
+  public getGraphOperationStatus(req: Request, res: Response) {
+    const refId = req.params?.refId;
+    if (!refId || typeof refId !== 'string') {
+      return res.status(HttpStatusCode.BadRequest).send();
+    }
+
+    try {
+      const status = GraphWebhookService.getOperationStatusByRefId(refId);
+      if (!status) {
+        return res.status(HttpStatusCode.NotFound).send();
+      }
+
+      return res.status(HttpStatusCode.Ok).send({ referenceId: refId, status }).end();
+    } catch (err: any) {
+      logger.error({ err }, 'Error getting graph operation status');
+      if (err instanceof HttpError) {
+        return res.status(err.code).send(err.message).end();
+      }
+      return res.status(HttpStatusCode.InternalServerError).send(err.message).end();
     }
   }
 }

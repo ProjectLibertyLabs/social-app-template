@@ -22,6 +22,8 @@ type SIWFTransactionData = {
 
 export class AccountServiceWebhook {
   private static instance: AccountServiceWebhook;
+  // TODO: this should probably use a limited lifetime cache entry, as the current
+  // implementation can grow unbounded
   public static referenceIdsReceived: Map<string, SIWFTransactionData> = new Map();
   private _client: AccountServiceWebhookClient;
 
