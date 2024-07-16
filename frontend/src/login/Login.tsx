@@ -111,7 +111,8 @@ const Login = ({ onLogin, providerId, nodeUrl, siwfUrl }: LoginProps): ReactElem
           accountResp.handle = resp.handle;
         } catch (e) {
           console.error(`Login.tsx::handleLogin: dsnpLink.authAccount: error: ${e}`);
-          throw new Error(`Account Sign In Failed: (${e})`);
+          setIsLoading(false);
+          return;
         }
         onLogin({
           handle: accountResp.handle,
@@ -143,7 +144,8 @@ const Login = ({ onLogin, providerId, nodeUrl, siwfUrl }: LoginProps): ReactElem
               });
             } catch (e) {
               console.error(`Login.tsx::getMsaIdAndHandle: dsnpLink.authAccount: error: ${e}`);
-              throw new Error(`Account Sign In Failed: (${e})`);
+              setIsLoading(false);
+              return;
             }
 
             if (resp.size === 0) {
