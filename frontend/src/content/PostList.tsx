@@ -71,7 +71,7 @@ const PostList = ({ feedType, profile, refreshTrigger, network, showReplyInput }
   useEffect(() => {
     const getOlder = refreshTrigger === priorTrigger;
     fetchData(getOlder);
-  }, [feedType, profile, refreshTrigger, priorTrigger, network]);
+  }, [feedType, profile, refreshTrigger, priorTrigger]);
 
   const fetchData = async (getOlder: boolean) => {
     const isAddingMore = priorFeedType === feedType;
