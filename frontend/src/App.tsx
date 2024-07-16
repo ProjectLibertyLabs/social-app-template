@@ -6,7 +6,7 @@ import useStickyState from './helpers/StickyState';
 import * as dsnpLink from './dsnpLink';
 import { Network, UserAccount } from './types';
 import Header from './chrome/Header';
-import { Col, ConfigProvider, Layout, Row, Spin } from 'antd';
+import { Col, ConfigProvider, Layout, Modal, Row, Spin } from 'antd';
 import { setAccessToken } from './service/AuthService';
 import { Content } from 'antd/es/layout/layout';
 import { setIpfsGateway } from './service/IpfsService';
@@ -15,6 +15,7 @@ import FrequencyWaves from './style/frequencyWaves.svg';
 import FeedNav from './content/FeedNav';
 import { BrowserRouter } from 'react-router-dom';
 import PageRoutes from './PageRoutes';
+import LoginModal from './chrome/LoginModal';
 
 const App = (): ReactElement => {
   const [loggedInAccount, setLoggedInAccount] = useStickyState<UserAccount | undefined>(undefined, 'user-account');
@@ -22,6 +23,7 @@ const App = (): ReactElement => {
   const [network, setNetwork] = useState<Network>('testnet');
   const [isPosting, setIsPosting] = useState<boolean>(false);
   const [refreshTrigger, setRefreshTrigger] = useState<number>(Date.now());
+  const [isLoginModalOpen, setIsLoginModalOpen] = useState<boolean>(false);
 
   if (loggedInAccount) {
     setAccessToken(loggedInAccount.accessToken, loggedInAccount.expires);
@@ -46,6 +48,10 @@ const App = (): ReactElement => {
       setRefreshTrigger(Date.now());
       setIsPosting(false);
     }, 14_000);
+  };
+
+  const handleCancel = () => {
+    setIsLoginModalOpen(false);
   };
 
   return (
@@ -83,12 +89,14 @@ const App = (): ReactElement => {
                         network={network}
                         isPosting={isPosting}
                         refreshTrigger={refreshTrigger}
+                        showLoginModal={() => setIsLoginModalOpen(true)}
                       />
                     </AuthErrorBoundary>
                   </Col>
                 </Row>
               </Spin>
             </Content>
+            <LoginModal open={isLoginModalOpen} onLogin={handleLogin} handleCancel={handleCancel} />
           </div>
           <img src={FrequencyWaves} alt={'Frequency Waves'} className={styles.waves} />
         </Layout>

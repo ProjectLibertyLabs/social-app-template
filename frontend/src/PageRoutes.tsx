@@ -9,9 +9,10 @@ interface PageRoutesProps {
   network: Network;
   isPosting: boolean;
   refreshTrigger: number;
+  showLoginModal: () => void;
 }
 
-const PageRoutes = ({ loggedInAccount, network, isPosting, refreshTrigger }: PageRoutesProps) => {
+const PageRoutes = ({ loggedInAccount, network, isPosting, refreshTrigger, showLoginModal }: PageRoutesProps) => {
   return (
     <>
       <Routes>
@@ -24,6 +25,7 @@ const PageRoutes = ({ loggedInAccount, network, isPosting, refreshTrigger }: Pag
               isPosting={isPosting}
               refreshTrigger={refreshTrigger}
               showReplyInput={!!loggedInAccount}
+              showLoginModal={showLoginModal}
             />
           }
         />

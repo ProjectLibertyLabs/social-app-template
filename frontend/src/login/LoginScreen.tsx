@@ -12,11 +12,12 @@ const dsnpLinkCtx = process.env.REACT_APP_BACKEND_URL
 
 interface LoginScreenProps {
   onLogin: (account: UserAccount, providerInfo: dsnpLink.ProviderResponse) => void;
+  loadingState?: boolean;
 }
 
-const LoginScreen = ({ onLogin }: LoginScreenProps): ReactElement => {
+const LoginScreen = ({ onLogin, loadingState = true }: LoginScreenProps): ReactElement => {
   // Assume it has a wallet extension until after we have called enable
-  const [isLoading, setIsLoading] = useState(true);
+  const [isLoading, setIsLoading] = useState<boolean>(loadingState);
   const [providerInfo, setProviderInfo] = useState<dsnpLink.ProviderResponse>();
 
   useEffect(() => {
