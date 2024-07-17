@@ -160,7 +160,8 @@ const Login = ({ onLogin, providerId, nodeUrl, siwfUrl }: LoginProps): ReactElem
       console.log(`Start polling for SIWF account creation... timeout:(0)`);
       let SIWFAccountResp = await getMsaIdAndHandle(referenceId, 0);
       let tries = 1;
-      while (SIWFAccountResp === null && tries < 10) {
+      // Increase the timeout to 90 (30 * 3) seconds to allow for the account creation to complete
+      while (SIWFAccountResp === null && tries < 30) {
         console.log('Waiting another 3 seconds before getting the account again...');
         SIWFAccountResp = await getMsaIdAndHandle(referenceId, 3_000);
         tries++;

@@ -12,7 +12,7 @@ ask_and_save() {
 }
 
 # Check for Docker and Docker Compose
-if ! command -v docker &> /dev/null || ! command -v docker-compose &> /dev/null; then
+if ! command -v docker &> /dev/null || ! command -v docker compose &> /dev/null; then
     printf "Docker and Docker Compose are required but not installed. Please install them and try again.\n"
     exit 1
 fi
@@ -20,9 +20,9 @@ fi
 # Load existing .env-saved file if it exists
 if [ -f .env-saved ]; then
     cat << EOI
-****************************************************************************************
-* Loading existing .env-saved file environment values...                             *
-****************************************************************************************
+┏━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━┓
+┃ Loading existing .env-saved file environment values...                                      ┃ 
+┗━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━┛
 
 EOI
 else 
@@ -37,9 +37,9 @@ else
 
     # Create .env-saved file to store environment variables
     cat << EOI
-****************************************************************************************
-* Creating .env-saved file to store environment variables...                         *
-****************************************************************************************
+┏━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━┓
+┃ Creating .env-saved file to store environment variables...                                  ┃
+┗━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━┛
 
 EOI
     echo "COMPOSE_PROJECT_NAME='gateway'" >> .env-saved
@@ -50,7 +50,14 @@ EOI
 
     if [[ $TESTNET_ENV =~ ^[Yy]$ ]]
     then
-        echo -e "\nStarting on testnet..."
+    cat << EOI
+
+┏━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━┓
+┃ Setting defaults for testnet...                                                             ┃ 
+┃ Hit <ENTER> to accept the default value or enter new value and then hit <ENTER>             ┃ 
+┗━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━┛
+
+EOI
         TESTNET_ENV="testnet"
         FREQUENCY_URL="wss://0.rpc.testnet.amplica.io"
         FREQUENCY_HTTP_URL="https://0.rpc.testnet.amplica.io"
@@ -66,19 +73,45 @@ EOI
         PROVIDER_ACCOUNT_SEED_PHRASE="//Alice"
         IPFS_VOLUME="/data/ipfs"
     fi
+    IPFS_ENDPOINT="http://ipfs:5001"
+    IPFS_GATEWAY_URL='https://ipfs.io/ipfs/[CID]'
+    IPFS_BASIC_AUTH_USER=""
+    IPFS_BASIC_AUTH_SECRET=""
+
 
     ask_and_save "FREQUENCY_URL" "Enter the Frequency Testnet RPC URL" "$FREQUENCY_URL"
     ask_and_save "FREQUENCY_HTTP_URL" "Enter the Frequency HTTP Testnet RPC URL" "$FREQUENCY_HTTP_URL"
-    cat << EOI
+cat << EOI
 
-*************************************************************************************************
-* A Provider is required to start the services.                                                 *
-* If you need to become a provider, visit https://provider.frequency.xyz/ to get a Provider ID. *
-*************************************************************************************************
+┏━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━┓
+┃   🔗💠📡                                                                           📡💠🔗   ┃
+┃   🔗💠📡   A Provider is required to start the services.                           📡💠🔗   ┃
+┃   🔗💠📡                                                                           📡💠🔗   ┃
+┃   🔗💠📡   If you need to become a provider, visit                                 📡💠🔗   ┃
+┃   🔗💠📡   https://provider.frequency.xyz/ to get a Provider ID.                   📡💠🔗   ┃
+┃   🔗💠📡                                                                           📡💠🔗   ┃
+┗━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━┛
+
 EOI
     ask_and_save "PROVIDER_ID" "Enter Provider ID" "$PROVIDER_ID"
     ask_and_save "PROVIDER_ACCOUNT_SEED_PHRASE" "Enter Provider Seed Phrase" "$PROVIDER_ACCOUNT_SEED_PHRASE"
-    ask_and_save "IPFS_VOLUME" "Enter the IPFS volume" "$IPFS_VOLUME"
+    cat << EOI
+
+┏━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━┓
+┃ Do you want to change the IPFS settings [y/n]:                                              ┃ 
+┗━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━┛
+
+EOI
+    read CHANGE_IPFS_SETTINGS
+
+    if [[ $CHANGE_IPFS_SETTINGS =~ ^[Yy]$ ]]
+    then
+        ask_and_save "IPFS_VOLUME" "Enter the IPFS volume" "$IPFS_VOLUME"
+        ask_and_save "IPFS_ENDPOINT" "Enter the IPFS Endpoint" "kubo default: $IPFS_ENDPOINT"
+        ask_and_save "IPFS_GATEWAY_URL" "Enter the IPFS Gateway URL" "default public ipfs: $IPFS_GATEWAY_URL"
+        ask_and_save "IPFS_BASIC_AUTH_USER" "Enter the IPFS Basic Auth User" "$IPFS_BASIC_AUTH_USER"
+        ask_and_save "IPFS_BASIC_AUTH_SECRET" "Enter the IPFS Basic Auth Secret" "$IPFS_BASIC_AUTH_SECRET"
+    fi
 fi
 set -a; source .env-saved; set +a
 
@@ -94,9 +127,17 @@ then
 
     # Run npm run local:init 
     echo "Running npm run local:init to provision Provider with capacity, etc..."
-    cd backend && npm run local:init && cd -
+    cd backend && npm run local:init && cd ..
 fi
 
 # Start all services in detached mode
 echo -e "\nStarting all services..."
 docker compose  --profile backend --profile frontend up -d
+
+cat << EOI
+
+┏━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━┓
+┃ 🚀 You can access the Gateway at http://localhost:3000/ 🚀                                  ┃
+┗━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━┛
+EOI
+

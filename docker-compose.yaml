@@ -26,6 +26,8 @@ x-content-publishing-env: &content-publishing-env
   BATCH_INTERVAL_SECONDS: 12
   BATCH_MAX_COUNT: 1000
   ASSET_UPLOAD_VERIFICATION_DELAY_SECONDS: 5
+  IPFS_BASIC_AUTH_USER:
+  IPFS_BASIC_AUTH_SECRET:
 
 x-content-watcher-env: &content-watcher-env
   IPFS_BASIC_AUTH_SECRET:
@@ -101,6 +103,7 @@ services:
   content-publishing-service-api:
     image: amplicalabs/content-publishing-service:latest
     platform: linux/amd64
+    pull_policy: always
     ports:
     - ${SERVICE_PORT_0}:3000
     environment:
@@ -114,6 +117,7 @@ services:
   content-publishing-service-worker:
     image: amplicalabs/content-publishing-service:latest
     platform: linux/amd64
+    pull_policy: always
     environment:
       <<: [*common-environment, *content-publishing-env]
       START_PROCESS: worker
@@ -126,6 +130,7 @@ services:
   content-watcher-service:
     image: amplicalabs/content-watcher-service:latest
     platform: linux/amd64
+    pull_policy: always
     ports:
     - ${SERVICE_PORT_1}:3000
     environment:
@@ -139,6 +144,7 @@ services:
   graph-service-api:
     image: amplicalabs/graph-service:latest
     platform: linux/amd64
+    pull_policy: always
     ports:
     - ${SERVICE_PORT_2}:3000
     environment:
@@ -152,6 +158,7 @@ services:
   graph-service-worker:
     image: amplicalabs/graph-service:latest
     platform: linux/amd64
+    pull_policy: always
     environment:
       <<: [*common-environment, *graph-service-env]
       START_PROCESS: worker
@@ -163,6 +170,7 @@ services:
   account-service-api:
     image: amplicalabs/account-service:latest
     platform: linux/amd64
+    pull_policy: always
     ports:
     - ${SERVICE_PORT_3}:3000
     command: api
@@ -176,6 +184,7 @@ services:
   account-service-worker:
     image: amplicalabs/account-service:latest
     platform: linux/amd64
+    pull_policy: always
     command: worker
     environment:
       <<: [*common-environment, *account-service-env]
