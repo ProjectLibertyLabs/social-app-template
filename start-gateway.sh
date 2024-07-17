@@ -12,7 +12,7 @@ ask_and_save() {
 }
 
 # Check for Docker and Docker Compose
-if ! command -v docker &> /dev/null || ! command -v docker-compose &> /dev/null; then
+if ! command -v docker &> /dev/null || ! command -v docker compose &> /dev/null; then
     printf "Docker and Docker Compose are required but not installed. Please install them and try again.\n"
     exit 1
 fi
@@ -20,9 +20,9 @@ fi
 # Load existing .env-saved file if it exists
 if [ -f .env-saved ]; then
     cat << EOI
-****************************************************************************************
-* Loading existing .env-saved file environment values...                             *
-****************************************************************************************
+┏━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━┓
+┃ Loading existing .env-saved file environment values...                                      ┃ 
+┗━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━┛
 
 EOI
 else 
@@ -37,9 +37,9 @@ else
 
     # Create .env-saved file to store environment variables
     cat << EOI
-****************************************************************************************
-* Creating .env-saved file to store environment variables...                         *
-****************************************************************************************
+┏━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━┓
+┃ Creating .env-saved file to store environment variables...                                  ┃
+┗━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━┛
 
 EOI
     echo "COMPOSE_PROJECT_NAME='gateway'" >> .env-saved
@@ -81,7 +81,7 @@ EOI
 
     ask_and_save "FREQUENCY_URL" "Enter the Frequency Testnet RPC URL" "$FREQUENCY_URL"
     ask_and_save "FREQUENCY_HTTP_URL" "Enter the Frequency HTTP Testnet RPC URL" "$FREQUENCY_HTTP_URL"
-    cat << EOI
+cat << EOI
 
 ┏━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━┓
 ┃   🔗💠📡                                                                           📡💠🔗   ┃
@@ -127,9 +127,17 @@ then
 
     # Run npm run local:init 
     echo "Running npm run local:init to provision Provider with capacity, etc..."
-    cd backend && npm run local:init && cd -
+    cd backend && npm run local:init && cd ..
 fi
 
 # Start all services in detached mode
 echo -e "\nStarting all services..."
 docker compose  --profile backend --profile frontend up -d
+
+cat << EOI
+
+┏━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━┓
+┃ 🚀 You can access the Gateway at http://localhost:3000/ 🚀                                  ┃
+┗━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━┛
+EOI
+
