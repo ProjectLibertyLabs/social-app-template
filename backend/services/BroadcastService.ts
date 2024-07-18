@@ -15,6 +15,7 @@ export class BroadcastService {
         await repository.postBroadcast(msaId, data);
       } else {
         const reply = { ...data, inReplyTo };
+
         await repository.postReply(msaId, reply);
       }
 

@@ -12,6 +12,8 @@ interface ReplyBlockProps {
 }
 
 const ReplyBlock = ({ parentURI, replies, showReplyInput }: ReplyBlockProps): ReactElement => {
+    console.log("replies", replies);
+
   return (
     <>
       <div className={styles.root}>

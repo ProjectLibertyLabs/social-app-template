@@ -57,6 +57,7 @@ const NewPostModal = ({ onSuccess, onCancel, loggedInAccount }: NewPostProps): R
           assets: assetIds,
         }
       );
+      console.log("Created Post: ", response);
       success();
     } catch (e) {
       console.error(e);
