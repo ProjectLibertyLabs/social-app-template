@@ -6,15 +6,19 @@ import logger from '../logger.js';
 export class BroadcastService {
   public static async create(msaId: string, params: PostBroadcastRequest): Promise<PostBroadcastResponse> {
     try {
+      console.log('*****params', params);
       const repository = await ContentPublisherService.getInstance();
       const { assets, content, inReplyTo } = params;
 
       const data = BroadcastDataBuilder.build(content, assets);
+      console.log('*****data', data);
 
       if (!inReplyTo) {
         await repository.postBroadcast(msaId, data);
       } else {
         const reply = { ...data, inReplyTo };
+        console.log('*****creating reply', reply);
+
         await repository.postReply(msaId, reply);
       }
 

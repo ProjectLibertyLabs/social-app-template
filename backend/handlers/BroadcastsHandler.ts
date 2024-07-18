@@ -5,6 +5,7 @@ import { HttpStatusCode } from 'axios';
 
 export async function postBroadcastHandler(msaId: string, body: any) {
   try {
+    console.log({ msaId, body });
     const broadcast = await BroadcastService.create(msaId, body);
 
     return broadcast;

@@ -238,6 +238,8 @@ export async function postAssetsHandler<FetcherData>(ctx: r.Context<AuthMethods,
  * Create a new post
  */
 export async function postBroadcastHandler<FetcherData>(ctx: r.Context<AuthMethods, FetcherData>, params: {}, body: PostBroadcastRequest, opts?: FetcherData): Promise<PostBroadcastResponse> {
+    console.log("****postBroadcastHandler body*******", body);
+
     const req = await ctx.createRequest({
         path: '/broadcasts',
         params,
@@ -245,6 +247,7 @@ export async function postBroadcastHandler<FetcherData>(ctx: r.Context<AuthMetho
         body,
         auth: ["tokenAuth"]
     });
+    console.log("****req*******", req);
     const res = await ctx.sendRequest(req, opts);
     return ctx.handleResponse(res, {});
 }
