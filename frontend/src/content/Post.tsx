@@ -33,6 +33,8 @@ const Post = ({ feedItem, showReplyInput, isProfile, showLoginModal }: PostProps
 
   const attachments: ActivityContentAttachment[] = content.attachment || [];
 
+  console.log("FEED ITEM", feedItem);
+
   return (
     <Card key={feedItem.contentHash} className={styles.card} bordered={true}>
       <Spin tip="Loading" size="large" spinning={isLoading}>
