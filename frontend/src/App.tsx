@@ -62,13 +62,7 @@ const App = (): ReactElement => {
     >
       <BrowserRouter>
         <Layout className={styles.root}>
-          <Header
-            loggedInAccount={loggedInAccount}
-            logout={handleLogout}
-            login={(account: UserAccount, providerInfo: dsnpLink.ProviderResponse) =>
-              handleLogin(account, providerInfo)
-            }
-          />
+          <Header loggedInAccount={loggedInAccount} logout={handleLogout} login={handleLogin} />
           <div className={styles.block}>
             <Content className={styles.content}>
               <Spin spinning={loading}>
