@@ -1,4 +1,5 @@
-import { Client as GraphServiceWebhookClient } from '../types/openapi-account-service';
+import { Client as GraphServiceWebhookClient } from '../types/openapi-graph-service';
+import { GraphChangeNotification, GraphOperationStatus } from '../types/graph-service-webhook';
 import { OpenAPIClientAxios, type Document } from 'openapi-client-axios';
 import openapiJson from '../openapi-specs/account-service.json' assert { type: 'json' };
 import * as Config from '../config/config';
@@ -6,30 +7,28 @@ import { HttpStatusCode } from 'axios';
 import logger from '../logger';
 import { HttpError } from '../types/HttpError';
 
-type GraphServiceWebhookResponse = {
-  referenceId: string;
-  msaId: string;
-  update: string;
-};
-
-type GraphChangeNotification = {
-  msaId: string;
-  update: string;
-};
-
-export class GraphServiceWebhook {
-  private static instance: GraphServiceWebhook;
-  public static referenceIdsReceived: Map<string, GraphChangeNotification> = new Map();
+export class GraphWebhookService {
+  private static instance: GraphWebhookService;
+  private static _referenceIdsPending = new Map<string, string>();
   private _client: GraphServiceWebhookClient;
 
   private constructor() {}
 
-  public static async getInstance(): Promise<GraphServiceWebhook> {
-    if (!GraphServiceWebhook.instance) {
-      GraphServiceWebhook.instance = new GraphServiceWebhook();
-      await GraphServiceWebhook.instance.connect();
+  public static updateOperationByRefId(refId: string, status: string) {
+    logger.debug({ refId, status }, 'Setting graph operation status');
+    GraphWebhookService._referenceIdsPending.set(refId, status);
+  }
+
+  public static getOperationStatusByRefId(refId: string): string | undefined {
+    return GraphWebhookService._referenceIdsPending.get(refId);
+  }
+
+  public static async getInstance(): Promise<GraphWebhookService> {
+    if (!GraphWebhookService.instance) {
+      GraphWebhookService.instance = new GraphWebhookService();
+      await GraphWebhookService.instance.connect();
     }
-    return GraphServiceWebhook.instance;
+    return GraphWebhookService.instance;
   }
 
   private async connect() {
@@ -38,7 +37,7 @@ export class GraphServiceWebhook {
         definition: openapiJson as Document,
         withServer: { url: Config.instance().accountServiceUrl },
       });
-      this._client = await api.init<GraphServiceWebhookClient>();
+      this.client = await api.init<GraphServiceWebhookClient>();
     }
   }
 
@@ -53,22 +52,23 @@ export class GraphServiceWebhook {
     return this._client;
   }
 
+  public processGraphUpdateNotification({ msaId, update }: GraphChangeNotification) {
+    logger.debug({ msaId, update }, 'Received graph update notification');
+    return HttpStatusCode.Ok;
+  }
+
   /**
    * Handles the webhook from the graph service.
    * @param _req - The request object, contains the on-chain data from the graph-service for the referenceId.
    * @param res - The response object.
    */
-  public graphServiceWebhook({ referenceId, msaId, update }: GraphServiceWebhookResponse) {
-    // TODO: This may need to be updated when claim/change handle is implemented
-    if (msaId && update) {
-      GraphServiceWebhook.referenceIdsReceived.set(referenceId, {
-        msaId,
-        update,
-      });
-      logger.debug(`WebhookController:authServiceWebhook: received referenceId: ${referenceId}`);
+  public requestRefIdWebhook({ referenceId, status }: GraphOperationStatus) {
+    if (referenceId && status) {
+      GraphWebhookService.updateOperationByRefId(referenceId, status);
+      logger.debug(`GraphWebhookService:requestRefIdWebhook: received referenceId: ${referenceId}`);
     } else {
       throw new HttpError(HttpStatusCode.BadRequest, 'Missing required fields');
     }
-    return HttpStatusCode.Created;
+    return HttpStatusCode.Ok;
   }
 }

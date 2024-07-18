@@ -133,6 +133,16 @@
             "schema": {
               "type": "string"
             }
+          },
+          {
+            "name": "includeAll",
+            "required": false,
+            "in": "query",
+            "example": true,
+            "description": "Boolean whether to include webhooks registered for 'all' MSAs (default: true)",
+            "schema": {
+              "type": "boolean"
+            }
           }
         ],
         "responses": {
@@ -473,6 +483,10 @@
             "items": {
               "$ref": "#/components/schemas/GraphKeyPairDto"
             }
+          },
+          "webhookUrl": {
+            "type": "string",
+            "description": "Optional URL of a webhook to invoke when the request is complete"
           }
         },
         "required": [
@@ -515,7 +529,6 @@
           }
         },
         "required": [
-          "dsnpIds",
           "webhookEndpoint"
         ]
       }

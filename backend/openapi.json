@@ -299,12 +299,7 @@
     "/content/discover": {
       "get": {
         "operationId": "getDiscover",
-        "summary": "Get the Discovery Feed for the current user, paginated",
-        "security": [
-          {
-            "tokenAuth": []
-          }
-        ],
+        "summary": "Get the Discovery Feed, paginated",
         "parameters": [
           {
             "name": "newestBlockNumber",
@@ -511,6 +506,65 @@
                     "description": "Array of DSNP Ids",
                     "type": "string"
                   }
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/graph/operations/{referenceId}": {
+      "get": {
+        "operationId": "graphOperationStatus",
+        "summary": "Get the status of a previously submitted graph operation by its referenceId",
+        "security": [
+          {
+            "tokenAuth": []
+          }
+        ],
+        "parameters": [
+          {
+            "name": "referenceId",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "401": {
+            "$ref": "#/components/responses/UnauthorizedError"
+          },
+          "404": {
+            "description": "Requested referenceId not found"
+          },
+          "200": {
+            "description": "Successful response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "referenceId": {
+                      "type": "string",
+                      "description": "ReferenceId from the request"
+                    },
+                    "status": {
+                      "title": "status",
+                      "enum": [
+                        "pending",
+                        "expired",
+                        "failed",
+                        "succeeded"
+                      ],
+                      "type": "string"
+                    }
+                  },
+                  "required": [
+                    "referenceId",
+                    "status"
+                  ]
                 }
               }
             }
@@ -803,7 +857,6 @@
               "canonical_base",
               "suffix"
             ]
-
           }
         },
         "required": [
@@ -1077,7 +1130,6 @@
               "canonical_base",
               "suffix"
             ]
-
           }
         },
         "required": [
@@ -1315,7 +1367,6 @@
               "canonical_base",
               "suffix"
             ]
-
           }
         },
         "required": [
