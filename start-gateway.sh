@@ -21,11 +21,11 @@ fi
 if [ -f .env-saved ]; then
     cat << EOI
 ┏━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━┓
-┃ Loading existing .env-saved file environment values...                                      ┃ 
+┃ Loading existing .env-saved file environment values...                                      ┃
 ┗━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━┛
 
 EOI
-else 
+else
     # Setup some variables for easy port management
     STARTING_PORT=3010
     for i in {0..10}
@@ -53,8 +53,8 @@ EOI
     cat << EOI
 
 ┏━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━┓
-┃ Setting defaults for testnet...                                                             ┃ 
-┃ Hit <ENTER> to accept the default value or enter new value and then hit <ENTER>             ┃ 
+┃ Setting defaults for testnet...                                                             ┃
+┃ Hit <ENTER> to accept the default value or enter new value and then hit <ENTER>             ┃
 ┗━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━┛
 
 EOI
@@ -77,6 +77,7 @@ EOI
     IPFS_GATEWAY_URL='https://ipfs.io/ipfs/[CID]'
     IPFS_BASIC_AUTH_USER=""
     IPFS_BASIC_AUTH_SECRET=""
+    IPFS_UA_GATEWAY_URL="http://localhost:8080"
 
 
     ask_and_save "FREQUENCY_URL" "Enter the Frequency Testnet RPC URL" "$FREQUENCY_URL"
@@ -98,7 +99,7 @@ EOI
     cat << EOI
 
 ┏━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━┓
-┃ Do you want to change the IPFS settings [y/n]:                                              ┃ 
+┃ Do you want to change the IPFS settings [y/n]:                                              ┃
 ┗━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━┛
 
 EOI
@@ -111,6 +112,7 @@ EOI
         ask_and_save "IPFS_GATEWAY_URL" "Enter the IPFS Gateway URL" "default public ipfs: $IPFS_GATEWAY_URL"
         ask_and_save "IPFS_BASIC_AUTH_USER" "Enter the IPFS Basic Auth User" "$IPFS_BASIC_AUTH_USER"
         ask_and_save "IPFS_BASIC_AUTH_SECRET" "Enter the IPFS Basic Auth Secret" "$IPFS_BASIC_AUTH_SECRET"
+        ask_and_save "IPFS_UA_GATEWAY_URL" "Enter the browser-resolveable IPFS Gateway URL" "$IPFS_UA_GATEWAY_URL"
     fi
 fi
 set -a; source .env-saved; set +a
@@ -125,7 +127,7 @@ then
     echo "Waiting 15 seconds for Frequency to be ready..."
     sleep 15
 
-    # Run npm run local:init 
+    # Run npm run local:init
     echo "Running npm run local:init to provision Provider with capacity, etc..."
     cd backend && npm run local:init && cd ..
 fi
@@ -140,4 +142,3 @@ cat << EOI
 ┃ 🚀 You can access the Gateway at http://localhost:3000/ 🚀                                  ┃
 ┗━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━┛
 EOI
-

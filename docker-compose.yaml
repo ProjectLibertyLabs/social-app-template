@@ -13,8 +13,10 @@ x-common-environment: &common-environment
   CAPACITY_LIMIT: '{"type":"percentage", "value":80}'
   SIWF_URL: 'https://amplicalabs.github.io/siwf/ui'
   SIWF_DOMAIN: 'localhost'
-  IPFS_ENDPOINT: 'http://ipfs:5001'
-  IPFS_GATEWAY_URL: 'https://ipfs.io/ipfs/[CID]'
+  IPFS_ENDPOINT: ${IPFS_ENDPOINT}
+  IPFS_GATEWAY_URL: ${IPFS_GATEWAY_URL}
+  IPFS_BASIC_AUTH_USER: ${IPFS_BASIC_AUTH_USER}
+  IPFS_BASIC_AUTH_SECRET: ${IPFS_BASIC_AUTH_SECRET}
   QUEUE_HIGH_WATER: 1000
   CHAIN_ENVIRONMENT: dev
   DEBUG: true
@@ -26,11 +28,8 @@ x-content-publishing-env: &content-publishing-env
   BATCH_INTERVAL_SECONDS: 12
   BATCH_MAX_COUNT: 1000
   ASSET_UPLOAD_VERIFICATION_DELAY_SECONDS: 5
-  IPFS_BASIC_AUTH_USER:
-  IPFS_BASIC_AUTH_SECRET:
 
 x-content-watcher-env: &content-watcher-env
-  IPFS_BASIC_AUTH_SECRET:
   STARTING_BLOCK: 759882
   BLOCKCHAIN_SCAN_INTERVAL_SECONDS: 6
   WEBHOOK_FAILURE_THRESHOLD: 4
@@ -42,6 +41,8 @@ x-graph-service-env: &graph-service-env
   PROVIDER_BASE_URL: 'http://social-app-template-backend:3001/webhooks/graph-service'
 
 x-account-service-env: &account-service-env
+  BLOCKCHAIN_SCAN_INTERVAL_SECONDS: 1
+  TRUST_UNFINALIZED_BLOCKS: true
   PROVIDER_BASE_URL: 'http://social-app-template-backend:3001/webhooks/account-service'
 
 x-social-app-template-backend: &social-app-template-backend
@@ -49,7 +50,7 @@ x-social-app-template-backend: &social-app-template-backend
   CONTENT_PUBLISHER_URL: 'http://content-publishing-service-api:3000'
   CONTENT_WATCHER_URL: 'http://content-watcher-service:3000'
   GRAPH_SERVICE_URL: 'http://graph-service-api:3000'
-  IPFS_UA_GATEWAY_URL: 'http://localhost:8080'
+  IPFS_UA_GATEWAY_URL: ${IPFS_UA_GATEWAY_URL}
   NODE_ENV: development
 
 x-social-app-template-frontend: &social-app-template-frontend
@@ -93,19 +94,21 @@ services:
     image: ipfs/kubo:latest
     ports:
       - 4001:4001
-      - 5001:5001
-      - 8080:8080
+      - 127.0.0.1:5001:5001
+      - 127.0.0.1:8080:8080
     networks:
       - social-app-backend
     volumes:
       - ipfs_data:${IPFS_VOLUME}
+    labels:
+      - 'portical.upnp.forward=4401:4401'
 
   content-publishing-service-api:
     image: amplicalabs/content-publishing-service:latest
     platform: linux/amd64
     pull_policy: always
     ports:
-    - ${SERVICE_PORT_0}:3000
+      - ${SERVICE_PORT_0}:3000
     environment:
       <<: [*common-environment, *content-publishing-env]
     depends_on:
@@ -132,7 +135,7 @@ services:
     platform: linux/amd64
     pull_policy: always
     ports:
-    - ${SERVICE_PORT_1}:3000
+      - ${SERVICE_PORT_1}:3000
     environment:
       <<: [*common-environment, *content-watcher-env]
     depends_on:
@@ -146,7 +149,7 @@ services:
     platform: linux/amd64
     pull_policy: always
     ports:
-    - ${SERVICE_PORT_2}:3000
+      - ${SERVICE_PORT_2}:3000
     environment:
       <<: [*common-environment, *graph-service-env]
       START_PROCESS: api
@@ -172,7 +175,7 @@ services:
     platform: linux/amd64
     pull_policy: always
     ports:
-    - ${SERVICE_PORT_3}:3000
+      - ${SERVICE_PORT_3}:3000
     command: api
     environment:
       <<: [*common-environment, *account-service-env]
