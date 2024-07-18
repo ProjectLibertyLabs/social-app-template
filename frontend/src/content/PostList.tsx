@@ -22,11 +22,19 @@ type PostListProps = {
   refreshTrigger: number;
   network: Network;
   showReplyInput: boolean;
+  showLoginModal?: () => void;
 };
 
 type FeedItem = dsnpLink.BroadcastExtended;
 
-const PostList = ({ feedType, profile, refreshTrigger, network, showReplyInput }: PostListProps): ReactElement => {
+const PostList = ({
+  feedType,
+  profile,
+  refreshTrigger,
+  network,
+  showReplyInput,
+  showLoginModal,
+}: PostListProps): ReactElement => {
   const [priorTrigger, setPriorTrigger] = React.useState<number>(refreshTrigger);
   const [priorFeedType, setPriorFeedType] = React.useState<number>(feedType);
   const [priorFeed, setPriorFeed] = React.useState<FeedItem[]>([]);
@@ -129,6 +137,7 @@ const PostList = ({ feedType, profile, refreshTrigger, network, showReplyInput }
               feedItem={feedItem}
               showReplyInput={showReplyInput}
               isProfile={feedType === FeedTypes.MY_PROFILE || feedType === FeedTypes.OTHER_PROFILE}
+              showLoginModal={showLoginModal}
             />
           ))}
           <Space />

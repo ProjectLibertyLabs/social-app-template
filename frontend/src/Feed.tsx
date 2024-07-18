@@ -11,6 +11,7 @@ type FeedProps = {
   feedType: FeedTypes;
   refreshTrigger: number;
   showReplyInput?: boolean;
+  showLoginModal?: () => void;
 };
 
 const Feed = ({
@@ -20,6 +21,7 @@ const Feed = ({
   feedType,
   refreshTrigger,
   showReplyInput = true,
+  showLoginModal,
 }: FeedProps): ReactElement => {
   return (
     <div className={styles.root}>
@@ -30,6 +32,7 @@ const Feed = ({
         feedType={feedType}
         profile={profile}
         showReplyInput={showReplyInput}
+        showLoginModal={showLoginModal}
       />
     </div>
   );

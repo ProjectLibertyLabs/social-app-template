@@ -20,9 +20,10 @@ type PostProps = {
   feedItem: FeedItem;
   showReplyInput: boolean;
   isProfile?: boolean;
+  showLoginModal?: () => void;
 };
 
-const Post = ({ feedItem, showReplyInput, isProfile }: PostProps): ReactElement => {
+const Post = ({ feedItem, showReplyInput, isProfile, showLoginModal }: PostProps): ReactElement => {
   const navigate = useNavigate();
   const { user, isLoading } = useGetUser(feedItem.fromId);
 
@@ -36,11 +37,16 @@ const Post = ({ feedItem, showReplyInput, isProfile }: PostProps): ReactElement 
     <Card key={feedItem.contentHash} className={styles.card} bordered={true}>
       <Spin tip="Loading" size="large" spinning={isLoading}>
         {!isProfile && (
-          <div onClick={() => navigate(`/profile/${feedItem.fromId}`)} className={styles.metaBlock}>
+          <div
+            onClick={() =>
+              showReplyInput ? navigate(`/profile/${feedItem.fromId}`) : showLoginModal && showLoginModal()
+            }
+            className={styles.metaBlock}
+          >
             <Card.Meta
               className={styles.metaInnerBlock}
               avatar={<UserAvatar user={user} avatarSize={'medium'} />}
-              title={<FromTitle user={user} />}
+              title={<FromTitle user={user} showLoginModal={showLoginModal} isLoggedOut={showReplyInput} />}
             />
           </div>
         )}
