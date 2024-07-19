@@ -124,6 +124,10 @@ export class Config {
     return this.configValues['PROVIDER_ACCOUNT_SEED_PHRASE'];
   }
 
+  public get redisUrl() {
+    return this.configValues['REDIS_URL'];
+  }
+
   public get siwfUrl() {
     return this.configValues['SIWF_URL'];
   }

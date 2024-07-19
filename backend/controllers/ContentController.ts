@@ -64,7 +64,7 @@ export class ContentController extends BaseController {
       });
       res.status(HttpStatusCode.Ok).send(response).end();
     } catch (err: any) {
-      logger.error({ err }, 'Error: unable to discover content: ');
+      logger.error({ err }, 'getFeed Error: unable to discover content: ');
       if (err instanceof HttpError) {
         return res.status(err.code).send(err.message || 'Caught error getting feed for current user');
       }
@@ -89,7 +89,7 @@ export class ContentController extends BaseController {
 
       res.status(HttpStatusCode.Ok).send(response).end();
     } catch (err: any) {
-      logger.error({ err }, 'Error: unable to discover content: ');
+      logger.error({ err }, 'getDiscover Error: unable to discover content: ');
       if (err instanceof HttpError) {
         return res
           .status(err.code)

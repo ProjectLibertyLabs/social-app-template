@@ -13,11 +13,13 @@ interface CachedPosts {
 type BlockRange = { from: number; to: number };
 
 async function getPostsForBlockRange({ from, to }: BlockRange): Promise<[number, Post][]> {
-  const messages = ContentRepository.get({
+  logger.debug({ from, to }, 'getPostsForBlockRange');
+  const messages = await ContentRepository.get({
     blockFrom: from,
     blockTo: to,
     announcementTypes: [AnnouncementType.Broadcast],
   });
+  logger.debug({ messages }, 'getPostsForBlockRange: messages');
 
   const posts: [number, Post][] = [];
   // Fetch the parquet files
@@ -121,7 +123,8 @@ export async function getPostsInRange(newestBlockNumber: number, oldestBlockNumb
 
 export async function getSpecificContent(msaId: string, contentHash: string): Promise<Post | undefined> {
   // const post = (Object.values(cache) as [number, Post][]).flatMap(([_, p]) => p).find((p) => p.contentHash === contentHash && p.fromId === msaId);
-  const allContentBlocks = ContentRepository.get({ msaIds: [msaId], contentHash }).map((ann) => ann.blockNumber);
+  const announcements = await ContentRepository.get({ msaIds: [msaId], contentHash });
+  const allContentBlocks = announcements.map((ann) => ann.blockNumber);
   if (!allContentBlocks || !allContentBlocks.length) {
     logger.error({ msaId, contentHash }, 'getSpecificContent: No content found');
     return undefined;
