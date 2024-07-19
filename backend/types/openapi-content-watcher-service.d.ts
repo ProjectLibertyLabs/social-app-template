@@ -17,7 +17,7 @@ declare namespace Components {
        *   19
        * ]
        */
-      schemaIds: number[];
+      schemaIds?: number[];
       /**
        * Specific dsnpIds (msa_id) to watch for
        * example:
@@ -26,25 +26,29 @@ declare namespace Components {
        *   "100001"
        * ]
        */
-      dsnpIds: string[];
+      dsnpIds?: string[];
     }
     export interface ContentSearchRequestDto {
       /**
-       * The starting block number to search from
+       * An optional client-supplied reference ID by which it can identify the result of this search
+       */
+      clientReferenceId?: string;
+      /**
+       * The block number to search (backward) from
        * example:
        * 100
        */
-      startBlock: number;
+      startBlock?: number;
       /**
-       * The ending block number to search to
+       * The number of blocks to scan (backwards)
        * example:
        * 101
        */
-      endBlock: number;
+      blockCount: number;
       /**
        * The schemaIds/dsnpIds to filter by
        */
-      filters: {
+      filters?: {
         /**
          * Specific schema ids to watch for
          * example:
@@ -53,7 +57,7 @@ declare namespace Components {
          *   19
          * ]
          */
-        schemaIds: number[];
+        schemaIds?: number[];
         /**
          * Specific dsnpIds (msa_id) to watch for
          * example:
@@ -62,9 +66,12 @@ declare namespace Components {
          *   "100001"
          * ]
          */
-        dsnpIds: string[];
+        dsnpIds?: string[];
       };
-      id: string;
+      /**
+       * A webhook URL to be notified of the results of this search
+       */
+      webhookUrl: string;
     }
     export interface ResetScannerDto {
       /**

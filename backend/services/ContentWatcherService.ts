@@ -5,7 +5,8 @@ import * as Config from '../config/config';
 import logger from '../logger';
 import { AnnouncementType } from '../types/content-announcement';
 
-type ResetScannerDto = Components.Schemas.ResetScannerDto;
+export type ResetScannerDto = Components.Schemas.ResetScannerDto;
+export type ContentSearchRequestDto = Components.Schemas.ContentSearchRequestDto;
 
 export class ContentWatcherService {
   private static instance: ContentWatcherService;
@@ -91,6 +92,15 @@ export class ContentWatcherService {
     } catch (err) {
       logger.error(err, 'Error getting content-watcher scanner ready status');
       return false;
+    }
+  }
+
+  public async requestContent(options: ContentSearchRequestDto) {
+    try {
+      await this.client.SearchControllerV1_search(null, options);
+      logger.info(options, 'Sent content search request to content-watcher');
+    } catch (err) {
+      logger.error(err, 'Error requesting content from content-watcher');
     }
   }
 }

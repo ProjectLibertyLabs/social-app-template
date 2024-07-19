@@ -51,7 +51,7 @@ export function add(content: AnnouncementResponse) {
 export function get(options?: ContentSearchParametersType): AnnouncementResponse[] {
   return [...contentMap.values()].filter((content) => {
     if (options) {
-      if (options.schemaIds && !options.schemaIds.includes(content.schemaId)) {
+      if (options.schemaIds && !options.schemaIds.includes(content.schemaId.toString())) {
         return false;
       }
 
