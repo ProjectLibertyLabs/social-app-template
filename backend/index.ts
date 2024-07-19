@@ -21,8 +21,7 @@ import logger from './logger';
 import { WebhookController } from './controllers/WebhookController';
 import { ContentWatcherService } from './services/ContentWatcherService';
 import { AnnouncementType } from './types/content-announcement';
-import { GraphWebhookService } from './services/GraphWebhookService';
-import { GraphService } from './services/GraphService';
+import { randomUUID } from 'crypto';
 
 // Support BigInt JSON
 (BigInt.prototype as any).toJSON = function () {
@@ -94,7 +93,11 @@ ContentWatcherService.getInstance().then(async (service) => {
       .map((v) => v as AnnouncementType)
   );
 
-  service.resetScanner({ immediate: true, rewindOffset: 600 });
+  service.requestContent({
+    clientReferenceId: randomUUID(),
+    blockCount: 14_400,
+    webhookUrl: `${Config.instance().webhookBaseUrl}/content-watcher/announcements`,
+  });
 });
 
 // Swagger UI

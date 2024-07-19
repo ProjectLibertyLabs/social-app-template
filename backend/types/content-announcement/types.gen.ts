@@ -18,7 +18,7 @@ export type AnnouncementResponse = {
   /**
    * Identifier for the schema being used or referenced
    */
-  schemaId: string;
+  schemaId: number;
   /**
    * The block number on the blockchain where this announcement was recorded
    */
