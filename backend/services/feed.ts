@@ -14,6 +14,9 @@ export type Post = T.Components.Schemas.BroadcastExtended;
 interface CachedPosts {
   [blockNumber: number]: [number, Post][];
 }
+interface CachedReplies {
+  [blockNumber: number]: [number, any][];
+}
 
 type BlockRange = { from: number; to: number };
 
@@ -43,27 +46,28 @@ async function getRepliesForBlockRange({ from, to }: BlockRange): Promise<[numbe
     blockTo: to,
     announcementTypes: [AnnouncementType.Reply],
   });
+  logger.debug(`getRepliesForBlockRange messages: ${messages}`);
 
-  const posts: [number, Post][] = [];
+  const replies: [number, any][] = [];
   // Fetch the parquet files
   for (const msg of messages) {
-    const post = await getReplyContent(msg);
-    if (post) {
-      posts.push(post);
+    const reply = await getReplyContent(msg);
+    logger.debug(`getRepliesForBlockRange reply: ${reply}`);
+    if (reply) {
+      replies.push(reply);
     }
   }
 
-  // Return the posts
-  return posts;
+  // Return the replies
+  return replies;
 }
 
 async function getRepliesForPost(contentHash: Post['contentHash']): Promise<any[]> {
   // need to check that reply did not come before post using block numbers.
-  logger.debug("****HELLO WORLD!!!", contentHash);
+  logger.debug(`****getRepliesForPost: ${contentHash}`);
   const allContentBlocks = ContentRepository.get({ announcementTypes: [AnnouncementType.Reply] }).map(
     (ann) => ann.blockNumber
   );
-  logger.debug("*****HERE REPLIES", allContentBlocks);
 
   if (!allContentBlocks || !allContentBlocks.length) {
     logger.error({ contentHash, announcementTypes: [AnnouncementType.Reply] }, 'getRepliesForPost: No content found');
@@ -74,15 +78,15 @@ async function getRepliesForPost(contentHash: Post['contentHash']): Promise<any[
   const maxBlock = Math.max(...allContentBlocks);
 
   const allReplies = await getRepliesInRange(minBlock, maxBlock) as any;
-  logger.debug("*****ALL REPLIES", allReplies);
+  logger.debug(`*****ALL REPLIES: ${allReplies}`);
 
   // @ts-ignore
   const repliesForPostIncludes = allReplies.find((r) => r.inRelyTo.includes(contentHash));
   const repliesForPostContains = allReplies.find((r: any) => r.inRelyTo.contains(contentHash));
   const repliesForPostEndsWith = allReplies.find((r: any) => r.inRelyTo.endsWith(contentHash));
-  logger.debug("*****HERE repliesForPost", repliesForPostIncludes);
-  logger.debug("*****HERE repliesForPostContains", repliesForPostContains);
-  logger.debug("*****HERE repliesForPostEndsWith", repliesForPostEndsWith);
+  logger.debug(`*****HERE repliesForPost: ${repliesForPostIncludes}`);
+  logger.debug(`*****HERE repliesForPostContains: ${repliesForPostContains}`);
+  logger.debug(`*****HERE repliesForPostEndsWith: ${repliesForPostEndsWith}`);
 
   return repliesForPostEndsWith;
 }
@@ -95,6 +99,10 @@ async function getPostContent(msg: AnnouncementResponse): Promise<[number, Post]
       responseType: 'text',
       timeout: 10000,
     });
+
+    const replies = await getRepliesForPost(announcement.contentHash);
+    logger.debug("*** FEED REPLIES ***", replies);
+
     return [
       msg.blockNumber,
       {
@@ -102,7 +110,7 @@ async function getPostContent(msg: AnnouncementResponse): Promise<[number, Post]
         contentHash: announcement.contentHash,
         content: postResp.data as string,
         timestamp: new Date().toISOString(), // TODO: Use Block timestamp
-        replies: await getRepliesForPost(announcement.contentHash), // TODO: Support replies
+        replies: replies,
       },
     ];
   } catch (err) {
@@ -117,17 +125,19 @@ async function getReplyContent(msg: AnnouncementResponse): Promise<[number, any]
   try {
     const announcement = msg.announcement as ReplyAnnouncement;
     // TODO: Validate Hash
-    const postResp = await axios.get(translateContentUrl(announcement.url), {
+    const replyResp = await axios.get(translateContentUrl(announcement.url), {
       responseType: 'text',
       timeout: 10000,
     });
+
+    logger.debug(`announcement announcement: ${announcement}`)
     return [
       msg.blockNumber,
       {
         fromId: announcement.fromId,
         contentHash: announcement.contentHash,
         inReplyTo: announcement.inReplyTo,
-        content: postResp.data as string,
+        content: replyResp.data as string,
         timestamp: new Date().toISOString(), // TODO: Use Block timestamp
       },
     ];
@@ -164,7 +174,7 @@ export async function fetchAndCachePosts(newestBlockNumber: number, oldestBlockN
     (_x, i) => oldestBlockNumber + i
   )
     // Skip those already in the cache
-    .filter((x) => !(x in cache))
+    .filter((x) => !(x in cachedPosts))
     // Create ranges
     // TODO: Handle single block requests
     .reduce(toRanges, []);
@@ -178,7 +188,7 @@ export async function fetchAndCachePosts(newestBlockNumber: number, oldestBlockN
       // Post announcements (a trigger for storing content) can come after the block is initially fetched.
       // If cached while empty, the new posts will not be found and then not show in the feed.
       if (blockPosts.length > 0) {
-        cache[i] = blockPosts;
+        cachedPosts[i] = blockPosts;
       }
     }
   }
@@ -191,28 +201,29 @@ export async function fetchAndCacheReplies(newestBlockNumber: number, oldestBloc
     (_x, i) => oldestBlockNumber + i
   )
     // Skip those already in the cache
-    .filter((x) => !(x in cache))
+    .filter((x) => !(x in cachedReplies))
     // Create ranges
     // TODO: Handle single block requests
     .reduce(toRanges, []);
 
   for (const range of ranges) {
     // Cache the posts for each range and apply to the cache
-    const posts = await getRepliesForBlockRange(range);
+    const replies = await getRepliesForBlockRange(range);
     for (let i = range.from; i <= range.to; i++) {
-      const blockPosts = posts.filter(([n]) => n === i);
+      const blockReplies = replies.filter(([n]) => n === i);
       // Do not cache empty blocks
       // Post announcements (a trigger for storing content) can come after the block is initially fetched.
       // If cached while empty, the new posts will not be found and then not show in the feed.
-      if (blockPosts.length > 0) {
-        cache[i] = blockPosts;
+      if (blockReplies.length > 0) {
+        cachedReplies[i] = blockReplies;
       }
     }
   }
 }
 
 // Object map
-const cache: CachedPosts = {};
+const cachedPosts: CachedPosts = {};
+const cachedReplies: CachedReplies = {};
 
 export async function getPostsInRange(newestBlockNumber: number, oldestBlockNumber: number): Promise<Post[]> {
   // Trigger the fetch and caching
@@ -220,7 +231,7 @@ export async function getPostsInRange(newestBlockNumber: number, oldestBlockNumb
 
   const posts: Post[] = [];
   for (let i = newestBlockNumber; i >= oldestBlockNumber; i--) {
-    const blockPosts = (cache?.[i] || []).map(([_x, p]) => p);
+    const blockPosts = (cachedPosts?.[i] || []).map(([_x, p]) => p);
     posts.push(...blockPosts);
   }
   logger.debug({ newestBlockNumber, oldestBlockNumber, posts }, 'getPostsInRange');
@@ -231,13 +242,13 @@ export async function getRepliesInRange(newestBlockNumber: number, oldestBlockNu
   // Trigger the fetch and caching
   await fetchAndCacheReplies(newestBlockNumber, oldestBlockNumber);
 
-  const posts: Post[] = [];
+  const replies: any[] = [];
   for (let i = newestBlockNumber; i >= oldestBlockNumber; i--) {
-    const blockPosts = (cache?.[i] || []).map(([_x, p]) => p);
-    posts.push(...blockPosts);
+    const blockReplies = (cachedReplies?.[i] || []).map(([_x, p]) => p);
+    replies.push(...blockReplies);
   }
-  logger.debug({ newestBlockNumber, oldestBlockNumber, posts }, 'getRepliesInRange');
-  return posts;
+  logger.debug({ newestBlockNumber, oldestBlockNumber, replies }, 'getRepliesInRange');
+  return replies;
 }
 
 export async function getSpecificContent(msaId: string, contentHash: string): Promise<Post | undefined> {
