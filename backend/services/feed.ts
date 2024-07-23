@@ -46,13 +46,13 @@ async function getRepliesForBlockRange({ from, to }: BlockRange): Promise<[numbe
     blockTo: to,
     announcementTypes: [AnnouncementType.Reply],
   });
-  logger.debug(`getRepliesForBlockRange messages: ${messages}`);
+  logger.debug({messages}, `getRepliesForBlockRange messages`);
 
   const replies: [number, any][] = [];
   // Fetch the parquet files
   for (const msg of messages) {
     const reply = await getReplyContent(msg);
-    logger.debug(`getRepliesForBlockRange reply: ${reply}`);
+    logger.debug({reply}, "getRepliesForBlockRange reply");
     if (reply) {
       replies.push(reply);
     }
@@ -62,33 +62,72 @@ async function getRepliesForBlockRange({ from, to }: BlockRange): Promise<[numbe
   return replies;
 }
 
-async function getRepliesForPost(contentHash: Post['contentHash']): Promise<any[]> {
-  // need to check that reply did not come before post using block numbers.
-  logger.debug(`****getRepliesForPost: ${contentHash}`);
-  const allContentBlocks = ContentRepository.get({ announcementTypes: [AnnouncementType.Reply] }).map(
-    (ann) => ann.blockNumber
-  );
-
-  if (!allContentBlocks || !allContentBlocks.length) {
-    logger.error({ contentHash, announcementTypes: [AnnouncementType.Reply] }, 'getRepliesForPost: No content found');
-    return [];
+async function getRepliesForPost(contentHash: Post['contentHash']) {
+  // logger.debug({cachedReplies}, "getRepliesForPost cachedReplies");
+  const cachedRepliesLocal: CachedReplies = {
+   "847969": [
+    [
+      847969,
+      {
+        fromId: 6400,
+         contentHash: "z4JyWUsG7do8Z8fQvjUP3V1ofjvbeZ9VQdLTJg4YhbKubGGvdiftWarcgp3WtadR5Eds29QDiwGxyk",
+         inReplyTo: "dsnp://6400/f7a387a666654426b36726159595a6634413551476e7a76466d44734b444178613452654d456a4e36594a4a6f596472653566527054527945",
+         content: "{\"@context\":\"https://www.w3.org/ns/activitystreams\",\"type\":\"Note\",\"mediaType\":\"text/plain\",\"published\":\"2024-07-22T23:25:39.680Z\",\"content\":\"reply!\",\"location\":null,\"tag\":[],\"attachment\":[]}",
+         timestamp: "2024-07-23T02:15:38.843Z"
+      }
+    ]
+   ]
   }
 
-  const minBlock = Math.min(...allContentBlocks);
-  const maxBlock = Math.max(...allContentBlocks);
+  if (Object.keys(cachedRepliesLocal).length === 0) return [];
 
-  const allReplies = await getRepliesInRange(minBlock, maxBlock) as any;
-  logger.debug(`*****ALL REPLIES: ${allReplies}`);
+  for (const blockNumber in cachedRepliesLocal) {
+    const blockArray = cachedRepliesLocal[blockNumber];
 
-  // @ts-ignore
-  const repliesForPostIncludes = allReplies.find((r) => r.inRelyTo.includes(contentHash));
-  const repliesForPostContains = allReplies.find((r: any) => r.inRelyTo.contains(contentHash));
-  const repliesForPostEndsWith = allReplies.find((r: any) => r.inRelyTo.endsWith(contentHash));
-  logger.debug(`*****HERE repliesForPost: ${repliesForPostIncludes}`);
-  logger.debug(`*****HERE repliesForPostContains: ${repliesForPostContains}`);
-  logger.debug(`*****HERE repliesForPostEndsWith: ${repliesForPostEndsWith}`);
+    for (const item of blockArray) {
+      logger.debug({item}, "getRepliesForPost item");
 
-  return repliesForPostEndsWith;
+      const nestedObject: string = item[1].inReplyTo;
+      logger.debug({nestedObject}, "getRepliesForPost nestedObject.inReplyTo");
+      logger.debug({contentHash}, "contentHash");
+
+      const isGood = nestedObject.endsWith(contentHash);
+      logger.debug({isGood}, "getRepliesForPost isGood");
+
+
+      if (nestedObject.endsWith("f7a387a666654426b36726159595a6634413551476e7a76466d44734b444178613452654d456a4e36594a4a6f596472653566527054527945")) {
+        return item;
+      }
+    }
+  }
+
+  return []; // If no matching item is found
+
+  // // need to check that reply did not come before post using block numbers.
+  // logger.debug(`****getRepliesForPost: ${contentHash}`);
+  // const allContentBlocks = ContentRepository.get({ announcementTypes: [AnnouncementType.Reply] }).map(
+  //   (ann) => ann.blockNumber
+  // );
+  //
+  // if (!allContentBlocks || !allContentBlocks.length) {
+  //   logger.error({ contentHash, announcementTypes: [AnnouncementType.Reply] }, 'getRepliesForPost: No content found');
+  //   return [];
+  // }
+  //
+  // const minBlock = Math.min(...allContentBlocks);
+  // const maxBlock = Math.max(...allContentBlocks);
+  //
+  // const allReplies = await getRepliesInRange(minBlock, maxBlock) as any;
+  // logger.debug({allReplies}, `*****ALL REPLIES`);
+  //
+  // // @ts-ignore
+  // const repliesForPostContains = allReplies.find((r: any) => r?.inRelyTo?.contains(contentHash));
+  // const repliesForPostEndsWith = (cachedReplies as any).find((r: any) => r?.inRelyTo?.endsWith(contentHash));
+  // logger.debug(`*****HERE repliesForPostContains: ${JSON.stringify(repliesForPostContains || {})}`);
+  // logger.debug(`*****HERE repliesForPostEndsWith: ${JSON.stringify(repliesForPostEndsWith || {})}`);
+
+
+  // return repliesForPostEndsWith;
 }
 
 async function getPostContent(msg: AnnouncementResponse): Promise<[number, Post] | undefined> {
@@ -130,7 +169,7 @@ async function getReplyContent(msg: AnnouncementResponse): Promise<[number, any]
       timeout: 10000,
     });
 
-    logger.debug(`announcement announcement: ${announcement}`)
+    logger.debug(`announcement announcement: ${announcement}`);
     return [
       msg.blockNumber,
       {
@@ -205,10 +244,13 @@ export async function fetchAndCacheReplies(newestBlockNumber: number, oldestBloc
     // Create ranges
     // TODO: Handle single block requests
     .reduce(toRanges, []);
+  logger.debug({ranges}, "here ranges");
+
 
   for (const range of ranges) {
     // Cache the posts for each range and apply to the cache
     const replies = await getRepliesForBlockRange(range);
+    logger.debug({replies}, "here replies");
     for (let i = range.from; i <= range.to; i++) {
       const blockReplies = replies.filter(([n]) => n === i);
       // Do not cache empty blocks
@@ -227,7 +269,9 @@ const cachedReplies: CachedReplies = {};
 
 export async function getPostsInRange(newestBlockNumber: number, oldestBlockNumber: number): Promise<Post[]> {
   // Trigger the fetch and caching
+  // await fetchAndCacheReplies(newestBlockNumber, oldestBlockNumber);
   await fetchAndCachePosts(newestBlockNumber, oldestBlockNumber);
+  logger.debug({cachedReplies}, 'cachedReplies***')
 
   const posts: Post[] = [];
   for (let i = newestBlockNumber; i >= oldestBlockNumber; i--) {
