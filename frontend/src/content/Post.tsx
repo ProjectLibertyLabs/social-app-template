@@ -28,15 +28,12 @@ const Post = ({ feedItem, showReplyInput, isProfile, showLoginModal }: PostProps
   const { user, isLoading } = useGetUser(feedItem.fromId);
 
   console.log("FeedItem", feedItem);
-  if(!feedItem?.content) return <></>;
 
   const content = JSON.parse(feedItem?.content) as ActivityContentNote;
 
   // TODO: validate content as ActivityContentNote or have DSNP Link do it
 
   const attachments: ActivityContentAttachment[] = content.attachment || [];
-
-  console.log("FEED ITEM", feedItem);
 
   return (
     <Card key={feedItem.contentHash} className={styles.card} bordered={true}>

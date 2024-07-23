@@ -34,10 +34,15 @@ const FeedNav = ({ handleIsPosting, loggedInAccount }: FeedNavProps) => {
     }
   };
 
+  const handleNav = (path: string) => {
+    navigate(path);
+    // TODO: get the scroll to stay at top after nav instead of going to last loaded post.
+  }
+
   return (
     <nav className={styles.navigation}>
       <Flex gap={'large'} vertical={true}>
-        <div className={feedNavClassName('/')} onClick={() => navigate('/')}>
+        <div className={feedNavClassName('/')} onClick={() => handleNav('/')}>
           <Flex gap={'small'}>
             <CompassOutlined />
             Discover
@@ -45,13 +50,13 @@ const FeedNav = ({ handleIsPosting, loggedInAccount }: FeedNavProps) => {
         </div>
         {loggedInAccount && (
           <>
-            <div className={feedNavClassName('/my-feed')} onClick={() => navigate('/my-feed')}>
+            <div className={feedNavClassName('/my-feed')} onClick={() => handleNav('/my-feed')}>
               <Flex gap={'small'}>
                 <HomeOutlined />
                 My Feed
               </Flex>
             </div>
-            <div className={feedNavClassName('/profile')} onClick={() => navigate(`/profile/${loggedInAccount.msaId}`)}>
+            <div className={feedNavClassName('/profile')} onClick={() => handleNav(`/profile/${loggedInAccount.msaId}`)}>
               <Flex gap={'small'}>
                 <UserOutlined />
                 Profile
