@@ -3,12 +3,12 @@
 
 # Function to ask for input with a default value and write to .env-saved
 ask_and_save() {
-    local var_name=$1
-    local prompt=$2
-    local default_value=$3
+    local var_name=${1}
+    local prompt=${2}
+    local default_value=${3}
     read -rp $'\n'"${prompt} [${default_value}]: " input
     local value=${input:-$default_value}
-    echo "$var_name=\"$value\"" >> .env-saved
+    echo "${var_name}=\"${value}\"" >> .env-saved
 }
 
 # Check for Docker and Docker Compose
@@ -19,13 +19,30 @@ fi
 
 # Load existing .env-saved file if it exists
 if [ -f .env-saved ]; then
-    cat << EOI
+    echo -e "Found saved environment from a previous run:\n"
+    cat .env-saved
+    echo
+    read -p  "Do you want to re-use the saved paramters? [y/N]: " REUSE_SAVED
+
+    if [[ ${REUSE_SAVED} =~ ^[Yy] ]]
+    then
+        cat << EOI
 ┏━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━┓
 ┃ Loading existing .env-saved file environment values...                                      ┃
 ┗━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━┛
-
 EOI
-else
+    else
+        cat << EOI
+┏━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━┓
+┃ Removing previous saved environment...                                                      |
+┗━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━┛
+EOI
+    rm .env-saved
+    fi
+fi
+
+if [ ! -f .env-saved ]
+then
     # Setup some variables for easy port management
     STARTING_PORT=3010
     for i in {0..10}
@@ -58,30 +75,31 @@ EOI
 ┗━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━┛
 
 EOI
-        TESTNET_ENV="testnet"
-        FREQUENCY_URL="wss://0.rpc.testnet.amplica.io"
-        FREQUENCY_HTTP_URL="https://0.rpc.testnet.amplica.io"
-        PROVIDER_ID="729"
-        PROVIDER_ACCOUNT_SEED_PHRASE="DEFAULT seed phrase needed"
-        IPFS_VOLUME="/data/ipfs"
+        DEFAULT_TESTNET_ENV="testnet"
+        DEFAULT_FREQUENCY_URL="wss://0.rpc.testnet.amplica.io"
+        DEFAULT_FREQUENCY_HTTP_URL="https://0.rpc.testnet.amplica.io"
+        DEFAULT_PROVIDER_ID="729"
+        DEFAULT_PROVIDER_ACCOUNT_SEED_PHRASE="DEFAULT seed phrase needed"
+        DEFAULT_IPFS_VOLUME="/data/ipfs"
     else
         echo -e "\nStarting on local..."
-        TESTNET_ENV="local"
-        FREQUENCY_URL="ws://frequency:9944"
-        FREQUENCY_HTTP_URL="http://localhost:9944"
-        PROVIDER_ID="1"
-        PROVIDER_ACCOUNT_SEED_PHRASE="//Alice"
-        IPFS_VOLUME="/data/ipfs"
+        DEFAULT_TESTNET_ENV="local"
+        DEFAULT_FREQUENCY_URL="ws://frequency:9944"
+        DEFAULT_FREQUENCY_HTTP_URL="http://localhost:9944"
+        DEFAULT_PROVIDER_ID="1"
+        DEFAULT_PROVIDER_ACCOUNT_SEED_PHRASE="//Alice"
+        DEFAULT_IPFS_VOLUME="/data/ipfs"
     fi
-    IPFS_ENDPOINT="http://ipfs:5001"
-    IPFS_GATEWAY_URL='https://ipfs.io/ipfs/[CID]'
-    IPFS_BASIC_AUTH_USER=""
-    IPFS_BASIC_AUTH_SECRET=""
-    IPFS_UA_GATEWAY_URL="http://localhost:8080"
+    DEFAULT_IPFS_ENDPOINT="http://ipfs:5001"
+    DEFAULT_IPFS_GATEWAY_URL='https://ipfs.io/ipfs/[CID]'
+    DEFAULT_IPFS_BASIC_AUTH_USER=""
+    DEFAULT_IPFS_BASIC_AUTH_SECRET=""
+    DEFAULT_IPFS_UA_GATEWAY_URL="http://localhost:8080"
+    DEFAULT_CONTENT_DB_VOLUME="./backend/db"
 
 
-    ask_and_save "FREQUENCY_URL" "Enter the Frequency Testnet RPC URL" "$FREQUENCY_URL"
-    ask_and_save "FREQUENCY_HTTP_URL" "Enter the Frequency HTTP Testnet RPC URL" "$FREQUENCY_HTTP_URL"
+    ask_and_save FREQUENCY_URL "Enter the Frequency Testnet RPC URL" "$DEFAULT_FREQUENCY_URL"
+    ask_and_save FREQUENCY_HTTP_URL "Enter the Frequency HTTP Testnet RPC URL" "$DEFAULT_FREQUENCY_HTTP_URL"
 cat << EOI
 
 ┏━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━┓
@@ -94,8 +112,8 @@ cat << EOI
 ┗━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━┛
 
 EOI
-    ask_and_save "PROVIDER_ID" "Enter Provider ID" "$PROVIDER_ID"
-    ask_and_save "PROVIDER_ACCOUNT_SEED_PHRASE" "Enter Provider Seed Phrase" "$PROVIDER_ACCOUNT_SEED_PHRASE"
+    ask_and_save PROVIDER_ID "Enter Provider ID" "$DEFAULT_PROVIDER_ID"
+    ask_and_save PROVIDER_ACCOUNT_SEED_PHRASE "Enter Provider Seed Phrase" "$DEFAULT_PROVIDER_ACCOUNT_SEED_PHRASE"
     cat << EOI
 
 ┏━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━┓
@@ -107,13 +125,15 @@ EOI
 
     if [[ $CHANGE_IPFS_SETTINGS =~ ^[Yy]$ ]]
     then
-        ask_and_save "IPFS_VOLUME" "Enter the IPFS volume" "$IPFS_VOLUME"
-        ask_and_save "IPFS_ENDPOINT" "Enter the IPFS Endpoint" "kubo default: $IPFS_ENDPOINT"
-        ask_and_save "IPFS_GATEWAY_URL" "Enter the IPFS Gateway URL" "default public ipfs: $IPFS_GATEWAY_URL"
-        ask_and_save "IPFS_BASIC_AUTH_USER" "Enter the IPFS Basic Auth User" "$IPFS_BASIC_AUTH_USER"
-        ask_and_save "IPFS_BASIC_AUTH_SECRET" "Enter the IPFS Basic Auth Secret" "$IPFS_BASIC_AUTH_SECRET"
-        ask_and_save "IPFS_UA_GATEWAY_URL" "Enter the browser-resolveable IPFS Gateway URL" "$IPFS_UA_GATEWAY_URL"
+        ask_and_save IPFS_VOLUME "Enter the IPFS volume" "$DEFAULT_IPFS_VOLUME"
+        ask_and_save IPFS_ENDPOINT "Enter the IPFS Endpoint" "$DEFAULT_IPFS_ENDPOINT"
+        ask_and_save IPFS_GATEWAY_URL "Enter the IPFS Gateway URL" "$DEFAULT_IPFS_GATEWAY_URL"
+        ask_and_save IPFS_BASIC_AUTH_USER "Enter the IPFS Basic Auth User" "$DEFAULT_IPFS_BASIC_AUTH_USER"
+        ask_and_save IPFS_BASIC_AUTH_SECRET "Enter the IPFS Basic Auth Secret" "$DEFAULT_IPFS_BASIC_AUTH_SECRET"
+        ask_and_save IPFS_UA_GATEWAY_URL "Enter the browser-resolveable IPFS Gateway URL" "$DEFAULT_IPFS_UA_GATEWAY_URL"
     fi
+
+    ask_and_save "CONTENT_DB_VOLUME" "Enter the location of the Content DB" "${DEFAULT_CONTENT_DB_VOLUME}"
 fi
 set -a; source .env-saved; set +a
 

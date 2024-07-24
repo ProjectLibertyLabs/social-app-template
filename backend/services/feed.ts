@@ -1,6 +1,6 @@
 import type * as T from '../types/openapi.js';
 import axios from 'axios';
-import * as ContentRepository from '../repositories/ContentRepository';
+import { ContentRepository } from '../repositories/ContentRepository';
 import {
   AnnouncementResponse,
   AnnouncementType,

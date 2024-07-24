@@ -11,8 +11,7 @@ echo "Shutting down any running services..."
 docker compose --profile local-node --profile backend --profile frontend down
 
 # Ask the user if they want to remove specified volumes
-echo "Do you want to remove specified volumes to remove all state and start fresh? [y/n]: "
-read REMOVE_VOLUMES
+read -p "Do you want to remove specified volumes to remove all state and start fresh? [y/N]: " REMOVE_VOLUMES
 
 if [[ $REMOVE_VOLUMES =~ ^[Yy]$ ]]
 then
@@ -28,5 +27,5 @@ then
         docker volume rm $(basename "$(pwd)" | tr '[:upper:]' '[:lower:]')_chainstorage
     fi
 else
-    echo "Not removing specified volumes..."
+    echo "Leaving Docker volumes alone."
 fi

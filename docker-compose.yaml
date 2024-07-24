@@ -207,12 +207,12 @@ services:
     ports:
       - 3001:3000
       - 3002:3001
-
     environment:
       <<: [*common-environment, *social-app-template-backend]
       IPFS_GATEWAY_URL: 'http://ipfs:8080'
     volumes:
       - ./backend:/app
+      - ${CONTENT_DB_VOLUME}:/app/db
       - backend_node_cache:/app/node_modules
     networks:
       - social-app-backend
