@@ -60,7 +60,7 @@ function getContentHash(contentAnnouncement: AnnouncementResponse) {
 }
 
 function getContentHashFromURI(dsnpUri: string): string | null {
-  return /^dsnp:\/\/[\d]+\/([^\/]*)(?:\/)?/i.exec(dsnpUri)?.[1] ?? null;
+  return /^dsnp:\/\/[\d]+\/([^/]*)(?:\/)?/i.exec(dsnpUri)?.[1] ?? null;
 }
 
 function getKey(contentAnnouncement: AnnouncementResponse) {
