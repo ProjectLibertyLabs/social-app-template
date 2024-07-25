@@ -117,7 +117,6 @@ export class ContentRepository {
       case AnnouncementType.Broadcast: {
         const key = getKey(content);
         logger.debug({ key, content }, 'Storing broadcast content');
-        // ContentRepository.contentMap.set(key, content);
         const stmt = ContentRepository.db.prepare(
           'INSERT OR REPLACE INTO "announcements"("key", "announcement") VALUES (:key, json(:content))'
         );
@@ -132,7 +131,6 @@ export class ContentRepository {
         const key = getKey(content as AnnouncementResponse);
         const relatedKey = getRelatedHash(content);
         logger.debug({ key, content, relatedKey }, 'Storing response content');
-        // ContentRepository.contentResponseMap.set(key, content as RelatedAnnouncementResponse);
         const stmt = ContentRepository.db.prepare(
           'INSERT OR REPLACE INTO "announcements"("key", "relatedKey", "announcement") VALUES (:key, :relatedKey, json(:content))'
         );
