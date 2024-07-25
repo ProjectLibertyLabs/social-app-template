@@ -9,7 +9,6 @@ import {
 } from '../types/content-announcement';
 import logger from '../logger.js';
 import { translateContentUrl } from '../utils/url-transation.js';
-import { isReply } from '../types/content-announcement/type.augment.js';
 
 export type Post = T.Components.Schemas.BroadcastExtended;
 export type Reply = T.Components.Schemas.ReplyExtended;

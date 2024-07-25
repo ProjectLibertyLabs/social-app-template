@@ -14,14 +14,7 @@
  */
 
 import { createHash } from 'crypto';
-import {
-  type AnnouncementResponse,
-  AnnouncementType,
-  ReactionAnnouncement,
-  ReplyAnnouncement,
-  TombstoneAnnouncement,
-  UpdateAnnouncement,
-} from '../types/content-announcement';
+import { type AnnouncementResponse, AnnouncementType } from '../types/content-announcement';
 import '../types/content-announcement/type.augment';
 import {
   isBroadcast,
@@ -33,6 +26,7 @@ import {
 } from '../types/content-announcement/type.augment';
 import logger from '../logger';
 import Database from 'better-sqlite3';
+import { RelatedAnnouncementResponse } from '../types/types';
 
 export type ContentSearchParametersType = {
   msaIds?: string[];
@@ -42,10 +36,6 @@ export type ContentSearchParametersType = {
   blockTo?: number;
   contentHash?: string;
   relatedContentHash?: string;
-};
-
-type RelatedAnnouncementResponse = AnnouncementResponse & {
-  announcement: ReplyAnnouncement | ReactionAnnouncement | TombstoneAnnouncement | UpdateAnnouncement;
 };
 
 function getContentHash(contentAnnouncement: AnnouncementResponse) {
