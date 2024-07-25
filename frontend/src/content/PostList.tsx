@@ -155,7 +155,7 @@ const PostList = ({
           )}
           {!hasMore && (
             <div className={styles.endMessageContainer}>
-              <Title level={4}>{true ? "No posts yet. May take 3-5 minutes to scan the last 48 hours of content on chain." : "That's all there is!"}</Title>
+              <Title level={4}>That's all there is!</Title>
             </div>
           )}
         </Flex>

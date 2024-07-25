@@ -4,7 +4,7 @@ import { HttpStatusCode } from 'axios';
 import { AccountServiceWebhook } from '../services/AccountWebhookService';
 import { HttpError } from '../types/HttpError';
 import logger from '../logger';
-import * as ContentRepository from '../repositories/ContentRepository';
+import { ContentRepository } from '../repositories/ContentRepository';
 import { GraphWebhookService } from '../services/GraphWebhookService';
 
 export class WebhookController extends BaseController {

@@ -22,6 +22,7 @@ import { WebhookController } from './controllers/WebhookController';
 import { ContentWatcherService } from './services/ContentWatcherService';
 import { AnnouncementType } from './types/content-announcement';
 import { randomUUID } from 'crypto';
+import { ContentRepository } from './repositories/ContentRepository';
 
 // Support BigInt JSON
 (BigInt.prototype as any).toJSON = function () {
@@ -29,6 +30,7 @@ import { randomUUID } from 'crypto';
 };
 
 Config.init(process.env);
+ContentRepository.init();
 
 const httpLogOptions: Options = {
   logger,
