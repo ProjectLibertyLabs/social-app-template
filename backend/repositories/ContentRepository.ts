@@ -19,9 +19,18 @@ import {
   AnnouncementType,
   ReactionAnnouncement,
   ReplyAnnouncement,
+  TombstoneAnnouncement,
+  UpdateAnnouncement,
 } from '../types/content-announcement';
 import '../types/content-announcement/type.augment';
-import { isBroadcast, isProfile, isReply, isTombstone, isUpdate } from '../types/content-announcement/type.augment';
+import {
+  isBroadcast,
+  isProfile,
+  isReaction,
+  isReply,
+  isTombstone,
+  isUpdate,
+} from '../types/content-announcement/type.augment';
 import logger from '../logger';
 import Database from 'better-sqlite3';
 
@@ -32,9 +41,12 @@ export type ContentSearchParametersType = {
   blockFrom?: number;
   blockTo?: number;
   contentHash?: string;
+  relatedContentHash?: string;
 };
 
-type ResponseAnnouncementResponse = AnnouncementResponse & { announcement: ReplyAnnouncement | ReactionAnnouncement };
+type RelatedAnnouncementResponse = AnnouncementResponse & {
+  announcement: ReplyAnnouncement | ReactionAnnouncement | TombstoneAnnouncement | UpdateAnnouncement;
+};
 
 function getContentHash(contentAnnouncement: AnnouncementResponse) {
   const { announcement } = contentAnnouncement;
@@ -47,6 +59,10 @@ function getContentHash(contentAnnouncement: AnnouncementResponse) {
   }
 }
 
+function getContentHashFromURI(dsnpUri: string): string | null {
+  return /^dsnp:\/\/[\d]+\/([^\/]*)(?:\/)?/i.exec(dsnpUri)?.[1] ?? null;
+}
+
 function getKey(contentAnnouncement: AnnouncementResponse) {
   const hash = getContentHash(contentAnnouncement);
   const {
@@ -57,18 +73,24 @@ function getKey(contentAnnouncement: AnnouncementResponse) {
   return `${blockNumber}:${fromId}:${hash}`;
 }
 
-function getResponseKey(contentAnnouncement: ResponseAnnouncementResponse): string {
-  const responseInReplyTo = contentAnnouncement.announcement.inReplyTo;
-  const parentContentHash = responseInReplyTo.split('/').pop();
-  if (!parentContentHash) throw new Error('Invalid URI');
-  return parentContentHash;
+function getRelatedHash(contentAnnouncement: AnnouncementResponse): string | null {
+  const { announcement } = contentAnnouncement;
+  if (isBroadcast(announcement)) {
+    return null;
+  } else if (isReply(announcement) || isReaction(announcement)) {
+    return getContentHashFromURI(announcement.inReplyTo);
+  } else if (isTombstone(announcement) || isUpdate(announcement)) {
+    return announcement.targetContentHash;
+  }
+
+  return null;
 }
 
 export class ContentRepository {
   private static db: any;
   // TODO: more tightly bind the announcement types. Reactions and replies only in contentResponseMap.
   private static contentMap = new Map<string, AnnouncementResponse>();
-  private static contentResponseMap = new Map<string, ResponseAnnouncementResponse>();
+  private static contentResponseMap = new Map<string, RelatedAnnouncementResponse>();
 
   static init() {
     try {
@@ -83,7 +105,7 @@ export class ContentRepository {
         verbose: (msg) => logger.info(msg),
       });
       ContentRepository.db.exec(
-        'CREATE TABLE IF NOT EXISTS "announcements"("id" INTEGER PRIMARY KEY ASC, "key" TEXT UNIQUE, "announcement" BLOB, "content" BLOB)'
+        'CREATE TABLE IF NOT EXISTS "announcements"("id" INTEGER PRIMARY KEY ASC, "key" TEXT UNIQUE, "relatedKey" TEXT, "announcement" BLOB, "content" BLOB)'
       );
     }
 
@@ -95,31 +117,40 @@ export class ContentRepository {
       case AnnouncementType.Broadcast: {
         const key = getKey(content);
         logger.debug({ key, content }, 'Storing broadcast content');
-        ContentRepository.contentMap.set(key, content);
-        const stmt = ContentRepository.db.prepare('INSERT INTO "announcements"("announcement") VALUES (json(?))');
-        const result = stmt.run([JSON.stringify(content)]);
+        // ContentRepository.contentMap.set(key, content);
+        const stmt = ContentRepository.db.prepare(
+          'INSERT OR REPLACE INTO "announcements"("key", "announcement") VALUES (:key, json(:content))'
+        );
+        const result = stmt.run({ key, content: JSON.stringify(content) });
         logger.debug(result, 'Stored broadcast content in DB');
         break;
       }
       case AnnouncementType.Reply:
-      case AnnouncementType.Reaction: {
-        const key = getResponseKey(content as ResponseAnnouncementResponse);
-        logger.debug({ key, content }, 'Storing response content');
-        ContentRepository.contentResponseMap.set(key, content as ResponseAnnouncementResponse);
-        const stmt = ContentRepository.db.prepare('INSERT INTO "announcements"("announcement") VALUES (json(?))');
-        const result = stmt.run([JSON.stringify(content)]);
+      case AnnouncementType.Reaction:
+      case AnnouncementType.Tombstone:
+      case AnnouncementType.Update: {
+        const key = getKey(content as AnnouncementResponse);
+        const relatedKey = getRelatedHash(content);
+        logger.debug({ key, content, relatedKey }, 'Storing response content');
+        // ContentRepository.contentResponseMap.set(key, content as RelatedAnnouncementResponse);
+        const stmt = ContentRepository.db.prepare(
+          'INSERT OR REPLACE INTO "announcements"("key", "relatedKey", "announcement") VALUES (:key, :relatedKey, json(:content))'
+        );
+        const result = stmt.run({ key, relatedKey, content: JSON.stringify(content) });
         logger.debug(result, 'Stored response content in DB');
         break;
       }
+
       default: {
         const key = getKey(content);
         logger.debug(
           { key, content, announcementType: content.announcement.announcementType.toString() },
           'Storing content for other announcement'
         );
-        ContentRepository.contentMap.set(key, content);
-        const stmt = ContentRepository.db.prepare('INSERT INTO "announcements"("announcement") VALUES (json(?))');
-        const result = stmt.run([JSON.stringify(content)]);
+        const stmt = ContentRepository.db.prepare(
+          'INSERT OR REPLACE INTO "announcements"("key", "announcement") VALUES (:key, json(:content))'
+        );
+        const result = stmt.run({ key, content: JSON.stringify(content) });
         logger.debug(result, 'Stored other content in DB');
         break;
       }
@@ -154,6 +185,10 @@ export class ContentRepository {
 
       if (options.contentHash) {
         conditionals.push(`"announcement_json"->>'$.announcement.contentHash' = :contentHash`);
+      }
+
+      if (options.relatedContentHash) {
+        conditionals.push(`"relatedKey" = :relatedContentHash`);
       }
     }
 

@@ -21,6 +21,7 @@ then
     docker volume rm ${COMPOSE_PROJECT_NAME}_redis_data
     docker volume rm ${COMPOSE_PROJECT_NAME}_ipfs_data
     docker volume rm ${COMPOSE_PROJECT_NAME}_backend_node_cache
+    docker volume rm ${COMPOSE_PROJECT_NAME}_content_db
     docker volume rm ${COMPOSE_PROJECT_NAME}_frontend_node_cache
     if [[ ! $TESTNET_ENV =~ ^[Yy]$ ]]
     then

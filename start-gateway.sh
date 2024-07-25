@@ -95,7 +95,7 @@ EOI
     DEFAULT_IPFS_BASIC_AUTH_USER=""
     DEFAULT_IPFS_BASIC_AUTH_SECRET=""
     DEFAULT_IPFS_UA_GATEWAY_URL="http://localhost:8080"
-    DEFAULT_CONTENT_DB_VOLUME="./backend/db"
+    DEFAULT_CONTENT_DB_VOLUME="content_db"
 
 
     ask_and_save FREQUENCY_URL "Enter the Frequency Testnet RPC URL" "$DEFAULT_FREQUENCY_URL"

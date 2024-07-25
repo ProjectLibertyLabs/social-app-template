@@ -264,6 +264,7 @@ volumes:
   backend_node_cache:
   frontend_node_cache:
   redis_data:
+  content_db:
   chainstorage:
     external: false
 
