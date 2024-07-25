@@ -92,7 +92,7 @@ export class GraphService {
    * @param objectId - The ID of the object.
    * @returns A Promise that resolves to void.
    */
-  public async postFollow(actorId: string, objectId: number): Promise<void> {
+  public async postFollow(actorId: string, objectId: number): Promise<string> {
     logger.debug({ actorId, objectId }, 'Follow Request');
     const providerGraphDto: ProviderGraphDto = {
       dsnpId: actorId,
@@ -114,9 +114,10 @@ export class GraphService {
     // REMOVE: For now we will just assume that the transaction is successful in about 14 seconds
     logger.debug({ response: resp.data }, 'REMOVE: DEBUG: Follow Response');
     GraphWebhookService.updateOperationByRefId(resp.data.referenceId, 'pending');
+    return resp.data.referenceId;
   }
 
-  public async postUnfollow(actorId: string, objectId: number): Promise<void> {
+  public async postUnfollow(actorId: string, objectId: number): Promise<string> {
     logger.debug({ actorId, objectId }, 'Unfollow Request');
     const providerGraphDto: ProviderGraphDto = {
       dsnpId: actorId,
@@ -138,5 +139,6 @@ export class GraphService {
     // REMOVE: For now we will just assume that the transaction is successful in about 14 seconds
     logger.debug({ response: resp.data }, 'REMOVE: DEBUG: Unfollow Response');
     GraphWebhookService.updateOperationByRefId(resp.data.referenceId, 'pending');
+    return resp.data.referenceId;
   }
 }

@@ -1,4 +1,4 @@
-import React, { ReactElement } from 'react';
+import React, {ReactElement, useEffect, useState} from 'react';
 import { Button } from 'antd';
 import styles from './GraphChangeButton.module.css';
 import * as dsnpLink from '../dsnpLink';
@@ -22,15 +22,27 @@ const GraphChangeButton = ({
 
   const buttonText = (): string => (isUpdating ? 'Updating' : isFollowing ? 'Unfollow' : 'Follow');
 
-  const changeGraphState = async () => {
-    setIsUpdating(true);
-    if (isFollowing) {
-      await dsnpLink.graphUnfollow(getContext(), { msaId: connectionAccount.msaId });
+  const getGraphChangeState = async (referenceId: string) => {
+    const operationStatus = await dsnpLink.graphOperationStatus(getContext(), { referenceId });
+    if (operationStatus.status !== 'pending') {
+      // Defined in App.tsx to refreshFollowing, triggers an api call to /graph/{msaId}/following
+      triggerGraphRefresh();
+      setIsUpdating(false);
     } else {
-      await dsnpLink.graphFollow(getContext(), { msaId: connectionAccount.msaId });
+      setIsUpdating(true);
     }
-    // Defined in App.tsx to refreshFollowing, triggers an api call to /graph/{msaId}/following
-    triggerGraphRefresh();
+    console.log("operationStatus", operationStatus);
+  };
+
+  const changeGraphState = async () => {
+    let refId: { referenceId?: string | undefined };
+    if (isFollowing) {
+      refId = await dsnpLink.graphUnfollow(getContext(), { msaId: connectionAccount.msaId });
+    } else {
+      refId =await dsnpLink.graphFollow(getContext(), { msaId: connectionAccount.msaId });
+    }
+
+    if (refId.referenceId) await getGraphChangeState(refId.referenceId);
   };
 
   return (

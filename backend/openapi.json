@@ -596,7 +596,20 @@
             "$ref": "#/components/responses/UnauthorizedError"
           },
           "201": {
-            "description": "Successful response"
+            "description": "Successful response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "referenceId": {
+                      "type": "string",
+                      "description": "ReferenceId from the request"
+                    }
+                  }
+                }
+              }
+            }
           }
         }
       }
@@ -625,7 +638,20 @@
             "$ref": "#/components/responses/UnauthorizedError"
           },
           "201": {
-            "description": "Successful response"
+            "description": "Successful response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "referenceId": {
+                      "type": "string",
+                      "description": "ReferenceId from the request"
+                    }
+                  }
+                }
+              }
+            }
           }
         }
       }
