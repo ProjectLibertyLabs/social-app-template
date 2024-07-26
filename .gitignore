@@ -22,7 +22,6 @@
 ### Output ###
 
 backend/dist/*
-backend/db/contentDb.sqlite
 frontend/build/*
 
 ### ENV ###
