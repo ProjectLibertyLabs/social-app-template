@@ -22,6 +22,7 @@
 ### Output ###
 
 backend/dist/*
+backend/db/*
 frontend/build/*
 
 ### ENV ###
