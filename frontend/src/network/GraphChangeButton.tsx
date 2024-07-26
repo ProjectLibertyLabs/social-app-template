@@ -1,4 +1,4 @@
-import React, {ReactElement, useEffect, useState} from 'react';
+import React, { ReactElement, useEffect, useState } from 'react';
 import { Button } from 'antd';
 import styles from './GraphChangeButton.module.css';
 import * as dsnpLink from '../dsnpLink';
@@ -31,7 +31,8 @@ const GraphChangeButton = ({
     } else {
       setIsUpdating(true);
     }
-    console.log("operationStatus", operationStatus);
+    console.log('operationStatus', operationStatus);
+    return operationStatus;
   };
 
   const changeGraphState = async () => {
@@ -39,10 +40,19 @@ const GraphChangeButton = ({
     if (isFollowing) {
       refId = await dsnpLink.graphUnfollow(getContext(), { msaId: connectionAccount.msaId });
     } else {
-      refId =await dsnpLink.graphFollow(getContext(), { msaId: connectionAccount.msaId });
+      refId = await dsnpLink.graphFollow(getContext(), { msaId: connectionAccount.msaId });
     }
 
-    if (refId.referenceId) await getGraphChangeState(refId.referenceId);
+    if (refId.referenceId) {
+      let operationStatus = await getGraphChangeState(refId.referenceId!);
+      let intervalCounter = 0;
+
+      const intervalId = setInterval(async () => {
+        intervalCounter++;
+        operationStatus = await getGraphChangeState(refId.referenceId!);
+        if (operationStatus.status !== 'pending' || intervalCounter > 10) clearInterval(intervalId);
+      }, 6000);
+    }
   };
 
   return (
