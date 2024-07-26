@@ -78,7 +78,7 @@ export class AccountService {
    * @returns A Promise that resolves to an AuthAccountResponse object containing the account information.
    * @throws If there was an error retrieving the account information.
    */
-  public async getAccount(msaId: string): Promise<Partial<AuthAccountResponse>> {
+  public async getAccount(msaId: string): Promise<Pick<AuthAccountResponse, 'msaId' | 'handle'>> {
     try {
       const response = await this.client.AccountsControllerV1_getAccount(msaId);
       logger.debug(
@@ -86,7 +86,7 @@ export class AccountService {
       );
       return {
         msaId: msaId,
-        handle: response.data.handle as { base_handle: string; canonical_base: string; suffix: number } | undefined,
+        handle: response.data.handle as AuthAccountResponse['handle'],
       };
     } catch (e) {
       logger.error(`Failed to get account for msaID:(${msaId}) error:${e}`);
@@ -116,7 +116,7 @@ export class AccountService {
           expires: Date.now() + 24 * 60 * 60 * 1_000,
           referenceId: referenceId,
           msaId: accountData.msaId,
-          handle: response.data.handle! as AuthAccountResponse['handle'],
+          handle: response.data.handle as AuthAccountResponse['handle'],
         };
       }
     } catch (e) {
