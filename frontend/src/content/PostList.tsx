@@ -79,7 +79,7 @@ const PostList = ({
   useEffect(() => {
     const getOlder = refreshTrigger === priorTrigger;
     fetchData(getOlder);
-  }, [feedType, profile, refreshTrigger, priorTrigger]);
+  }, [feedType, profile, priorTrigger]);
 
   const fetchData = async (getOlder: boolean) => {
     const isAddingMore = priorFeedType === feedType;
