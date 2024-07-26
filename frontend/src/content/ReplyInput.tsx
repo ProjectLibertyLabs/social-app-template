@@ -20,14 +20,6 @@ const ReplyInput = ({ parentURI }: ReplyInputProps): ReactElement => {
   const [form] = Form.useForm();
   const [saving, setSaving] = React.useState<boolean>(false);
 
-  const messageRef: LegacyRef<TextAreaRef> = React.createRef();
-
-  useEffect(() => {
-    if (messageRef.current) {
-      messageRef.current.focus();
-    }
-  }, [messageRef]);
-
   const success = () => {
     setSaving(false);
   };
@@ -55,7 +47,7 @@ const ReplyInput = ({ parentURI }: ReplyInputProps): ReactElement => {
     <Form form={form} onFinish={createReply}>
       <Flex className={styles.root} gap={'small'}>
         <Form.Item name="message" required={true} className={styles.input}>
-          <Input.TextArea placeholder="Reply..." ref={messageRef} autoSize={true} />
+          <Input.TextArea placeholder="Reply..." autoSize={true} />
         </Form.Item>
         <Form.Item>
           <Button htmlType="submit" loading={saving} type={'primary'}>
