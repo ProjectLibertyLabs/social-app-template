@@ -44,8 +44,10 @@ const Header = ({ loggedInAccount, login, logout }: HeaderProps): ReactElement =
             trigger="click"
             content={<UserMenu logout={handleLogout} />}
           >
-            <UserAvatar user={loggedInAccount} avatarSize="small" />
-            {makeDisplayHandle(loggedInAccount.handle)}
+            <Flex gap={8}>
+              <UserAvatar user={loggedInAccount} avatarSize="small" />
+              {makeDisplayHandle(loggedInAccount.handle)}
+            </Flex>
           </Popover>
         ) : (
           <LoginScreen onLogin={handleLogin} />

@@ -1,46 +1,69 @@
-import { Button, Flex, Input } from 'antd';
-import React, { ReactElement, useState } from 'react';
+import { Button, Flex, Form, Input } from 'antd';
+import React, { LegacyRef, ReactElement, useEffect, useState } from 'react';
 import { createNote } from '@dsnp/activity-content/factories';
 import { DSNPContentURI } from '../helpers/dsnp';
 import styles from './ReplyInput.module.css';
+import * as dsnpLink from '../dsnpLink';
+import { getContext } from '../service/AuthService';
+import { TextAreaRef } from 'antd/es/input/TextArea';
+import { UploadFile } from 'antd/es/upload/interface';
 
 interface ReplyInputProps {
   parentURI: DSNPContentURI;
 }
 
-const ReplyInput = ({ parentURI: parent }: ReplyInputProps): ReactElement => {
-  const [saving, setSaving] = React.useState<boolean>(false);
-  const [replyValue, setReplyValue] = useState<string>('');
+type NewReplyValues = {
+  message: string;
+};
 
-  const createReply = async (
-    event: React.KeyboardEvent<HTMLTextAreaElement> | React.MouseEvent<HTMLElement, MouseEvent>
-  ) => {
-    event.preventDefault();
-    setSaving(true);
-    const newReply = createNote(replyValue, new Date());
-    console.log('replyActivityContentCreated', { reply: newReply });
-    // await sendReply(userId, newReply, parent);
-    // dispatch(replyLoading({ loading: true, parent: parent }));
-    setReplyValue('');
+const ReplyInput = ({ parentURI }: ReplyInputProps): ReactElement => {
+  const [form] = Form.useForm();
+  const [saving, setSaving] = React.useState<boolean>(false);
+
+  const messageRef: LegacyRef<TextAreaRef> = React.createRef();
+
+  useEffect(() => {
+    if (messageRef.current) {
+      messageRef.current.focus();
+    }
+  }, [messageRef]);
+
+  const success = () => {
     setSaving(false);
   };
 
+  const createReply = async (formValues: NewReplyValues) => {
+    if (!formValues.message || formValues?.message?.length < 1) return;
+    try {
+      const response = await dsnpLink.postBroadcastHandler(
+        getContext(),
+        {},
+        {
+          content: formValues.message,
+          inReplyTo: parentURI,
+        }
+      );
+      success();
+      form.resetFields();
+    } catch (e) {
+      console.error(e);
+      setSaving(false);
+    }
+  };
+
   return (
-    <Flex className={styles.root} gap={'small'}>
-      <Input.TextArea
-        placeholder="Reply..."
-        value={replyValue}
-        onChange={(e) => {
-          if (saving) return;
-          setReplyValue(e.target.value);
-        }}
-        autoSize={true}
-        onPressEnter={(event) => createReply(event)}
-      />
-      <Button onClick={(event) => createReply(event)} type={'primary'} disabled={saving || replyValue.length < 1}>
-        Post
-      </Button>
-    </Flex>
+    <Form form={form} onFinish={createReply}>
+      <Flex className={styles.root} gap={'small'}>
+        <Form.Item name="message" required={true} className={styles.input}>
+          <Input.TextArea placeholder="Reply..." ref={messageRef} autoSize={true} />
+        </Form.Item>
+        <Form.Item>
+          <Button htmlType="submit" loading={saving} type={'primary'}>
+            Post
+          </Button>
+        </Form.Item>
+      </Flex>
+    </Form>
   );
 };
 

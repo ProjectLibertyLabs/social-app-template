@@ -1,5 +1,5 @@
 import React, { LegacyRef, ReactElement, useEffect } from 'react';
-import { Button, Modal, Input, Form } from 'antd';
+import { Button, Modal, Input, Form, Flex } from 'antd';
 import UserAvatar from '../chrome/UserAvatar';
 import NewPostImageUpload from './NewPostImageUpload';
 import type { User } from '../types';
@@ -74,8 +74,10 @@ const NewPostModal = ({ onSuccess, onCancel, loggedInAccount }: NewPostProps): R
     >
       <Form form={form} onFinish={createPost}>
         <Form.Item>
-          <UserAvatar user={loggedInAccount} avatarSize={'small'} />
-          <span className={styles.fromTitle}>Posting as @{makeDisplayHandle(loggedInAccount.handle)}</span>
+          <Flex gap={8}>
+            <UserAvatar user={loggedInAccount} avatarSize={'small'} />
+            <span className={styles.fromTitle}>Posting as @{makeDisplayHandle(loggedInAccount.handle)}</span>
+          </Flex>
         </Form.Item>
         <Form.Item name="message" required={true}>
           <Input.TextArea rows={4} placeholder="Enter your message" autoFocus={true} ref={messageRef} />

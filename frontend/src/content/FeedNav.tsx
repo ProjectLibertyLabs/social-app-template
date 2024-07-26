@@ -1,8 +1,7 @@
 import styles from '../Feed.module.css';
-import { FeedTypes, UserAccount } from '../types';
+import { UserAccount } from '../types';
 import { CompassOutlined, HomeOutlined, UserOutlined } from '@ant-design/icons';
 import React from 'react';
-import { makeDisplayHandle } from '../helpers/DisplayHandle';
 import { Flex } from 'antd';
 import NewPost from '../NewPost';
 import { useNavigate } from 'react-router-dom';

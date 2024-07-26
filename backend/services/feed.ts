@@ -1,11 +1,17 @@
 import type * as T from '../types/openapi.js';
 import axios from 'axios';
-import * as ContentRepository from '../repositories/ContentRepository';
-import { AnnouncementResponse, AnnouncementType, BroadcastAnnouncement } from '../types/content-announcement';
+import { ContentRepository } from '../repositories/ContentRepository';
+import {
+  AnnouncementResponse,
+  AnnouncementType,
+  BroadcastAnnouncement,
+  ReplyAnnouncement,
+} from '../types/content-announcement';
 import logger from '../logger.js';
 import { translateContentUrl } from '../utils/url-transation.js';
 
 export type Post = T.Components.Schemas.BroadcastExtended;
+export type Reply = T.Components.Schemas.ReplyExtended;
 interface CachedPosts {
   [blockNumber: number]: [number, Post][];
 }
@@ -40,6 +46,24 @@ async function getPostContent(msg: AnnouncementResponse): Promise<[number, Post]
       responseType: 'text',
       timeout: 10000,
     });
+    const replyMessages = ContentRepository.get({ announcementTypes: [AnnouncementType.Reply] });
+    const replies: Reply[] = await Promise.all(
+      replyMessages.map(async (replyMessage): Promise<Reply> => {
+        const replyAnnouncement = replyMessage.announcement as ReplyAnnouncement;
+        const replyResp = await axios.get(translateContentUrl(replyAnnouncement.url), {
+          responseType: 'text',
+          timeout: 10000,
+        });
+
+        return {
+          fromId: replyAnnouncement.fromId,
+          contentHash: replyAnnouncement.contentHash,
+          content: replyResp.data as string,
+          timestamp: new Date().toISOString(), // TODO: use block timestamp
+        };
+      })
+    );
+
     return [
       msg.blockNumber,
       {
@@ -47,7 +71,7 @@ async function getPostContent(msg: AnnouncementResponse): Promise<[number, Post]
         contentHash: announcement.contentHash,
         content: postResp.data as string,
         timestamp: new Date().toISOString(), // TODO: Use Block timestamp
-        replies: [], // TODO: Support replies
+        replies,
       },
     ];
   } catch (err) {
