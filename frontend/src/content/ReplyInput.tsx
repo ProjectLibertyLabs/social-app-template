@@ -34,8 +34,6 @@ const ReplyInput = ({ parentURI }: ReplyInputProps): ReactElement => {
 
   const createReply = async (formValues: NewReplyValues) => {
     if (!formValues.message || formValues?.message?.length < 1) return;
-
-    console.log('here', parentURI);
     try {
       const response = await dsnpLink.postBroadcastHandler(
         getContext(),
@@ -45,8 +43,6 @@ const ReplyInput = ({ parentURI }: ReplyInputProps): ReactElement => {
           inReplyTo: parentURI,
         }
       );
-
-      console.log('postBroadcastHandler', { response });
       success();
       form.resetFields();
     } catch (e) {

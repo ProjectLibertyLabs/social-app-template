@@ -1,5 +1,5 @@
 import React, { ReactElement } from 'react';
-import { Card, Spin } from 'antd';
+import { Card, Flex, Spin } from 'antd';
 import UserAvatar from '../chrome/UserAvatar';
 import PostMedia from './PostMedia';
 import RelativeTime from '../helpers/RelativeTime';
@@ -21,14 +21,12 @@ type PostProps = {
   showReplyInput: boolean;
   isProfile?: boolean;
   showLoginModal?: () => void;
+  isReply?: boolean;
 };
 
-const Post = ({ feedItem, showReplyInput, isProfile, showLoginModal }: PostProps): ReactElement => {
+const Post = ({ feedItem, showReplyInput, isProfile, showLoginModal, isReply }: PostProps): ReactElement => {
   const navigate = useNavigate();
   const { user, isLoading } = useGetUser(feedItem.fromId);
-
-  console.log("FeedItem", feedItem);
-
   const content = JSON.parse(feedItem?.content) as ActivityContentNote;
 
   // TODO: validate content as ActivityContentNote or have DSNP Link do it
@@ -38,25 +36,25 @@ const Post = ({ feedItem, showReplyInput, isProfile, showLoginModal }: PostProps
   return (
     <Card key={feedItem.contentHash} className={styles.card} bordered={true}>
       <Spin tip="Loading" size="large" spinning={isLoading}>
-        {!isProfile && (
-          <div
-            onClick={() =>
-              showReplyInput ? navigate(`/profile/${feedItem.fromId}`) : showLoginModal && showLoginModal()
-            }
-            className={styles.metaBlock}
-          >
-            <Card.Meta
-              className={styles.metaInnerBlock}
-              avatar={<UserAvatar user={user} avatarSize={'medium'} />}
-              title={<FromTitle user={user} showLoginModal={showLoginModal} isLoggedOut={showReplyInput} />}
-            />
+        <Flex gap={isReply ? 12 : 18} vertical>
+          {!isProfile && (
+            <div
+              onClick={() =>
+                showReplyInput ? navigate(`/profile/${feedItem.fromId}`) : showLoginModal && showLoginModal()
+              }
+              className={styles.metaBlock}
+            >
+              <Card.Meta
+                className={styles.metaInnerBlock}
+                avatar={<UserAvatar user={user} avatarSize={isReply ? 'small' : 'medium'} />}
+                title={<FromTitle user={user} showLoginModal={showLoginModal} isLoggedOut={showReplyInput} />}
+              />
+            </div>
+          )}
+          <div className={styles.time}>
+            <PostHashDropdown hash={feedItem.contentHash} fromId={feedItem.fromId} />
+            {content?.published && <RelativeTime published={content?.published} />}
           </div>
-        )}
-        <div className={styles.time}>
-          <PostHashDropdown hash={feedItem.contentHash} fromId={feedItem.fromId} />
-          {content?.published && <RelativeTime published={content?.published} />}
-        </div>
-        <>
           {content && (
             <div className={styles.caption}>
               <Anchorme target="_blank" rel="noreferrer noopener">
@@ -64,13 +62,13 @@ const Post = ({ feedItem, showReplyInput, isProfile, showLoginModal }: PostProps
               </Anchorme>
             </div>
           )}
-          {content?.attachment && <PostMedia attachments={attachments} />}
-        </>
-        <ReplyBlock
-          parentURI={buildDSNPContentURI(BigInt(feedItem.fromId), feedItem.contentHash)}
-          showReplyInput={showReplyInput}
-          replies={feedItem.replies || []}
-        />
+          {content?.attachment && content?.attachment?.length > 0 && <PostMedia attachments={attachments} />}
+          <ReplyBlock
+            parentURI={buildDSNPContentURI(BigInt(feedItem.fromId), feedItem.contentHash)}
+            showReplyInput={showReplyInput}
+            replies={feedItem.replies || []}
+          />
+        </Flex>
       </Spin>
     </Card>
   );

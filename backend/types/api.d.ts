@@ -12,12 +12,14 @@ declare namespace Components {
   }
   namespace Schemas {
     export interface AuthAccountResponse {
-      accessToken?: string;
-      expires?: number;
+      accessToken: string;
+      expires: number;
       referenceId?: string;
       msaId: string;
       handle?: {
-        [key: string]: any;
+        base_handle: string;
+        canonical_base: string;
+        suffix: number;
       };
     }
     export interface Broadcast {
@@ -89,7 +91,11 @@ declare namespace Components {
     }
     export interface HandlesResponse {
       publicKey: string;
-      handle: string;
+      handle: {
+        base_handle: string;
+        canonical_base: string;
+        suffix: number;
+      };
     }
     export interface LoginRequest {
       algo: 'SR25519';
@@ -133,7 +139,11 @@ declare namespace Components {
        * Timestamp of the post
        */
       timestamp: string;
-      displayHandle?: string;
+      handle?: {
+        base_handle: string;
+        canonical_base: string;
+        suffix: number;
+      };
     }
     export interface ProviderResponse {
       nodeUrl: string;
@@ -204,7 +214,11 @@ declare namespace Components {
     export interface WalletLoginResponse {
       referenceId: string;
       msaId?: string;
-      handle?: string;
+      handle?: {
+        base_handle: string;
+        canonical_base: string;
+        suffix: number;
+      };
     }
   }
 }
@@ -362,6 +376,28 @@ declare namespace Paths {
       export type $401 = Components.Responses.UnauthorizedError;
     }
   }
+  namespace GraphOperationStatus {
+    namespace Parameters {
+      export type ReferenceId = string;
+    }
+    export interface PathParameters {
+      referenceId: Parameters.ReferenceId;
+    }
+    namespace Responses {
+      export interface $200 {
+        /**
+         * ReferenceId from the request
+         */
+        referenceId: string;
+        /**
+         * status
+         */
+        status: 'pending' | 'expired' | 'failed' | 'succeeded';
+      }
+      export type $401 = Components.Responses.UnauthorizedError;
+      export interface $404 {}
+    }
+  }
   namespace GraphUnfollow {
     namespace Parameters {
       export type MsaId = string;
@@ -475,7 +511,7 @@ export interface OperationMethods {
     config?: AxiosRequestConfig
   ): OperationResponse<Paths.GetFeed.Responses.$200>;
   /**
-   * getDiscover - Get the Discovery Feed for the current user, paginated
+   * getDiscover - Get the Discovery Feed, paginated
    */
   'getDiscover'(
     parameters?: Parameters<Paths.GetDiscover.QueryParameters> | null,
@@ -514,6 +550,14 @@ export interface OperationMethods {
     data?: any,
     config?: AxiosRequestConfig
   ): OperationResponse<Paths.UserFollowing.Responses.$200>;
+  /**
+   * graphOperationStatus - Get the status of a previously submitted graph operation by its referenceId
+   */
+  'graphOperationStatus'(
+    parameters: Parameters<Paths.GraphOperationStatus.PathParameters>,
+    data?: any,
+    config?: AxiosRequestConfig
+  ): OperationResponse<Paths.GraphOperationStatus.Responses.$200>;
   /**
    * graphFollow - Follow a user
    */
@@ -633,7 +677,7 @@ export interface PathsDictionary {
   };
   ['/content/discover']: {
     /**
-     * getDiscover - Get the Discovery Feed for the current user, paginated
+     * getDiscover - Get the Discovery Feed, paginated
      */
     'get'(
       parameters?: Parameters<Paths.GetDiscover.QueryParameters> | null,
@@ -680,6 +724,16 @@ export interface PathsDictionary {
       data?: any,
       config?: AxiosRequestConfig
     ): OperationResponse<Paths.UserFollowing.Responses.$200>;
+  };
+  ['/graph/operations/{referenceId}']: {
+    /**
+     * graphOperationStatus - Get the status of a previously submitted graph operation by its referenceId
+     */
+    'get'(
+      parameters: Parameters<Paths.GraphOperationStatus.PathParameters>,
+      data?: any,
+      config?: AxiosRequestConfig
+    ): OperationResponse<Paths.GraphOperationStatus.Responses.$200>;
   };
   ['/graph/{msaId}/follow']: {
     /**

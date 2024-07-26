@@ -11,7 +11,6 @@ import { Request } from 'express';
 import logger from '../logger';
 import { AccountServiceWebhook } from './AccountWebhookService';
 import { Components as BackendComponents } from '../types/api';
-import type { HandleResponse } from '@frequency-chain/api-augment/interfaces';
 
 type AuthAccountResponse = BackendComponents.Schemas.AuthAccountResponse;
 type WalletLoginRequestDto = Components.Schemas.WalletLoginRequestDto;
@@ -79,7 +78,7 @@ export class AccountService {
    * @returns A Promise that resolves to an AuthAccountResponse object containing the account information.
    * @throws If there was an error retrieving the account information.
    */
-  public async getAccount(msaId: string): Promise<AuthAccountResponse> {
+  public async getAccount(msaId: string): Promise<Partial<AuthAccountResponse>> {
     try {
       const response = await this.client.AccountsControllerV1_getAccount(msaId);
       logger.debug(
@@ -87,7 +86,7 @@ export class AccountService {
       );
       return {
         msaId: msaId,
-        handle: response.data.handle,
+        handle: response.data.handle as { base_handle: string; canonical_base: string; suffix: number } | undefined,
       };
     } catch (e) {
       logger.error(`Failed to get account for msaID:(${msaId}) error:${e}`);
@@ -110,7 +109,6 @@ export class AccountService {
       if (accountData) {
         // REMOVE: When account service webhook is fixed to return the HandleResponse
         const response = await this.client.AccountsControllerV1_getAccount(accountData.msaId);
-        accountData.handle = response.data.handle as HandleResponse;
         // END REMOVE:
         logger.debug(`Found account for referenceId:(${referenceId})`);
         return {
@@ -118,7 +116,7 @@ export class AccountService {
           expires: Date.now() + 24 * 60 * 60 * 1_000,
           referenceId: referenceId,
           msaId: accountData.msaId,
-          handle: accountData.handle,
+          handle: response.data.handle! as AuthAccountResponse['handle'],
         };
       }
     } catch (e) {

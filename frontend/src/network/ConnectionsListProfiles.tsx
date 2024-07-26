@@ -26,8 +26,8 @@ const ConnectionsListProfiles = ({
     <Flex gap={'small'} vertical>
       {connectionsList.map((connectionAccount, index) => (
         <div className={styles.profile} key={connectionAccount.msaId}>
-          <UserAvatar user={connectionAccount} avatarSize="small" />
           <div className={styles.name} onClick={() => navigate(`/profile/${connectionAccount.msaId}`)}>
+            <UserAvatar user={connectionAccount} avatarSize="small" />
             <FromTitle user={connectionAccount} />
           </div>
           {/* Skip change button for self */}
