@@ -4,9 +4,9 @@ import styles from './App.module.css';
 import useStickyState from './helpers/StickyState';
 
 import * as dsnpLink from './dsnpLink';
-import { Network, UserAccount } from './types';
+import { Network, PostLoadingType, UserAccount } from './types';
 import Header from './chrome/Header';
-import { Col, ConfigProvider, Layout, Modal, Row, Spin } from 'antd';
+import { Col, ConfigProvider, Layout, Row, Spin } from 'antd';
 import { setAccessToken } from './service/AuthService';
 import { Content } from 'antd/es/layout/layout';
 import { setIpfsGateway } from './service/IpfsService';
@@ -21,7 +21,7 @@ const App = (): ReactElement => {
   const [loggedInAccount, setLoggedInAccount] = useStickyState<UserAccount | undefined>(undefined, 'user-account');
   const [loading, setLoading] = useState<boolean>(false);
   const [network, setNetwork] = useState<Network>('testnet');
-  const [isPosting, setIsPosting] = useState<boolean>(false);
+  const [isPosting, setIsPosting] = useState<PostLoadingType>('none');
   const [refreshTrigger, setRefreshTrigger] = useState<number>(Date.now());
   const [isLoginModalOpen, setIsLoginModalOpen] = useState<boolean>(false);
 
@@ -42,11 +42,11 @@ const App = (): ReactElement => {
     setLoggedInAccount(undefined);
   };
 
-  const handleIsPosting = () => {
-    setIsPosting(true);
+  const handleIsPosting = (postLoadingType: PostLoadingType) => {
+    setIsPosting(postLoadingType);
     setTimeout(() => {
       setRefreshTrigger(Date.now());
-      setIsPosting(false);
+      setIsPosting('none');
     }, 14_000);
   };
 
@@ -85,7 +85,9 @@ const App = (): ReactElement => {
                       <PageRoutes
                         loggedInAccount={loggedInAccount}
                         network={network}
-                        isPosting={isPosting}
+                        isPosting={isPosting === 'post'}
+                        isReplying={isPosting === 'reply'}
+                        handleIsPosting={handleIsPosting}
                         refreshTrigger={refreshTrigger}
                         showLoginModal={() => setIsLoginModalOpen(true)}
                       />

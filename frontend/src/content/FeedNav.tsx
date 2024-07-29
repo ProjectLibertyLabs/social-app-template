@@ -1,5 +1,5 @@
 import styles from '../Feed.module.css';
-import { UserAccount } from '../types';
+import { PostLoadingType, UserAccount } from '../types';
 import { CompassOutlined, HomeOutlined, UserOutlined } from '@ant-design/icons';
 import React from 'react';
 import { Flex } from 'antd';
@@ -7,7 +7,7 @@ import NewPost from '../NewPost';
 import { useNavigate } from 'react-router-dom';
 
 interface FeedNavProps {
-  handleIsPosting: () => void;
+  handleIsPosting: (postLoadingType: PostLoadingType) => void;
   loggedInAccount: UserAccount;
 }
 

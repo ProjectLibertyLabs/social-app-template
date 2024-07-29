@@ -1,11 +1,11 @@
-import React, { ReactElement, useState } from 'react';
+import React, { ReactElement } from 'react';
 import PostList from './content/PostList';
-import { Spin } from 'antd';
-import { FeedTypes, User, Network, UserAccount } from './types';
+import { FeedTypes, Network, UserAccount } from './types';
 import styles from './Feed.module.css';
 
 type FeedProps = {
   isPosting: boolean;
+  isReplying: boolean;
   profile?: UserAccount | undefined;
   network: Network;
   feedType: FeedTypes;
@@ -17,6 +17,7 @@ type FeedProps = {
 const Feed = ({
   profile,
   isPosting,
+  isReplying,
   network,
   feedType,
   refreshTrigger,
@@ -33,6 +34,7 @@ const Feed = ({
         showReplyInput={showReplyInput}
         showLoginModal={showLoginModal}
         isPosting={isPosting}
+        isReplying={isReplying}
       />
     </div>
   );

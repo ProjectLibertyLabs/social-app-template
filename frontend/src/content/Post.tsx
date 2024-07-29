@@ -13,6 +13,7 @@ import { useGetUser } from '../service/UserProfileService';
 import { buildDSNPContentURI } from '../helpers/dsnp';
 import styles from './Post.module.css';
 import { useNavigate } from 'react-router-dom';
+import { PostLoadingType } from '../types';
 
 type FeedItem = dsnpLink.BroadcastExtended;
 
@@ -22,9 +23,19 @@ type PostProps = {
   isProfile?: boolean;
   showLoginModal?: () => void;
   isReply?: boolean;
+  isReplying: boolean;
+  handleIsPosting: (postLoadingType: PostLoadingType) => void;
 };
 
-const Post = ({ feedItem, showReplyInput, isProfile, showLoginModal, isReply }: PostProps): ReactElement => {
+const Post = ({
+  feedItem,
+  showReplyInput,
+  isProfile,
+  showLoginModal,
+  isReply = false,
+  isReplying,
+  handleIsPosting,
+}: PostProps): ReactElement => {
   const navigate = useNavigate();
   const { user, isLoading } = useGetUser(feedItem.fromId);
   const content = JSON.parse(feedItem?.content) as ActivityContentNote;
@@ -66,6 +77,8 @@ const Post = ({ feedItem, showReplyInput, isProfile, showLoginModal, isReply }: 
           parentURI={buildDSNPContentURI(BigInt(feedItem.fromId), feedItem.contentHash)}
           showReplyInput={showReplyInput}
           replies={feedItem.replies || []}
+          isReplying={isReplying}
+          handleIsPosting={handleIsPosting}
         />
       </Flex>
     </Card>

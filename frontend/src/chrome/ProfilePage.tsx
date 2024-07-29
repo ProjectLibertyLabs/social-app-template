@@ -13,9 +13,10 @@ interface ProfilePageProps {
   network: Network;
   isPosting: boolean;
   refreshTrigger: number;
+  isReplying: boolean;
 }
 
-const ProfilePage = ({ loggedInAccount, network, isPosting, refreshTrigger }: ProfilePageProps) => {
+const ProfilePage = ({ loggedInAccount, network, isPosting, refreshTrigger, isReplying }: ProfilePageProps) => {
   const location = useLocation();
 
   const getCurMsa = () => {
@@ -51,6 +52,7 @@ const ProfilePage = ({ loggedInAccount, network, isPosting, refreshTrigger }: Pr
         feedType={loggedInAccount.msaId === profile.msaId ? FeedTypes.MY_PROFILE : FeedTypes.OTHER_PROFILE}
         isPosting={isPosting}
         refreshTrigger={refreshTrigger}
+        isReplying={isReplying}
       />
     </Spin>
   );

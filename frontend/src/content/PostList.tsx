@@ -2,7 +2,7 @@ import React, { ReactElement, useEffect } from 'react';
 import Title from 'antd/es/typography/Title';
 import Post from './Post';
 import * as dsnpLink from '../dsnpLink';
-import { User, FeedTypes, Network } from '../types';
+import { User, FeedTypes, Network, PostLoadingType } from '../types';
 import { getContext } from '../service/AuthService';
 import styles from './Post.module.css';
 import { Button, Card, Flex, Space, Spin } from 'antd';
@@ -24,6 +24,8 @@ type PostListProps = {
   showReplyInput: boolean;
   isPosting: boolean;
   showLoginModal?: () => void;
+  isReplying: boolean;
+  handleIsPosting: (postLoadingType: PostLoadingType) => void;
 };
 
 type FeedItem = dsnpLink.BroadcastExtended;
@@ -35,6 +37,8 @@ const PostList = ({
   network,
   showReplyInput,
   showLoginModal,
+  isReplying,
+  handleIsPosting,
   isPosting,
 }: PostListProps): ReactElement => {
   const [priorTrigger, setPriorTrigger] = React.useState<number>(refreshTrigger);
@@ -141,6 +145,8 @@ const PostList = ({
               showReplyInput={showReplyInput}
               isProfile={feedType === FeedTypes.MY_PROFILE || feedType === FeedTypes.OTHER_PROFILE}
               showLoginModal={showLoginModal}
+              isReplying={isReplying}
+              handleIsPosting={handleIsPosting}
             />
           ))}
           <Space />

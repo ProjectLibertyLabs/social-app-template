@@ -2,10 +2,10 @@ import { Button } from 'antd';
 import React, { useState } from 'react';
 import styles from './NewPost.module.css';
 import NewPostModal from './content/NewPostModal';
-import { UserAccount } from './types';
+import { PostLoadingType, UserAccount } from './types';
 
 interface NewPostProps {
-  handleIsPosting: () => void;
+  handleIsPosting: (postLoadingType: PostLoadingType) => void;
   loggedInAccount: UserAccount;
 }
 
@@ -21,7 +21,7 @@ const NewPost = ({ handleIsPosting, loggedInAccount }: NewPostProps) => {
         <NewPostModal
           onSuccess={() => {
             setIsModalOpen(false);
-            handleIsPosting();
+            handleIsPosting('post');
           }}
           onCancel={() => setIsModalOpen(false)}
           loggedInAccount={loggedInAccount}
