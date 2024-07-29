@@ -13,7 +13,6 @@ import { useGetUser } from '../service/UserProfileService';
 import { buildDSNPContentURI } from '../helpers/dsnp';
 import styles from './Post.module.css';
 import { useNavigate } from 'react-router-dom';
-import { PostLoadingType } from '../types';
 
 type FeedItem = dsnpLink.BroadcastExtended;
 
@@ -22,20 +21,10 @@ type PostProps = {
   showReplyInput: boolean;
   isProfile?: boolean;
   showLoginModal?: () => void;
-  isReply?: boolean;
-  isReplying: boolean;
-  handleIsPosting: (postLoadingType: PostLoadingType) => void;
+  handleIsPosting: () => void;
 };
 
-const Post = ({
-  feedItem,
-  showReplyInput,
-  isProfile,
-  showLoginModal,
-  isReply = false,
-  isReplying,
-  handleIsPosting,
-}: PostProps): ReactElement => {
+const Post = ({ feedItem, showReplyInput, isProfile, showLoginModal, handleIsPosting }: PostProps): ReactElement => {
   const navigate = useNavigate();
   const { user, isLoading } = useGetUser(feedItem.fromId);
   const content = JSON.parse(feedItem?.content) as ActivityContentNote;
@@ -46,7 +35,7 @@ const Post = ({
 
   return (
     <Card key={feedItem.contentHash} className={styles.card} bordered={true} loading={isLoading}>
-      <Flex gap={isReply ? 12 : 18} vertical>
+      <Flex gap={18} vertical>
         {!isProfile && (
           <div
             onClick={() =>
@@ -56,7 +45,7 @@ const Post = ({
           >
             <Card.Meta
               className={styles.metaInnerBlock}
-              avatar={<UserAvatar user={user} avatarSize={isReply ? 'small' : 'medium'} />}
+              avatar={<UserAvatar user={user} avatarSize={'medium'} />}
               title={<FromTitle user={user} showLoginModal={showLoginModal} isLoggedOut={showReplyInput} />}
             />
           </div>
@@ -77,7 +66,6 @@ const Post = ({
           parentURI={buildDSNPContentURI(BigInt(feedItem.fromId), feedItem.contentHash)}
           showReplyInput={showReplyInput}
           replies={feedItem.replies || []}
-          isReplying={isReplying}
           handleIsPosting={handleIsPosting}
         />
       </Flex>

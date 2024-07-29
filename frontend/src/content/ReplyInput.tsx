@@ -7,18 +7,17 @@ import * as dsnpLink from '../dsnpLink';
 import { getContext } from '../service/AuthService';
 import { TextAreaRef } from 'antd/es/input/TextArea';
 import { UploadFile } from 'antd/es/upload/interface';
-import { PostLoadingType } from '../types';
 
 interface ReplyInputProps {
   parentURI: DSNPContentURI;
-  handleIsPosting: (postLoadingType: PostLoadingType) => void;
+  handleIsReplying: () => void;
 }
 
 type NewReplyValues = {
   message: string;
 };
 
-const ReplyInput = ({ parentURI, handleIsPosting }: ReplyInputProps): ReactElement => {
+const ReplyInput = ({ parentURI, handleIsReplying }: ReplyInputProps): ReactElement => {
   const [form] = Form.useForm();
   const [saving, setSaving] = React.useState<boolean>(false);
 
@@ -38,7 +37,7 @@ const ReplyInput = ({ parentURI, handleIsPosting }: ReplyInputProps): ReactEleme
         }
       );
       success();
-      handleIsPosting('reply');
+      handleIsReplying();
       form.resetFields();
     } catch (e) {
       console.error(e);

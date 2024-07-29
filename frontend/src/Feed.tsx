@@ -5,24 +5,24 @@ import styles from './Feed.module.css';
 
 type FeedProps = {
   isPosting: boolean;
-  isReplying: boolean;
   profile?: UserAccount | undefined;
   network: Network;
   feedType: FeedTypes;
   refreshTrigger: number;
   showReplyInput?: boolean;
   showLoginModal?: () => void;
+  handleIsPosting: () => void;
 };
 
 const Feed = ({
   profile,
   isPosting,
-  isReplying,
   network,
   feedType,
   refreshTrigger,
   showReplyInput = true,
   showLoginModal,
+  handleIsPosting
 }: FeedProps): ReactElement => {
   return (
     <div className={styles.root}>
@@ -34,7 +34,7 @@ const Feed = ({
         showReplyInput={showReplyInput}
         showLoginModal={showLoginModal}
         isPosting={isPosting}
-        isReplying={isReplying}
+        handleIsPosting={handleIsPosting}
       />
     </div>
   );

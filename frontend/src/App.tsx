@@ -4,7 +4,7 @@ import styles from './App.module.css';
 import useStickyState from './helpers/StickyState';
 
 import * as dsnpLink from './dsnpLink';
-import { Network, PostLoadingType, UserAccount } from './types';
+import { Network, UserAccount } from './types';
 import Header from './chrome/Header';
 import { Col, ConfigProvider, Layout, Row, Spin } from 'antd';
 import { setAccessToken } from './service/AuthService';
@@ -21,7 +21,7 @@ const App = (): ReactElement => {
   const [loggedInAccount, setLoggedInAccount] = useStickyState<UserAccount | undefined>(undefined, 'user-account');
   const [loading, setLoading] = useState<boolean>(false);
   const [network, setNetwork] = useState<Network>('testnet');
-  const [isPosting, setIsPosting] = useState<PostLoadingType>('none');
+  const [isPosting, setIsPosting] = useState<boolean>(false);
   const [refreshTrigger, setRefreshTrigger] = useState<number>(Date.now());
   const [isLoginModalOpen, setIsLoginModalOpen] = useState<boolean>(false);
 
@@ -42,11 +42,11 @@ const App = (): ReactElement => {
     setLoggedInAccount(undefined);
   };
 
-  const handleIsPosting = (postLoadingType: PostLoadingType) => {
-    setIsPosting(postLoadingType);
+  const handleIsPosting = () => {
+    setIsPosting(true);
     setTimeout(() => {
       setRefreshTrigger(Date.now());
-      setIsPosting('none');
+      setIsPosting(false);
     }, 14_000);
   };
 
@@ -85,8 +85,7 @@ const App = (): ReactElement => {
                       <PageRoutes
                         loggedInAccount={loggedInAccount}
                         network={network}
-                        isPosting={isPosting === 'post'}
-                        isReplying={isPosting === 'reply'}
+                        isPosting={isPosting}
                         handleIsPosting={handleIsPosting}
                         refreshTrigger={refreshTrigger}
                         showLoginModal={() => setIsLoginModalOpen(true)}

@@ -40,5 +40,3 @@ export enum ConnectionsType {
   FOLLOWERS = 'FOLLOWERS',
   FOLLOWING = 'FOLLOWING',
 }
-
-export type PostLoadingType = 'reply' | 'post' | 'none';

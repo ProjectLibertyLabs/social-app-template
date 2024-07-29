@@ -10,10 +10,9 @@ import type { MenuProps } from 'antd';
 interface PostHashDropdownProps {
   hash: HexString;
   fromId: string;
-  isReply?: boolean;
 }
 
-const PostHashDropdown = ({ hash, fromId, isReply }: PostHashDropdownProps): ReactElement => {
+const PostHashDropdown = ({ hash, fromId }: PostHashDropdownProps): ReactElement => {
   const [isCopied, setIsCopied] = useState<boolean>(false);
   const [isVisible, setIsVisible] = useState<boolean>(false);
 

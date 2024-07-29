@@ -9,19 +9,16 @@ import { ActivityContentNote } from '@dsnp/activity-content/types';
 import { Anchorme } from 'react-anchorme';
 import * as dsnpLink from '../dsnpLink';
 import { useGetUser } from '../service/UserProfileService';
-import { buildDSNPContentURI } from '../helpers/dsnp';
 import styles from './Post.module.css';
-import { PostLoadingType } from '../types';
 
 type FeedItem = dsnpLink.BroadcastExtended;
 
 type ReplyProps = {
   feedItem: FeedItem;
   isReplying: boolean;
-  handleIsPosting: (postLoadingType: PostLoadingType) => void;
 };
 
-const Reply = ({ feedItem, isReplying, handleIsPosting }: ReplyProps): ReactElement => {
+const Reply = ({ feedItem, isReplying }: ReplyProps): ReactElement => {
   const { user, isLoading } = useGetUser(feedItem.fromId);
   const content = JSON.parse(feedItem?.content) as ActivityContentNote;
 
@@ -32,7 +29,7 @@ const Reply = ({ feedItem, isReplying, handleIsPosting }: ReplyProps): ReactElem
           <Card.Meta
             className={styles.metaInnerBlock}
             avatar={<UserAvatar user={user} avatarSize={'small'} />}
-            title={<FromTitle user={user} />}
+            title={<FromTitle user={user} isReply={true} />}
           />
           <div className={styles.time}>
             <PostHashDropdown hash={feedItem.contentHash} fromId={feedItem.fromId} />
@@ -45,13 +42,6 @@ const Reply = ({ feedItem, isReplying, handleIsPosting }: ReplyProps): ReactElem
               </Anchorme>
             </div>
           )}
-          <ReplyBlock
-            parentURI={buildDSNPContentURI(BigInt(feedItem.fromId), feedItem.contentHash)}
-            showReplyInput={false}
-            replies={feedItem.replies || []}
-            isReplying={isReplying}
-            handleIsPosting={handleIsPosting}
-          />
         </Flex>
       </Spin>
     </Card>
