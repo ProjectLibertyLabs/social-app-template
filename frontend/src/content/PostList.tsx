@@ -5,7 +5,7 @@ import * as dsnpLink from '../dsnpLink';
 import { User, FeedTypes, Network } from '../types';
 import { getContext } from '../service/AuthService';
 import styles from './Post.module.css';
-import { Button, Flex, Space, Spin } from 'antd';
+import { Button, Card, Flex, Space, Spin } from 'antd';
 import { useNavigate } from 'react-router-dom';
 import { getUserProfile } from '../service/UserProfileService';
 
@@ -22,6 +22,7 @@ type PostListProps = {
   refreshTrigger: number;
   network: Network;
   showReplyInput: boolean;
+  isPosting: boolean;
   showLoginModal?: () => void;
 };
 
@@ -34,6 +35,7 @@ const PostList = ({
   network,
   showReplyInput,
   showLoginModal,
+  isPosting,
 }: PostListProps): ReactElement => {
   const [priorTrigger, setPriorTrigger] = React.useState<number>(refreshTrigger);
   const [priorFeedType, setPriorFeedType] = React.useState<number>(feedType);
@@ -131,6 +133,7 @@ const PostList = ({
       <Spin size="large" spinning={isLoading} className={styles.spinner} />
       {oldestBlockNumber !== undefined && (
         <Flex gap={'middle'} vertical={true}>
+          {isPosting && <Card loading={isPosting} />}
           {currentFeed.map((feedItem, index) => (
             <Post
               key={index}

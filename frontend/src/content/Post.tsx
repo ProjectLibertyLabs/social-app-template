@@ -34,42 +34,40 @@ const Post = ({ feedItem, showReplyInput, isProfile, showLoginModal, isReply }: 
   const attachments: ActivityContentAttachment[] = content.attachment || [];
 
   return (
-    <Card key={feedItem.contentHash} className={styles.card} bordered={true}>
-      <Spin tip="Loading" size="large" spinning={isLoading}>
-        <Flex gap={isReply ? 12 : 18} vertical>
-          {!isProfile && (
-            <div
-              onClick={() =>
-                showReplyInput ? navigate(`/profile/${feedItem.fromId}`) : showLoginModal && showLoginModal()
-              }
-              className={styles.metaBlock}
-            >
-              <Card.Meta
-                className={styles.metaInnerBlock}
-                avatar={<UserAvatar user={user} avatarSize={isReply ? 'small' : 'medium'} />}
-                title={<FromTitle user={user} showLoginModal={showLoginModal} isLoggedOut={showReplyInput} />}
-              />
-            </div>
-          )}
-          <div className={styles.time}>
-            <PostHashDropdown hash={feedItem.contentHash} fromId={feedItem.fromId} />
-            {content?.published && <RelativeTime published={content?.published} />}
+    <Card key={feedItem.contentHash} className={styles.card} bordered={true} loading={isLoading}>
+      <Flex gap={isReply ? 12 : 18} vertical>
+        {!isProfile && (
+          <div
+            onClick={() =>
+              showReplyInput ? navigate(`/profile/${feedItem.fromId}`) : showLoginModal && showLoginModal()
+            }
+            className={styles.metaBlock}
+          >
+            <Card.Meta
+              className={styles.metaInnerBlock}
+              avatar={<UserAvatar user={user} avatarSize={isReply ? 'small' : 'medium'} />}
+              title={<FromTitle user={user} showLoginModal={showLoginModal} isLoggedOut={showReplyInput} />}
+            />
           </div>
-          {content && (
-            <div className={styles.caption}>
-              <Anchorme target="_blank" rel="noreferrer noopener">
-                {content?.content}
-              </Anchorme>
-            </div>
-          )}
-          {content?.attachment && content?.attachment?.length > 0 && <PostMedia attachments={attachments} />}
-          <ReplyBlock
-            parentURI={buildDSNPContentURI(BigInt(feedItem.fromId), feedItem.contentHash)}
-            showReplyInput={showReplyInput}
-            replies={feedItem.replies || []}
-          />
-        </Flex>
-      </Spin>
+        )}
+        <div className={styles.time}>
+          <PostHashDropdown hash={feedItem.contentHash} fromId={feedItem.fromId} />
+          {content?.published && <RelativeTime published={content?.published} />}
+        </div>
+        {content && (
+          <div className={styles.caption}>
+            <Anchorme target="_blank" rel="noreferrer noopener">
+              {content?.content}
+            </Anchorme>
+          </div>
+        )}
+        {content?.attachment && content?.attachment?.length > 0 && <PostMedia attachments={attachments} />}
+        <ReplyBlock
+          parentURI={buildDSNPContentURI(BigInt(feedItem.fromId), feedItem.contentHash)}
+          showReplyInput={showReplyInput}
+          replies={feedItem.replies || []}
+        />
+      </Flex>
     </Card>
   );
 };
