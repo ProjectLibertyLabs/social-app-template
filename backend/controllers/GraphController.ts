@@ -59,8 +59,10 @@ export class GraphController extends BaseController {
     }
 
     try {
-      const referenceId = await GraphService.getInstance().then((service) => service.postFollow(msaId, parseInt(msaToFollow)));
-      return res.status(HttpStatusCode.Created).send({referenceId});
+      const referenceId = await GraphService.getInstance().then((service) =>
+        service.postFollow(msaId, parseInt(msaToFollow))
+      );
+      return res.status(HttpStatusCode.Created).send({ referenceId });
     } catch (err: any) {
       logger.error({ err }, 'Error changing user graph: follow');
       if (err instanceof HttpError) {
@@ -83,9 +85,11 @@ export class GraphController extends BaseController {
     }
 
     try {
-      const referenceId = await GraphService.getInstance().then((service) => service.postUnfollow(msaId, parseInt(msaToUnfollow)));
+      const referenceId = await GraphService.getInstance().then((service) =>
+        service.postUnfollow(msaId, parseInt(msaToUnfollow))
+      );
 
-      return res.status(HttpStatusCode.Created).send({referenceId});
+      return res.status(HttpStatusCode.Created).send({ referenceId });
     } catch (err: any) {
       logger.error({ err }, 'Error changing user graph: unfollow');
       if (err instanceof HttpError) {
