@@ -133,7 +133,7 @@ const PostList = ({
       <Spin size="large" spinning={isLoading} className={styles.spinner} />
       {oldestBlockNumber !== undefined && (
         <Flex gap={'middle'} vertical={true}>
-          {isPosting && <Card loading={isPosting} />}
+          {isPosting && <Card loading={true} className={styles.card} bordered={true} />}
           {currentFeed.map((feedItem, index) => (
             <Post
               key={index}
