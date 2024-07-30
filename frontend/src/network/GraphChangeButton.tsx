@@ -43,10 +43,11 @@ const GraphChangeButton = ({
   };
 
   const changeGraphState = async () => {
-    const { referenceId } = await (isFollowing
-      ? dsnpLink.graphUnfollow(getContext(), { msaId: connectionAccount.msaId })
-      : dsnpLink.graphFollow(getContext(), { msaId: connectionAccount.msaId }));
+    const { referenceId } = isFollowing
+      ? await dsnpLink.graphUnfollow(getContext(), { msaId: connectionAccount.msaId })
+      : await dsnpLink.graphFollow(getContext(), { msaId: connectionAccount.msaId });
 
+    console.log('referenceId', referenceId);
     if (referenceId) await pollGraphChangeState(referenceId);
   };
 

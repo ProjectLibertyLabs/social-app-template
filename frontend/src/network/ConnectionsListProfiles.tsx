@@ -24,31 +24,27 @@ const ConnectionsListProfiles = ({
 
   return (
     <Flex gap={'small'} vertical>
-      {connectionsList ? (
-        connectionsList.map((connectionAccount, index) => (
-          <div className={styles.profile} key={connectionAccount.msaId}>
-            <div className={styles.name} onClick={() => navigate(`/profile/${connectionAccount.msaId}`)}>
-              <UserAvatar user={connectionAccount} avatarSize="small" />
-              <FromTitle user={connectionAccount} />
-            </div>
-            {/* Skip change button for self */}
-            {connectionAccount.msaId !== loggedInAccount.msaId && (
-              <GraphChangeButton
-                key={index}
-                triggerGraphRefresh={triggerGraphRefresh}
-                connectionAccount={connectionAccount}
-                relationshipStatus={
-                  loggedInAccountConnections.includes(connectionAccount.msaId)
-                    ? RelationshipStatus.FOLLOWING
-                    : RelationshipStatus.NONE
-                }
-              />
-            )}
+      {connectionsList.map((connectionAccount, index) => (
+        <div className={styles.profile} key={connectionAccount.msaId}>
+          <div className={styles.name} onClick={() => navigate(`/profile/${connectionAccount.msaId}`)}>
+            <UserAvatar user={connectionAccount} avatarSize="small" />
+            <FromTitle user={connectionAccount} />
           </div>
-        ))
-      ) : (
-        <div>No connections yet.</div>
-      )}
+          {/* Skip change button for self */}
+          {connectionAccount.msaId !== loggedInAccount.msaId && (
+            <GraphChangeButton
+              key={index}
+              triggerGraphRefresh={triggerGraphRefresh}
+              connectionAccount={connectionAccount}
+              relationshipStatus={
+                loggedInAccountConnections.includes(connectionAccount.msaId)
+                  ? RelationshipStatus.FOLLOWING
+                  : RelationshipStatus.NONE
+              }
+            />
+          )}
+        </div>
+      ))}
     </Flex>
   );
 };
