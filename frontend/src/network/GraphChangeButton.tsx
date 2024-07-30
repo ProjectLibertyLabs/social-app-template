@@ -1,4 +1,4 @@
-import React, { ReactElement, useEffect, useState } from 'react';
+import React, { ReactElement } from 'react';
 import { Button } from 'antd';
 import styles from './GraphChangeButton.module.css';
 import * as dsnpLink from '../dsnpLink';
@@ -24,35 +24,30 @@ const GraphChangeButton = ({
 
   const getGraphChangeState = async (referenceId: string) => {
     const operationStatus = await dsnpLink.graphOperationStatus(getContext(), { referenceId });
-    if (operationStatus.status !== 'pending') {
-      // Defined in App.tsx to refreshFollowing, triggers an api call to /graph/{msaId}/following
-      triggerGraphRefresh();
-      setIsUpdating(false);
-    } else {
-      setIsUpdating(true);
-    }
-    console.log('operationStatus', operationStatus);
+    setIsUpdating(operationStatus.status === 'pending');
+    if (operationStatus.status !== 'pending') triggerGraphRefresh();
     return operationStatus;
   };
 
+  const pollGraphChangeState = async (referenceId: string) => {
+    // get initial state.
+    let operationStatus = await getGraphChangeState(referenceId);
+    let intervalCounter = 0;
+
+    // after 6 seconds, we poll 10 times over the course of a minute.
+    const intervalId = setInterval(async () => {
+      intervalCounter++;
+      operationStatus = await getGraphChangeState(referenceId!);
+      if (operationStatus.status !== 'pending' || intervalCounter > 10) clearInterval(intervalId);
+    }, 6000);
+  };
+
   const changeGraphState = async () => {
-    let refId: { referenceId?: string | undefined };
-    if (isFollowing) {
-      refId = await dsnpLink.graphUnfollow(getContext(), { msaId: connectionAccount.msaId });
-    } else {
-      refId = await dsnpLink.graphFollow(getContext(), { msaId: connectionAccount.msaId });
-    }
+    const { referenceId } = await (isFollowing
+      ? dsnpLink.graphUnfollow(getContext(), { msaId: connectionAccount.msaId })
+      : dsnpLink.graphFollow(getContext(), { msaId: connectionAccount.msaId }));
 
-    if (refId.referenceId) {
-      let operationStatus = await getGraphChangeState(refId.referenceId!);
-      let intervalCounter = 0;
-
-      const intervalId = setInterval(async () => {
-        intervalCounter++;
-        operationStatus = await getGraphChangeState(refId.referenceId!);
-        if (operationStatus.status !== 'pending' || intervalCounter > 10) clearInterval(intervalId);
-      }, 6000);
-    }
+    if (referenceId) await pollGraphChangeState(referenceId);
   };
 
   return (
