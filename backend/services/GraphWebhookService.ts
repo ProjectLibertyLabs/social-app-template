@@ -14,7 +14,7 @@ export class GraphWebhookService {
 
   private constructor() {}
 
-  public static updateOperationByRefId(refId: string, status: string) {
+  public static updateOperationByRefId(refId: string, status: 'pending' | 'expired' | 'failed' | 'succeeded') {
     logger.debug({ refId, status }, 'Setting graph operation status');
     GraphWebhookService._referenceIdsPending.set(refId, status);
   }

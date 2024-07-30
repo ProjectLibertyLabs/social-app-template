@@ -456,7 +456,12 @@ export async function graphOperationStatus<FetcherData>(ctx: r.Context<AuthMetho
  */
 export async function graphFollow<FetcherData>(ctx: r.Context<AuthMethods, FetcherData>, params: {
     msaId: string;
-}, opts?: FetcherData): Promise<any> {
+}, opts?: FetcherData): Promise<{
+    /**
+     * ReferenceId from the request
+     */
+    referenceId?: string;
+}> {
     const req = await ctx.createRequest({
         path: '/graph/{msaId}/follow',
         params,
@@ -471,7 +476,12 @@ export async function graphFollow<FetcherData>(ctx: r.Context<AuthMethods, Fetch
  */
 export async function graphUnfollow<FetcherData>(ctx: r.Context<AuthMethods, FetcherData>, params: {
     msaId: string;
-}, opts?: FetcherData): Promise<any> {
+}, opts?: FetcherData): Promise<{
+    /**
+     * ReferenceId from the request
+     */
+    referenceId?: string;
+}> {
     const req = await ctx.createRequest({
         path: '/graph/{msaId}/unfollow',
         params,

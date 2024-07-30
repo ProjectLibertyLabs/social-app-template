@@ -22,15 +22,32 @@ const GraphChangeButton = ({
 
   const buttonText = (): string => (isUpdating ? 'Updating' : isFollowing ? 'Unfollow' : 'Follow');
 
+  const getGraphChangeState = async (referenceId: string) => {
+    const operationStatus = await dsnpLink.graphOperationStatus(getContext(), { referenceId });
+    setIsUpdating(operationStatus.status === 'pending');
+    if (operationStatus.status !== 'pending') triggerGraphRefresh();
+    return operationStatus;
+  };
+
+  const pollGraphChangeState = async (referenceId: string) => {
+    // get initial state.
+    let operationStatus = await getGraphChangeState(referenceId);
+    let intervalCounter = 0;
+
+    // after 6 seconds, we poll 10 times over the course of a minute.
+    const intervalId = setInterval(async () => {
+      intervalCounter++;
+      operationStatus = await getGraphChangeState(referenceId!);
+      if (operationStatus.status !== 'pending' || intervalCounter > 10) clearInterval(intervalId);
+    }, 6000);
+  };
+
   const changeGraphState = async () => {
-    setIsUpdating(true);
-    if (isFollowing) {
-      await dsnpLink.graphUnfollow(getContext(), { msaId: connectionAccount.msaId });
-    } else {
-      await dsnpLink.graphFollow(getContext(), { msaId: connectionAccount.msaId });
-    }
-    // Defined in App.tsx to refreshFollowing, triggers an api call to /graph/{msaId}/following
-    triggerGraphRefresh();
+    const { referenceId } = await (isFollowing
+      ? dsnpLink.graphUnfollow(getContext(), { msaId: connectionAccount.msaId })
+      : dsnpLink.graphFollow(getContext(), { msaId: connectionAccount.msaId }));
+
+    if (referenceId) await pollGraphChangeState(referenceId);
   };
 
   return (
