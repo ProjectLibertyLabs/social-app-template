@@ -24,27 +24,31 @@ const ConnectionsListProfiles = ({
 
   return (
     <Flex gap={'small'} vertical>
-      {connectionsList.map((connectionAccount, index) => (
-        <div className={styles.profile} key={connectionAccount.msaId}>
-          <div className={styles.name} onClick={() => navigate(`/profile/${connectionAccount.msaId}`)}>
-            <UserAvatar user={connectionAccount} avatarSize="small" />
-            <FromTitle user={connectionAccount} />
+      {connectionsList ? (
+        connectionsList.map((connectionAccount, index) => (
+          <div className={styles.profile} key={connectionAccount.msaId}>
+            <div className={styles.name} onClick={() => navigate(`/profile/${connectionAccount.msaId}`)}>
+              <UserAvatar user={connectionAccount} avatarSize="small" />
+              <FromTitle user={connectionAccount} />
+            </div>
+            {/* Skip change button for self */}
+            {connectionAccount.msaId !== loggedInAccount.msaId && (
+              <GraphChangeButton
+                key={index}
+                triggerGraphRefresh={triggerGraphRefresh}
+                connectionAccount={connectionAccount}
+                relationshipStatus={
+                  loggedInAccountConnections.includes(connectionAccount.msaId)
+                    ? RelationshipStatus.FOLLOWING
+                    : RelationshipStatus.NONE
+                }
+              />
+            )}
           </div>
-          {/* Skip change button for self */}
-          {connectionAccount.msaId !== loggedInAccount.msaId && (
-            <GraphChangeButton
-              key={index}
-              triggerGraphRefresh={triggerGraphRefresh}
-              connectionAccount={connectionAccount}
-              relationshipStatus={
-                loggedInAccountConnections.includes(connectionAccount.msaId)
-                  ? RelationshipStatus.FOLLOWING
-                  : RelationshipStatus.NONE
-              }
-            />
-          )}
-        </div>
-      ))}
+        ))
+      ) : (
+        <div>No connections yet.</div>
+      )}
     </Flex>
   );
 };
