@@ -26,6 +26,7 @@ type NewPostValues = {
 const NewPostModal = ({ onSuccess, onCancel, loggedInAccount }: NewPostProps): ReactElement => {
   const [form] = Form.useForm();
   const [saving, setSaving] = React.useState<boolean>(false);
+  const [isDisabled, setIsDisabled] = React.useState<boolean>(true);
 
   const messageRef: LegacyRef<TextAreaRef> = React.createRef();
 
@@ -80,7 +81,13 @@ const NewPostModal = ({ onSuccess, onCancel, loggedInAccount }: NewPostProps): R
           </Flex>
         </Form.Item>
         <Form.Item name="message" required={true}>
-          <Input.TextArea rows={4} placeholder="Enter your message" autoFocus={true} ref={messageRef} />
+          <Input.TextArea
+            rows={4}
+            placeholder="Enter your message"
+            autoFocus={true}
+            ref={messageRef}
+            onChange={(e) => setIsDisabled(e.target.value.length === 0)}
+          />
         </Form.Item>
         <NewPostImageUpload
           onChange={(fileList) => {
@@ -89,7 +96,14 @@ const NewPostModal = ({ onSuccess, onCancel, loggedInAccount }: NewPostProps): R
           }}
         />
         <Form.Item>
-          <Button size={'large'} type={'primary'} className={styles.newPostButton} htmlType="submit" loading={saving}>
+          <Button
+            size={'large'}
+            type={'primary'}
+            className={styles.newPostButton}
+            htmlType="submit"
+            loading={saving}
+            disabled={isDisabled}
+          >
             Post
           </Button>
         </Form.Item>
