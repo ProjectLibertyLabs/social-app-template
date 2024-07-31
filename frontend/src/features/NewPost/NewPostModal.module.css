@@ -1,0 +1,14 @@
+.title {
+  font-size: large;
+  font-weight: bold;
+}
+
+.fromTitle {
+  font-size: medium;
+  font-weight: bold;
+}
+
+.postButton {
+  font-weight: bold;
+  width: 100%;
+}

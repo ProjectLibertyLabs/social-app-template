@@ -58,7 +58,7 @@ export class AccountService {
   }
 
   /**
-   * Retrieves the SIWF configuration for wallet login.
+   * Retrieves the SIWF configuration for wallet Login.
    * @returns A promise that resolves to a `WalletLoginConfigResponse` object.
    * @throws If there was an error retrieving the SWIF config.
    */

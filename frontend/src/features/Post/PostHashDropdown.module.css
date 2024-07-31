@@ -1,0 +1,21 @@
+:root {
+  --hash-bg: white;
+  --border: black;
+  --border-hover: #999;
+}
+
+.root {
+  cursor: pointer;
+}
+
+.menu {
+  max-width: 200px;
+  overflow-wrap: break-word;
+  white-space: pre-wrap;
+  padding: 12px;
+}
+
+.title {
+  font-weight: bold;
+  line-height: 1;
+}
