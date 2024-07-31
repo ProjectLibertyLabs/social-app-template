@@ -24,7 +24,6 @@ const PageRoutes = ({ loggedInAccount, network, isPosting, refreshTrigger, showL
               network={network}
               isPosting={isPosting}
               refreshTrigger={refreshTrigger}
-              showReplyInput={!!loggedInAccount}
               showLoginModal={showLoginModal}
             />
           }

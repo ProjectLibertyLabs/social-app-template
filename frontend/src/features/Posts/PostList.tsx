@@ -1,12 +1,13 @@
 import React, { ReactElement, useEffect } from 'react';
-import Title from 'antd/es/typography/Title';
-import Post from '../Post/Post';
+import Post from './Post';
 import * as dsnpLink from '../../dsnpLink';
-import { User, FeedTypes, Network } from '../../types';
+import { BroadcastCardType, FeedTypes, Network, User } from '../../types';
 import { getContext } from '../../service/AuthService';
 import styles from './PostList.module.css';
 import { Button, Flex, Space, Spin } from 'antd';
 import { useNavigate } from 'react-router-dom';
+import BroadcastCard from '../BroadcastCard/BroadcastCard';
+import Title from 'antd/es/typography/Title';
 
 const OLDEST_BLOCK_TO_GO_TO: Record<Network, number> = {
   local: 1,
@@ -20,7 +21,6 @@ type PostListProps = {
   // Uses Date.now to trigger an update
   refreshTrigger: number;
   network: Network;
-  showReplyInput: boolean;
   isPosting: boolean;
   showLoginModal?: () => void;
 };
@@ -32,7 +32,6 @@ const PostList = ({
   profile,
   refreshTrigger,
   network,
-  showReplyInput,
   showLoginModal,
   isPosting,
 }: PostListProps): ReactElement => {
@@ -132,12 +131,11 @@ const PostList = ({
       <Spin size="large" spinning={isLoading} className={styles.spinner} />
       {oldestBlockNumber !== undefined && (
         <Flex gap={'middle'} vertical={true}>
-          {isPosting && <Card loading={true} className={styles.card} bordered={true} />}
+          {isPosting && <BroadcastCard broadcastCardType={BroadcastCardType.POST_LOADING} isLoading={true} />}
           {currentFeed.map((feedItem, index) => (
             <Post
               key={index}
               feedItem={feedItem}
-              showReplyInput={showReplyInput}
               isProfile={feedType === FeedTypes.MY_PROFILE || feedType === FeedTypes.OTHER_PROFILE}
               showLoginModal={showLoginModal}
             />

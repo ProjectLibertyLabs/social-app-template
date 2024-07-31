@@ -2,17 +2,19 @@ import React, { ReactElement, useState } from 'react';
 import ReplyInput from './ReplyInput';
 import * as dsnpLink from '../../dsnpLink';
 import { DSNPContentURI } from '../../helpers/dsnp';
-import { Card, Flex } from 'antd';
-import styles from './Post.module.css';
-import Reply from '../Reply/Reply';
+import { Flex } from 'antd';
+import Reply from './Reply';
+import BroadcastCard from '../BroadcastCard/BroadcastCard';
+import { BroadcastCardType } from '../../types';
 
 interface ReplyBlockProps {
   parentURI: DSNPContentURI;
   replies: dsnpLink.ReplyExtended[];
-  showReplyInput: boolean;
+  isLoggedOut: boolean;
+  showLoginModal?: () => void;
 }
 
-const ReplyBlock = ({ parentURI, replies, showReplyInput }: ReplyBlockProps): ReactElement => {
+const ReplyList = ({ parentURI, replies, isLoggedOut, showLoginModal }: ReplyBlockProps): ReactElement => {
   const [isReplying, setIsReplying] = useState<boolean>(false);
 
   const handleIsReplying = () => {
@@ -27,15 +29,15 @@ const ReplyBlock = ({ parentURI, replies, showReplyInput }: ReplyBlockProps): Re
       {replies.length > 0 && (
         <Flex gap={'small'} vertical>
           {replies.map((reply, index) => (
-            <Reply feedItem={reply} key={index} />
+            <Reply feedItem={reply} showLoginModal={showLoginModal} key={index} />
           ))}
-          {isReplying && <Card loading={isReplying} style={{ height: 70 }} className={styles.card} bordered={true} />}
+          {isReplying && <BroadcastCard broadcastCardType={BroadcastCardType.REPLY_LOADING} isLoading={true} />}
         </Flex>
       )}
 
-      {showReplyInput && <ReplyInput parentURI={parentURI} handleIsReplying={handleIsReplying} />}
+      {isLoggedOut && <ReplyInput parentURI={parentURI} handleIsReplying={handleIsReplying} />}
     </>
   );
 };
 
-export default ReplyBlock;
+export default ReplyList;

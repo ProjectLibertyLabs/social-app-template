@@ -5,15 +5,13 @@ type DiscoverProps = {
   network: Network;
   isPosting: boolean;
   refreshTrigger: number;
-  showReplyInput: boolean;
   showLoginModal: () => void;
 };
 
-const Discover = ({ isPosting, network, refreshTrigger, showReplyInput, showLoginModal }: DiscoverProps) => {
+const Discover = ({ isPosting, network, refreshTrigger, showLoginModal }: DiscoverProps) => {
   return (
     <Feed
       feedType={FeedTypes.DISCOVER}
-      showReplyInput={showReplyInput}
       showLoginModal={showLoginModal}
       isPosting={isPosting}
       network={network}

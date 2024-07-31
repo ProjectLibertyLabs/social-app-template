@@ -1,7 +1,7 @@
 import React, { ReactElement } from 'react';
 import ReactPlayer from 'react-player';
 import { Carousel } from 'antd';
-import styles from './PostMedia.module.css';
+import styles from './BroadcastMedia.module.css';
 import type {
   ActivityContentAttachment,
   ActivityContentImage,
@@ -10,7 +10,7 @@ import type {
 } from '@dsnp/activity-content/types';
 import { tryUseIpfsGateway } from '../../service/IpfsService';
 
-interface PostMediaProps {
+interface BroadcastMediaProps {
   attachments: ActivityContentAttachment[];
 }
 
@@ -26,7 +26,7 @@ function isAudio(attachment: ActivityContentAttachment): attachment is ActivityC
   return attachment.type.toLowerCase() === 'audio';
 }
 
-const PostMedia = ({ attachments }: PostMediaProps): ReactElement => {
+const BroadcastMedia = ({ attachments }: BroadcastMediaProps): ReactElement => {
   const getPostMediaItems = () => {
     return attachments.map((attachment, index) => {
       return (
@@ -58,4 +58,4 @@ const PostMedia = ({ attachments }: PostMediaProps): ReactElement => {
     </Carousel>
   );
 };
-export default PostMedia;
+export default BroadcastMedia;

@@ -6,7 +6,7 @@ import useStickyState from '../../helpers/StickyState';
 import * as dsnpLink from '../../dsnpLink';
 import { Network, UserAccount } from '../../types';
 import Header from '../../features/Header/Header';
-import { Col, ConfigProvider, Layout, Modal, Row, Spin } from 'antd';
+import { Col, ConfigProvider, Layout, Row, Spin } from 'antd';
 import { setAccessToken } from '../../service/AuthService';
 import { Content } from 'antd/es/layout/layout';
 import { setIpfsGateway } from '../../service/IpfsService';
