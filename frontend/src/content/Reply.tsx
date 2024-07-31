@@ -2,7 +2,6 @@ import React, { ReactElement } from 'react';
 import { Card, Flex, Spin } from 'antd';
 import UserAvatar from '../chrome/UserAvatar';
 import RelativeTime from '../helpers/RelativeTime';
-import ReplyBlock from './ReplyBlock';
 import PostHashDropdown from './PostHashDropdown';
 import { FromTitle } from './FromTitle';
 import { ActivityContentNote } from '@dsnp/activity-content/types';
@@ -15,10 +14,9 @@ type FeedItem = dsnpLink.BroadcastExtended;
 
 type ReplyProps = {
   feedItem: FeedItem;
-  isReplying: boolean;
 };
 
-const Reply = ({ feedItem, isReplying }: ReplyProps): ReactElement => {
+const Reply = ({ feedItem }: ReplyProps): ReactElement => {
   const { user, isLoading } = useGetUser(feedItem.fromId);
   const content = JSON.parse(feedItem?.content) as ActivityContentNote;
 

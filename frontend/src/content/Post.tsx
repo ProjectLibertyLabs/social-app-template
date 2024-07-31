@@ -1,5 +1,5 @@
 import React, { ReactElement } from 'react';
-import { Card, Flex, Spin } from 'antd';
+import { Card, Flex } from 'antd';
 import UserAvatar from '../chrome/UserAvatar';
 import PostMedia from './PostMedia';
 import RelativeTime from '../helpers/RelativeTime';

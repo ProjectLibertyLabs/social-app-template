@@ -29,7 +29,7 @@ const ReplyBlock = ({ parentURI, replies, showReplyInput }: ReplyBlockProps): Re
       {(replies.length > 0 || isReplying) && (
         <Flex gap={'small'} vertical className={styles.root}>
           {replies.map((reply, index) => (
-            <Reply feedItem={reply} key={index} isReplying={isReplying} />
+            <Reply feedItem={reply} key={index} />
           ))}
           {isReplying && <Card loading={isReplying} style={{ height: 70 }} className={styles.card} bordered={true} />}
         </Flex>

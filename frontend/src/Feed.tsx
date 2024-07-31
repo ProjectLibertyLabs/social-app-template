@@ -22,7 +22,7 @@ const Feed = ({
   refreshTrigger,
   showReplyInput = true,
   showLoginModal,
-  handleIsPosting
+  handleIsPosting,
 }: FeedProps): ReactElement => {
   return (
     <div className={styles.root}>
