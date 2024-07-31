@@ -1,0 +1,14 @@
+.connectionsCount {
+  font-weight: bold;
+  margin-right: 6px;
+  font-size: medium;
+}
+
+.connectionsOpenModal {
+  font-size: medium;
+}
+
+.connectionsOpenModal:hover {
+  text-decoration: underline;
+  cursor: pointer;
+}

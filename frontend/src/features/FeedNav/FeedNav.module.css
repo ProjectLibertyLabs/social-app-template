@@ -1,0 +1,12 @@
+.root {
+  font-size: x-large;
+  font-weight: bold;
+}
+
+.navigationItem:hover {
+  cursor: pointer;
+}
+
+.navigationItem--active {
+  text-decoration: underline;
+}

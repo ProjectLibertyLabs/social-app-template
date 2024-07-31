@@ -40,3 +40,10 @@ export enum ConnectionsType {
   FOLLOWERS = 'FOLLOWERS',
   FOLLOWING = 'FOLLOWING',
 }
+
+export enum BroadcastCardType {
+  POST = 'POST',
+  POST_LOADING = 'POST_LOADING',
+  REPLY = 'REPLY',
+  REPLY_LOADING = 'REPLY_LOADING',
+}
