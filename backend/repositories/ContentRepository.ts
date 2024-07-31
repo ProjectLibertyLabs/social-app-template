@@ -78,9 +78,6 @@ function getRelatedHash(contentAnnouncement: AnnouncementResponse): string | nul
 
 export class ContentRepository {
   private static db: any;
-  // TODO: more tightly bind the announcement types. Reactions and replies only in contentResponseMap.
-  private static contentMap = new Map<string, AnnouncementResponse>();
-  private static contentResponseMap = new Map<string, RelatedAnnouncementResponse>();
 
   static init() {
     try {

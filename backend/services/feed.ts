@@ -40,13 +40,16 @@ async function getPostsForBlockRange({ from, to }: BlockRange): Promise<[number,
 
 async function getPostContent(msg: AnnouncementResponse): Promise<[number, Post] | undefined> {
   try {
-    const announcement = msg.announcement as BroadcastAnnouncement;
+    const broadcastAnnouncement = msg.announcement as BroadcastAnnouncement;
     // TODO: Validate Hash
-    const postResp = await axios.get(translateContentUrl(announcement.url), {
+    const postResp = await axios.get(translateContentUrl(broadcastAnnouncement.url), {
       responseType: 'text',
       timeout: 10000,
     });
-    const replyMessages = ContentRepository.get({ announcementTypes: [AnnouncementType.Reply] });
+    const replyMessages = ContentRepository.get({
+      announcementTypes: [AnnouncementType.Reply],
+      relatedContentHash: broadcastAnnouncement.contentHash,
+    });
     const replies: Reply[] = await Promise.all(
       replyMessages.map(async (replyMessage): Promise<Reply> => {
         const replyAnnouncement = replyMessage.announcement as ReplyAnnouncement;
@@ -67,8 +70,8 @@ async function getPostContent(msg: AnnouncementResponse): Promise<[number, Post]
     return [
       msg.blockNumber,
       {
-        fromId: announcement.fromId,
-        contentHash: announcement.contentHash,
+        fromId: broadcastAnnouncement.fromId,
+        contentHash: broadcastAnnouncement.contentHash,
         content: postResp.data as string,
         timestamp: new Date().toISOString(), // TODO: Use Block timestamp
         replies,
