@@ -21,10 +21,9 @@ type PostProps = {
   showReplyInput: boolean;
   isProfile?: boolean;
   showLoginModal?: () => void;
-  handleIsPosting: () => void;
 };
 
-const Post = ({ feedItem, showReplyInput, isProfile, showLoginModal, handleIsPosting }: PostProps): ReactElement => {
+const Post = ({ feedItem, showReplyInput, isProfile, showLoginModal }: PostProps): ReactElement => {
   const navigate = useNavigate();
   const { user, isLoading } = useGetUser(feedItem.fromId);
   const content = JSON.parse(feedItem?.content) as ActivityContentNote;
@@ -66,7 +65,6 @@ const Post = ({ feedItem, showReplyInput, isProfile, showLoginModal, handleIsPos
           parentURI={buildDSNPContentURI(BigInt(feedItem.fromId), feedItem.contentHash)}
           showReplyInput={showReplyInput}
           replies={feedItem.replies || []}
-          handleIsPosting={handleIsPosting}
         />
       </Flex>
     </Card>

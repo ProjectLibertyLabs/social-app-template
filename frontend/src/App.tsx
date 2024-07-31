@@ -86,7 +86,6 @@ const App = (): ReactElement => {
                         loggedInAccount={loggedInAccount}
                         network={network}
                         isPosting={isPosting}
-                        handleIsPosting={handleIsPosting}
                         refreshTrigger={refreshTrigger}
                         showLoginModal={() => setIsLoginModalOpen(true)}
                       />

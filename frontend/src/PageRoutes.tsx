@@ -10,17 +10,9 @@ interface PageRoutesProps {
   isPosting: boolean;
   refreshTrigger: number;
   showLoginModal: () => void;
-  handleIsPosting: () => void;
 }
 
-const PageRoutes = ({
-  loggedInAccount,
-  network,
-  isPosting,
-  refreshTrigger,
-  showLoginModal,
-  handleIsPosting,
-}: PageRoutesProps) => {
+const PageRoutes = ({ loggedInAccount, network, isPosting, refreshTrigger, showLoginModal }: PageRoutesProps) => {
   return (
     <>
       <Routes>
@@ -34,7 +26,6 @@ const PageRoutes = ({
               refreshTrigger={refreshTrigger}
               showReplyInput={!!loggedInAccount}
               showLoginModal={showLoginModal}
-              handleIsPosting={handleIsPosting}
             />
           }
         />
@@ -48,7 +39,6 @@ const PageRoutes = ({
                   feedType={FeedTypes.MY_FEED}
                   isPosting={isPosting}
                   refreshTrigger={refreshTrigger}
-                  handleIsPosting={handleIsPosting}
                 />
               }
             />
@@ -60,7 +50,6 @@ const PageRoutes = ({
                   refreshTrigger={refreshTrigger}
                   isPosting={isPosting}
                   loggedInAccount={loggedInAccount}
-                  handleIsPosting={handleIsPosting}
                 />
               }
             />

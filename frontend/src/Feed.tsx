@@ -11,7 +11,6 @@ type FeedProps = {
   refreshTrigger: number;
   showReplyInput?: boolean;
   showLoginModal?: () => void;
-  handleIsPosting: () => void;
 };
 
 const Feed = ({
@@ -22,7 +21,6 @@ const Feed = ({
   refreshTrigger,
   showReplyInput = true,
   showLoginModal,
-  handleIsPosting,
 }: FeedProps): ReactElement => {
   return (
     <div className={styles.root}>
@@ -34,7 +32,6 @@ const Feed = ({
         showReplyInput={showReplyInput}
         showLoginModal={showLoginModal}
         isPosting={isPosting}
-        handleIsPosting={handleIsPosting}
       />
     </div>
   );

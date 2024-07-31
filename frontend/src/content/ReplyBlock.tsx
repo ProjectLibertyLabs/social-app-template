@@ -11,7 +11,6 @@ interface ReplyBlockProps {
   parentURI: DSNPContentURI;
   replies: dsnpLink.ReplyExtended[];
   showReplyInput: boolean;
-  handleIsPosting: () => void;
 }
 
 const ReplyBlock = ({ parentURI, replies, showReplyInput }: ReplyBlockProps): ReactElement => {
