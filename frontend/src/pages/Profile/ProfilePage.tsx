@@ -43,7 +43,7 @@ const ProfilePage = ({ loggedInAccount, network, isPosting, refreshTrigger }: Pr
   if (!profile) return <>{`User was not found.`}</>;
 
   return (
-    <Spin tip="Loading" size="large" spinning={isLoading}>
+    <>
       <Profile loggedInAccount={loggedInAccount} profile={profile} isLoading={isLoading} />
       <Feed
         profile={profile}
@@ -52,7 +52,7 @@ const ProfilePage = ({ loggedInAccount, network, isPosting, refreshTrigger }: Pr
         isPosting={isPosting}
         refreshTrigger={refreshTrigger}
       />
-    </Spin>
+    </>
   );
 };
 
