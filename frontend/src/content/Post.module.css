@@ -28,8 +28,8 @@
   align-items: flex-end;
   flex-direction: column;
   position: absolute;
-  top: 0;
-  right: 0;
+  top: 10px;
+  right: 10px;
 }
 
 .spinner {

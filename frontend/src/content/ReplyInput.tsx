@@ -46,10 +46,10 @@ const ReplyInput = ({ parentURI }: ReplyInputProps): ReactElement => {
   return (
     <Form form={form} onFinish={createReply}>
       <Flex className={styles.root} gap={'small'}>
-        <Form.Item name="message" required={true} className={styles.input}>
+        <Form.Item name="message" required={true} className={styles.formItemInput}>
           <Input.TextArea placeholder="Reply..." autoSize={true} />
         </Form.Item>
-        <Form.Item>
+        <Form.Item className={styles.formItem}>
           <Button htmlType="submit" loading={saving} type={'primary'}>
             Post
           </Button>

@@ -25,7 +25,6 @@ const Feed = ({
 }: FeedProps): ReactElement => {
   return (
     <div className={styles.root}>
-      <Spin spinning={isPosting} size="large" />
       <PostList
         network={network}
         refreshTrigger={refreshTrigger}
@@ -33,6 +32,7 @@ const Feed = ({
         profile={profile}
         showReplyInput={showReplyInput}
         showLoginModal={showLoginModal}
+        isPosting={isPosting}
       />
     </div>
   );
