@@ -471,7 +471,7 @@ export interface OperationMethods {
     config?: AxiosRequestConfig
   ): OperationResponse<Paths.AuthProvider.Responses.$200>;
   /**
-   * authLogin - Use Sign In With Frequency to Login
+   * authLogin - Use Sign In With Frequency to login
    */
   'authLogin'(
     parameters?: Parameters<UnknownParamsObject> | null,
@@ -627,7 +627,7 @@ export interface PathsDictionary {
   };
   ['/auth/login']: {
     /**
-     * authLogin - Use Sign In With Frequency to Login
+     * authLogin - Use Sign In With Frequency to login
      */
     'post'(
       parameters?: Parameters<UnknownParamsObject> | null,

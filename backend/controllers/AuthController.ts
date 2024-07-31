@@ -69,7 +69,7 @@ export class AuthController extends BaseController {
       res.status(HttpStatusCode.Ok).send(data);
     } else {
       // Get the account information based on the referenceId
-      // The Front End is asking if we have finished a user Login or registration
+      // The Front End is asking if we have finished a user login or registration
       // We should return a 202 if we have not finished the registration
       // If the transaction has been finalized, the webhook will have received the information, for the referenceId.
       data = await AccountService.getInstance().then((service) => service.getAccountByReferenceId(referenceId));
@@ -80,7 +80,7 @@ export class AuthController extends BaseController {
   }
 
   /**
-   * Handles the POST request for SIWF user Login or registration.
+   * Handles the POST request for SIWF user login or registration.
    * @param req - The request object of type `WalletLoginRequest`.
    * @param res - The response object of type `WalletLoginResponse`.
    */

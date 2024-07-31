@@ -71,7 +71,7 @@ declare namespace Components {
     }
     export interface WalletLoginRequestDto {
       /**
-       * The wallet Login request information
+       * The wallet login request information
        * example:
        * {
        *   "siwsPayload": {

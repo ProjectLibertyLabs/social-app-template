@@ -424,7 +424,7 @@ export interface OperationMethods {
     config?: AxiosRequestConfig
   ): OperationResponse<Paths.AuthProvider.Responses.$200>;
   /**
-   * authLogin2 - Use Wallet Proxy to Login
+   * authLogin2 - Use Wallet Proxy to login
    */
   'authLogin2'(
     parameters?: Parameters<UnknownParamsObject> | null,
@@ -572,7 +572,7 @@ export interface PathsDictionary {
   };
   ['/auth/login']: {
     /**
-     * authLogin2 - Use Wallet Proxy to Login
+     * authLogin2 - Use Wallet Proxy to login
      */
     'post'(
       parameters?: Parameters<UnknownParamsObject> | null,
