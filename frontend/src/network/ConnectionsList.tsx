@@ -61,13 +61,17 @@ const ConnectionsList = ({
   return (
     <Spin spinning={isLoading} tip="Loading" size="large">
       <div className={styles.root}>
-        <ConnectionsListProfiles
-          key={loggedInAccountConnections.length}
-          triggerGraphRefresh={triggerGraphRefresh}
-          loggedInAccount={loggedInAccount}
-          connectionsList={connectionsList}
-          loggedInAccountConnections={loggedInAccountConnections}
-        />
+        {connectionsList.length > 0 ? (
+          <ConnectionsListProfiles
+            key={loggedInAccountConnections.length}
+            triggerGraphRefresh={triggerGraphRefresh}
+            loggedInAccount={loggedInAccount}
+            connectionsList={connectionsList}
+            loggedInAccountConnections={loggedInAccountConnections}
+          />
+        ) : (
+          <div>No connections yet.</div>
+        )}
       </div>
     </Spin>
   );
