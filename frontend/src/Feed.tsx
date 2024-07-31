@@ -1,7 +1,6 @@
-import React, { ReactElement, useState } from 'react';
+import React, { ReactElement } from 'react';
 import PostList from './content/PostList';
-import { Spin } from 'antd';
-import { FeedTypes, User, Network, UserAccount } from './types';
+import { FeedTypes, Network, UserAccount } from './types';
 import styles from './Feed.module.css';
 
 type FeedProps = {

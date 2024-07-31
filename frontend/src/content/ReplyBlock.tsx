@@ -1,10 +1,11 @@
-import React, { ReactElement } from 'react';
+import React, { ReactElement, useState } from 'react';
 import ReplyInput from './ReplyInput';
 import * as dsnpLink from '../dsnpLink';
 import { DSNPContentURI } from '../helpers/dsnp';
-import Post from './Post';
-import styles from './ReplyBlock.module.css';
-import { Flex } from 'antd';
+import { Card, Flex } from 'antd';
+import styles from './Post.module.css';
+
+import Reply from './Reply';
 
 interface ReplyBlockProps {
   parentURI: DSNPContentURI;
@@ -13,17 +14,27 @@ interface ReplyBlockProps {
 }
 
 const ReplyBlock = ({ parentURI, replies, showReplyInput }: ReplyBlockProps): ReactElement => {
+  const [isReplying, setIsReplying] = useState<boolean>(false);
+
+  const handleIsReplying = () => {
+    setIsReplying(true);
+    setTimeout(() => {
+      setIsReplying(false);
+    }, 14_000);
+  };
+
   return (
     <>
-      {replies.length > 0 && (
+      {(replies.length > 0 || isReplying) && (
         <Flex gap={'small'} vertical className={styles.root}>
           {replies.map((reply, index) => (
-            <Post feedItem={reply} key={index} showReplyInput={false} isReply={true} />
+            <Reply feedItem={reply} key={index} />
           ))}
+          {isReplying && <Card loading={isReplying} style={{ height: 70 }} className={styles.card} bordered={true} />}
         </Flex>
       )}
 
-      {showReplyInput && <ReplyInput parentURI={parentURI} />}
+      {showReplyInput && <ReplyInput parentURI={parentURI} handleIsReplying={handleIsReplying} />}
     </>
   );
 };

@@ -7,7 +7,6 @@ import { getContext } from '../service/AuthService';
 import styles from './Post.module.css';
 import { Button, Card, Flex, Space, Spin } from 'antd';
 import { useNavigate } from 'react-router-dom';
-import { getUserProfile } from '../service/UserProfileService';
 
 const OLDEST_BLOCK_TO_GO_TO: Record<Network, number> = {
   local: 1,

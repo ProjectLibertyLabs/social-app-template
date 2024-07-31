@@ -1,4 +1,4 @@
-import { Navigate, Route, Routes } from 'react-router-dom';
+import { Route, Routes } from 'react-router-dom';
 import Feed from './Feed';
 import { FeedTypes, Network, UserAccount } from './types';
 import ProfilePage from './chrome/ProfilePage';

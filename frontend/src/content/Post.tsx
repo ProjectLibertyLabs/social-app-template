@@ -1,5 +1,5 @@
 import React, { ReactElement } from 'react';
-import { Card, Flex, Spin } from 'antd';
+import { Card, Flex } from 'antd';
 import UserAvatar from '../chrome/UserAvatar';
 import PostMedia from './PostMedia';
 import RelativeTime from '../helpers/RelativeTime';
@@ -21,10 +21,9 @@ type PostProps = {
   showReplyInput: boolean;
   isProfile?: boolean;
   showLoginModal?: () => void;
-  isReply?: boolean;
 };
 
-const Post = ({ feedItem, showReplyInput, isProfile, showLoginModal, isReply }: PostProps): ReactElement => {
+const Post = ({ feedItem, showReplyInput, isProfile, showLoginModal }: PostProps): ReactElement => {
   const navigate = useNavigate();
   const { user, isLoading } = useGetUser(feedItem.fromId);
   const content = JSON.parse(feedItem?.content) as ActivityContentNote;
@@ -35,7 +34,7 @@ const Post = ({ feedItem, showReplyInput, isProfile, showLoginModal, isReply }: 
 
   return (
     <Card key={feedItem.contentHash} className={styles.card} bordered={true} loading={isLoading}>
-      <Flex gap={isReply ? 12 : 18} vertical>
+      <Flex gap={18} vertical>
         {!isProfile && (
           <div
             onClick={() =>
@@ -45,7 +44,7 @@ const Post = ({ feedItem, showReplyInput, isProfile, showLoginModal, isReply }: 
           >
             <Card.Meta
               className={styles.metaInnerBlock}
-              avatar={<UserAvatar user={user} avatarSize={isReply ? 'small' : 'medium'} />}
+              avatar={<UserAvatar user={user} avatarSize={'medium'} />}
               title={<FromTitle user={user} showLoginModal={showLoginModal} isLoggedOut={showReplyInput} />}
             />
           </div>

@@ -10,13 +10,14 @@ import { UploadFile } from 'antd/es/upload/interface';
 
 interface ReplyInputProps {
   parentURI: DSNPContentURI;
+  handleIsReplying: () => void;
 }
 
 type NewReplyValues = {
   message: string;
 };
 
-const ReplyInput = ({ parentURI }: ReplyInputProps): ReactElement => {
+const ReplyInput = ({ parentURI, handleIsReplying }: ReplyInputProps): ReactElement => {
   const [form] = Form.useForm();
   const [saving, setSaving] = React.useState<boolean>(false);
 
@@ -36,6 +37,7 @@ const ReplyInput = ({ parentURI }: ReplyInputProps): ReactElement => {
         }
       );
       success();
+      handleIsReplying();
       form.resetFields();
     } catch (e) {
       console.error(e);
