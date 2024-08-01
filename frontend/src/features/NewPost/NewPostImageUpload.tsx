@@ -23,6 +23,7 @@ const NewPostImageUpload = ({ onChange }: NewPostImageUploadProps): ReactElement
   const [previewTitle, setPreviewTitle] = React.useState('');
   const [errorMsg, setErrorMsg] = React.useState<string | null>(null);
 
+  console.log({ fileList });
   const handleCancel = () => setPreviewOpen(false);
 
   const handlePreview = async (file: UploadFile) => {

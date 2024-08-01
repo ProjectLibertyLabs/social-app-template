@@ -26,14 +26,12 @@ const Post = ({ feedItem, isProfile, showLoginModal }: PostProps): ReactElement 
   // TODO: validate content as ActivityContentNote or have DSNP Link do it
 
   const attachments: ActivityContentAttachment[] = content.attachment || [];
-
   return (
     <BroadcastCard key={feedItem.contentHash} broadcastCardType={BroadcastCardType.POST} isLoading={isLoading}>
       {!isProfile && <PostMeta user={user} showLoginModal={showLoginModal} feedItemFromId={feedItem.fromId} />}
       <BroadcastInfo feedItem={feedItem} content={content} />
       <BroadcastContent content={content.content} />
-      {content?.attachment && content?.attachment?.length > 0 && <BroadcastMedia attachments={attachments} />}
-
+      {attachments.length > 0 && <BroadcastMedia attachments={attachments} />}
       <ReplyList
         parentURI={buildDSNPContentURI(BigInt(feedItem.fromId), feedItem.contentHash)}
         isLoggedOut={!!user}
