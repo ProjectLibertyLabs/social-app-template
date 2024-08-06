@@ -1,6 +1,6 @@
 # Social App Template
 
-The Social Application Template (SAT) is an example client app that demonstrates how to use [Gateway Services](https://github.com/AmplicaLabs/gateway).
+The Social Application Template (SAT) is an example client app that demonstrates how to use [Gateway Services](https://github.com/ProjectLibertyLabs/gateway).
 
 <!-- TABLE OF CONTENTS -->
 
@@ -21,11 +21,11 @@ The Social Application Template (SAT) is an example client app that demonstrates
 - [❓FAQ](#faq)
 - [📝 License](#-license)
 
-<!-- PROJECT DESCRIPTION -->The Social Application Template (SAT) is an example client app that demonstrates how to use [Gateway Services](https://github.com/AmplicaLabs/gateway).
+<!-- PROJECT DESCRIPTION -->The Social Application Template (SAT) is an example client app that demonstrates how to use [Gateway Services](https://github.com/ProjectLibertyLabs/gateway).
 
 # 📖 Social Application Template (SAT) <a name="about-project"></a>
 
-The [Gateway Services](https://github.com/AmplicaLabs/gateway) are a suite of services designed to make interacting with [Frequency](https://github.com/frequency-chain/frequency) easy for applications integrating with [DSNP](https://dsnp.org/).
+The [Gateway Services](https://github.com/ProjectLibertyLabs/gateway) are a suite of services designed to make interacting with [Frequency](https://github.com/frequency-chain/frequency) easy for applications integrating with [DSNP](https://dsnp.org/).
 The SAT is an example client that shows you how to use Gateway.
 
 Gateway enables web2 companies to use a simple gateway into web3 using tooling they are accustomed to. It aims to let service providers self-serve with minimal help outside of docs and tools, rather than
@@ -81,7 +81,7 @@ Key: * = coming soon
 
 ### Key Features
 
-- **[Sign in with Frequency](https://github.com/AmplicaLabs/siwf)**
+- **[Sign in with Frequency](https://github.com/ProjectLibertyLabs/siwf)**
 - **Create a post**
 - **Create a comment on a post**
 - **View a feed**
@@ -94,7 +94,7 @@ Key: * = coming soon
 
 ## 🚀 Live Docs
 
-- [Gateway Live Docs](https://amplicalabs.github.io/gateway/)
+- [Gateway Live Docs](https://ProjectLibertyLabs.github.io/gateway/)
 - Open Api docs coming soon...
 
 <p align="right">(<a href="#-table-of-contents">back to top</a>)</p>
@@ -125,7 +125,7 @@ Clone this repository to your desired folder:
 Example commands:
 
 ```sh
-  git clone git@github.com:AmplicaLabs/social-app-template.git
+  git clone git@github.com:ProjectLibertyLabs/social-app-template.git
   cd social-app-template
 ```
 
@@ -152,7 +152,7 @@ You can deploy using containers. Check the [docker-compose.yaml](backend/docker-
 Contributions, issues, and feature requests are welcome!
 
 - [Contributing Guidelines](./CONTRIBUTING.md)
-- [Open Issues](https://github.com/AmplicaLabs/social-app-template/issues)
+- [Open Issues](https://github.com/ProjectLibertyLabs/social-app-template/issues)
 
 <p align="right">(<a href="#-table-of-contents">back to top</a>)</p>
 
@@ -164,9 +164,9 @@ Contributions, issues, and feature requests are welcome!
 
 - Developers wanting a better understanding of how DSNP/Frequency works.
 - Developers wanting an example of integrating Gateway Services.
-  
+
 - **Who is a provider and how do you become one?**
-  
+
   - Visit the [Provider Dashboard](https://provider.frequency.xyz/)!
 
 - **Do I need Web 3 experience?**
