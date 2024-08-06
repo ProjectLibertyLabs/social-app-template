@@ -1,7 +1,7 @@
 import { Client as AccountServiceClient, type Components } from '../types/openapi-account-service';
 import { OpenAPIClientAxios, type Document } from 'openapi-client-axios';
 import openapiJson from '../openapi-specs/account-service.json' assert { type: 'json' };
-import { WalletProxyResponse, validateSignin, validateSignup } from '@amplica-labs/siwf';
+import { WalletProxyResponse, validateSignin, validateSignup } from '@projectlibertylabs/siwf';
 import { createAuthToken, getAuthToken, revokeAuthToken } from './TokenAuth';
 import { getApi } from './frequency';
 import * as Config from '../config/config';

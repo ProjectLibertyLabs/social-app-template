@@ -30,16 +30,16 @@
   },
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/AmplicaLabs/dsnp-gateway-prototype.git"
+    "url": "git+https://github.com/ProjectLibertyLabs/dsnp-gateway-prototype.git"
   },
-  "author": "Amplica Labs",
+  "author": "Project Liberty Labs",
   "license": "Apache-2.0",
   "bugs": {
-    "url": "https://github.com/AmplicaLabs/dsnp-gateway-prototype/issues"
+    "url": "https://github.com/ProjectLibertyLabs/dsnp-gateway-prototype/issues"
   },
-  "homepage": "https://github.com/AmplicaLabs/dsnp-gateway-prototype#readme",
+  "homepage": "https://github.com/ProjectLibertyLabs/dsnp-gateway-prototype#readme",
   "dependencies": {
-    "@amplica-labs/siwf": "^1.0.0",
+    "@projectlibertylabs/siwf": "^1.0.0",
     "@azns/resolver-core": "file:azns-stub",
     "@dsnp/activity-content": "^1.1.0",
     "@dsnp/frequency-schemas": "^1.1.0",
