@@ -8,15 +8,15 @@ The Social Application Template (SAT) is an example client app that demonstrates
 
 - [📖 About the Project](#about-project)
 - [🔍 Arch Map](#-arch-maps)
-- [🛠 Built With](#-built-with)
-    - [Tech Stack](#tech-stack)
-    - [Key Features](#key-features)
+- [🛠 Built With](#built-with)
+  - [Tech Stack](#tech-stack)
+  - [Key Features](#key-features)
 - [🚀 Live OpenAPI Docs](#-live-docs)
 - [💻 Getting Started](#-getting-started)
-    - [Prerequisites](#prerequisites)
-    - [Setup](#setup)
-    - [Quick Start](#quick-start)
-    - [Deployment](#deployment)
+  - [Prerequisites](#prerequisites)
+  - [Setup](#setup)
+  - [Quick Start](#quick-start)
+  - [Deployment](#deployment)
 - [🤝 Contributing](#-contributing)
 - [❓FAQ](#faq)
 - [📝 License](#-license)
@@ -35,7 +35,7 @@ interacting with Frequency directly. Providers no longer need to fully understan
 
 ## 🔭 Arch Maps
 
-### Overview of the Social App Template in relation to Gateway Services.
+### Overview of the Social App Template in relation to Gateway Services
 
 ![Arch Map](./docs/social_app_template_arch.drawio.png)
 
@@ -52,7 +52,7 @@ Key: * = coming soon
   <ul>
     <li>Framework: <a href="https://react.dev/">React</a></li>
     <li>Language: <a href="https://www.typescriptlang.org/">Typescript</a></li>
-    <li>Testing Library: 
+    <li>Testing Library:
       <ul>
         <li><a href="https://jestjs.io/">Jest</a></li>
         <li><a href="https://testing-library.com/">Testing Library</a></li>
@@ -68,7 +68,7 @@ Key: * = coming soon
     <li>Framework: <a href="https://....">Node.js</a> with <a href="https://expressjs.com/">Express</a></li>
     <li>Language: <a href="https://www.typescriptlang.org/">Typescript</a></li>
     <li>Testing Library:<a href="https://jestjs.io/">Vitest</a></li>
-    <li>API Documentation: 
+    <li>API Documentation:
       <ul>
         <li><a href="https://swagger.io/">Swagger</a></li>
         <li><a href="https://learn.openapis.org/">OpenAPI</a></li>
@@ -80,6 +80,7 @@ Key: * = coming soon
 <!-- Features -->
 
 ### Key Features
+
 - **[Sign in with Frequency](https://github.com/AmplicaLabs/siwf)**
 - **Create a post**
 - **Create a comment on a post**
@@ -113,9 +114,9 @@ Key: * = coming soon
 ### Prerequisites
 
 In order to run this project you need to...
--  Become a provider. To do so, visit the [Provider Dashboard](https://provider.frequency.xyz/)!
-- [Get Docker](https://docs.docker.com/get-docker/)
 
+- Become a provider. To do so, visit the [Provider Dashboard](https://provider.frequency.xyz/)!
+- [Get Docker](https://docs.docker.com/get-docker/)
 
 ### Setup
 
@@ -170,12 +171,11 @@ Contributions, issues, and feature requests are welcome!
 
 - **Do I need Web 3 experience?**
 
-    - Nope! The Gateway is an open source suite that enables Frequency integrations without web3 programming skills. The Gateway makes building/integrating a social network on the DSNP/Frequency stack as easy as a Web2 API integration.
+  - Nope! The Gateway is an open source suite that enables Frequency integrations without web3 programming skills. The Gateway makes building/integrating a social network on the DSNP/Frequency stack as easy as a Web2 API integration.
 
 - **Do I need to know anything about cryptocurrency?**
 
-    - Nope! The Gateway has a coinless user interface that does not require using cryptocurrency tokens.
-
+  - Nope! The Gateway has a coinless user interface that does not require using cryptocurrency tokens.
 
 <p align="right">(<a href="#-table-of-contents">back to top</a>)</p>
 
