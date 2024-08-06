@@ -104,7 +104,7 @@ services:
       - 'portical.upnp.forward=4401:4401'
 
   content-publishing-service-api:
-    image: amplicalabs/content-publishing-service:latest
+    image: projectlibertylabs/content-publishing-service:latest
     platform: linux/amd64
     pull_policy: always
     ports:
@@ -118,7 +118,7 @@ services:
       - social-app-backend
 
   content-publishing-service-worker:
-    image: amplicalabs/content-publishing-service:latest
+    image: projectlibertylabs/content-publishing-service:latest
     platform: linux/amd64
     pull_policy: always
     environment:
@@ -131,7 +131,7 @@ services:
       - social-app-backend
 
   content-watcher-service:
-    image: amplicalabs/content-watcher-service:latest
+    image: projectlibertylabs/content-watcher-service:latest
     platform: linux/amd64
     pull_policy: always
     ports:
@@ -145,7 +145,7 @@ services:
       - social-app-backend
 
   graph-service-api:
-    image: amplicalabs/graph-service:latest
+    image: projectlibertylabs/graph-service:latest
     platform: linux/amd64
     pull_policy: always
     ports:
@@ -159,7 +159,7 @@ services:
       - social-app-backend
 
   graph-service-worker:
-    image: amplicalabs/graph-service:latest
+    image: projectlibertylabs/graph-service:latest
     platform: linux/amd64
     pull_policy: always
     environment:
@@ -171,7 +171,7 @@ services:
       - social-app-backend
 
   account-service-api:
-    image: amplicalabs/account-service:latest
+    image: projectlibertylabs/account-service:latest
     platform: linux/amd64
     pull_policy: always
     ports:
@@ -185,7 +185,7 @@ services:
       - social-app-backend
 
   account-service-worker:
-    image: amplicalabs/account-service:latest
+    image: projectlibertylabs/account-service:latest
     platform: linux/amd64
     pull_policy: always
     command: worker
@@ -209,7 +209,7 @@ services:
       - 3002:3001
     environment:
       <<: [*common-environment, *social-app-template-backend]
-      IPFS_GATEWAY_URL: 'http://ipfs:8080'
+      IPFS_GATEWAY_URL: "http://ipfs:8080"
     volumes:
       - ./backend:/app
       - ${CONTENT_DB_VOLUME}:/app/db
