@@ -195,7 +195,7 @@ export class AccountService {
 
     if (signIn) {
       try {
-        const { msaId, publicKey } = await validateSignin(chainApi, signIn, 'amplicalabs.github.io');
+        const { msaId, publicKey } = await validateSignin(chainApi, signIn, 'projectlibertylabs.github.io');
         return {
           accessToken: createAuthToken(publicKey),
           expires: Date.now() + 24 * 60 * 60 * 1_000,
