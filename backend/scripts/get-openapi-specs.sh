@@ -25,7 +25,7 @@ download_oopenapi_specs() {
 cd ../openapi-specs
 
 # Download the swagger.json files from the microservices repositories
-ORG_NAME="AmplicaLabs"
+ORG_NAME="Project Liberty Labs"
 BRANCH="main"
 download_oopenapi_specs "${ORG_NAME}" "account-service" "${BRANCH}" "swagger.json" "account-service.json"
 download_oopenapi_specs "${ORG_NAME}" "content-watcher-service" "${BRANCH}" "content-announcement.openapi.json" "content-announcement.openapi.json"

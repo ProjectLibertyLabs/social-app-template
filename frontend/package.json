@@ -3,7 +3,7 @@
   "version": "0.1.0",
   "type": "module",
   "dependencies": {
-    "@amplica-labs/siwf": "^1.0.0",
+    "@projectlibertylabs/siwf": "^1.0.0",
     "@ant-design/icons": "^5.3.1",
     "@dsnp/activity-content": "^1.1.0",
     "@testing-library/jest-dom": "^6.4.2",

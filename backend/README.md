@@ -37,8 +37,8 @@ This is a prototype for a DSNP Gateway to allow for simple provider setup.
 
 # 📖 Social Application Template (SAT) <a name="about-project"></a>
 
-The [Gateway Services](https://github.com/AmplicaLabs/gateway) are a suite of services designed to make interacting with
-[Frequency](https://github.com/frequency-chain/frequency) easy for applications integrating with
+The [Gateway Services](https://github.com/ProjectLibertyLabs/gateway) are a suite of services designed to make
+interacting with [Frequency](https://github.com/frequency-chain/frequency) easy for applications integrating with
 [DSNP](https://dsnp.org/). The SAT is an example client that shows you how to use Gateway.
 
 Gateway enables web2 companies to use a simple gateway into web3 using tooling they are accustomed to. It aims to let
@@ -77,7 +77,7 @@ Key: \* = coming soon
 
 ### Key Features
 
-- **[Sign in with Frequency](https://github.com/AmplicaLabs/siwf)**
+- **[Sign in with Frequency](https://github.com/ProjectLibertyLabs/siwf)**
 - **Create a post**
 - **Create a comment on a post**
 - **Get feed data**
@@ -91,7 +91,7 @@ Key: \* = coming soon
 
 ## 🚀 Live Docs
 
-- [Gateway Live Docs](https://amplicalabs.github.io/gateway/)
+- [Gateway Live Docs](https://ProjectLibertyLabs.github.io/gateway/)
 - Open Api docs coming soon...
 
 <p align="right">(<a href="#-table-of-contents">back to top</a>)</p>
@@ -114,7 +114,7 @@ Clone this repository to your desired folder:
 Example commands:
 
 ```sh
-  git clone git@github.com:AmplicaLabs/social-app-template.git
+  git clone git@github.com:ProjectLibertyLabs/social-app-template.git
   cd social-app-template
 ```
 
@@ -138,7 +138,7 @@ The application is configured by way of environment variables. A complete list o
   launching a full environment of all Frequency Gateway services needed by this Gateway application. To that end, each
   service has its own environment, which are specified in the `docker-compose-bare-metal.yaml` and `docker-compose.yaml` files.
   Additionally, when running in bare-metal mode, `npm run env:init` will create the necessary `.env.social-app-backend` file from the `env.social-app-backend.template` file.
-  
+
 Sample configuration files can be found [here](./environment/).
 
 </details>
@@ -301,7 +301,7 @@ You can deploy using containers. Check the [docker-compose.yaml](backend/docker-
 Contributions, issues, and feature requests are welcome!
 
 - [Contributing Guidelines](./CONTRIBUTING.md)
-- [Open Issues](https://github.com/AmplicaLabs/social-app-template/issues)
+- [Open Issues](https://github.com/ProjectLibertyLabs/social-app-template/issues)
 
 <p align="right">(<a href="#-table-of-contents">back to top</a>)</p>
 
