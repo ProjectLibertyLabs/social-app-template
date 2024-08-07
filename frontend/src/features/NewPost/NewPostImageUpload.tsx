@@ -23,7 +23,6 @@ const NewPostImageUpload = ({ onChange }: NewPostImageUploadProps): ReactElement
   const [previewTitle, setPreviewTitle] = React.useState('');
   const [errorMsg, setErrorMsg] = React.useState<string | null>(null);
 
-  console.log({ fileList });
   const handleCancel = () => setPreviewOpen(false);
 
   const handlePreview = async (file: UploadFile) => {
@@ -49,6 +48,7 @@ const NewPostImageUpload = ({ onChange }: NewPostImageUploadProps): ReactElement
     };
     reader.onerror = () => {
       // Handle file read error
+      setErrorMsg('Failed to read file');
       onError?.(new Error('Failed to read file'));
     };
     reader.readAsDataURL(file as any);

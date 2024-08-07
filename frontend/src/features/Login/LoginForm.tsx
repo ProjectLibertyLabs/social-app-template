@@ -1,10 +1,10 @@
 import React, { ReactElement, useState } from 'react';
 import { Button, Spin, Form } from 'antd';
-import { getLoginOrRegistrationPayload, setConfig } from '@projectlibertylabs/siwf';
 
 import * as dsnpLink from '../../dsnpLink';
 import { UserAccount } from '../../types';
 import { getContext } from '../../service/AuthService';
+import { getLoginOrRegistrationPayload, setConfig } from '@projectlibertylabs/siwf';
 
 /**
  * Props for the LoginForm component.

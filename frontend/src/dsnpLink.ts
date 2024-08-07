@@ -261,11 +261,11 @@ export async function authProvider<FetcherData>(ctx: r.Context<AuthMethods, Fetc
     return ctx.handleResponse(res, {});
 }
 /**
- * Use Sign In With Frequency to Login
+ * Use Sign In With Frequency to login
  */
 export async function authLogin<FetcherData>(ctx: r.Context<AuthMethods, FetcherData>, params: {}, body: WalletLoginRequest, opts?: FetcherData): Promise<WalletLoginResponse | any> {
     const req = await ctx.createRequest({
-        path: '/auth/Login',
+        path: '/auth/login',
         params,
         method: r.HttpMethod.POST,
         body
