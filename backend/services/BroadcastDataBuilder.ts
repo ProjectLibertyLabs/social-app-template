@@ -10,7 +10,6 @@ export class BroadcastDataBuilder {
   }
 
   private static createAsset(asset: string) {
-    // TODO: not hard code the type as image.
     return {
       type: 'image' as 'image' | 'link' | 'audio' | 'video',
       references: [
