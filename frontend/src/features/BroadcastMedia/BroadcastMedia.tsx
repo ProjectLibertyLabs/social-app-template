@@ -42,8 +42,8 @@ const BroadcastMedia = ({ attachments }: BroadcastMediaProps): ReactElement => {
               playsinline
               className={styles.image}
               url={tryUseIpfsGateway(attachment.url[0].href)}
-              width={670}
-              height={isVideo(attachment) ? 400 : 55}
+              maxWidth={670}
+              height={isVideo(attachment) ? 'auto' : 55}
               muted
             />
           )}
@@ -53,7 +53,7 @@ const BroadcastMedia = ({ attachments }: BroadcastMediaProps): ReactElement => {
   };
 
   return (
-    <Carousel dotPosition="bottom" className={styles.slider} dots={{ className: styles.dots }}>
+    <Carousel className={styles.slider} dots={attachments.length > 1}>
       {getPostMediaItems()}
     </Carousel>
   );

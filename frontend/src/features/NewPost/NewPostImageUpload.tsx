@@ -48,6 +48,7 @@ const NewPostImageUpload = ({ onChange }: NewPostImageUploadProps): ReactElement
     };
     reader.onerror = () => {
       // Handle file read error
+      setErrorMsg('Failed to read file');
       onError?.(new Error('Failed to read file'));
     };
     reader.readAsDataURL(file as any);
