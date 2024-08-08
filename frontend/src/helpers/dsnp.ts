@@ -1,4 +1,4 @@
-import { HexString } from '../types';
+import { Base32EncodeHash } from '../types';
 
 const DSNP_SCHEMA_REGEX = /^dsnp:\/\//i;
 
@@ -90,6 +90,6 @@ export const convertToDSNPUserURI = (value: unknown): DSNPUserURI => {
  * @param contentHash - The content hash of the announcement posted by the user
  * @returns A DSNP Content Uri for the given announcement
  */
-export const buildDSNPContentURI = (userIdOrUri: DSNPUserId | DSNPUserURI, contentHash: HexString): DSNPContentURI => {
+export const buildDSNPContentURI = (userIdOrUri: DSNPUserId | DSNPUserURI, contentHash: Base32EncodeHash): DSNPContentURI => {
   return `dsnp://${convertToDSNPUserId(userIdOrUri)}/${contentHash}`;
 };
