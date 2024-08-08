@@ -29,7 +29,7 @@ export enum FeedTypes {
   OTHER_PROFILE,
 }
 
-export type HexString = string;
+export type Base32EncodedHash = string;
 
 export enum RelationshipStatus {
   FOLLOWING,
