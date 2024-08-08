@@ -1,14 +1,14 @@
 import React, { ReactElement, useState } from 'react';
 import { Dropdown } from 'antd';
 import { CheckCircleTwoTone, EllipsisOutlined } from '@ant-design/icons';
-import { HexString } from '../../types';
+import { Base32EncodedHash } from '../../types';
 import { buildDSNPContentURI } from '../../helpers/dsnp';
 import styles from './PostHashDropdown.module.css';
 
 import type { MenuProps } from 'antd';
 
 interface PostHashDropdownProps {
-  hash: HexString;
+  hash: Base32EncodedHash;
   fromId: string;
 }
 
