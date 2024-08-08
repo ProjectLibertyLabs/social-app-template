@@ -6,7 +6,6 @@
   overflow: hidden;
   max-height: 550px;
   border-radius: 10px;
-  height: calc(100%-10px);
 }
 
 .image {
