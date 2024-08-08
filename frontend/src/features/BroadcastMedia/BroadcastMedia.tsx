@@ -42,7 +42,6 @@ const BroadcastMedia = ({ attachments }: BroadcastMediaProps): ReactElement => {
               playsinline
               className={styles.image}
               url={tryUseIpfsGateway(attachment.url[0].href)}
-              width={'100%'}
               maxWith={670}
               height={isVideo(attachment) ? 'auto' : 55}
               muted
