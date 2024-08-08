@@ -54,7 +54,7 @@ const BroadcastMedia = ({ attachments }: BroadcastMediaProps): ReactElement => {
   };
 
   return (
-    <Carousel dotPosition="bottom" className={styles.slider} dots={{ className: styles.dots }}>
+    <Carousel className={styles.slider} dots={attachments.length > 1}>
       {getPostMediaItems()}
     </Carousel>
   );
