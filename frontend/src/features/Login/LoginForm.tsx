@@ -15,21 +15,6 @@ interface LoginProps {
    * @param account - The user account information.
    */
   onLogin: (account: UserAccount) => void;
-
-  /**
-   * The ID of the provider used for authentication.
-   */
-  providerId: string;
-
-  /**
-   * The URL of the Frequency RPC endpoint.
-   */
-  nodeUrl: string;
-
-  /**
-   * The URL of the SIWF/Wallet-Proxy server.
-   */
-  siwfUrl: string;
 }
 
 /**
@@ -43,38 +28,13 @@ interface LoginProps {
  * @param {string} props.siwfUrl - The URL where Wallet-Proxy lives.
  * @returns {JSX.Element} The rendered Login component.
  */
-const LoginForm = ({ onLogin, providerId, nodeUrl, siwfUrl }: LoginProps): ReactElement => {
+const LoginForm = ({ onLogin }: LoginProps): ReactElement => {
   const [isLoading, setIsLoading] = useState(false);
 
   const handleLogin = async () => {
     setIsLoading(true);
 
     try {
-      // Set the configuration for SIWF
-      setConfig({
-        providerId,
-        // The url where SIWF front-end lives
-        proxyUrl: siwfUrl,
-        // The Frequency RPC endpoint
-        frequencyRpcUrl: nodeUrl,
-        siwsOptions: {
-          // The expiration for the SIWS payload.
-          expiresInMsecs: 60_000,
-        },
-        // The Schema name that permissions are being requested.
-        // A specified version can be set using the ID attribute.
-        // If set to 0 it grabs the latest version for the schema.
-        schemas: [
-          { name: 'broadcast' },
-          { name: 'reply' },
-          { name: 'reaction' },
-          { name: 'profile' },
-          { name: 'tombstone' },
-          { name: 'update' },
-          { name: 'public-follows' },
-        ],
-      });
-
       // This is the first step in the Login process.
       // We need to get the payload from SIWF to send to the Wallet-Proxy
       const authPayload = await getLoginOrRegistrationPayload();
@@ -185,13 +145,13 @@ const LoginForm = ({ onLogin, providerId, nodeUrl, siwfUrl }: LoginProps): React
 
   return (
     <Form layout="vertical" size="large">
-      <Spin tip="Loading" size="large" spinning={isLoading}>
-        <Form.Item label="">
-          <Button type="primary" onClick={handleLogin}>
-            Signup / Login with Frequency
-          </Button>
-        </Form.Item>
-      </Spin>
+      {/* <Spin tip="Loading" size="large" spinning={isLoading}> */}
+      <Form.Item label="">
+        <Button type="primary" onClick={handleLogin}>
+          Signup / Login with Frequency
+        </Button>
+      </Form.Item>
+      {/* </Spin> */}
     </Form>
   );
 };

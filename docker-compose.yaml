@@ -131,9 +131,9 @@ services:
       - social-app-backend
 
   content-watcher-service:
-    image: projectlibertylabs/content-watcher-service:latest
-    platform: linux/amd64
-    pull_policy: always
+    image: content-watcher-service:latest
+    # platform: linux/amd64
+    pull_policy: never
     ports:
       - ${SERVICE_PORT_1}:3000
     environment:

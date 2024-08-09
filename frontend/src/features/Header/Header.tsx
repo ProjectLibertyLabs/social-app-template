@@ -12,7 +12,7 @@ import UserMenu from './UserMenu';
 
 type HeaderProps = {
   loggedInAccount?: UserAccount;
-  login: (account: UserAccount, providerInfo: dsnpLink.ProviderResponse) => void;
+  login: (account: UserAccount) => void;
   logout?: () => void;
 };
 
@@ -26,9 +26,9 @@ const Header = ({ loggedInAccount, login, logout }: HeaderProps): ReactElement =
     }
   };
 
-  const handleLogin = (account: UserAccount, providerInfo: dsnpLink.ProviderResponse) => {
+  const handleLogin = (account: UserAccount) => {
     navigate('/');
-    login(account, providerInfo);
+    login(account);
   };
 
   return (

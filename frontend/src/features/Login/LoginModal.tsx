@@ -1,13 +1,12 @@
 import { Modal } from 'antd';
 import React, { useState } from 'react';
 import { UserAccount } from '../../types';
-import * as dsnpLink from '../../dsnpLink';
 import Login from './Login';
 import styles from './LoginModal.module.css';
 
 interface LoginModalProps {
   open: boolean;
-  onLogin: (account: UserAccount, providerInfo: dsnpLink.ProviderResponse) => void;
+  onLogin: (account: UserAccount) => void;
   handleCancel: () => void;
 }
 
@@ -26,7 +25,7 @@ const LoginModal = ({ open, onLogin, handleCancel }: LoginModalProps) => {
       footer={null}
       onCancel={onCancel}
     >
-      <Login onLogin={onLogin} loadingState={loadingState} />
+      <Login onLogin={onLogin} />
     </Modal>
   );
 };
