@@ -22,7 +22,7 @@ if [ -f .env-saved ]; then
     echo -e "Found saved environment from a previous run:\n"
     cat .env-saved
     echo
-    read -p  "Do you want to re-use the saved paramters? [y]: " REUSE_SAVED
+    read -p  "Do you want to re-use the saved parameters? [Y/n]: " REUSE_SAVED
     REUSE_SAVED=${REUSE_SAVED:-y}
 
     if [[ ${REUSE_SAVED} =~ ^[Yy] ]]
