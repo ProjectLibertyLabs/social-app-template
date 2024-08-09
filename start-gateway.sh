@@ -61,6 +61,8 @@ then
 
 EOI
     echo "COMPOSE_PROJECT_NAME='gateway'" >> .env-saved
+    read -p "Enter a tag to use to pull the Gateway Docker images [latest]: " tag
+    echo "DOCKER_TAG=${tag:-latest}" >> .env-saved
     # Ask the user if they want to start on testnet or local
     echo "Do you want to start on Frequency Paseo Testnet [y/n]:"
     read TESTNET_ENV
