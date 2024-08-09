@@ -11,7 +11,7 @@ export const setIpfsGateway = (url: string): void => {
 export const tryUseIpfsGateway = (ipfsUrl: string): string => {
   const { frequencyRpcUrl } = getConfig();
   if (ipfsUrl.includes('https://ipfs.io/ipfs/')) {
-    if (frequencyRpcUrl.includes('localhost')) {
+    if (frequencyRpcUrl.includes('localhost') || frequencyRpcUrl.includes('https://0.rpc.testnet.amplica.io')) {
       return ipfsUrl.replace('https://ipfs.io', ipfsUAGateway);
     }
     // Use the gateway instead
