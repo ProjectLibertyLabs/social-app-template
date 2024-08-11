@@ -21,7 +21,7 @@ The Social Application Template (SAT) is an example client app that demonstrates
 - [❓FAQ](#faq)
 - [📝 License](#-license)
 
-<!-- PROJECT DESCRIPTION -->The Social Application Template (SAT) is an example client app that demonstrates how to use [Gateway Services](https://github.com/ProjectLibertyLabs/gateway).
+<!-- PROJECT DESCRIPTION -->
 
 # 📖 Social Application Template (SAT) <a name="about-project"></a>
 
