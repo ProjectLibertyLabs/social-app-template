@@ -134,10 +134,18 @@ Example commands:
 Enter the following command and answer the prompts. Press <ENTER> to accept the default values.
 
 ```sh
-  ./start-gateway.sh
+  ./start.sh
 ```
 
 Note: When connecting to a local Frequency node, you will need to execute `cd backend && npm install` to install the necessary dependencies. See the [Backend Readme](./backend/README.md) for more details.
+
+### Shutting Down
+
+Enter the following command to stop the services:
+
+```sh
+  ./stop.sh
+```
 
 ### Deployment
 
