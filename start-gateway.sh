@@ -65,7 +65,7 @@ EOI
     echo "DOCKER_TAG=${tag:-latest}" >> .env-saved
     # Ask the user if they want to start on testnet or local
     read -p "Do you want to start on Frequency Paseo Testnet [y/N]:" TESTNET_ENV
-    echo "TESTNET_ENV="$TESTNET_ENV\"" >> .env-saved
+    echo "TESTNET_ENV=\"$TESTNET_ENV\"" >> .env-saved
 
     if [[ $TESTNET_ENV =~ ^[Yy]$ ]]
     then
@@ -133,7 +133,7 @@ EOI
         ask_and_save IPFS_GATEWAY_URL "Enter the IPFS Gateway URL" "$DEFAULT_IPFS_GATEWAY_URL"
         ask_and_save IPFS_BASIC_AUTH_USER "Enter the IPFS Basic Auth User" "$DEFAULT_IPFS_BASIC_AUTH_USER"
         ask_and_save IPFS_BASIC_AUTH_SECRET "Enter the IPFS Basic Auth Secret" "$DEFAULT_IPFS_BASIC_AUTH_SECRET"
-        ask_and_save IPFS_UA_GATEWAY_URL "Enter the browser-resolveable IPFS UA (User-Agent) Gateway URL" "$DEFAULT_IPFS_UA_GATEWAY_URL"
+        ask_and_save IPFS_UA_GATEWAY_URL "Enter the browser-resolveable IPFS UA Gateway URL" "$DEFAULT_IPFS_UA_GATEWAY_URL"
     else
     # Add the IPFS settings to the .env-saved file so defaults work with local testing
         cat >> .env-saved << EOI
@@ -185,6 +185,6 @@ fi
 cat << EOI
 
 ┏━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━┓
-┃ 🚀 You can access the Gateway at http://localhost:3000/ 🚀                                  ┃
+┃ 🚀 You can access the Social App Template at http://localhost:3000 🚀                      ┃
 ┗━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━┛
 EOI
