@@ -64,8 +64,7 @@ EOI
     read -p "Enter a tag to use to pull the Gateway Docker images [latest]: " tag
     echo "DOCKER_TAG=${tag:-latest}" >> .env-saved
     # Ask the user if they want to start on testnet or local
-    echo "Do you want to start on Frequency Paseo Testnet [y/n]:"
-    read TESTNET_ENV
+    read -p "Do you want to start on Frequency Paseo Testnet [y/N]:" TESTNET_ENV
     echo "TESTNET_ENV=\"$TESTNET_ENV\"" >> .env-saved
 
     if [[ $TESTNET_ENV =~ ^[Yy]$ ]]
@@ -81,9 +80,8 @@ EOI
         DEFAULT_TESTNET_ENV="testnet"
         DEFAULT_FREQUENCY_URL="wss://0.rpc.testnet.amplica.io"
         DEFAULT_FREQUENCY_HTTP_URL="https://0.rpc.testnet.amplica.io"
-        DEFAULT_PROVIDER_ID="729"
-        DEFAULT_PROVIDER_ACCOUNT_SEED_PHRASE="DEFAULT seed phrase needed"
-        DEFAULT_IPFS_ENDPOINT="https://ipfs.infura.io:5001"
+        DEFAULT_PROVIDER_ID="INPUT REQUIRED"
+        DEFAULT_PROVIDER_ACCOUNT_SEED_PHRASE="INPUT REQUIRED"
     else
         echo -e "\nStarting on local..."
         DEFAULT_TESTNET_ENV="local"
@@ -92,8 +90,8 @@ EOI
         DEFAULT_PROVIDER_ID="1"
         DEFAULT_PROVIDER_ACCOUNT_SEED_PHRASE="//Alice"
     fi
-    DEFAULT_IPFS_VOLUME="/data/ipfs"
     DEFAULT_IPFS_ENDPOINT="http://ipfs:5001"
+    DEFAULT_IPFS_VOLUME="/data/ipfs"
     DEFAULT_IPFS_GATEWAY_URL='https://ipfs.io/ipfs/[CID]'
     DEFAULT_IPFS_BASIC_AUTH_USER=""
     DEFAULT_IPFS_BASIC_AUTH_SECRET=""
@@ -120,7 +118,9 @@ EOI
     cat << EOI
 
 ┏━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━┓
-┃ Do you want to change the IPFS settings [y/n]:                                              ┃
+┃ Do you want to change the IPFS settings [y/N]:                                              ┃
+┃                                                                                             ┃
+┃ Suggestion: Change to an IPFS Pinning Service for better persistence and availability       ┃
 ┗━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━┛
 
 EOI
@@ -133,22 +133,25 @@ EOI
         ask_and_save IPFS_GATEWAY_URL "Enter the IPFS Gateway URL" "$DEFAULT_IPFS_GATEWAY_URL"
         ask_and_save IPFS_BASIC_AUTH_USER "Enter the IPFS Basic Auth User" "$DEFAULT_IPFS_BASIC_AUTH_USER"
         ask_and_save IPFS_BASIC_AUTH_SECRET "Enter the IPFS Basic Auth Secret" "$DEFAULT_IPFS_BASIC_AUTH_SECRET"
-        ask_and_save IPFS_UA_GATEWAY_URL "Enter the browser-resolveable IPFS Gateway URL" "$DEFAULT_IPFS_UA_GATEWAY_URL"
+        ask_and_save IPFS_UA_GATEWAY_URL "Enter the browser-resolveable IPFS UA Gateway URL" "$DEFAULT_IPFS_UA_GATEWAY_URL"
     else
-    # Add the IPFS settings to the .env-saved file
-    echo "IPFS_VOLUME=\"$DEFAULT_IPFS_VOLUME\"" >> .env-saved
-    echo "IPFS_ENDPOINT=\"$DEFAULT_IPFS_ENDPOINT\"" >> .env-saved
-    echo "IPFS_GATEWAY_URL=\"$DEFAULT_IPFS_GATEWAY_URL\"" >> .env-saved
-    echo "IPFS_BASIC_AUTH_USER=\"$DEFAULT_IPFS_BASIC_AUTH_USER\"" >> .env-saved
-    echo "IPFS_BASIC_AUTH_SECRET=\"$DEFAULT_IPFS_BASIC_AUTH_SECRET\"" >> .env-saved
-    echo "IPFS_UA_GATEWAY_URL=\"$DEFAULT_IPFS_UA_GATEWAY_URL\"" >> .env-saved
+    # Add the IPFS settings to the .env-saved file so defaults work with local testing
+        cat >> .env-saved << EOI
+IPFS_VOLUME="${DEFAULT_IPFS_VOLUME}"
+IPFS_ENDPOINT="${DEFAULT_IPFS_ENDPOINT}"
+IPFS_GATEWAY_URL="${DEFAULT_IPFS_GATEWAY_URL}"
+IPFS_BASIC_AUTH_USER="${DEFAULT_IPFS_BASIC_AUTH_USER}"
+IPFS_BASIC_AUTH_SECRET="${DEFAULT_IPFS_BASIC_AUTH_SECRET}"
+IPFS_UA_GATEWAY_URL="${DEFAULT_IPFS_UA_GATEWAY_URL}"
+EOI
     fi
 
     # When testing with gateway services it may be useful to use docker containers that have been built locally
     # Setting `DEV_CONTAINERS` to `true` will use the local docker containers
     echo "DEV_CONTAINERS=\"false\"" >> .env-saved
 
-    ask_and_save "CONTENT_DB_VOLUME" "Enter the location of the Content DB" "${DEFAULT_CONTENT_DB_VOLUME}"
+    # Edit `CONTENT_DB_VOLUME` to change the location of the content database, the default is a docker volume
+    echo "CONTENT_DB_VOLUME=\"$DEFAULT_CONTENT_DB_VOLUME\"" >> .env-saved
 fi
 set -a; source .env-saved; set +a
 
@@ -167,7 +170,6 @@ then
     cd backend && npm run local:init && cd ..
 fi
 
-echo "DEV_CONTAINERS:$DEV_CONTAINERS"
 if [[ $DEV_CONTAINERS == "true" ]]
 then
     # Start specific services in detached mode
@@ -182,6 +184,6 @@ fi
 cat << EOI
 
 ┏━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━┓
-┃ 🚀 You can access the Gateway at http://localhost:3000/ 🚀                                  ┃
+┃ 🚀 You can access the Social App Template at http://localhost:3000 🚀                       ┃
 ┗━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━┛
 EOI
