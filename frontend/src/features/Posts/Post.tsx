@@ -21,17 +21,16 @@ type PostProps = {
 
 const Post = ({ feedItem, isProfile, showLoginModal }: PostProps): ReactElement => {
   const { user, isLoading } = useGetUser(feedItem.fromId);
-  const content = JSON.parse(feedItem?.content) as ActivityContentNote;
+  const content = JSON.parse(feedItem.content) as ActivityContentNote;
 
   // TODO: validate content as ActivityContentNote or have DSNP Link do it
 
-  const attachments: ActivityContentAttachment[] = content.attachment || [];
   return (
     <BroadcastCard key={feedItem.contentHash} broadcastCardType={BroadcastCardType.POST} isLoading={isLoading}>
       {!isProfile && <PostMeta user={user} showLoginModal={showLoginModal} feedItemFromId={feedItem.fromId} />}
       <BroadcastInfo feedItem={feedItem} content={content} />
-      <BroadcastContent content={content.content} />
-      {attachments.length > 0 && <BroadcastMedia attachments={attachments} />}
+      {content.content && <BroadcastContent content={content.content} />}
+      {content.attachment && content.attachment?.length > 0 && <BroadcastMedia attachments={content.attachment} />}
       <ReplyList
         parentURI={buildDSNPContentURI(BigInt(feedItem.fromId), feedItem.contentHash)}
         isLoggedOut={!!user}
