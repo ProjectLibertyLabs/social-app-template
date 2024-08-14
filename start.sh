@@ -82,7 +82,6 @@ EOI
         DEFAULT_FREQUENCY_HTTP_URL="https://0.rpc.testnet.amplica.io"
         DEFAULT_PROVIDER_ID="INPUT REQUIRED"
         DEFAULT_PROVIDER_ACCOUNT_SEED_PHRASE="INPUT REQUIRED"
-        DEFAULT_IPFS_ENDPOINT="https://ipfs.infura.io:5001"
     else
         echo -e "\nStarting on local..."
         DEFAULT_TESTNET_ENV="local"
@@ -90,8 +89,8 @@ EOI
         DEFAULT_FREQUENCY_HTTP_URL="http://localhost:9944"
         DEFAULT_PROVIDER_ID="1"
         DEFAULT_PROVIDER_ACCOUNT_SEED_PHRASE="//Alice"
-        DEFAULT_IPFS_ENDPOINT="http://ipfs:5001"
     fi
+    DEFAULT_IPFS_ENDPOINT="http://ipfs:5001"
     DEFAULT_IPFS_VOLUME="/data/ipfs"
     DEFAULT_IPFS_GATEWAY_URL='https://ipfs.io/ipfs/[CID]'
     DEFAULT_IPFS_BASIC_AUTH_USER=""
@@ -120,7 +119,8 @@ EOI
 
 ┏━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━┓
 ┃ Do you want to change the IPFS settings [y/N]:                                              ┃
-┃ [When using Testnet(Paseo), you must change the IPFS Provider information]                  ┃
+┃                                                                                             ┃
+┃ Suggestion: Change to an IPFS Pinning Service for better persistence and availability       ┃
 ┗━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━┛
 
 EOI
@@ -170,7 +170,6 @@ then
     cd backend && npm run local:init && cd ..
 fi
 
-echo "DEV_CONTAINERS:$DEV_CONTAINERS"
 if [[ $DEV_CONTAINERS == "true" ]]
 then
     # Start specific services in detached mode
