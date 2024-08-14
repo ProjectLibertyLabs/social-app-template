@@ -21,9 +21,11 @@ type PostProps = {
 
 const Post = ({ feedItem, isProfile, showLoginModal }: PostProps): ReactElement => {
   const { user, isLoading } = useGetUser(feedItem.fromId);
-  const content = JSON.parse(feedItem.content) as ActivityContentNote;
+  const content = JSON.parse(feedItem?.content) as ActivityContentNote;
 
   // TODO: validate content as ActivityContentNote or have DSNP Link do it
+
+  if (!content) return <></>;
 
   return (
     <BroadcastCard key={feedItem.contentHash} broadcastCardType={BroadcastCardType.POST} isLoading={isLoading}>
