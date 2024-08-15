@@ -73,7 +73,7 @@ export class WebhookController extends BaseController {
   }
 
   public postAnnouncementsWebhook(req: Request, res: Response) {
-    ContentRepository.add(req.body);
+    ContentRepository.addAnnouncement(req.body);
 
     return res.status(HttpStatusCode.Created).send();
   }

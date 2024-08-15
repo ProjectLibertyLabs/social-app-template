@@ -33,7 +33,7 @@ const main = async () => {
         const evt = eventWithSectionAndMethod(events, 'msa', 'MsaCreated');
         if (evt) {
           const id = evt?.data[0];
-          console.log('SUCCESS: MSA Created:' + id);
+          console.log('SUCCESS: MSA Created: ' + id);
           resolve();
         } else {
           console.error(
@@ -48,7 +48,7 @@ const main = async () => {
 
   // Create alice provider
   await new Promise((resolve, reject) => {
-    console.log('Creating an Provider...');
+    console.log('Creating a Provider...');
     api.tx.msa.createProvider('alice').signAndSend(keys, {}, ({ status, events, dispatchError }) => {
       if (dispatchError) {
         console.error('ERROR: ', dispatchError.toHuman());
@@ -57,7 +57,7 @@ const main = async () => {
         const evt = eventWithSectionAndMethod(events, 'msa', 'ProviderCreated');
         if (evt) {
           const id = evt?.data[0];
-          console.log('SUCCESS: Provider Created:' + id);
+          console.log('SUCCESS: Provider Created: ' + id);
           resolve();
         } else {
           console.error(
@@ -73,7 +73,7 @@ const main = async () => {
   // Alice provider get Capacity
   await new Promise((resolve, reject) => {
     console.log('Staking for Capacity...');
-    api.tx.capacity.stake('1', 500_000 * Math.pow(8, 10)).signAndSend(keys, {}, ({ status, events, dispatchError }) => {
+    api.tx.capacity.stake('1', 500_000 * Math.pow(10, 8)).signAndSend(keys, {}, ({ status, events, dispatchError }) => {
       if (dispatchError) {
         console.error('ERROR: ', dispatchError.toHuman());
         reject();

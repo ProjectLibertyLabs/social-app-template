@@ -1,7 +1,7 @@
-import React, { ReactElement } from 'react';
+import { ReactElement } from 'react';
 import BroadcastMedia from '../BroadcastMedia/BroadcastMedia';
 import ReplyList from '../Replies/ReplyList';
-import { ActivityContentAttachment, ActivityContentNote } from '@dsnp/activity-content/types';
+import { ActivityContentNote } from '@dsnp/activity-content/types';
 import * as dsnpLink from '../../dsnpLink';
 import { useGetUser } from '../../service/UserProfileService';
 import { buildDSNPContentURI } from '../../helpers/dsnp';
@@ -25,13 +25,14 @@ const Post = ({ feedItem, isProfile, showLoginModal }: PostProps): ReactElement 
 
   // TODO: validate content as ActivityContentNote or have DSNP Link do it
 
-  const attachments: ActivityContentAttachment[] = content.attachment || [];
+  if (!content) return <></>;
+
   return (
     <BroadcastCard key={feedItem.contentHash} broadcastCardType={BroadcastCardType.POST} isLoading={isLoading}>
       {!isProfile && <PostMeta user={user} showLoginModal={showLoginModal} feedItemFromId={feedItem.fromId} />}
       <BroadcastInfo feedItem={feedItem} content={content} />
-      <BroadcastContent content={content.content} />
-      {attachments.length > 0 && <BroadcastMedia attachments={attachments} />}
+      {content.content && <BroadcastContent content={content.content} />}
+      {content.attachment && content.attachment?.length > 0 && <BroadcastMedia attachments={content.attachment} />}
       <ReplyList
         parentURI={buildDSNPContentURI(BigInt(feedItem.fromId), feedItem.contentHash)}
         isLoggedOut={!!user}
