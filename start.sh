@@ -1,14 +1,17 @@
 #!/bin/bash
 # Script to start all SAT services on the Frequency Paseo Testnet
 
-# Function to ask for input with a default value and write to .env-saved
+ENV_FILE=.env-saved
+COMPOSE_PROJECT_NAME=gateway
+
+# Function to ask for input with a default value and write to ${ENV_FILE}
 ask_and_save() {
     local var_name=${1}
     local prompt=${2}
     local default_value=${3}
     read -rp $'\n'"${prompt} [${default_value}]: " input
     local value=${input:-$default_value}
-    echo "${var_name}=\"${value}\"" >> .env-saved
+    echo "${var_name}=\"${value}\"" >> ${ENV_FILE}
 }
 
 # Check for Docker and Docker Compose
@@ -17,10 +20,18 @@ if ! command -v docker &> /dev/null || ! command -v docker compose &> /dev/null;
     exit 1
 fi
 
-# Load existing .env-saved file if it exists
-if [ -f .env-saved ]; then
+if [ -n "${1}" ]; then
+    ENV_FILE=${1}
+fi
+
+if [ -n "${2}" ]; then
+    COMPOSE_PROJECT_NAME=${2}
+fi
+
+# Load existing ${ENV_FILE} file if it exists
+if [ -f ${ENV_FILE} ]; then
     echo -e "Found saved environment from a previous run:\n"
-    cat .env-saved
+    cat ${ENV_FILE}
     echo
     read -p  "Do you want to re-use the saved parameters? [Y/n]: " REUSE_SAVED
     REUSE_SAVED=${REUSE_SAVED:-y}
@@ -29,7 +40,7 @@ if [ -f .env-saved ]; then
     then
         cat << EOI
 ┏━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━┓
-┃ Loading existing .env-saved file environment values...                                      ┃
+┃ Loading existing ${ENV_FILE} file environment values...                                      ┃
 ┗━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━┛
 EOI
     else
@@ -38,34 +49,35 @@ EOI
 ┃ Removing previous saved environment...                                                      |
 ┗━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━┛
 EOI
-    rm .env-saved
+    rm ${ENV_FILE}
     fi
 fi
 
-if [ ! -f .env-saved ]
+if [ ! -f ${ENV_FILE} ]
 then
     # Setup some variables for easy port management
-    STARTING_PORT=3010
+    read -p "Enter starting port for local port mapping [3010]: " portno
+    STARTING_PORT=${portno:-3010}
     for i in {0..10}
     do
     eval SERVICE_PORT_${i}=$(( STARTING_PORT + i ))
     eval "export SERVICE_PORT_${i}=\${SERVICE_PORT_${i}}"
-    eval "echo SERVICE_PORT_${i}=\${SERVICE_PORT_${i}}" >> .env-saved
+    eval "echo SERVICE_PORT_${i}=\${SERVICE_PORT_${i}}" >> ${ENV_FILE}
     done
 
-    # Create .env-saved file to store environment variables
+    # Create ${ENV_FILE} file to store environment variables
     cat << EOI
 ┏━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━┓
-┃ Creating .env-saved file to store environment variables...                                  ┃
+┃ Creating ${ENV_FILE} file to store environment variables...                                  ┃
 ┗━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━┛
 
 EOI
-    echo "COMPOSE_PROJECT_NAME='gateway'" >> .env-saved
+    echo "COMPOSE_PROJECT_NAME=${COMPOSE_PROJECT_NAME}" >> ${ENV_FILE}
     read -p "Enter a tag to use to pull the Gateway Docker images [latest]: " tag
-    echo "DOCKER_TAG=${tag:-latest}" >> .env-saved
+    echo "DOCKER_TAG=${tag:-latest}" >> ${ENV_FILE}
     # Ask the user if they want to start on testnet or local
     read -p "Do you want to start on Frequency Paseo Testnet [y/N]:" TESTNET_ENV
-    echo "TESTNET_ENV=\"$TESTNET_ENV\"" >> .env-saved
+    echo "TESTNET_ENV=\"$TESTNET_ENV\"" >> ${ENV_FILE}
 
     if [[ $TESTNET_ENV =~ ^[Yy]$ ]]
     then
@@ -136,7 +148,7 @@ EOI
         ask_and_save IPFS_UA_GATEWAY_URL "Enter the browser-resolveable IPFS UA Gateway URL" "$DEFAULT_IPFS_UA_GATEWAY_URL"
     else
     # Add the IPFS settings to the .env-saved file so defaults work with local testing
-        cat >> .env-saved << EOI
+        cat >> ${ENV_FILE} << EOI
 IPFS_VOLUME="${DEFAULT_IPFS_VOLUME}"
 IPFS_ENDPOINT="${DEFAULT_IPFS_ENDPOINT}"
 IPFS_GATEWAY_URL="${DEFAULT_IPFS_GATEWAY_URL}"
@@ -148,12 +160,12 @@ EOI
 
     # When testing with gateway services it may be useful to use docker containers that have been built locally
     # Setting `DEV_CONTAINERS` to `true` will use the local docker containers
-    echo "DEV_CONTAINERS=\"false\"" >> .env-saved
+    echo "DEV_CONTAINERS=\"false\"" >> ${ENV_FILE}
 
     # Edit `CONTENT_DB_VOLUME` to change the location of the content database, the default is a docker volume
-    echo "CONTENT_DB_VOLUME=\"$DEFAULT_CONTENT_DB_VOLUME\"" >> .env-saved
+    echo "CONTENT_DB_VOLUME=\"$DEFAULT_CONTENT_DB_VOLUME\"" >> ${ENV_FILE}
 fi
-set -a; source .env-saved; set +a
+set -a; source ${ENV_FILE}; set +a
 
 if [[ ! $TESTNET_ENV =~ ^[Yy]$ ]]
 then
@@ -184,6 +196,6 @@ fi
 cat << EOI
 
 ┏━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━┓
-┃ 🚀 You can access the Social App Template at http://localhost:3000 🚀                       ┃
+┃ 🚀 You can access the Social App Template at http://localhost:${SERVICE_PORT_10} 🚀                       ┃
 ┗━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━┛
 EOI

@@ -54,13 +54,13 @@ x-social-app-template-backend: &social-app-template-backend
   WEBHOOK_BASE_URL: 'http://social-app-template-backend:3001/webhooks'
 
 x-social-app-template-frontend: &social-app-template-frontend
-  REACT_APP_BACKEND_URL: 'http://localhost:3001'
+  REACT_APP_BACKEND_URL: 'http://localhost:${SERVICE_PORT_8}'
 
 services:
   redis:
     image: redis:latest
     ports:
-      - 6379:6379
+      - ${SERVICE_PORT_7}:6379
     networks:
       - social-app-backend
     volumes:
@@ -89,6 +89,10 @@ services:
       - chainstorage:/data
     profiles:
       - local-node
+    # We make frequency dependent on ipfs, because we only want to run
+    # a local IPFS node if we're running with a local chain
+    depends_on:
+      - ipfs
 
   ipfs:
     image: ipfs/kubo:latest
@@ -113,7 +117,6 @@ services:
       <<: [*common-environment, *content-publishing-env]
     depends_on:
       - redis
-      - ipfs
     networks:
       - social-app-backend
 
@@ -126,7 +129,6 @@ services:
       START_PROCESS: worker
     depends_on:
       - redis
-      - ipfs
     networks:
       - social-app-backend
 
@@ -140,7 +142,6 @@ services:
       <<: [*common-environment, *content-watcher-env]
     depends_on:
       - redis
-      - ipfs
     networks:
       - social-app-backend
 
@@ -205,8 +206,8 @@ services:
       tags:
         - social-app-backend:latest
     ports:
-      - 3001:3000
-      - 3002:3001
+      - ${SERVICE_PORT_8}:3000
+      - ${SERVICE_PORT_9}:3001
     environment:
       <<: [*common-environment, *social-app-template-backend]
       IPFS_GATEWAY_URL: 'http://ipfs:8080'
@@ -217,7 +218,6 @@ services:
     networks:
       - social-app-backend
     depends_on:
-      - ipfs
       - content-publishing-service-api
       - content-publishing-service-worker
       - content-watcher-service
@@ -237,8 +237,7 @@ services:
       tags:
         - social-app-frontend:latest
     ports:
-      - 3000:3000
-
+      - ${SERVICE_PORT_10}:3000
     environment:
       <<: *social-app-template-frontend
     volumes:
@@ -247,7 +246,6 @@ services:
     networks:
       - social-app-backend
     depends_on:
-      - ipfs
       - content-publishing-service-api
       - content-publishing-service-worker
       - content-watcher-service

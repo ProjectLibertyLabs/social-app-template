@@ -1,9 +1,15 @@
 #!/bin/bash
 # Stop all services and optionally remove specified volumes to remove all state and start fresh
 
+ENV_FILE=.env-saved
+
+if [ -n "${1}" ]; then
+    ENV_FILE=${1}
+fi
+
 # Export the variables that are used in the docker-compose.yaml file
-if [ -f .env-saved ]; then
-    set -a; source .env-saved; set +a
+if [ -f ${ENV_FILE} ]; then
+    set -a; source ${ENV_FILE}; set +a
 fi
 
 # Shutting down any running services
