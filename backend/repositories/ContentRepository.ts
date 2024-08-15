@@ -37,6 +37,11 @@ export type ContentSearchParametersType = {
   relatedContentHash?: string;
 };
 
+export type ContentOrderingParametersType = {
+  field: 'blockNumber' | 'published';
+  order: 'ASC' | 'DESC';
+};
+
 export type AnnouncementEntity = {
   key: string;
   announcement: AnnouncementResponse;
@@ -81,8 +86,9 @@ function getRelatedHash(contentAnnouncement: AnnouncementResponse): string | nul
   return null;
 }
 
-function getFilter(options?: ContentSearchParametersType): string {
+function getFilter(options?: ContentSearchParametersType, sort?: ContentOrderingParametersType[]): string {
   const conditionals: string[] = [];
+
   if (options) {
     if (options.schemaIds) {
       conditionals.push(`"announcement_json"->>'$.schemaId' IN (SELECT value from json_each(:schemaIds))`);
@@ -115,7 +121,23 @@ function getFilter(options?: ContentSearchParametersType): string {
     }
   }
 
-  return conditionals.length ? `WHERE ${conditionals.join(' AND ')}` : '';
+  const ordering = (sort || [{ field: 'blockNumber', order: 'DESC' }])?.map((sortField) => {
+    switch (sortField.field) {
+      case 'published':
+        return `"content_json"->>'$.published' ${sortField.order || 'DESC'}`;
+
+      case 'blockNumber':
+        return `"announcement_json"->>'$.blockNumber' ${sortField.order || 'DESC'}`;
+
+      default:
+        return `"announcement_json"->>'$.blockNumber' DESC`;
+    }
+  });
+
+  const orderBy = ordering?.length ? `ORDER BY ${ordering.join(', ')}` : '';
+  const where = conditionals.length ? `WHERE ${conditionals.join(' AND ')}` : '';
+
+  return `${where} ${orderBy}`;
 }
 
 export class ContentRepository {

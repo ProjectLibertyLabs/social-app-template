@@ -1,7 +1,7 @@
-import React, { ReactElement } from 'react';
+import { ReactElement } from 'react';
 import BroadcastMedia from '../BroadcastMedia/BroadcastMedia';
 import ReplyList from '../Replies/ReplyList';
-import { ActivityContentAttachment, ActivityContentNote } from '@dsnp/activity-content/types';
+import { ActivityContentNote } from '@dsnp/activity-content/types';
 import * as dsnpLink from '../../dsnpLink';
 import { useGetUser } from '../../service/UserProfileService';
 import { buildDSNPContentURI } from '../../helpers/dsnp';
