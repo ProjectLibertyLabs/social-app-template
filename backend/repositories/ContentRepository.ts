@@ -1,16 +1,8 @@
 /** Content Repository
  *
- * Dummy service for caching content; replace with a persistence/cache layer of your choice.
- * This one is horribly inefficient and does not scale!
+ * Very bare-bones SQLite DB persistence mechanism for caching content announced from the chain.
+ * Replace with a persistence mechanism of your choosing.
  *
- * Notes about this bare-bones content repository:
- *
- * - Primary announcements are stored by their `contentHash`. A "real" implementation
- *   would likely have a database backend so that content announcements could be easily queried
- *   by various criteria (MSA, timestamp/block range, schema/announcement type, etc)
- *
- * - Secondary announcements (Replies, Reactions, Tombstones) are indexed by the content hash
- *   of the parent announcement
  */
 
 import { createHash } from 'crypto';
