@@ -89,10 +89,6 @@ services:
       - chainstorage:/data
     profiles:
       - local-node
-    # We make frequency dependent on ipfs, because we only want to run
-    # a local IPFS node if we're running with a local chain
-    depends_on:
-      - ipfs
 
   ipfs:
     image: ipfs/kubo:latest
@@ -103,12 +99,12 @@ services:
     networks:
       - social-app-backend
     volumes:
-      - ipfs_data:${IPFS_VOLUME}
-    labels:
-      - 'portical.upnp.forward=4401:4401'
+      - ${IPFS_VOLUME:-ipfs_data}:/data/ipfs
+    # labels:
+    #   - 'portical.upnp.forward=4401:4401'
 
   content-publishing-service-api:
-    image: projectlibertylabs/content-publishing-service:${DOCKER_TAG}
+    image: projectlibertylabs/content-publishing-service:${DOCKER_TAG:-latest}
     platform: linux/amd64
     pull_policy: always
     ports:
@@ -121,7 +117,7 @@ services:
       - social-app-backend
 
   content-publishing-service-worker:
-    image: projectlibertylabs/content-publishing-service:${DOCKER_TAG}
+    image: projectlibertylabs/content-publishing-service:${DOCKER_TAG:-latest}
     platform: linux/amd64
     pull_policy: always
     environment:
@@ -133,7 +129,7 @@ services:
       - social-app-backend
 
   content-watcher-service:
-    image: projectlibertylabs/content-watcher-service:${DOCKER_TAG}
+    image: projectlibertylabs/content-watcher-service:${DOCKER_TAG:-latest}
     platform: linux/amd64
     pull_policy: always
     ports:
@@ -146,7 +142,7 @@ services:
       - social-app-backend
 
   graph-service-api:
-    image: projectlibertylabs/graph-service:${DOCKER_TAG}
+    image: projectlibertylabs/graph-service:${DOCKER_TAG:-latest}
     platform: linux/amd64
     pull_policy: always
     ports:
@@ -160,7 +156,7 @@ services:
       - social-app-backend
 
   graph-service-worker:
-    image: projectlibertylabs/graph-service:${DOCKER_TAG}
+    image: projectlibertylabs/graph-service:${DOCKER_TAG:-latest}
     platform: linux/amd64
     pull_policy: always
     environment:
@@ -172,7 +168,7 @@ services:
       - social-app-backend
 
   account-service-api:
-    image: projectlibertylabs/account-service:${DOCKER_TAG}
+    image: projectlibertylabs/account-service:${DOCKER_TAG:-latest}
     platform: linux/amd64
     pull_policy: always
     ports:
@@ -186,7 +182,7 @@ services:
       - social-app-backend
 
   account-service-worker:
-    image: projectlibertylabs/account-service:${DOCKER_TAG}
+    image: projectlibertylabs/account-service:${DOCKER_TAG:-latest}
     platform: linux/amd64
     pull_policy: always
     command: worker
@@ -237,7 +233,7 @@ services:
       tags:
         - social-app-frontend:latest
     ports:
-      - ${SERVICE_PORT_10}:3000
+      - ${FRONTEND_PORT:-3000}:3000
     environment:
       <<: *social-app-template-frontend
     volumes:

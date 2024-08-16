@@ -1,8 +1,4 @@
 import Joi from 'joi';
-import { mnemonicValidate } from '@polkadot/util-crypto';
-
-// eslint-disable-next-line no-useless-escape
-const devUriRegEx = /^\/\/(Alice|Bob|Charlie|Dave|Eve|Ferdie)(\/[\/]?\d+)?$/;
 
 const ENV_SCHEMA = Joi.object({
   API_PORT: Joi.number().min(1001).max(10_000).default(3000),
@@ -26,19 +22,6 @@ const ENV_SCHEMA = Joi.object({
     .positive()
     .unsafe(true)
     .custom((value) => BigInt(value)),
-  PROVIDER_ACCOUNT_SEED_PHRASE: Joi.string()
-    .required()
-    .custom((value: string, helpers) => {
-      if (process.env?.CHAIN_ENVIRONMENT === 'dev' && devUriRegEx.test(value)) {
-        return value;
-      }
-      if (!mnemonicValidate(value)) {
-        return helpers.error('any.custom', {
-          error: new Error(`the provided value is not a valid BIP39 seed phrase`),
-        });
-      }
-      return value;
-    }),
   SIWF_URL: Joi.string().uri().required(),
   SIWF_DOMAIN: Joi.alternatives().required().match('any').try(Joi.string().domain(), Joi.string().hostname()), // allow hostname for local testing
 });
@@ -112,16 +95,8 @@ export class Config {
     return this.configValues['FREQUENCY_URL'];
   }
 
-  public get frequencyHttpUrl() {
-    return this.configValues['FREQUENCY_HTTP_URL'];
-  }
-
   public get providerId(): string {
     return this.configValues['PROVIDER_ID'].toString();
-  }
-
-  public get providerSeedPhrase() {
-    return this.configValues['PROVIDER_ACCOUNT_SEED_PHRASE'];
   }
 
   public get siwfUrl() {

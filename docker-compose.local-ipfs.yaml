@@ -1,0 +1,20 @@
+services:
+  content-publishing-service-api:
+    depends_on:
+      - redis
+
+  content-publishing-service-worker:
+    depends_on:
+      - ipfs
+
+  content-watcher-service:
+    depends_on:
+      - ipfs
+
+  social-app-template-backend:
+    depends_on:
+      - ipfs
+
+  social-app-template-frontend:
+    depends_on:
+      - ipfs
