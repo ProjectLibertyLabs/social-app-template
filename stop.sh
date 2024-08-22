@@ -1,11 +1,39 @@
 #!/bin/bash
 # Stop all services and optionally remove specified volumes to remove all state and start fresh
+BASE_DIR=${HOME}/.projectliberty
+BASE_NAME=social-app-template
+ENV_FILE=${BASE_DIR}/.env.${BASE_NAME}
 
-ENV_FILE=.env-saved
+# Usage: ./stop.sh [options]
+# Options:
+#   -h, --help                 Show this help message and exit
+#   -n, --name                 Specify the project name
 
+# Function to display help message
+show_help() {
+    echo "Usage: ./stop.sh [options]"
+    echo "Options:"
+    echo "  -h, --help                 Show this help message and exit"
+    echo "  -n, --name                 Specify the project name"
+}
+
+# Parse command-line arguments
+while [[ "$#" -gt 0 ]]; do
+    case $1 in
+        -h|--help) show_help; exit 0 ;;
+        -n|--name) BASE_NAME="$2"; shift ;;
+        *) echo "Unknown parameter passed: $1"; show_help; exit 1 ;;
+    esac
+    shift
+done
 if [ -n "${1}" ]; then
     ENV_FILE=${1}
 fi
+
+if [[ -n $ENV_FILE ]]; then
+    echo -e "Using environment file: $ENV_FILE\n"
+fi
+
 
 # Export the variables that are used in the docker-compose.yaml file
 if [ -f ${ENV_FILE} ]; then

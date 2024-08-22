@@ -123,17 +123,28 @@ ask_and_save() {
     local var_name=${1}
     local prompt=${2}
     local default_value=${3}
+    local hide_input=${4:-false}
     local value=
+    local input=
+
     if [ -z "${default_value}" ]
     then
-        input=
-        while [ -z "${input}" ]
-        do
+        if [ "${hide_input}" = true ]
+        then
+            read -rsp $'\n'"${prompt} (INPUT HIDDEN): " input
+            echo
+        else
             read -rp $'\n'"${prompt}: " input
-        done
+        fi
         value=${input}
     else
-        read -rp $'\n'"${prompt} [${default_value}]: " input
+        if [ "${hide_input}" = true ]
+        then
+            read -rsp $'\n'"${prompt} [${default_value}] (INPUT HIDDEN): " input
+            echo
+        else
+            read -rp $'\n'"${prompt} [${default_value}]: " input
+        fi
         value=${input:-$default_value}
     fi
     echo "${var_name}=\"${value}\"" >> ${ENV_FILE}
@@ -150,6 +161,39 @@ show_help() {
     echo "Options:"
     echo "  -h, --help                 Show this help message and exit"
     echo "  -n, --name                 Specify the project name"
+}
+
+
+# Function to get user selection and return the hex value of the selected color
+select_color() {
+    # Define color options
+    declare -a color_names=("White" "Light Gray" "Light Yellow" "Light Blue" "Light Green" )
+    declare -a color_values=("#FFFFFF" "#D3D3D3" "#FFFFE0" "#ADD8E6" "#90EE90")
+
+    PS3=$'\nEnter the number of the color you want: '
+
+    select color in "${color_names[@]}"; do
+        if [[ -n "$color" ]]; then
+            for i in "${!color_names[@]}"; do
+                if [[ "${color_names[$i]}" = "${color}" ]]; then
+                    echo "${color_values[$i]}"
+                    return 0
+                fi
+            done
+        else
+            echo "Invalid selection. Please try again."
+        fi
+    done
+}
+
+# Function to redact sensitive values in the .env file
+redact_sensitive_values() {
+    local env_file="$1"
+    sed \
+        -e 's/^PROVIDER_ACCOUNT_SEED_PHRASE=.*/PROVIDER_ACCOUNT_SEED_PHRASE=[REDACTED]/' \
+        -e 's/^IPFS_BASIC_AUTH_USER=.*/IPFS_BASIC_AUTH_USER=[REDACTED]/' \
+        -e 's/^IPFS_BASIC_AUTH_SECRET=.*/IPFS_BASIC_AUTH_SECRET=[REDACTED]/' \
+        "$env_file"
 }
 
 # Parse command-line arguments
@@ -171,7 +215,7 @@ ENV_FILE=${BASE_DIR}/.env.${BASE_NAME}
 COMPOSE_PROJECT_NAME=${BASE_NAME}
 
 if [[ -n $ENV_FILE ]]; then
-    echo "Using environment file: $ENV_FILE"
+    echo -e "Using environment file: $ENV_FILE\n"
 fi
 
 # Check for Docker and Docker Compose
@@ -183,7 +227,8 @@ fi
 # Load existing ${ENV_FILE} file if it exists
 if [ -f ${ENV_FILE} ]; then
     echo -e "Found saved environment from a previous run:\n"
-    cat ${ENV_FILE}
+    redacted_content=$(redact_sensitive_values "${ENV_FILE}")
+    echo "${redacted_content}"
     echo
     read -p  "Do you want to re-use the saved parameters? [Y/n]: " REUSE_SAVED
     REUSE_SAVED=${REUSE_SAVED:-y}
@@ -194,12 +239,21 @@ if [ -f ${ENV_FILE} ]; then
     else
         ${OUTPUT} "Removing previous saved environment..."
 
-    rm ${ENV_FILE}
+        rm ${ENV_FILE}
+        # If the file fails to delete, exit the script
+        if [ -f ${ENV_FILE} ]
+        then
+            ${OUTPUT} "Failed to remove previous saved environment. Exiting..."
+        fi
     fi
 fi
 
 if [ ! -f ${ENV_FILE} ]
 then
+    ${OUTPUT} << EOI
+Creating project environment file:
+    ${ENV_FILE}
+EOI
     # Setup some variables for easy port management
     read -p "Enter starting port for local port mapping (reserves a 20-port range) [3000]: " portno
     FRONTEND_PORT=${portno:-3000}
@@ -212,22 +266,21 @@ then
     eval "echo SERVICE_PORT_${i}=\${SERVICE_PORT_${i}}" >> ${ENV_FILE}
     done
 
-    ${OUTPUT} << EOI
-Creating project environment file:
-    ${ENV_FILE}
-EOI
     echo "COMPOSE_PROJECT_NAME=${COMPOSE_PROJECT_NAME}" >> ${ENV_FILE}
+    echo
     read -p "Enter a tag to use to pull the Gateway Docker images [latest]: " tag
     echo "DOCKER_TAG=${tag:-latest}" >> ${ENV_FILE}
+
     # Ask the user if they want to start on testnet or local
+    echo
     read -p "Do you want to start on Frequency Paseo Testnet [y/N]: "
+    echo
     [[ "${REPLY}" =~ ^[Yy]$ ]] && TESTNET_ENV=true || TESTNET_ENV=false
     echo "TESTNET_ENV=$TESTNET_ENV" >> ${ENV_FILE}
 
     if [ $TESTNET_ENV = true ]
     then
     ${OUTPUT} << EOI
-
 Setting defaults for testnet...
 Hit <ENTER> to accept the default value or enter new value and then hit <ENTER>
 
@@ -251,13 +304,23 @@ EOI
     DEFAULT_IPFS_UA_GATEWAY_URL="http://localhost:8080"
     DEFAULT_CONTENT_DB_VOLUME="content_db"
 
+    # Allow different instances to have different banner titles
+    ask_and_save REACT_APP_TITLE "Enter the title of the application" "Social Web Demo"
+
+    # Allow different instances to have different background colors in the header
+    echo
+${OUTPUT} << EOI
+Select the background color of the header:
+EOI
+    selected_color_hex=$(select_color)
+    echo "REACT_APP_HEADER_BG_COLOR=${selected_color_hex}" >> ${ENV_FILE}
 
     ask_and_save FREQUENCY_URL "Enter the Frequency RPC URL" "$DEFAULT_FREQUENCY_URL"
     ask_and_save FREQUENCY_HTTP_URL "Enter the Frequency HTTP RPC URL" "$DEFAULT_FREQUENCY_HTTP_URL"
+    echo
     if [ ${TESTNET_ENV} = true ]
     then
 ${OUTPUT} << EOI
-
 🔗💠📡                                                                           📡💠🔗
 🔗💠📡   A Provider is required to start the services.                           📡💠🔗
 🔗💠📡                                                                           📡💠🔗
@@ -267,13 +330,12 @@ ${OUTPUT} << EOI
 
 EOI
         ask_and_save PROVIDER_ID "Enter Provider ID" "$DEFAULT_PROVIDER_ID"
-        ask_and_save PROVIDER_ACCOUNT_SEED_PHRASE "Enter Provider Seed Phrase" "$DEFAULT_PROVIDER_ACCOUNT_SEED_PHRASE"
+        ask_and_save PROVIDER_ACCOUNT_SEED_PHRASE "Enter Provider Seed Phrase" "$DEFAULT_PROVIDER_ACCOUNT_SEED_PHRASE" true
     else
         echo "PROVIDER_ID=1" >> ${ENV_FILE}
         echo "PROVIDER_ACCOUNT_SEED_PHRASE=\"//Alice\"" >> ${ENV_FILE}
     fi
     ${OUTPUT} << EOI
-
 The default configuration runs a local, containerized IPFS node.
 This configuration will likely have trouble propagating content to the global IPFS
 network.
@@ -290,8 +352,8 @@ EOI
         EXTERNAL_IPFS=1
         ask_and_save IPFS_ENDPOINT "Enter the IPFS Endpoint" "$DEFAULT_IPFS_ENDPOINT"
         ask_and_save IPFS_GATEWAY_URL "Enter the IPFS Gateway URL" "$DEFAULT_IPFS_GATEWAY_URL"
-        ask_and_save IPFS_BASIC_AUTH_USER "Enter the IPFS Basic Auth User" "$DEFAULT_IPFS_BASIC_AUTH_USER"
-        ask_and_save IPFS_BASIC_AUTH_SECRET "Enter the IPFS Basic Auth Secret" "$DEFAULT_IPFS_BASIC_AUTH_SECRET"
+        ask_and_save IPFS_BASIC_AUTH_USER "Enter the IPFS Basic Auth User" "$DEFAULT_IPFS_BASIC_AUTH_USER" true
+        ask_and_save IPFS_BASIC_AUTH_SECRET "Enter the IPFS Basic Auth Secret" "$DEFAULT_IPFS_BASIC_AUTH_SECRET" true
         ask_and_save IPFS_UA_GATEWAY_URL "Enter the browser-resolveable IPFS UA Gateway URL" "$DEFAULT_IPFS_UA_GATEWAY_URL"
     else
     # Add the IPFS settings to the .env-saved file so defaults work with local testing
@@ -352,6 +414,5 @@ then
 fi
 
 ${OUTPUT} << EOI
-
 🚀 You can access the Social App Template at http://localhost:${FRONTEND_PORT} 🚀
 EOI
