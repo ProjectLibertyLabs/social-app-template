@@ -55,6 +55,8 @@ x-social-app-template-backend: &social-app-template-backend
 
 x-social-app-template-frontend: &social-app-template-frontend
   REACT_APP_BACKEND_URL: 'http://localhost:${SERVICE_PORT_8}'
+  REACT_APP_TITLE: ${REACT_APP_TITLE}
+  REACT_APP_HEADER_BG_COLOR: ${REACT_APP_HEADER_BG_COLOR}
 
 services:
   redis:

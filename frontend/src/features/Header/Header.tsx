@@ -31,11 +31,16 @@ const Header = ({ loggedInAccount, login, logout }: HeaderProps): ReactElement =
     login(account, providerInfo);
   };
 
+  // Read the title from the environment variable
+  console.log(process.env.REACT_APP_TITLE);
+  const title = process.env.REACT_APP_TITLE || 'Social Web Demo';
+  const headerBgColor = process.env.REACT_APP_HEADER_BG_COLOR || '#ffffff';
+
   return (
-    <div className={styles.root}>
+    <div className={styles.root} style={{ backgroundColor: headerBgColor }}>
       <Flex align={'center'} justify={'space-between'} className={styles.container}>
         <Title level={1} className={styles.title}>
-          Social Web Demo
+          {title}
         </Title>
         {loggedInAccount && logout ? (
           <Popover

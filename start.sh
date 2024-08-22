@@ -152,6 +152,34 @@ show_help() {
     echo "  -n, --name                 Specify the project name"
 }
 
+
+# Function to print color options
+print_color_options() {
+    # Define color options
+    declare -a color_names=("White" "Light Gray" "Light Yellow" "Light Blue" "Light Green" )
+    declare -a color_values=("#FFFFFF" "#D3D3D3" "#FFFFE0" "#ADD8E6" "#90EE90")
+
+    PS3="Enter the number of the color you want: "
+
+    select color in "${color_names[@]}"; do
+        if [[ -n "$color" ]]; then
+            for i in "${!color_names[@]}"; do
+                if [[ "${color_names[$i]}" = "${color}" ]]; then
+                    echo "${color_values[$i]}"
+                    return 0
+                fi
+            done
+        else
+            echo "Invalid selection. Please try again."
+        fi
+    done
+}
+
+# Function to get user selection and return the hex value of the selected color
+select_color() {
+    print_color_options
+}
+
 # Parse command-line arguments
 while [[ "$#" -gt 0 ]]; do
     case $1 in
@@ -171,7 +199,7 @@ ENV_FILE=${BASE_DIR}/.env.${BASE_NAME}
 COMPOSE_PROJECT_NAME=${BASE_NAME}
 
 if [[ -n $ENV_FILE ]]; then
-    echo "Using environment file: $ENV_FILE"
+    echo -e "Using environment file: $ENV_FILE\n"
 fi
 
 # Check for Docker and Docker Compose
@@ -194,12 +222,21 @@ if [ -f ${ENV_FILE} ]; then
     else
         ${OUTPUT} "Removing previous saved environment..."
 
-    rm ${ENV_FILE}
+        rm ${ENV_FILE}
+        # If the file fails to delete, exit the script
+        if [ -f ${ENV_FILE} ]
+        then
+            ${OUTPUT} "Failed to remove previous saved environment. Exiting..."
+        fi
     fi
 fi
 
 if [ ! -f ${ENV_FILE} ]
 then
+    ${OUTPUT} << EOI
+Creating project environment file:
+    ${ENV_FILE}
+EOI
     # Setup some variables for easy port management
     read -p "Enter starting port for local port mapping (reserves a 20-port range) [3000]: " portno
     FRONTEND_PORT=${portno:-3000}
@@ -212,14 +249,13 @@ then
     eval "echo SERVICE_PORT_${i}=\${SERVICE_PORT_${i}}" >> ${ENV_FILE}
     done
 
-    ${OUTPUT} << EOI
-Creating project environment file:
-    ${ENV_FILE}
-EOI
     echo "COMPOSE_PROJECT_NAME=${COMPOSE_PROJECT_NAME}" >> ${ENV_FILE}
+    echo
     read -p "Enter a tag to use to pull the Gateway Docker images [latest]: " tag
     echo "DOCKER_TAG=${tag:-latest}" >> ${ENV_FILE}
+
     # Ask the user if they want to start on testnet or local
+    echo
     read -p "Do you want to start on Frequency Paseo Testnet [y/N]: "
     [[ "${REPLY}" =~ ^[Yy]$ ]] && TESTNET_ENV=true || TESTNET_ENV=false
     echo "TESTNET_ENV=$TESTNET_ENV" >> ${ENV_FILE}
@@ -251,6 +287,15 @@ EOI
     DEFAULT_IPFS_UA_GATEWAY_URL="http://localhost:8080"
     DEFAULT_CONTENT_DB_VOLUME="content_db"
 
+    # Allow different instances to have different banner titles
+    ask_and_save REACT_APP_TITLE "Enter the title of the application" "Social Web Demo"
+
+    # Allow different instances to have different background colors in the header
+    echo -e "\nSelect the background color of the header:"
+    selected_color_hex=$(select_color;)
+    echo "REACT_APP_HEADER_BG_COLOR=${selected_color_hex}" >> ${ENV_FILE}
+
+    # ask_and_save REACT_APP_HEADER_BG_COLOR "Enter the background color of the header" "#282c34"
 
     ask_and_save FREQUENCY_URL "Enter the Frequency RPC URL" "$DEFAULT_FREQUENCY_URL"
     ask_and_save FREQUENCY_HTTP_URL "Enter the Frequency HTTP RPC URL" "$DEFAULT_FREQUENCY_HTTP_URL"
