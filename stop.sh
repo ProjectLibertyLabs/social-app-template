@@ -30,6 +30,11 @@ if [ -n "${1}" ]; then
     ENV_FILE=${1}
 fi
 
+if [[ -n $ENV_FILE ]]; then
+    echo -e "Using environment file: $ENV_FILE\n"
+fi
+
+
 # Export the variables that are used in the docker-compose.yaml file
 if [ -f ${ENV_FILE} ]; then
     set -a; source ${ENV_FILE}; set +a

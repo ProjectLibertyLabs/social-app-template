@@ -153,13 +153,13 @@ show_help() {
 }
 
 
-# Function to print color options
-print_color_options() {
+# Function to get user selection and return the hex value of the selected color
+select_color() {
     # Define color options
     declare -a color_names=("White" "Light Gray" "Light Yellow" "Light Blue" "Light Green" )
     declare -a color_values=("#FFFFFF" "#D3D3D3" "#FFFFE0" "#ADD8E6" "#90EE90")
 
-    PS3="Enter the number of the color you want: "
+    PS3=$'\nEnter the number of the color you want: '
 
     select color in "${color_names[@]}"; do
         if [[ -n "$color" ]]; then
@@ -175,9 +175,14 @@ print_color_options() {
     done
 }
 
-# Function to get user selection and return the hex value of the selected color
-select_color() {
-    print_color_options
+# Function to redact sensitive values in the .env file
+redact_sensitive_values() {
+    local env_file="$1"
+    sed \
+        -e 's/^PROVIDER_ACCOUNT_SEED_PHRASE=.*/PROVIDER_ACCOUNT_SEED_PHRASE=[REDACTED]/' \
+        -e 's/^IPFS_BASIC_AUTH_USER=.*/IPFS_BASIC_AUTH_USER=[REDACTED]/' \
+        -e 's/^IPFS_BASIC_AUTH_SECRET=.*/IPFS_BASIC_AUTH_SECRET=[REDACTED]/' \
+        "$env_file"
 }
 
 # Parse command-line arguments
@@ -211,7 +216,8 @@ fi
 # Load existing ${ENV_FILE} file if it exists
 if [ -f ${ENV_FILE} ]; then
     echo -e "Found saved environment from a previous run:\n"
-    cat ${ENV_FILE}
+    redacted_content=$(redact_sensitive_values "${ENV_FILE}")
+    echo "${redacted_content}"
     echo
     read -p  "Do you want to re-use the saved parameters? [Y/n]: " REUSE_SAVED
     REUSE_SAVED=${REUSE_SAVED:-y}
@@ -257,13 +263,13 @@ EOI
     # Ask the user if they want to start on testnet or local
     echo
     read -p "Do you want to start on Frequency Paseo Testnet [y/N]: "
+    echo
     [[ "${REPLY}" =~ ^[Yy]$ ]] && TESTNET_ENV=true || TESTNET_ENV=false
     echo "TESTNET_ENV=$TESTNET_ENV" >> ${ENV_FILE}
 
     if [ $TESTNET_ENV = true ]
     then
     ${OUTPUT} << EOI
-
 Setting defaults for testnet...
 Hit <ENTER> to accept the default value or enter new value and then hit <ENTER>
 
@@ -291,18 +297,20 @@ EOI
     ask_and_save REACT_APP_TITLE "Enter the title of the application" "Social Web Demo"
 
     # Allow different instances to have different background colors in the header
-    echo -e "\nSelect the background color of the header:"
-    selected_color_hex=$(select_color;)
+${OUTPUT} << EOI
+Select the background color of the header:
+EOI
+    selected_color_hex=$(select_color)
     echo "REACT_APP_HEADER_BG_COLOR=${selected_color_hex}" >> ${ENV_FILE}
 
     # ask_and_save REACT_APP_HEADER_BG_COLOR "Enter the background color of the header" "#282c34"
 
     ask_and_save FREQUENCY_URL "Enter the Frequency RPC URL" "$DEFAULT_FREQUENCY_URL"
     ask_and_save FREQUENCY_HTTP_URL "Enter the Frequency HTTP RPC URL" "$DEFAULT_FREQUENCY_HTTP_URL"
+    echo
     if [ ${TESTNET_ENV} = true ]
     then
 ${OUTPUT} << EOI
-
 🔗💠📡                                                                           📡💠🔗
 🔗💠📡   A Provider is required to start the services.                           📡💠🔗
 🔗💠📡                                                                           📡💠🔗
@@ -318,7 +326,6 @@ EOI
         echo "PROVIDER_ACCOUNT_SEED_PHRASE=\"//Alice\"" >> ${ENV_FILE}
     fi
     ${OUTPUT} << EOI
-
 The default configuration runs a local, containerized IPFS node.
 This configuration will likely have trouble propagating content to the global IPFS
 network.
@@ -397,6 +404,5 @@ then
 fi
 
 ${OUTPUT} << EOI
-
 🚀 You can access the Social App Template at http://localhost:${FRONTEND_PORT} 🚀
 EOI
