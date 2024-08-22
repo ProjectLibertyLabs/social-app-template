@@ -297,13 +297,12 @@ EOI
     ask_and_save REACT_APP_TITLE "Enter the title of the application" "Social Web Demo"
 
     # Allow different instances to have different background colors in the header
+    echo
 ${OUTPUT} << EOI
 Select the background color of the header:
 EOI
     selected_color_hex=$(select_color)
     echo "REACT_APP_HEADER_BG_COLOR=${selected_color_hex}" >> ${ENV_FILE}
-
-    # ask_and_save REACT_APP_HEADER_BG_COLOR "Enter the background color of the header" "#282c34"
 
     ask_and_save FREQUENCY_URL "Enter the Frequency RPC URL" "$DEFAULT_FREQUENCY_URL"
     ask_and_save FREQUENCY_HTTP_URL "Enter the Frequency HTTP RPC URL" "$DEFAULT_FREQUENCY_HTTP_URL"
