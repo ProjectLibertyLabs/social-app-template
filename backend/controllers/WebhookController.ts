@@ -8,6 +8,7 @@ import { ContentRepository } from '../repositories/ContentRepository';
 import { GraphWebhookService } from '../services/GraphWebhookService';
 import { ContentController } from './ContentController';
 import { client, setClient } from '../index';
+import { sseManager } from '../utils/sse';
 
 export class WebhookController extends BaseController {
   constructor(app: Express) {
@@ -75,10 +76,12 @@ export class WebhookController extends BaseController {
     }
   }
 
-  public postAnnouncementsWebhook(req: Request, res: Response) {
+  public async postAnnouncementsWebhook(req: Request, res: Response) {
     ContentRepository.addAnnouncement(req.body);
 
-    setClient();
+    logger.warn({ announcement: req.body }, 'postAnnouncementsWebhook: Announcement received');
+    logger.warn("postAnnouncementsWebhook: sseManager Broadcasting announcement");
+    sseManager.broadcast('announcement', req.body);
 
     return res.status(HttpStatusCode.Created).send();
   }

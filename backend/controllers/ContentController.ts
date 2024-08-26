@@ -16,7 +16,6 @@ export class ContentController extends BaseController {
     this.router.get('/feed', validateAuthToken, validateMsaAuth, this.getFeed.bind(this));
     this.router.get('/discover', this.getDiscover.bind(this));
     this.router.get('/:msaId', this.getContent.bind(this));
-    this.router.get('/events', this.getEvents.bind(this));
     this.router.get('/:msaId/:contentHash', validateAuthToken, validateMsaAuth, this.getSpecificUserContent.bind(this));
     this.router.put(
       '/:contentType/:contentHash',
@@ -122,28 +121,35 @@ export class ContentController extends BaseController {
 
   public putSpecificContentType() {}
 
-  public getEvents(req: Request, res: Response) {
-    // SSE endpoint to subscribe to events
-    res.setHeader('Content-Type', 'text/event-stream');
-    res.setHeader('Cache-Control', 'no-cache');
-    res.setHeader('Connection', 'keep-alive');
+  // public getEvents(req: Request, res: Response) {
+  //   // SSE endpoint to subscribe to events
+  //   logger.warn(req, 'getEvents');
+  //   res.setHeader('Content-Type', 'text/event-stream');
+  //   res.setHeader('Cache-Control', 'no-cache');
+  //   res.setHeader('Connection', 'keep-alive');
 
-    res.type('text/event-stream');
+  //   const clientId = Date.now().toString();
+  //   sseManager.addClient(clientId, res);
 
-    // Send a test message immediately
-    logger.debug('getEvents');
-    res.write(`data: Connected to SSE\n\n`);
+  //   // Send a test message immediately
+  //   logger.debug('getEvents');
+  //   const sendEvent = (data: "testing SSE") => {
+  //     res.write(`data: ${JSON.stringify(data)}\n\n`);
+  //   };
 
-    // Example: Send an event every 10 seconds
-    const intervalId = setInterval(() => {
-      const eventData = { time: new Date().toISOString() };
-      res.write(`data: ${JSON.stringify(eventData)}\n\n`);
-    }, 3000);
+  //   sseManager.broadcast('announcement', sendEvent);
 
-    // Handle client disconnection
-    req.on('close', () => {
-      clearInterval(intervalId);
-      res.end();
-    });
-  }
+  //   // // Example: Send an event every 10 seconds
+  //   // const intervalId = setInterval(() => {
+  //   //   const eventData = { time: new Date().toISOString() };
+  //   //   res.write(`data: ${JSON.stringify(eventData)}\n\n`);
+  //   // }, 3000);
+
+  //   // Handle client disconnection
+  //   req.on('close', () => {
+  //     // clearInterval(intervalId);
+  //     sseManager.removeClient(clientId);
+  //     res.end();
+  //   });
+  // }
 }

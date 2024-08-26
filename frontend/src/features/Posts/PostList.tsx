@@ -103,21 +103,21 @@ const PostList = ({
 
   useEffect(() => {
     const eventSource = new EventSource('http://localhost:3018/content/events');
-    //
-    // // @ts-ignore
-    // eventSource.onmessage = (event) => {
-    //   // @ts-ignore
-    //   setMessages((prevMessages) => [...prevMessages, event.data]);
-    // };
-    //
-    // eventSource.onerror = () => {
-    //   console.error('EventSource failed.');
-    //   eventSource.close();
-    // };
-    //
-    // return () => {
-    //   eventSource.close();
-    // };
+    
+    eventSource.onmessage = (event) => {
+      console.log('SSE received event.data', event.data);
+      const newContent = JSON.parse(event.data);
+    };
+    
+    eventSource.onerror = () => {
+      console.error('EventSource failed.');
+      eventSource.close();
+    };
+    
+    return () => {
+      console.log('SSE connected');
+      eventSource.close();
+    };
   }, []);
 
   const fetchData = async (getOlder: boolean) => {
