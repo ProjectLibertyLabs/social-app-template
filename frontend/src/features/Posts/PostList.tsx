@@ -1,4 +1,4 @@
-import React, { ReactElement, useContext, useEffect } from 'react';
+import React, { ReactElement, useContext, useEffect, useState } from 'react';
 import Post from './Post';
 import * as dsnpLink from '../../dsnpLink';
 import { BroadcastCardType, FeedTypes, Network, User } from '../../types';
@@ -8,7 +8,6 @@ import { Button, Flex, Space, Spin } from 'antd';
 import { useNavigate } from 'react-router-dom';
 import BroadcastCard from '../BroadcastCard/BroadcastCard';
 import Title from 'antd/es/typography/Title';
-import { getContentEvents } from '../../dsnpLink';
 
 const OLDEST_BLOCK_TO_GO_TO: Record<Network, number> = {
   local: 1,
@@ -82,22 +81,43 @@ const PostList = ({
     fetchData(getOlder);
   }, [feedType, profile, priorTrigger]);
 
+  // useEffect(() => {
+  //   const eventSource = new EventSource('http://localhost:3000/content/events');
+  //
+  //   eventSource.onmessage = function (event) {
+  //     const response = JSON.parse(event.data);
+  //     console.log('response***', response);
+  //   };
+  //
+  //   eventSource.onerror = function (error) {
+  //     console.error('EventSource failed:', error);
+  //     eventSource.close();
+  //   };
+  //
+  //   return () => {
+  //     eventSource.close();
+  //   };
+  // }, []);
+
+  const [messages, setMessages] = useState<string[]>([]);
+
   useEffect(() => {
-    const eventSource = new EventSource('http://localhost:3000/content/events');
-
-    eventSource.onmessage = function (event) {
-      const response = JSON.parse(event.data);
-      console.log('response***', response);
-    };
-
-    eventSource.onerror = function (error) {
-      console.error('EventSource failed:', error);
-      eventSource.close();
-    };
-
-    return () => {
-      eventSource.close();
-    };
+    const eventSource = new EventSource('http://localhost:3018/content/events');
+    //
+    // // @ts-ignore
+    // eventSource.onmessage = (event) => {
+    //   // @ts-ignore
+    //   setMessages((prevMessages) => [...prevMessages, event.data]);
+    // };
+    //
+    // eventSource.onerror = () => {
+    //   console.error('EventSource failed.');
+    //   eventSource.close();
+    // };
+    //
+    // return () => {
+    //   eventSource.close();
+    // };
   }, []);
 
   const fetchData = async (getOlder: boolean) => {
@@ -148,6 +168,7 @@ const PostList = ({
   return (
     <div className={styles.root}>
       <Spin size="large" spinning={isLoading} className={styles.spinner} />
+      <div>{messages}</div>
       {oldestBlockNumber !== undefined && (
         <Flex gap={'middle'} vertical={true}>
           {isPosting && <BroadcastCard broadcastCardType={BroadcastCardType.POST_LOADING} isLoading={true} />}

@@ -6,7 +6,8 @@ import { HttpError } from '../types/HttpError';
 import logger from '../logger';
 import { ContentRepository } from '../repositories/ContentRepository';
 import { GraphWebhookService } from '../services/GraphWebhookService';
-import { client } from '../index';
+import { ContentController } from './ContentController';
+import { client, setClient } from '../index';
 
 export class WebhookController extends BaseController {
   constructor(app: Express) {
@@ -76,7 +77,9 @@ export class WebhookController extends BaseController {
 
   public postAnnouncementsWebhook(req: Request, res: Response) {
     ContentRepository.addAnnouncement(req.body);
-    client.res.write(`data: true\n\n`);
+
+    setClient();
+
     return res.status(HttpStatusCode.Created).send();
   }
 }

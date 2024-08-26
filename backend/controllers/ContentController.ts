@@ -5,7 +5,6 @@ import * as ContentService from '../services/ContentService';
 import { HttpError } from '../types/HttpError';
 import { RequestAccount, validateAuthToken, validateMsaAuth } from '../services/TokenAuth';
 import logger from '../logger';
-import { client, setClient } from '../index';
 
 export class ContentController extends BaseController {
   constructor(app: Express) {
@@ -129,13 +128,22 @@ export class ContentController extends BaseController {
     res.setHeader('Cache-Control', 'no-cache');
     res.setHeader('Connection', 'keep-alive');
 
-    res.flushHeaders(); // send headers before data
+    res.type('text/event-stream');
 
-    setClient({ req, res });
+    // Send a test message immediately
+    logger.debug('getEvents');
+    res.write(`data: Connected to SSE\n\n`);
 
-    // Remove the client when it disconnects
+    // Example: Send an event every 10 seconds
+    const intervalId = setInterval(() => {
+      const eventData = { time: new Date().toISOString() };
+      res.write(`data: ${JSON.stringify(eventData)}\n\n`);
+    }, 3000);
+
+    // Handle client disconnection
     req.on('close', () => {
-      if (client.res !== res) return client;
+      clearInterval(intervalId);
+      res.end();
     });
   }
 }

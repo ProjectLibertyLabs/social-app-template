@@ -306,19 +306,6 @@ export async function authAccount<FetcherData>(ctx: r.Context<AuthMethods, Fetch
     return ctx.handleResponse(res, {});
 }
 /**
- * getContentEvents
- */
-export async function getContentEvents<FetcherData>(ctx: r.Context<AuthMethods, FetcherData>, params: {}, opts?: FetcherData) {
-    const req = await ctx.createRequest({
-        path: '/contents/events',
-        params,
-        method: r.HttpMethod.GET,
-        auth: ["tokenAuth"]
-    });
-    const res = await ctx.sendRequest(req, opts);
-    return ctx.handleResponse(res, {});
-}
-/**
  * Get recent posts from a user, paginated
  */
 export async function getUserFeed<FetcherData>(ctx: r.Context<AuthMethods, FetcherData>, params: {
