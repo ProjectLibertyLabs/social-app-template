@@ -1,4 +1,4 @@
-import React, { ReactElement, useEffect } from 'react';
+import React, { ReactElement, useContext, useEffect } from 'react';
 import Post from './Post';
 import * as dsnpLink from '../../dsnpLink';
 import { BroadcastCardType, FeedTypes, Network, User } from '../../types';
@@ -8,6 +8,7 @@ import { Button, Flex, Space, Spin } from 'antd';
 import { useNavigate } from 'react-router-dom';
 import BroadcastCard from '../BroadcastCard/BroadcastCard';
 import Title from 'antd/es/typography/Title';
+import { getContentEvents } from '../../dsnpLink';
 
 const OLDEST_BLOCK_TO_GO_TO: Record<Network, number> = {
   local: 1,
@@ -80,6 +81,24 @@ const PostList = ({
     const getOlder = refreshTrigger === priorTrigger;
     fetchData(getOlder);
   }, [feedType, profile, priorTrigger]);
+
+  useEffect(() => {
+    const eventSource = new EventSource('http://localhost:3000/content/events');
+
+    eventSource.onmessage = function (event) {
+      const response = JSON.parse(event.data);
+      console.log('response***', response);
+    };
+
+    eventSource.onerror = function (error) {
+      console.error('EventSource failed:', error);
+      eventSource.close();
+    };
+
+    return () => {
+      eventSource.close();
+    };
+  }, []);
 
   const fetchData = async (getOlder: boolean) => {
     const isAddingMore = priorFeedType === feedType;

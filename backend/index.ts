@@ -33,6 +33,9 @@ import { GraphService } from './services/GraphService';
 Config.init(process.env);
 ContentRepository.init();
 
+export let client: any; // Store connected client
+export const setClient = (value: unknown) => (client = value);
+
 const httpLogOptions: Options = {
   logger,
   autoLogging: false,

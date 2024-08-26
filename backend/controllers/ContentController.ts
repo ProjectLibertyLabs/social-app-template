@@ -5,6 +5,7 @@ import * as ContentService from '../services/ContentService';
 import { HttpError } from '../types/HttpError';
 import { RequestAccount, validateAuthToken, validateMsaAuth } from '../services/TokenAuth';
 import logger from '../logger';
+import { client, setClient } from '../index';
 
 export class ContentController extends BaseController {
   constructor(app: Express) {
@@ -16,7 +17,7 @@ export class ContentController extends BaseController {
     this.router.get('/feed', validateAuthToken, validateMsaAuth, this.getFeed.bind(this));
     this.router.get('/discover', this.getDiscover.bind(this));
     this.router.get('/:msaId', this.getContent.bind(this));
-
+    this.router.get('/events', this.getEvents.bind(this));
     this.router.get('/:msaId/:contentHash', validateAuthToken, validateMsaAuth, this.getSpecificUserContent.bind(this));
     this.router.put(
       '/:contentType/:contentHash',
@@ -121,4 +122,20 @@ export class ContentController extends BaseController {
   }
 
   public putSpecificContentType() {}
+
+  public getEvents(req: Request, res: Response) {
+    // SSE endpoint to subscribe to events
+    res.setHeader('Content-Type', 'text/event-stream');
+    res.setHeader('Cache-Control', 'no-cache');
+    res.setHeader('Connection', 'keep-alive');
+
+    res.flushHeaders(); // send headers before data
+
+    setClient({ req, res });
+
+    // Remove the client when it disconnects
+    req.on('close', () => {
+      if (client.res !== res) return client;
+    });
+  }
 }
