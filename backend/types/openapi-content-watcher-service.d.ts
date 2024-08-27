@@ -206,7 +206,7 @@ export interface OperationMethods {
     config?: AxiosRequestConfig
   ): OperationResponse<Paths.ScanControllerV1GetWatchOptions.Responses.$200>;
   /**
-   * ScanControllerV1_setWatchOptions - Set watch options to filter the blockchain content scanner by schemas or MSA IDs
+   * ScanControllerV1_setWatchOptions - Set watch options to filter the blockchain content scanner by schemas or MSA Ids
    */
   'ScanControllerV1_setWatchOptions'(
     parameters?: Parameters<UnknownParamsObject> | null,
@@ -308,7 +308,7 @@ export interface PathsDictionary {
       config?: AxiosRequestConfig
     ): OperationResponse<Paths.ScanControllerV1GetWatchOptions.Responses.$200>;
     /**
-     * ScanControllerV1_setWatchOptions - Set watch options to filter the blockchain content scanner by schemas or MSA IDs
+     * ScanControllerV1_setWatchOptions - Set watch options to filter the blockchain content scanner by schemas or MSA Ids
      */
     'post'(
       parameters?: Parameters<UnknownParamsObject> | null,

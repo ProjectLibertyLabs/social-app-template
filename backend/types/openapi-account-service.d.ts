@@ -8,44 +8,39 @@ import type {
 
 declare namespace Components {
   namespace Schemas {
-    export interface AccountResponse {
+    export interface AccountResponseDto {
       msaId: string;
-      handle?: {
-        [key: string]: any;
-      };
+      handle?: HandleResponseDto;
     }
     export interface EncodedExtrinsicDto {
       pallet: string;
       extrinsicName: string;
-      encodedExtrinsic: {
-        [key: string]: any;
-      };
+      encodedExtrinsic: string;
     }
     export interface ErrorResponseDto {
       message: string;
     }
-    export interface HandlePayload {
+    export interface HandlePayloadDto {
       baseHandle: string;
       expiration: number;
     }
-    export interface HandleRequest {
+    export interface HandleRequestDto {
       accountId: string;
-      payload: HandlePayload;
-      proof: {
-        [key: string]: any;
-      };
+      payload: HandlePayloadDto;
+      proof: string;
     }
-    export interface KeysRequest {
+    export interface HandleResponseDto {
+      base_handle: string;
+      canonical_base: string;
+      suffix: number;
+    }
+    export interface KeysRequestDto {
       msaOwnerAddress: string;
-      msaOwnerSignature: {
-        [key: string]: any;
-      };
-      newKeyOwnerSignature: {
-        [key: string]: any;
-      };
-      payload: KeysRequestPayload;
+      msaOwnerSignature: string;
+      newKeyOwnerSignature: string;
+      payload: KeysRequestPayloadDto;
     }
-    export interface KeysRequestPayload {
+    export interface KeysRequestPayloadDto {
       msaId: string;
       expiration: number;
       newPublicKey: string;
@@ -60,11 +55,9 @@ declare namespace Components {
     }
     export interface SiwsPayloadDto {
       message: string;
-      signature: {
-        [key: string]: any;
-      };
+      signature: string;
     }
-    export interface WalletLoginConfigResponse {
+    export interface WalletLoginConfigResponseDto {
       providerId: string;
       siwfUrl: string;
       frequencyRpcUrl: string;
@@ -89,7 +82,7 @@ declare namespace Components {
       };
       signUp?: SignUpResponseDto;
     }
-    export interface WalletLoginResponse {
+    export interface WalletLoginResponseDto {
       referenceId: string;
       msaId?: string;
       publicKey?: string;
@@ -97,7 +90,7 @@ declare namespace Components {
   }
 }
 declare namespace Paths {
-  namespace AccountsControllerV1GetAccount {
+  namespace AccountsControllerV1GetAccountForMsa {
     namespace Parameters {
       export type MsaId = string;
     }
@@ -105,18 +98,29 @@ declare namespace Paths {
       msaId: Parameters.MsaId;
     }
     namespace Responses {
-      export type $200 = Components.Schemas.AccountResponse;
+      export type $200 = Components.Schemas.AccountResponseDto;
+    }
+  }
+  namespace AccountsControllerV1GetAccountForPublicKey {
+    namespace Parameters {
+      export type PublicKey = string;
+    }
+    export interface PathParameters {
+      publicKey: Parameters.PublicKey;
+    }
+    namespace Responses {
+      export type $200 = Components.Schemas.AccountResponseDto;
     }
   }
   namespace AccountsControllerV1GetSIWFConfig {
     namespace Responses {
-      export type $200 = Components.Schemas.WalletLoginConfigResponse;
+      export type $200 = Components.Schemas.WalletLoginConfigResponseDto;
     }
   }
   namespace AccountsControllerV1PostSignInWithFrequency {
     export type RequestBody = Components.Schemas.WalletLoginRequestDto;
     namespace Responses {
-      export type $201 = Components.Schemas.WalletLoginResponse;
+      export type $201 = Components.Schemas.WalletLoginResponseDto;
     }
   }
   namespace DelegationControllerV1GetDelegation {
@@ -131,13 +135,13 @@ declare namespace Paths {
     }
   }
   namespace HandlesControllerV1ChangeHandle {
-    export type RequestBody = Components.Schemas.HandleRequest;
+    export type RequestBody = Components.Schemas.HandleRequestDto;
     namespace Responses {
       export interface $200 {}
     }
   }
   namespace HandlesControllerV1CreateHandle {
-    export type RequestBody = Components.Schemas.HandleRequest;
+    export type RequestBody = Components.Schemas.HandleRequestDto;
     namespace Responses {
       export interface $200 {}
     }
@@ -169,7 +173,7 @@ declare namespace Paths {
     }
   }
   namespace KeysControllerV1AddKey {
-    export type RequestBody = Components.Schemas.KeysRequest;
+    export type RequestBody = Components.Schemas.KeysRequestDto;
     namespace Responses {
       export interface $200 {}
     }
@@ -189,7 +193,7 @@ declare namespace Paths {
 
 export interface OperationMethods {
   /**
-   * AccountsControllerV1_getSIWFConfig - Get the Sign-In With Frequency Configuration
+   * AccountsControllerV1_getSIWFConfig - Get the Sign In With Frequency configuration
    */
   'AccountsControllerV1_getSIWFConfig'(
     parameters?: Parameters<UnknownParamsObject> | null,
@@ -197,7 +201,7 @@ export interface OperationMethods {
     config?: AxiosRequestConfig
   ): OperationResponse<Paths.AccountsControllerV1GetSIWFConfig.Responses.$200>;
   /**
-   * AccountsControllerV1_postSignInWithFrequency - Request to sign in with Frequency
+   * AccountsControllerV1_postSignInWithFrequency - Request to Sign In With Frequency
    */
   'AccountsControllerV1_postSignInWithFrequency'(
     parameters?: Parameters<UnknownParamsObject> | null,
@@ -205,15 +209,23 @@ export interface OperationMethods {
     config?: AxiosRequestConfig
   ): OperationResponse<Paths.AccountsControllerV1PostSignInWithFrequency.Responses.$201>;
   /**
-   * AccountsControllerV1_getAccount - Fetch an account given an msaId.
+   * AccountsControllerV1_getAccountForMsa - Fetch an account given an MSA Id
    */
-  'AccountsControllerV1_getAccount'(
-    parameters: Parameters<Paths.AccountsControllerV1GetAccount.PathParameters>,
+  'AccountsControllerV1_getAccountForMsa'(
+    parameters: Parameters<Paths.AccountsControllerV1GetAccountForMsa.PathParameters>,
     data?: any,
     config?: AxiosRequestConfig
-  ): OperationResponse<Paths.AccountsControllerV1GetAccount.Responses.$200>;
+  ): OperationResponse<Paths.AccountsControllerV1GetAccountForMsa.Responses.$200>;
   /**
-   * DelegationControllerV1_getDelegation - Get the delegation information associated with an msaId.
+   * AccountsControllerV1_getAccountForPublicKey - Fetch an account given a public key
+   */
+  'AccountsControllerV1_getAccountForPublicKey'(
+    parameters: Parameters<Paths.AccountsControllerV1GetAccountForPublicKey.PathParameters>,
+    data?: any,
+    config?: AxiosRequestConfig
+  ): OperationResponse<Paths.AccountsControllerV1GetAccountForPublicKey.Responses.$200>;
+  /**
+   * DelegationControllerV1_getDelegation - Get the delegation information associated with an MSA Id
    */
   'DelegationControllerV1_getDelegation'(
     parameters: Parameters<Paths.DelegationControllerV1GetDelegation.PathParameters>,
@@ -237,7 +249,7 @@ export interface OperationMethods {
     config?: AxiosRequestConfig
   ): OperationResponse<Paths.HandlesControllerV1ChangeHandle.Responses.$200>;
   /**
-   * HandlesControllerV1_getHandle - Fetch a handle given an msaId.
+   * HandlesControllerV1_getHandle - Fetch a handle given an MSA Id
    */
   'HandlesControllerV1_getHandle'(
     parameters: Parameters<Paths.HandlesControllerV1GetHandle.PathParameters>,
@@ -245,7 +257,7 @@ export interface OperationMethods {
     config?: AxiosRequestConfig
   ): OperationResponse<Paths.HandlesControllerV1GetHandle.Responses.$200>;
   /**
-   * KeysControllerV1_addKey - add new control keys for an MSA ID
+   * KeysControllerV1_addKey - Add new control keys for an MSA Id
    */
   'KeysControllerV1_addKey'(
     parameters?: Parameters<UnknownParamsObject> | null,
@@ -253,7 +265,7 @@ export interface OperationMethods {
     config?: AxiosRequestConfig
   ): OperationResponse<Paths.KeysControllerV1AddKey.Responses.$200>;
   /**
-   * KeysControllerV1_getKeys - Fetch public keys given an msaId.
+   * KeysControllerV1_getKeys - Fetch public keys given an MSA Id
    */
   'KeysControllerV1_getKeys'(
     parameters: Parameters<Paths.KeysControllerV1GetKeys.PathParameters>,
@@ -289,7 +301,7 @@ export interface OperationMethods {
 export interface PathsDictionary {
   ['/v1/accounts/siwf']: {
     /**
-     * AccountsControllerV1_getSIWFConfig - Get the Sign-In With Frequency Configuration
+     * AccountsControllerV1_getSIWFConfig - Get the Sign In With Frequency configuration
      */
     'get'(
       parameters?: Parameters<UnknownParamsObject> | null,
@@ -297,7 +309,7 @@ export interface PathsDictionary {
       config?: AxiosRequestConfig
     ): OperationResponse<Paths.AccountsControllerV1GetSIWFConfig.Responses.$200>;
     /**
-     * AccountsControllerV1_postSignInWithFrequency - Request to sign in with Frequency
+     * AccountsControllerV1_postSignInWithFrequency - Request to Sign In With Frequency
      */
     'post'(
       parameters?: Parameters<UnknownParamsObject> | null,
@@ -307,17 +319,27 @@ export interface PathsDictionary {
   };
   ['/v1/accounts/{msaId}']: {
     /**
-     * AccountsControllerV1_getAccount - Fetch an account given an msaId.
+     * AccountsControllerV1_getAccountForMsa - Fetch an account given an MSA Id
      */
     'get'(
-      parameters: Parameters<Paths.AccountsControllerV1GetAccount.PathParameters>,
+      parameters: Parameters<Paths.AccountsControllerV1GetAccountForMsa.PathParameters>,
       data?: any,
       config?: AxiosRequestConfig
-    ): OperationResponse<Paths.AccountsControllerV1GetAccount.Responses.$200>;
+    ): OperationResponse<Paths.AccountsControllerV1GetAccountForMsa.Responses.$200>;
+  };
+  ['/v1/accounts/account/{publicKey}']: {
+    /**
+     * AccountsControllerV1_getAccountForPublicKey - Fetch an account given a public key
+     */
+    'get'(
+      parameters: Parameters<Paths.AccountsControllerV1GetAccountForPublicKey.PathParameters>,
+      data?: any,
+      config?: AxiosRequestConfig
+    ): OperationResponse<Paths.AccountsControllerV1GetAccountForPublicKey.Responses.$200>;
   };
   ['/v1/delegation/{msaId}']: {
     /**
-     * DelegationControllerV1_getDelegation - Get the delegation information associated with an msaId.
+     * DelegationControllerV1_getDelegation - Get the delegation information associated with an MSA Id
      */
     'get'(
       parameters: Parameters<Paths.DelegationControllerV1GetDelegation.PathParameters>,
@@ -347,7 +369,7 @@ export interface PathsDictionary {
   };
   ['/v1/handles/{msaId}']: {
     /**
-     * HandlesControllerV1_getHandle - Fetch a handle given an msaId.
+     * HandlesControllerV1_getHandle - Fetch a handle given an MSA Id
      */
     'get'(
       parameters: Parameters<Paths.HandlesControllerV1GetHandle.PathParameters>,
@@ -357,7 +379,7 @@ export interface PathsDictionary {
   };
   ['/v1/keys/add']: {
     /**
-     * KeysControllerV1_addKey - add new control keys for an MSA ID
+     * KeysControllerV1_addKey - Add new control keys for an MSA Id
      */
     'post'(
       parameters?: Parameters<UnknownParamsObject> | null,
@@ -367,7 +389,7 @@ export interface PathsDictionary {
   };
   ['/v1/keys/{msaId}']: {
     /**
-     * KeysControllerV1_getKeys - Fetch public keys given an msaId.
+     * KeysControllerV1_getKeys - Fetch public keys given an MSA Id
      */
     'get'(
       parameters: Parameters<Paths.KeysControllerV1GetKeys.PathParameters>,

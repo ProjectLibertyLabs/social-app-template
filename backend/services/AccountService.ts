@@ -14,8 +14,8 @@ import { Components as BackendComponents } from '../types/api';
 
 type AuthAccountResponse = BackendComponents.Schemas.AuthAccountResponse;
 type WalletLoginRequestDto = Components.Schemas.WalletLoginRequestDto;
-type WalletLoginConfigResponse = Components.Schemas.WalletLoginConfigResponse;
-type WalletLoginResponse = Components.Schemas.WalletLoginResponse;
+type WalletLoginConfigResponse = Components.Schemas.WalletLoginConfigResponseDto;
+type WalletLoginResponse = Components.Schemas.WalletLoginResponseDto;
 
 /**
  * The `AccountService` class provides methods for interacting with user accounts.
@@ -80,7 +80,7 @@ export class AccountService {
    */
   public async getAccount(msaId: string): Promise<Pick<AuthAccountResponse, 'msaId' | 'handle'>> {
     try {
-      const response = await this.client.AccountsControllerV1_getAccount(msaId);
+      const response = await this.client.AccountsControllerV1_getAccountForMsa(msaId);
       logger.debug(
         `AccountService: getAccount: Got account for msaID:(${msaId}), data:(${JSON.stringify(response.data)})`
       );
@@ -108,7 +108,7 @@ export class AccountService {
       const accountData = AccountServiceWebhook.referenceIdsReceived.get(referenceId);
       if (accountData) {
         // REMOVE: When account service webhook is fixed to return the HandleResponse
-        const response = await this.client.AccountsControllerV1_getAccount(accountData.msaId);
+        const response = await this.client.AccountsControllerV1_getAccountForMsa(accountData.msaId);
         // END REMOVE:
         logger.debug(`Found account for referenceId:(${referenceId})`);
         return {

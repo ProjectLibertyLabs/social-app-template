@@ -49,7 +49,7 @@ export class ContentPublisherService {
 
   public async postBroadcast(msaId: string, data: BroadcastDto): Promise<AnnouncementResponseDto> {
     try {
-      const res = await this.client.ContentController_broadcast(msaId, data);
+      const res = await this.client.ContentControllerV1_broadcast(msaId, data);
       return res.data;
     } catch (err) {
       logger.error({ err }, 'Failed to post broadcast');
@@ -59,7 +59,7 @@ export class ContentPublisherService {
 
   public async postReply(msaId: string, data: ReplyDto): Promise<AnnouncementResponseDto> {
     try {
-      const res = await this.client.ContentController_reply(msaId, data);
+      const res = await this.client.ContentControllerV1_reply(msaId, data);
       return res.data;
     } catch (err) {
       logger.error({ err }, 'Failed to post broadcast reply');

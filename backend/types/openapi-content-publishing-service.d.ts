@@ -12,7 +12,6 @@ declare namespace Components {
       referenceId: string;
     }
     export interface AssetDto {
-      type: 'link' | 'image' | 'audio' | 'video';
       references?: AssetReferenceDto[];
       name?: string;
       href?: string;
@@ -40,7 +39,7 @@ declare namespace Components {
     }
     export interface NoteActivityDto {
       content: string;
-      published: string; // ISO8601_REGEX
+      published: string;
       assets?: AssetDto[];
       name?: string;
       tag?: TagDto[];
@@ -49,7 +48,7 @@ declare namespace Components {
     export interface ProfileActivityDto {
       icon?: AssetReferenceDto[];
       summary?: string;
-      published?: string; // ISO8601_REGEX
+      published?: string;
       name?: string;
       tag?: TagDto[];
       location?: LocationDto;
@@ -60,23 +59,23 @@ declare namespace Components {
     export interface ReactionDto {
       emoji: string; // DSNP_EMOJI_REGEX
       apply: number;
-      inReplyTo: string; // DSNP_CONTENT_URI_REGEX
+      inReplyTo: string;
     }
     export interface ReplyDto {
-      inReplyTo: string; // DSNP_CONTENT_URI_REGEX
+      inReplyTo: string;
       content: NoteActivityDto;
     }
     export interface TagDto {
       type: 'mention' | 'hashtag';
       name?: string;
-      mentionedId?: string; // DSNP_USER_URI_REGEX
+      mentionedId?: string;
     }
     export interface TombstoneDto {
-      targetContentHash: string; // DSNP_CONTENT_HASH_REGEX
+      targetContentHash: string;
       targetAnnouncementType: 'broadcast' | 'reply';
     }
     export interface UpdateDto {
-      targetContentHash: string; // DSNP_CONTENT_HASH_REGEX
+      targetContentHash: string;
       targetAnnouncementType: 'broadcast' | 'reply';
       content: NoteActivityDto;
     }
@@ -86,13 +85,13 @@ declare namespace Components {
   }
 }
 declare namespace Paths {
-  namespace AssetControllerAssetUpload {
+  namespace AssetControllerV1AssetUpload {
     export type RequestBody = Components.Schemas.FilesUploadDto;
     namespace Responses {
-      export type $202 = Components.Schemas.UploadResponseDto;
+      export type $2XX = Components.Schemas.UploadResponseDto;
     }
   }
-  namespace ContentControllerBroadcast {
+  namespace ContentControllerV1Broadcast {
     namespace Parameters {
       export type UserDsnpId = string;
     }
@@ -101,10 +100,10 @@ declare namespace Paths {
     }
     export type RequestBody = Components.Schemas.BroadcastDto;
     namespace Responses {
-      export type $202 = Components.Schemas.AnnouncementResponseDto;
+      export type $2XX = Components.Schemas.AnnouncementResponseDto;
     }
   }
-  namespace ContentControllerDelete {
+  namespace ContentControllerV1Delete {
     namespace Parameters {
       export type UserDsnpId = string;
     }
@@ -113,10 +112,10 @@ declare namespace Paths {
     }
     export type RequestBody = Components.Schemas.TombstoneDto;
     namespace Responses {
-      export type $202 = Components.Schemas.AnnouncementResponseDto;
+      export type $2XX = Components.Schemas.AnnouncementResponseDto;
     }
   }
-  namespace ContentControllerReaction {
+  namespace ContentControllerV1Reaction {
     namespace Parameters {
       export type UserDsnpId = string;
     }
@@ -125,10 +124,10 @@ declare namespace Paths {
     }
     export type RequestBody = Components.Schemas.ReactionDto;
     namespace Responses {
-      export type $202 = Components.Schemas.AnnouncementResponseDto;
+      export type $2XX = Components.Schemas.AnnouncementResponseDto;
     }
   }
-  namespace ContentControllerReply {
+  namespace ContentControllerV1Reply {
     namespace Parameters {
       export type UserDsnpId = string;
     }
@@ -137,10 +136,10 @@ declare namespace Paths {
     }
     export type RequestBody = Components.Schemas.ReplyDto;
     namespace Responses {
-      export type $202 = Components.Schemas.AnnouncementResponseDto;
+      export type $2XX = Components.Schemas.AnnouncementResponseDto;
     }
   }
-  namespace ContentControllerUpdate {
+  namespace ContentControllerV1Update {
     namespace Parameters {
       export type UserDsnpId = string;
     }
@@ -149,10 +148,10 @@ declare namespace Paths {
     }
     export type RequestBody = Components.Schemas.UpdateDto;
     namespace Responses {
-      export type $202 = Components.Schemas.AnnouncementResponseDto;
+      export type $2XX = Components.Schemas.AnnouncementResponseDto;
     }
   }
-  namespace DevelopmentControllerGetAsset {
+  namespace DevelopmentControllerV1GetAsset {
     namespace Parameters {
       export type AssetId = string;
     }
@@ -160,10 +159,10 @@ declare namespace Paths {
       assetId: Parameters.AssetId;
     }
     namespace Responses {
-      export interface $200 {}
+      export type $2XX = string; // binary
     }
   }
-  namespace DevelopmentControllerPopulate {
+  namespace DevelopmentControllerV1Populate {
     namespace Parameters {
       export type Count = number;
       export type QueueType = string;
@@ -176,7 +175,7 @@ declare namespace Paths {
       export interface $201 {}
     }
   }
-  namespace DevelopmentControllerRequestJob {
+  namespace DevelopmentControllerV1RequestJob {
     namespace Parameters {
       export type JobId = string;
     }
@@ -202,7 +201,7 @@ declare namespace Paths {
       export interface $200 {}
     }
   }
-  namespace ProfileControllerProfile {
+  namespace ProfileControllerV1Profile {
     namespace Parameters {
       export type UserDsnpId = string;
     }
@@ -211,68 +210,68 @@ declare namespace Paths {
     }
     export type RequestBody = Components.Schemas.ProfileDto;
     namespace Responses {
-      export type $202 = Components.Schemas.AnnouncementResponseDto;
+      export type $2XX = Components.Schemas.AnnouncementResponseDto;
     }
   }
 }
 
 export interface OperationMethods {
   /**
-   * AssetController_assetUpload - Upload Asset Files
+   * AssetControllerV1_assetUpload - Upload asset files
    */
-  'AssetController_assetUpload'(
+  'AssetControllerV1_assetUpload'(
     parameters?: Parameters<UnknownParamsObject> | null,
-    data?: Paths.AssetControllerAssetUpload.RequestBody,
+    data?: Paths.AssetControllerV1AssetUpload.RequestBody,
     config?: AxiosRequestConfig
-  ): OperationResponse<Paths.AssetControllerAssetUpload.Responses.$202>;
+  ): OperationResponse<Paths.AssetControllerV1AssetUpload.Responses.$2XX>;
   /**
-   * ContentController_broadcast - Create DSNP Broadcast for User
+   * ContentControllerV1_broadcast - Create DSNP Broadcast for user
    */
-  'ContentController_broadcast'(
-    parameters: Parameters<Paths.ContentControllerBroadcast.PathParameters>,
-    data?: Paths.ContentControllerBroadcast.RequestBody,
+  'ContentControllerV1_broadcast'(
+    parameters: Parameters<Paths.ContentControllerV1Broadcast.PathParameters>,
+    data?: Paths.ContentControllerV1Broadcast.RequestBody,
     config?: AxiosRequestConfig
-  ): OperationResponse<Paths.ContentControllerBroadcast.Responses.$202>;
+  ): OperationResponse<Paths.ContentControllerV1Broadcast.Responses.$2XX>;
   /**
-   * ContentController_reply - Create DSNP Reply for User
+   * ContentControllerV1_reply - Create DSNP Reply for user
    */
-  'ContentController_reply'(
-    parameters: Parameters<Paths.ContentControllerReply.PathParameters>,
-    data?: Paths.ContentControllerReply.RequestBody,
+  'ContentControllerV1_reply'(
+    parameters: Parameters<Paths.ContentControllerV1Reply.PathParameters>,
+    data?: Paths.ContentControllerV1Reply.RequestBody,
     config?: AxiosRequestConfig
-  ): OperationResponse<Paths.ContentControllerReply.Responses.$202>;
+  ): OperationResponse<Paths.ContentControllerV1Reply.Responses.$2XX>;
   /**
-   * ContentController_reaction - Create DSNP Reaction for User
+   * ContentControllerV1_reaction - Create DSNP Reaction for user
    */
-  'ContentController_reaction'(
-    parameters: Parameters<Paths.ContentControllerReaction.PathParameters>,
-    data?: Paths.ContentControllerReaction.RequestBody,
+  'ContentControllerV1_reaction'(
+    parameters: Parameters<Paths.ContentControllerV1Reaction.PathParameters>,
+    data?: Paths.ContentControllerV1Reaction.RequestBody,
     config?: AxiosRequestConfig
-  ): OperationResponse<Paths.ContentControllerReaction.Responses.$202>;
+  ): OperationResponse<Paths.ContentControllerV1Reaction.Responses.$2XX>;
   /**
-   * ContentController_update - Update DSNP Content for User
+   * ContentControllerV1_update - Update DSNP Content for user
    */
-  'ContentController_update'(
-    parameters: Parameters<Paths.ContentControllerUpdate.PathParameters>,
-    data?: Paths.ContentControllerUpdate.RequestBody,
+  'ContentControllerV1_update'(
+    parameters: Parameters<Paths.ContentControllerV1Update.PathParameters>,
+    data?: Paths.ContentControllerV1Update.RequestBody,
     config?: AxiosRequestConfig
-  ): OperationResponse<Paths.ContentControllerUpdate.Responses.$202>;
+  ): OperationResponse<Paths.ContentControllerV1Update.Responses.$2XX>;
   /**
-   * ContentController_delete - Delete DSNP Content for User
+   * ContentControllerV1_delete - Delete DSNP Content for user
    */
-  'ContentController_delete'(
-    parameters: Parameters<Paths.ContentControllerDelete.PathParameters>,
-    data?: Paths.ContentControllerDelete.RequestBody,
+  'ContentControllerV1_delete'(
+    parameters: Parameters<Paths.ContentControllerV1Delete.PathParameters>,
+    data?: Paths.ContentControllerV1Delete.RequestBody,
     config?: AxiosRequestConfig
-  ): OperationResponse<Paths.ContentControllerDelete.Responses.$202>;
+  ): OperationResponse<Paths.ContentControllerV1Delete.Responses.$2XX>;
   /**
-   * ProfileController_profile - Update a user's Profile
+   * ProfileControllerV1_profile - Update a user's Profile
    */
-  'ProfileController_profile'(
-    parameters: Parameters<Paths.ProfileControllerProfile.PathParameters>,
-    data?: Paths.ProfileControllerProfile.RequestBody,
+  'ProfileControllerV1_profile'(
+    parameters: Parameters<Paths.ProfileControllerV1Profile.PathParameters>,
+    data?: Paths.ProfileControllerV1Profile.RequestBody,
     config?: AxiosRequestConfig
-  ): OperationResponse<Paths.ProfileControllerProfile.Responses.$202>;
+  ): OperationResponse<Paths.ProfileControllerV1Profile.Responses.$2XX>;
   /**
    * HealthController_healthz - Check the health status of the service
    */
@@ -298,105 +297,105 @@ export interface OperationMethods {
     config?: AxiosRequestConfig
   ): OperationResponse<Paths.HealthControllerReadyz.Responses.$200>;
   /**
-   * DevelopmentController_requestJob - Get a Job given a jobId
+   * DevelopmentControllerV1_requestJob - Get a Job given a jobId
    *
    * ONLY enabled when ENVIRONMENT="dev".
    */
-  'DevelopmentController_requestJob'(
-    parameters: Parameters<Paths.DevelopmentControllerRequestJob.PathParameters>,
+  'DevelopmentControllerV1_requestJob'(
+    parameters: Parameters<Paths.DevelopmentControllerV1RequestJob.PathParameters>,
     data?: any,
     config?: AxiosRequestConfig
-  ): OperationResponse<Paths.DevelopmentControllerRequestJob.Responses.$200>;
+  ): OperationResponse<Paths.DevelopmentControllerV1RequestJob.Responses.$200>;
   /**
-   * DevelopmentController_getAsset - Get an Asset given an assetId
+   * DevelopmentControllerV1_getAsset - Get an Asset given an assetId
    *
    * ONLY enabled when ENVIRONMENT="dev".
    */
-  'DevelopmentController_getAsset'(
-    parameters: Parameters<Paths.DevelopmentControllerGetAsset.PathParameters>,
+  'DevelopmentControllerV1_getAsset'(
+    parameters: Parameters<Paths.DevelopmentControllerV1GetAsset.PathParameters>,
     data?: any,
     config?: AxiosRequestConfig
-  ): OperationResponse<Paths.DevelopmentControllerGetAsset.Responses.$200>;
+  ): OperationResponse<Paths.DevelopmentControllerV1GetAsset.Responses.$2XX>;
   /**
-   * DevelopmentController_populate - Create dummy announcement data
+   * DevelopmentControllerV1_populate - Create dummy announcement data
    *
    * ONLY enabled when ENVIRONMENT="dev".
    */
-  'DevelopmentController_populate'(
-    parameters: Parameters<Paths.DevelopmentControllerPopulate.PathParameters>,
+  'DevelopmentControllerV1_populate'(
+    parameters: Parameters<Paths.DevelopmentControllerV1Populate.PathParameters>,
     data?: any,
     config?: AxiosRequestConfig
-  ): OperationResponse<Paths.DevelopmentControllerPopulate.Responses.$201>;
+  ): OperationResponse<Paths.DevelopmentControllerV1Populate.Responses.$201>;
 }
 
 export interface PathsDictionary {
   ['/v1/asset/upload']: {
     /**
-     * AssetController_assetUpload - Upload Asset Files
+     * AssetControllerV1_assetUpload - Upload asset files
      */
     'put'(
       parameters?: Parameters<UnknownParamsObject> | null,
-      data?: Paths.AssetControllerAssetUpload.RequestBody,
+      data?: Paths.AssetControllerV1AssetUpload.RequestBody,
       config?: AxiosRequestConfig
-    ): OperationResponse<Paths.AssetControllerAssetUpload.Responses.$202>;
+    ): OperationResponse<Paths.AssetControllerV1AssetUpload.Responses.$2XX>;
   };
   ['/v1/content/{userDsnpId}/broadcast']: {
     /**
-     * ContentController_broadcast - Create DSNP Broadcast for User
+     * ContentControllerV1_broadcast - Create DSNP Broadcast for user
      */
     'post'(
-      parameters: Parameters<Paths.ContentControllerBroadcast.PathParameters>,
-      data?: Paths.ContentControllerBroadcast.RequestBody,
+      parameters: Parameters<Paths.ContentControllerV1Broadcast.PathParameters>,
+      data?: Paths.ContentControllerV1Broadcast.RequestBody,
       config?: AxiosRequestConfig
-    ): OperationResponse<Paths.ContentControllerBroadcast.Responses.$202>;
+    ): OperationResponse<Paths.ContentControllerV1Broadcast.Responses.$2XX>;
   };
   ['/v1/content/{userDsnpId}/reply']: {
     /**
-     * ContentController_reply - Create DSNP Reply for User
+     * ContentControllerV1_reply - Create DSNP Reply for user
      */
     'post'(
-      parameters: Parameters<Paths.ContentControllerReply.PathParameters>,
-      data?: Paths.ContentControllerReply.RequestBody,
+      parameters: Parameters<Paths.ContentControllerV1Reply.PathParameters>,
+      data?: Paths.ContentControllerV1Reply.RequestBody,
       config?: AxiosRequestConfig
-    ): OperationResponse<Paths.ContentControllerReply.Responses.$202>;
+    ): OperationResponse<Paths.ContentControllerV1Reply.Responses.$2XX>;
   };
   ['/v1/content/{userDsnpId}/reaction']: {
     /**
-     * ContentController_reaction - Create DSNP Reaction for User
+     * ContentControllerV1_reaction - Create DSNP Reaction for user
      */
     'post'(
-      parameters: Parameters<Paths.ContentControllerReaction.PathParameters>,
-      data?: Paths.ContentControllerReaction.RequestBody,
+      parameters: Parameters<Paths.ContentControllerV1Reaction.PathParameters>,
+      data?: Paths.ContentControllerV1Reaction.RequestBody,
       config?: AxiosRequestConfig
-    ): OperationResponse<Paths.ContentControllerReaction.Responses.$202>;
+    ): OperationResponse<Paths.ContentControllerV1Reaction.Responses.$2XX>;
   };
   ['/v1/content/{userDsnpId}']: {
     /**
-     * ContentController_update - Update DSNP Content for User
+     * ContentControllerV1_update - Update DSNP Content for user
      */
     'put'(
-      parameters: Parameters<Paths.ContentControllerUpdate.PathParameters>,
-      data?: Paths.ContentControllerUpdate.RequestBody,
+      parameters: Parameters<Paths.ContentControllerV1Update.PathParameters>,
+      data?: Paths.ContentControllerV1Update.RequestBody,
       config?: AxiosRequestConfig
-    ): OperationResponse<Paths.ContentControllerUpdate.Responses.$202>;
+    ): OperationResponse<Paths.ContentControllerV1Update.Responses.$2XX>;
     /**
-     * ContentController_delete - Delete DSNP Content for User
+     * ContentControllerV1_delete - Delete DSNP Content for user
      */
     'delete'(
-      parameters: Parameters<Paths.ContentControllerDelete.PathParameters>,
-      data?: Paths.ContentControllerDelete.RequestBody,
+      parameters: Parameters<Paths.ContentControllerV1Delete.PathParameters>,
+      data?: Paths.ContentControllerV1Delete.RequestBody,
       config?: AxiosRequestConfig
-    ): OperationResponse<Paths.ContentControllerDelete.Responses.$202>;
+    ): OperationResponse<Paths.ContentControllerV1Delete.Responses.$2XX>;
   };
   ['/v1/profile/{userDsnpId}']: {
     /**
-     * ProfileController_profile - Update a user's Profile
+     * ProfileControllerV1_profile - Update a user's Profile
      */
     'put'(
-      parameters: Parameters<Paths.ProfileControllerProfile.PathParameters>,
-      data?: Paths.ProfileControllerProfile.RequestBody,
+      parameters: Parameters<Paths.ProfileControllerV1Profile.PathParameters>,
+      data?: Paths.ProfileControllerV1Profile.RequestBody,
       config?: AxiosRequestConfig
-    ): OperationResponse<Paths.ProfileControllerProfile.Responses.$202>;
+    ): OperationResponse<Paths.ProfileControllerV1Profile.Responses.$2XX>;
   };
   ['/healthz']: {
     /**
@@ -430,39 +429,39 @@ export interface PathsDictionary {
   };
   ['/dev/request/{jobId}']: {
     /**
-     * DevelopmentController_requestJob - Get a Job given a jobId
+     * DevelopmentControllerV1_requestJob - Get a Job given a jobId
      *
      * ONLY enabled when ENVIRONMENT="dev".
      */
     'get'(
-      parameters: Parameters<Paths.DevelopmentControllerRequestJob.PathParameters>,
+      parameters: Parameters<Paths.DevelopmentControllerV1RequestJob.PathParameters>,
       data?: any,
       config?: AxiosRequestConfig
-    ): OperationResponse<Paths.DevelopmentControllerRequestJob.Responses.$200>;
+    ): OperationResponse<Paths.DevelopmentControllerV1RequestJob.Responses.$200>;
   };
   ['/dev/asset/{assetId}']: {
     /**
-     * DevelopmentController_getAsset - Get an Asset given an assetId
+     * DevelopmentControllerV1_getAsset - Get an Asset given an assetId
      *
      * ONLY enabled when ENVIRONMENT="dev".
      */
     'get'(
-      parameters: Parameters<Paths.DevelopmentControllerGetAsset.PathParameters>,
+      parameters: Parameters<Paths.DevelopmentControllerV1GetAsset.PathParameters>,
       data?: any,
       config?: AxiosRequestConfig
-    ): OperationResponse<Paths.DevelopmentControllerGetAsset.Responses.$200>;
+    ): OperationResponse<Paths.DevelopmentControllerV1GetAsset.Responses.$2XX>;
   };
   ['/dev/dummy/announcement/{queueType}/{count}']: {
     /**
-     * DevelopmentController_populate - Create dummy announcement data
+     * DevelopmentControllerV1_populate - Create dummy announcement data
      *
      * ONLY enabled when ENVIRONMENT="dev".
      */
     'post'(
-      parameters: Parameters<Paths.DevelopmentControllerPopulate.PathParameters>,
+      parameters: Parameters<Paths.DevelopmentControllerV1Populate.PathParameters>,
       data?: any,
       config?: AxiosRequestConfig
-    ): OperationResponse<Paths.DevelopmentControllerPopulate.Responses.$201>;
+    ): OperationResponse<Paths.DevelopmentControllerV1Populate.Responses.$201>;
   };
 }
 
