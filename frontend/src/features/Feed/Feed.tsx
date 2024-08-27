@@ -5,14 +5,25 @@ import styles from './Feed.module.css';
 
 type FeedProps = {
   isPosting: boolean;
+  stopPosting: () => void;
   profile?: UserAccount | undefined;
   network: Network;
   feedType: FeedTypes;
   refreshTrigger: number;
   showLoginModal?: () => void;
+  loggedInAccount: UserAccount;
 };
 
-const Feed = ({ profile, isPosting, network, feedType, refreshTrigger, showLoginModal }: FeedProps): ReactElement => {
+const Feed = ({
+  profile,
+  isPosting,
+  stopPosting,
+  network,
+  feedType,
+  refreshTrigger,
+  showLoginModal,
+  loggedInAccount,
+}: FeedProps): ReactElement => {
   return (
     <div className={styles.root}>
       <PostList
@@ -22,6 +33,8 @@ const Feed = ({ profile, isPosting, network, feedType, refreshTrigger, showLogin
         profile={profile}
         showLoginModal={showLoginModal}
         isPosting={isPosting}
+        stopPosting={stopPosting}
+        loggedInAccount={loggedInAccount}
       />
     </div>
   );

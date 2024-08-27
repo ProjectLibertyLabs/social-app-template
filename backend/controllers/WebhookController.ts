@@ -6,8 +6,6 @@ import { HttpError } from '../types/HttpError';
 import logger from '../logger';
 import { ContentRepository } from '../repositories/ContentRepository';
 import { GraphWebhookService } from '../services/GraphWebhookService';
-import { ContentController } from './ContentController';
-import { client, setClient } from '../index';
 import { sseManager } from '../utils/sse';
 
 export class WebhookController extends BaseController {
@@ -80,7 +78,7 @@ export class WebhookController extends BaseController {
     ContentRepository.addAnnouncement(req.body);
 
     logger.warn({ announcement: req.body }, 'postAnnouncementsWebhook: Announcement received');
-    logger.warn("postAnnouncementsWebhook: sseManager Broadcasting announcement");
+    logger.warn('postAnnouncementsWebhook: sseManager Broadcasting announcement');
     sseManager.broadcast('announcement', req.body);
 
     return res.status(HttpStatusCode.Created).send();

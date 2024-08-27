@@ -17,6 +17,7 @@ type BlockRange = { from: number; to: number };
 
 function toPost(entity: AnnouncementEntity): Post {
   const broadcast = entity.announcement.announcement as BroadcastAnnouncement;
+  logger.debug({ entity }, 'entity');
   return {
     fromId: broadcast.fromId,
     contentHash: broadcast.contentHash,
@@ -61,10 +62,13 @@ async function getPostContent(msg: AnnouncementEntity): Promise<Post | undefined
     // TODO: Validate Hash
     let rawContent = msg.content;
     if (!rawContent) {
+      logger.debug('getPostContent: REQUESTING CONTENT');
+
       const postResp = await axios.get(translateContentUrl(broadcastAnnouncement.url), {
         responseType: 'text',
         timeout: 10000,
       });
+      logger.debug(postResp.data, 'getPostContent: ');
       rawContent = JSON.parse(postResp.data);
       msg.content = rawContent;
       ContentRepository.addContent(msg.key, rawContent);
@@ -90,6 +94,8 @@ async function getPostContent(msg: AnnouncementEntity): Promise<Post | undefined
       })
     );
 
+    console.log({ msg });
+    logger.debug({ msg }, 'msg');
     return {
       ...toPost(msg),
       replies,

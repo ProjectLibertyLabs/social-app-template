@@ -1,7 +1,7 @@
 import React, { ReactElement, useContext, useEffect, useState } from 'react';
 import Post from './Post';
 import * as dsnpLink from '../../dsnpLink';
-import { BroadcastCardType, FeedTypes, Network, User } from '../../types';
+import { BroadcastCardType, FeedTypes, Network, User, UserAccount } from '../../types';
 import { getContext } from '../../service/AuthService';
 import styles from './PostList.module.css';
 import { Button, Flex, Space, Spin } from 'antd';
@@ -22,7 +22,9 @@ type PostListProps = {
   refreshTrigger: number;
   network: Network;
   isPosting: boolean;
+  stopPosting: () => void;
   showLoginModal?: () => void;
+  loggedInAccount: UserAccount;
 };
 
 type FeedItem = dsnpLink.BroadcastExtended;
@@ -34,6 +36,8 @@ const PostList = ({
   network,
   showLoginModal,
   isPosting,
+  stopPosting,
+  loggedInAccount,
 }: PostListProps): ReactElement => {
   const [priorTrigger, setPriorTrigger] = React.useState<number>(refreshTrigger);
   const [priorFeedType, setPriorFeedType] = React.useState<number>(feedType);
@@ -51,6 +55,7 @@ const PostList = ({
     priorFeed: FeedItem[]
   ) => {
     // REMOVE: fix result.posts is not iterable error
+    console.log({ result });
     const posts = Array.isArray(result.posts) ? result.posts : [];
     setOldestBlockNumber(Math.min(oldestBlockNumber || result.oldestBlockNumber, result.oldestBlockNumber));
     setNewestBlockNumber(Math.max(newestBlockNumber || result.newestBlockNumber, result.newestBlockNumber));
@@ -70,9 +75,6 @@ const PostList = ({
     ) {
       // Keep going back in time
       setPriorTrigger(priorTrigger - 1);
-    } else {
-      // Good for now
-      setIsLoading(false);
     }
   };
 
@@ -81,41 +83,23 @@ const PostList = ({
     fetchData(getOlder);
   }, [feedType, profile, priorTrigger]);
 
-  // useEffect(() => {
-  //   const eventSource = new EventSource('http://localhost:3000/content/events');
-  //
-  //   eventSource.onmessage = function (event) {
-  //     const response = JSON.parse(event.data);
-  //     console.log('response***', response);
-  //   };
-  //
-  //   eventSource.onerror = function (error) {
-  //     console.error('EventSource failed:', error);
-  //     eventSource.close();
-  //   };
-  //
-  //   return () => {
-  //     eventSource.close();
-  //   };
-  // }, []);
-
   const [messages, setMessages] = useState<string[]>([]);
 
   useEffect(() => {
     const eventSource = new EventSource('http://localhost:3018/content/events');
-    
-    eventSource.onmessage = (event) => {
-      console.log('SSE received event.data', event.data);
-      const newContent = JSON.parse(event.data);
-    };
-    
+
+    eventSource.addEventListener(`announcement`, async function (e) {
+      // when the new post is published, update feed.
+      console.log('Fetching new data:', JSON.stringify(e.data));
+      await fetchData(false);
+      stopPosting();
+    });
+
     eventSource.onerror = () => {
-      console.error('EventSource failed.');
       eventSource.close();
     };
-    
+
     return () => {
-      console.log('SSE connected');
       eventSource.close();
     };
   }, []);
@@ -167,8 +151,6 @@ const PostList = ({
 
   return (
     <div className={styles.root}>
-      <Spin size="large" spinning={isLoading} className={styles.spinner} />
-      <div>{messages}</div>
       {oldestBlockNumber !== undefined && (
         <Flex gap={'middle'} vertical={true}>
           {isPosting && <BroadcastCard broadcastCardType={BroadcastCardType.POST_LOADING} isLoading={true} />}
@@ -178,6 +160,7 @@ const PostList = ({
               feedItem={feedItem}
               isProfile={feedType === FeedTypes.MY_PROFILE || feedType === FeedTypes.OTHER_PROFILE}
               showLoginModal={showLoginModal}
+              loggedInAccount={loggedInAccount}
             />
           ))}
           <Space />

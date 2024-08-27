@@ -9,7 +9,7 @@ import BroadcastInfo from '../BroadcastInfo/BroadcastInfo';
 import BroadcastContent from '../BroadcastContent/BroadcastContent';
 import PostMeta from './PostMeta';
 import BroadcastCard from '../BroadcastCard/BroadcastCard';
-import { BroadcastCardType } from '../../types';
+import { BroadcastCardType, UserAccount } from '../../types';
 
 type FeedItem = dsnpLink.BroadcastExtended;
 
@@ -17,15 +17,16 @@ type PostProps = {
   feedItem: FeedItem;
   isProfile?: boolean;
   showLoginModal?: () => void;
+  loggedInAccount: UserAccount;
 };
 
-const Post = ({ feedItem, isProfile, showLoginModal }: PostProps): ReactElement => {
+const Post = ({ feedItem, isProfile, showLoginModal, loggedInAccount }: PostProps): ReactElement => {
   const { user, isLoading } = useGetUser(feedItem.fromId);
   const content = JSON.parse(feedItem?.content) as ActivityContentNote;
 
   // TODO: validate content as ActivityContentNote or have DSNP Link do it
 
-  if (!content) return <></>;
+  if (!content) return <>Got post with no content</>;
 
   return (
     <BroadcastCard key={feedItem.contentHash} broadcastCardType={BroadcastCardType.POST} isLoading={isLoading}>
@@ -35,7 +36,7 @@ const Post = ({ feedItem, isProfile, showLoginModal }: PostProps): ReactElement 
       {content.attachment && content.attachment?.length > 0 && <BroadcastMedia attachments={content.attachment} />}
       <ReplyList
         parentURI={buildDSNPContentURI(BigInt(feedItem.fromId), feedItem.contentHash)}
-        isLoggedOut={!!user}
+        isLoggedOut={!!loggedInAccount}
         showLoginModal={showLoginModal}
         replies={feedItem.replies || []}
       />

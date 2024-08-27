@@ -12,10 +12,11 @@ interface ProfilePageProps {
   loggedInAccount: UserAccount;
   network: Network;
   isPosting: boolean;
+  stopPosting: () => void;
   refreshTrigger: number;
 }
 
-const ProfilePage = ({ loggedInAccount, network, isPosting, refreshTrigger }: ProfilePageProps) => {
+const ProfilePage = ({ loggedInAccount, network, isPosting, stopPosting, refreshTrigger }: ProfilePageProps) => {
   const location = useLocation();
 
   const getCurMsa = () => {
@@ -50,7 +51,9 @@ const ProfilePage = ({ loggedInAccount, network, isPosting, refreshTrigger }: Pr
         network={network}
         feedType={loggedInAccount.msaId === profile.msaId ? FeedTypes.MY_PROFILE : FeedTypes.OTHER_PROFILE}
         isPosting={isPosting}
+        stopPosting={stopPosting}
         refreshTrigger={refreshTrigger}
+        loggedInAccount={loggedInAccount}
       />
     </>
   );
