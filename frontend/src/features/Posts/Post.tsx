@@ -35,7 +35,7 @@ const Post = ({
 
   // TODO: validate content as ActivityContentNote or have DSNP Link do it
 
-  if (!content) return <>Got post with no content</>;
+  if (!content) return <></>;
 
   return (
     <BroadcastCard key={feedItem.contentHash} broadcastCardType={BroadcastCardType.POST} isLoading={isLoading}>
