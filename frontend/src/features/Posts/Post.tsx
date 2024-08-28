@@ -18,9 +18,18 @@ type PostProps = {
   isProfile?: boolean;
   showLoginModal?: () => void;
   loggedInAccount: UserAccount;
+  handleIsReplying: () => void;
+  isReplying: boolean;
 };
 
-const Post = ({ feedItem, isProfile, showLoginModal, loggedInAccount }: PostProps): ReactElement => {
+const Post = ({
+  feedItem,
+  isProfile,
+  showLoginModal,
+  loggedInAccount,
+  handleIsReplying,
+  isReplying,
+}: PostProps): ReactElement => {
   const { user, isLoading } = useGetUser(feedItem.fromId);
   const content = JSON.parse(feedItem?.content) as ActivityContentNote;
 
@@ -39,6 +48,8 @@ const Post = ({ feedItem, isProfile, showLoginModal, loggedInAccount }: PostProp
         isLoggedOut={!!loggedInAccount}
         showLoginModal={showLoginModal}
         replies={feedItem.replies || []}
+        isReplying={isReplying}
+        handleIsReplying={handleIsReplying}
       />
     </BroadcastCard>
   );

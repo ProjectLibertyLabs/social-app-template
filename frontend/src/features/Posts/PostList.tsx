@@ -44,8 +44,8 @@ const PostList = ({
   const [priorFeed, setPriorFeed] = React.useState<FeedItem[]>([]);
   const [newestBlockNumber, setNewestBlockNumber] = React.useState<number | null>(null);
   const [oldestBlockNumber, setOldestBlockNumber] = React.useState<number | null>(null);
-  const [isLoading, setIsLoading] = React.useState(true);
   const [currentFeed, setCurrentFeed] = React.useState<FeedItem[]>([]);
+  const [isReplying, setIsReplying] = useState<boolean>(false);
 
   const navigate = useNavigate();
 
@@ -55,7 +55,6 @@ const PostList = ({
     priorFeed: FeedItem[]
   ) => {
     // REMOVE: fix result.posts is not iterable error
-    console.log({ result });
     const posts = Array.isArray(result.posts) ? result.posts : [];
     setOldestBlockNumber(Math.min(oldestBlockNumber || result.oldestBlockNumber, result.oldestBlockNumber));
     setNewestBlockNumber(Math.max(newestBlockNumber || result.newestBlockNumber, result.newestBlockNumber));
@@ -83,16 +82,14 @@ const PostList = ({
     fetchData(getOlder);
   }, [feedType, profile, priorTrigger]);
 
-  const [messages, setMessages] = useState<string[]>([]);
-
   useEffect(() => {
     const eventSource = new EventSource('http://localhost:3018/content/events');
 
     eventSource.addEventListener(`announcement`, async function (e) {
       // when the new post is published, update feed.
-      console.log('Fetching new data:', JSON.stringify(e.data));
       await fetchData(false);
       stopPosting();
+      setIsReplying(false);
     });
 
     eventSource.onerror = () => {
@@ -120,7 +117,6 @@ const PostList = ({
     setPriorTrigger(refreshTrigger);
 
     setPriorFeedType(feedType);
-    setIsLoading(true);
     const appendOrPrepend = getOlder ? 'append' : 'prepend';
     switch (feedType) {
       case FeedTypes.MY_FEED:
@@ -161,6 +157,8 @@ const PostList = ({
               isProfile={feedType === FeedTypes.MY_PROFILE || feedType === FeedTypes.OTHER_PROFILE}
               showLoginModal={showLoginModal}
               loggedInAccount={loggedInAccount}
+              handleIsReplying={() => setIsReplying(true)}
+              isReplying={isReplying}
             />
           ))}
           <Space />
