@@ -1,4 +1,4 @@
-import React, { ReactElement, useContext, useEffect, useState } from 'react';
+import React, { ReactElement, useEffect, useState } from 'react';
 import Post from './Post';
 import * as dsnpLink from '../../dsnpLink';
 import { BroadcastCardType, FeedTypes, Network, User, UserAccount } from '../../types';
@@ -83,7 +83,7 @@ const PostList = ({
   }, [feedType, profile, priorTrigger]);
 
   useEffect(() => {
-    const eventSource = new EventSource('http://localhost:3018/content/events');
+    const eventSource = new EventSource(`${process.env.REACT_APP_BACKEND_URL}/content/events`);
 
     eventSource.addEventListener(`announcement`, async function (e) {
       // when the new post is published, update feed.
