@@ -17,7 +17,6 @@ type BlockRange = { from: number; to: number };
 
 function toPost(entity: AnnouncementEntity): Post {
   const broadcast = entity.announcement.announcement as BroadcastAnnouncement;
-  logger.debug({ entity }, 'entity');
   return {
     fromId: broadcast.fromId,
     contentHash: broadcast.contentHash,
@@ -47,7 +46,6 @@ async function getPostsForBlockRange({ from, to }: BlockRange): Promise<Post[]> 
   // Fetch the parquet files
   for (const msg of announcements) {
     const post = await getPostContent(msg);
-    logger.debug({ post }, 'post***:');
     if (post) {
       posts.push(post);
     }
@@ -63,17 +61,13 @@ async function getPostContent(msg: AnnouncementEntity): Promise<Post | undefined
     // TODO: Validate Hash
     let rawContent = msg.content;
     if (!rawContent) {
-      logger.debug('getPostContent: REQUESTING CONTENT 123');
-
       const postResp = await axios.get(translateContentUrl(broadcastAnnouncement.url), {
         responseType: 'text',
         timeout: 10000,
       });
 
-      logger.debug({ postResp: postResp.data }, 'getPostContent: POSTRESP');
       rawContent = JSON.parse(postResp.data);
       msg.content = rawContent;
-      logger.debug({ rawContent }, 'getPostContent: rawContent');
       ContentRepository.addContent(msg.key, rawContent);
     }
     const replyMessages = ContentRepository.getAnnouncementsWithContent({
@@ -110,7 +104,7 @@ async function getPostContent(msg: AnnouncementEntity): Promise<Post | undefined
 }
 
 export async function getPostsInRange(newestBlockNumber: number, oldestBlockNumber: number): Promise<Post[]> {
-  return await getPostsForBlockRange({ from: oldestBlockNumber, to: newestBlockNumber });
+  return getPostsForBlockRange({ from: oldestBlockNumber, to: newestBlockNumber });
 }
 
 export async function getSpecificContent(msaId: string, contentHash: string): Promise<Post | undefined> {
