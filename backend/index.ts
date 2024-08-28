@@ -58,13 +58,12 @@ const httpLogOptions: Options = {
   customSuccessMessage: (req, res) => `RESP: ${req.method} ${req.url} ${res.statusCode}`,
 };
 
-
 // Don't let middleware interfere with the SSE connection
 const publicApp = express();
 publicApp.use(cors());
 publicApp.get('/content/events', (req, res) => {
   res.setHeader('Content-Type', 'text/event-stream');
-  res.setHeader('Cache-Control', 'no-cache'); 
+  res.setHeader('Cache-Control', 'no-cache');
   res.setHeader('Connection', 'keep-alive');
 
   const clientId = Date.now().toString();
