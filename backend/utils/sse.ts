@@ -32,7 +32,7 @@ class SSEManager {
     logger.warn({ payload }, 'Broadcasting to SSE clients');
 
     this.clients.forEach((client) => {
-      client.res.write(payload);
+      client.res.write(payload, (error) => error && logger.error(error));
     });
   }
 }

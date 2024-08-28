@@ -87,9 +87,8 @@ const PostList = ({
 
     eventSource.addEventListener(`announcement`, async function (e) {
       // when the new post is published, update feed.
-      await fetchData(false).then(() => {
-        handlePostPublished();
-      });
+      await fetchData(false);
+      handlePostPublished();
       setIsReplyingIndex(null);
     });
 

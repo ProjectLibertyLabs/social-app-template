@@ -34,9 +34,6 @@ import { sseManager } from './utils/sse';
 Config.init(process.env);
 ContentRepository.init();
 
-export let client: any; // Store connected client
-export const setClient = (value: unknown) => (client = value);
-
 const httpLogOptions: Options = {
   logger,
   autoLogging: false,

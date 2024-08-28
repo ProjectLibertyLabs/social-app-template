@@ -74,7 +74,7 @@ export class WebhookController extends BaseController {
     }
   }
 
-  public async postAnnouncementsWebhook(req: Request, res: Response) {
+  public postAnnouncementsWebhook(req: Request, res: Response) {
     ContentRepository.addAnnouncement(req.body);
 
     logger.debug({ announcement: req.body }, 'postAnnouncementsWebhook: Announcement received');
