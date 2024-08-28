@@ -17,11 +17,11 @@ export async function getOwnContent(msaId: string, { newestBlockNumber, oldestBl
   const oldest = Math.max(1, oldestBlockNumber || 1, newest - 45_000); // 45k blocks at a time max
 
   try {
-    const posts = await getPostsInRange(newest, oldest);
+    const posts = await getPostsInRange(newest, oldest, msaId);
     const response: T.Paths.GetUserFeed.Responses.$200 = {
       newestBlockNumber: newest,
       oldestBlockNumber: oldest,
-      posts: posts.filter((x) => x.fromId === msaId),
+      posts,
     };
     return response;
   } catch (e) {

@@ -2,7 +2,7 @@
 # Stop all services and optionally remove specified volumes to remove all state and start fresh
 BASE_DIR=${HOME}/.projectliberty
 BASE_NAME=social-app-template
-ENV_FILE=${BASE_DIR}/.env.${BASE_NAME}
+ENV_FILE="${BASE_DIR}/.env.${BASE_NAME}"
 
 # Usage: ./stop.sh [options]
 # Options:
@@ -26,12 +26,12 @@ while [[ "$#" -gt 0 ]]; do
     esac
     shift
 done
-if [ -n "${1}" ]; then
-    ENV_FILE=${1}
-fi
 
-if [[ -n $ENV_FILE ]]; then
-    echo -e "Using environment file: $ENV_FILE\n"
+if [ ! -f "${BASE_DIR}/.env.${BASE_NAME}" ]; then
+   echo -e "Unable to find '${BASE_DIR}/.env.${BASE_NAME}'; using '${ENV_FILE}' instead.\n"
+else
+   ENV_FILE="${BASE_DIR}/.env.${BASE_NAME}"
+    echo -e "Using environment file: '${ENV_FILE}'\n"
 fi
 
 
