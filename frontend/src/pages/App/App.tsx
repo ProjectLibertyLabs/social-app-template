@@ -42,12 +42,9 @@ const App = (): ReactElement => {
     setLoggedInAccount(undefined);
   };
 
-  const handleIsPosting = () => {
-    setIsPosting(true);
-    setTimeout(() => {
-      setRefreshTrigger(Date.now());
-      setIsPosting(false);
-    }, 14_000);
+  const handlePostPublished = () => {
+    setRefreshTrigger(Date.now());
+    setIsPosting(false);
   };
 
   const handleCancel = () => {
@@ -78,7 +75,7 @@ const App = (): ReactElement => {
               <Spin spinning={loading}>
                 <Row gutter={20}>
                   <Col span={6}>
-                    <FeedNav loggedInAccount={loggedInAccount} handleIsPosting={handleIsPosting} />
+                    <FeedNav loggedInAccount={loggedInAccount} handleIsPosting={() => setIsPosting(true)} />
                   </Col>
                   <Col span={18}>
                     <AuthErrorBoundary onError={() => setLoggedInAccount(undefined)}>
@@ -86,7 +83,7 @@ const App = (): ReactElement => {
                         loggedInAccount={loggedInAccount}
                         network={network}
                         isPosting={isPosting}
-                        stopPosting={() => setIsPosting(false)}
+                        handlePostPublished={handlePostPublished}
                         refreshTrigger={refreshTrigger}
                         showLoginModal={() => setIsLoginModalOpen(true)}
                       />

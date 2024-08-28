@@ -4,17 +4,17 @@ import { FeedTypes, Network, UserAccount } from '../../types';
 type MyFeedProps = {
   network: Network;
   isPosting: boolean;
-  stopPosting: () => void;
+  handlePostPublished: () => void;
   refreshTrigger: number;
   loggedInAccount: UserAccount;
 };
 
-const MyFeed = ({ isPosting, stopPosting, network, refreshTrigger, loggedInAccount }: MyFeedProps) => {
+const MyFeed = ({ isPosting, handlePostPublished, network, refreshTrigger, loggedInAccount }: MyFeedProps) => {
   return (
     <Feed
       feedType={FeedTypes.MY_FEED}
       isPosting={isPosting}
-      stopPosting={stopPosting}
+      handlePostPublished={handlePostPublished}
       network={network}
       refreshTrigger={refreshTrigger}
       loggedInAccount={loggedInAccount}

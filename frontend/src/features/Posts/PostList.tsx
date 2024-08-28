@@ -4,7 +4,7 @@ import * as dsnpLink from '../../dsnpLink';
 import { BroadcastCardType, FeedTypes, Network, User, UserAccount } from '../../types';
 import { getContext } from '../../service/AuthService';
 import styles from './PostList.module.css';
-import { Button, Flex, Space, Spin } from 'antd';
+import { Button, Flex, Space } from 'antd';
 import { useNavigate } from 'react-router-dom';
 import BroadcastCard from '../BroadcastCard/BroadcastCard';
 import Title from 'antd/es/typography/Title';
@@ -22,7 +22,7 @@ type PostListProps = {
   refreshTrigger: number;
   network: Network;
   isPosting: boolean;
-  stopPosting: () => void;
+  handlePostPublished: () => void;
   showLoginModal?: () => void;
   loggedInAccount: UserAccount;
 };
@@ -36,7 +36,7 @@ const PostList = ({
   network,
   showLoginModal,
   isPosting,
-  stopPosting,
+  handlePostPublished,
   loggedInAccount,
 }: PostListProps): ReactElement => {
   const [priorTrigger, setPriorTrigger] = React.useState<number>(refreshTrigger);
@@ -45,7 +45,7 @@ const PostList = ({
   const [newestBlockNumber, setNewestBlockNumber] = React.useState<number | null>(null);
   const [oldestBlockNumber, setOldestBlockNumber] = React.useState<number | null>(null);
   const [currentFeed, setCurrentFeed] = React.useState<FeedItem[]>([]);
-  const [isReplying, setIsReplying] = useState<boolean>(false);
+  const [isReplyingIndex, setIsReplyingIndex] = useState<number | null>();
 
   const navigate = useNavigate();
 
@@ -87,9 +87,10 @@ const PostList = ({
 
     eventSource.addEventListener(`announcement`, async function (e) {
       // when the new post is published, update feed.
-      await fetchData(false);
-      stopPosting();
-      setIsReplying(false);
+      await fetchData(false).then(() => {
+        handlePostPublished();
+      });
+      setIsReplyingIndex(null);
     });
 
     eventSource.onerror = () => {
@@ -157,8 +158,8 @@ const PostList = ({
               isProfile={feedType === FeedTypes.MY_PROFILE || feedType === FeedTypes.OTHER_PROFILE}
               showLoginModal={showLoginModal}
               loggedInAccount={loggedInAccount}
-              handleIsReplying={() => setIsReplying(true)}
-              isReplying={isReplying}
+              handleIsReplying={() => setIsReplyingIndex(index)}
+              isReplying={isReplyingIndex === index}
             />
           ))}
           <Space />

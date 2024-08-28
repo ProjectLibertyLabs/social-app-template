@@ -9,13 +9,13 @@ interface PageRoutesProps {
   loggedInAccount: UserAccount;
   network: Network;
   isPosting: boolean;
-  stopPosting: () => void;
+  handlePostPublished: () => void;
   refreshTrigger: number;
   showLoginModal: () => void;
 }
 
 const PageRoutes = ({
-  stopPosting,
+  handlePostPublished,
   loggedInAccount,
   network,
   isPosting,
@@ -33,7 +33,7 @@ const PageRoutes = ({
               isPosting={isPosting}
               refreshTrigger={refreshTrigger}
               showLoginModal={showLoginModal}
-              stopPosting={stopPosting}
+              handlePostPublished={handlePostPublished}
               loggedInAccount={loggedInAccount}
             />
           }
@@ -47,7 +47,7 @@ const PageRoutes = ({
                   network={network}
                   isPosting={isPosting}
                   refreshTrigger={refreshTrigger}
-                  stopPosting={stopPosting}
+                  handlePostPublished={handlePostPublished}
                   loggedInAccount={loggedInAccount}
                 />
               }
@@ -60,7 +60,7 @@ const PageRoutes = ({
                   refreshTrigger={refreshTrigger}
                   isPosting={isPosting}
                   loggedInAccount={loggedInAccount}
-                  stopPosting={stopPosting}
+                  handlePostPublished={handlePostPublished}
                 />
               }
             />

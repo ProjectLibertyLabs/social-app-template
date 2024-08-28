@@ -4,7 +4,7 @@ import { FeedTypes, Network, UserAccount } from '../../types';
 type DiscoverProps = {
   network: Network;
   isPosting: boolean;
-  stopPosting: () => void;
+  handlePostPublished: () => void;
   refreshTrigger: number;
   showLoginModal: () => void;
   loggedInAccount: UserAccount;
@@ -12,7 +12,7 @@ type DiscoverProps = {
 
 const Discover = ({
   isPosting,
-  stopPosting,
+  handlePostPublished,
   network,
   refreshTrigger,
   showLoginModal,
@@ -23,7 +23,7 @@ const Discover = ({
       feedType={FeedTypes.DISCOVER}
       showLoginModal={showLoginModal}
       isPosting={isPosting}
-      stopPosting={stopPosting}
+      handlePostPublished={handlePostPublished}
       network={network}
       refreshTrigger={refreshTrigger}
       loggedInAccount={loggedInAccount}

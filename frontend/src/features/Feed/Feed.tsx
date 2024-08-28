@@ -5,7 +5,7 @@ import styles from './Feed.module.css';
 
 type FeedProps = {
   isPosting: boolean;
-  stopPosting: () => void;
+  handlePostPublished: () => void;
   profile?: UserAccount | undefined;
   network: Network;
   feedType: FeedTypes;
@@ -17,7 +17,7 @@ type FeedProps = {
 const Feed = ({
   profile,
   isPosting,
-  stopPosting,
+  handlePostPublished,
   network,
   feedType,
   refreshTrigger,
@@ -33,7 +33,7 @@ const Feed = ({
         profile={profile}
         showLoginModal={showLoginModal}
         isPosting={isPosting}
-        stopPosting={stopPosting}
+        handlePostPublished={handlePostPublished}
         loggedInAccount={loggedInAccount}
       />
     </div>
