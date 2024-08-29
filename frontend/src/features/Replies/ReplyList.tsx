@@ -11,27 +11,25 @@ interface ReplyBlockProps {
   parentURI: DSNPContentURI;
   replies: dsnpLink.ReplyExtended[];
   isLoggedOut: boolean;
+  handleIsReplying: () => void;
+  isReplying: boolean;
   showLoginModal?: () => void;
 }
 
-const ReplyList = ({ parentURI, replies, isLoggedOut, showLoginModal }: ReplyBlockProps): ReactElement => {
-  const [isReplying, setIsReplying] = useState<boolean>(false);
-
-  const handleIsReplying = () => {
-    setIsReplying(true);
-    setTimeout(() => {
-      setIsReplying(false);
-    }, 14_000);
-  };
-
+const ReplyList = ({
+  parentURI,
+  replies,
+  isLoggedOut,
+  showLoginModal,
+  isReplying,
+  handleIsReplying,
+}: ReplyBlockProps): ReactElement => {
   return (
     <>
-      {replies.length > 0 && (
+      {(replies.length > 0 || isReplying) && (
         <Flex gap={'small'} vertical>
-          {replies.map((reply, index) => (
-            <Reply feedItem={reply} showLoginModal={showLoginModal} key={index} />
-          ))}
           {isReplying && <BroadcastCard broadcastCardType={BroadcastCardType.REPLY_LOADING} isLoading={true} />}
+          {replies?.map((reply, index) => <Reply feedItem={reply} showLoginModal={showLoginModal} key={index} />)}
         </Flex>
       )}
 

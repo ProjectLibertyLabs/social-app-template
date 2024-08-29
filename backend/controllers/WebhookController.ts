@@ -6,6 +6,7 @@ import { HttpError } from '../types/HttpError';
 import logger from '../logger';
 import { ContentRepository } from '../repositories/ContentRepository';
 import { GraphWebhookService } from '../services/GraphWebhookService';
+import { sseManager } from '../utils/sse';
 
 export class WebhookController extends BaseController {
   constructor(app: Express) {
@@ -40,6 +41,7 @@ export class WebhookController extends BaseController {
       }
     }
   }
+
   public async graphServiceNotifications(req: Request, res: Response) {
     try {
       logger.debug({ body: req.body }, 'GraphServiceWebhook body');
@@ -74,6 +76,10 @@ export class WebhookController extends BaseController {
 
   public postAnnouncementsWebhook(req: Request, res: Response) {
     ContentRepository.addAnnouncement(req.body);
+
+    logger.debug({ announcement: req.body }, 'postAnnouncementsWebhook: Announcement received');
+    logger.trace('postAnnouncementsWebhook: sseManager Broadcasting announcement');
+    sseManager.broadcast('announcement', req.body);
 
     return res.status(HttpStatusCode.Created).send();
   }

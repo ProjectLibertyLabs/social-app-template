@@ -66,7 +66,9 @@ async function getPostContent(msg: AnnouncementEntity): Promise<Post | undefined
         responseType: 'text',
         timeout: 10000,
       });
+
       rawContent = JSON.parse(postResp.data);
+      msg.content = rawContent;
       ContentRepository.addContent(msg.key, rawContent);
     }
     const replyMessages = ContentRepository.getAnnouncementsWithContent({

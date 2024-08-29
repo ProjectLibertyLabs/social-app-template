@@ -32,7 +32,6 @@ const Header = ({ loggedInAccount, login, logout }: HeaderProps): ReactElement =
   };
 
   // Read the title from the environment variable
-  console.log(process.env.REACT_APP_TITLE);
   const title = process.env.REACT_APP_TITLE || 'Social Web Demo';
   const headerBgColor = process.env.REACT_APP_HEADER_BG_COLOR || '#ffffff';
 

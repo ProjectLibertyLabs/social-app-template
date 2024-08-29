@@ -9,11 +9,19 @@ interface PageRoutesProps {
   loggedInAccount: UserAccount;
   network: Network;
   isPosting: boolean;
+  handlePostPublished: () => void;
   refreshTrigger: number;
   showLoginModal: () => void;
 }
 
-const PageRoutes = ({ loggedInAccount, network, isPosting, refreshTrigger, showLoginModal }: PageRoutesProps) => {
+const PageRoutes = ({
+  handlePostPublished,
+  loggedInAccount,
+  network,
+  isPosting,
+  refreshTrigger,
+  showLoginModal,
+}: PageRoutesProps) => {
   return (
     <>
       <Routes>
@@ -25,6 +33,8 @@ const PageRoutes = ({ loggedInAccount, network, isPosting, refreshTrigger, showL
               isPosting={isPosting}
               refreshTrigger={refreshTrigger}
               showLoginModal={showLoginModal}
+              handlePostPublished={handlePostPublished}
+              loggedInAccount={loggedInAccount}
             />
           }
         />
@@ -32,7 +42,15 @@ const PageRoutes = ({ loggedInAccount, network, isPosting, refreshTrigger, showL
           <>
             <Route
               path="/my-feed"
-              element={<MyFeed network={network} isPosting={isPosting} refreshTrigger={refreshTrigger} />}
+              element={
+                <MyFeed
+                  network={network}
+                  isPosting={isPosting}
+                  refreshTrigger={refreshTrigger}
+                  handlePostPublished={handlePostPublished}
+                  loggedInAccount={loggedInAccount}
+                />
+              }
             />
             <Route
               path="/profile/:dsnpId"
@@ -42,6 +60,7 @@ const PageRoutes = ({ loggedInAccount, network, isPosting, refreshTrigger, showL
                   refreshTrigger={refreshTrigger}
                   isPosting={isPosting}
                   loggedInAccount={loggedInAccount}
+                  handlePostPublished={handlePostPublished}
                 />
               }
             />
