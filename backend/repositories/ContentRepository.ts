@@ -101,7 +101,7 @@ function getFilter(options?: ContentSearchParametersType, sort?: ContentOrdering
     }
 
     if (options.msaIds && options.msaIds.length > 0) {
-      conditionals.push(`"announcement_json"->>'$.announcement.fromId IN  (SELECT value from json_each(:msaIds))`);
+      conditionals.push(`"announcement_json"->>'$.announcement.fromId' IN  (SELECT value from json_each(:msaIds))`);
     }
 
     if (options.contentHash) {
