@@ -117,6 +117,8 @@ services:
       - redis
     networks:
       - social-app-backend
+    profiles:
+      - content_publishing
 
   content-publishing-service-worker:
     image: projectlibertylabs/content-publishing-service:${DOCKER_TAG:-latest}
@@ -129,6 +131,8 @@ services:
       - redis
     networks:
       - social-app-backend
+    profiles:
+      - content_publishing
 
   content-watcher-service:
     image: projectlibertylabs/content-watcher-service:${DOCKER_TAG:-latest}
@@ -142,6 +146,8 @@ services:
       - redis
     networks:
       - social-app-backend
+    profiles:
+      - content_watcher
 
   graph-service-api:
     image: projectlibertylabs/graph-service:${DOCKER_TAG:-latest}
@@ -156,6 +162,8 @@ services:
       - redis
     networks:
       - social-app-backend
+    profiles:
+      - graph
 
   graph-service-worker:
     image: projectlibertylabs/graph-service:${DOCKER_TAG:-latest}
@@ -168,6 +176,8 @@ services:
       - redis
     networks:
       - social-app-backend
+    profiles:
+      - graph
 
   account-service-api:
     image: projectlibertylabs/account-service:${DOCKER_TAG:-latest}
@@ -182,6 +192,8 @@ services:
       - redis
     networks:
       - social-app-backend
+    profiles:
+      - account
 
   account-service-worker:
     image: projectlibertylabs/account-service:${DOCKER_TAG:-latest}
@@ -194,6 +206,8 @@ services:
       - redis
     networks:
       - social-app-backend
+    profiles:
+      - account
 
   social-app-template-backend:
     pull_policy: never
@@ -223,6 +237,8 @@ services:
       - account-service-worker
       - graph-service-api
       - graph-service-worker
+    profiles:
+      - backend
 
   social-app-template-frontend:
     pull_policy: never
@@ -250,6 +266,8 @@ services:
       - graph-service-api
       - graph-service-worker
       - social-app-template-backend
+    profiles:
+      - frontend
 
 volumes:
   ipfs_data:

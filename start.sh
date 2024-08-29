@@ -198,6 +198,29 @@ redact_sensitive_values() {
         "$env_file"
 }
 
+# Function to echo and export a variable
+export_save_variable() {
+    local variable_name=$1
+    local value=$2
+
+    echo "${variable_name}=\"${value}\"" >> ${ENV_FILE}
+    export ${variable_name}="${value}"
+}
+
+# Function to set the status for all services to y
+start_all_gateway_services() {
+    export_save_variable "START_BACKEND" "y"
+    export_save_variable "START_ACCOUNT" "y"
+    export_save_variable "START_GRAPH" "y"
+    export_save_variable "START_CONTENT_PUBLISHING" "y"
+    export_save_variable "START_CONTENT_WATCHER" "y"
+}
+
+# Function to convert a string to lowercase
+to_lowercase() {
+    echo "$1" | tr '[:upper:]' '[:lower:]'
+}
+
 # Parse command-line arguments
 while [[ "$#" -gt 0 ]]; do
     case $1 in
@@ -291,69 +314,53 @@ Note: frontend and backend require all the gateway services to be running.
 Hit <ENTER> to accept the default value or enter new value and then hit <ENTER> 
 EOI
     ask_and_save START_FRONTEND "Start the frontend service?" "y"
-    ask_and_save START_BACKEND "Start the backend service?" "y"
-    ask_and_save START_ACCOUNT "Start the account service?" "y"
-    ask_and_save START_GRAPH "Start the graph service?" "y"
-    ask_and_save START_CONTENT_PUBLISHING "Start the content-publishing service?" "y"
-    ask_and_save START_CONTENT_WATCHER "Start the content-watcher service?" "y"
+    # If the user has selected to start the frontend or the backend, then automatically start the rest of the services
+    if [ "$START_FRONTEND" = "y" ]
+    then
+        start_all_gateway_services
+    else
+        ask_and_save START_BACKEND "Start the backend service?" "y"
+        if [ "$START_BACKEND" = "y" ]
+        then
+            start_all_gateway_services
+        else
+            ask_and_save START_ACCOUNT "Start the account service?" "y"
+            ask_and_save START_GRAPH "Start the graph service?" "y"
+            ask_and_save START_CONTENT_PUBLISHING "Start the content-publishing service?" "y"
+            ask_and_save START_CONTENT_WATCHER "Start the content-watcher service?" "y"
+        fi
+    fi
 
     # Define services and their corresponding components
     SERVICES=(
-        "FRONTEND:social-app-template-frontend"
-        "BACKEND:social-app-template-backend"
-        "ACCOUNT:account-service-api account-service-worker"
-        "GRAPH:graph-service-api graph-service-worker"
-        "CONTENT_PUBLISHING:content-publishing-service-api content-publishing-service-worker"
-        "CONTENT_WATCHER:content-watcher-service"
+        "FRONTEND"
+        "BACKEND"
+        "ACCOUNT"
+        "GRAPH"
+        "CONTENT_PUBLISHING"
+        "CONTENT_WATCHER"
     )
 
-    SELECTED_SERVICES=""
+    PROFILES=""
 
-    # Iterate over the services and use a case statement to transform and select them
+    # Iterate over the services and save the lowercased name to the env file if the service is selected
     for service in "${SERVICES[@]}"; do
-        IFS=":" read -r service_name service_components <<< "$service"
-        case $service_name in
-            FRONTEND)
-                if [ "$START_FRONTEND" = "y" ]; then
-                    SELECTED_SERVICES="${SELECTED_SERVICES} ${service_components}"
-                fi
-                ;;
-            BACKEND)
-                if [ "$START_BACKEND" = "y" ]; then
-                    SELECTED_SERVICES="${SELECTED_SERVICES} ${service_components}"
-                fi
-                ;;
-            ACCOUNT)
-                if [ "$START_ACCOUNT" = "y" ]; then
-                    SELECTED_SERVICES="${SELECTED_SERVICES} ${service_components}"
-                fi
-                ;;
-            GRAPH)
-                if [ "$START_GRAPH" = "y" ]; then
-                    SELECTED_SERVICES="${SELECTED_SERVICES} ${service_components}"
-                fi
-                ;;
-            CONTENT_PUBLISHING)
-                if [ "$START_CONTENT_PUBLISHING" = "y" ]; then
-                    SELECTED_SERVICES="${SELECTED_SERVICES} ${service_components}"
-                fi
-                ;;
-            CONTENT_WATCHER)
-                if [ "$START_CONTENT_WATCHER" = "y" ]; then
-                    SELECTED_SERVICES="${SELECTED_SERVICES} ${service_components}"
-                fi
-                ;;
-            *)
-                echo "Unknown service: $service_name"
-                ;;
-        esac
-    done
-    echo
-    echo "Selected services to start:"
-    echo ${SELECTED_SERVICES}
-    echo
+        service_var="START_${service}"
+        service_value=$(eval echo \$$service_var)
 
-    echo "SELECTED_SERVICES=\"${SELECTED_SERVICES}\"" >> ${ENV_FILE}
+        if [ "$service_value" = "y" ]; then
+            lowercased_name=$(to_lowercase "$service")
+            PROFILES="${PROFILES} --profile ${lowercased_name}"
+        fi
+    done
+
+    # Save the PROFILES variable to the .env file
+    export_save_variable "PROFILES" "${PROFILES}"
+
+    ${OUTPUT} << EOI
+Selected services to start:
+${PROFILES}
+EOI
 
     if [ $TESTNET_ENV = true ]
     then
@@ -477,7 +484,7 @@ fi
 if [ $TESTNET_ENV != true ]
 then
     COMPOSE_FILES="${COMPOSE_FILES} -f docker-compose.local-frequency.yaml"
-    PROFILES="--profile local-node"
+    PROFILES="${PROFILES} --profile local-node"
 fi
 
 if [ $DEV_CONTAINERS = true ]
@@ -489,7 +496,7 @@ else
     echo -e "\nStarting selected services..."
 fi
 
-docker compose ${COMPOSE_FILES} ${PROFILES} up -d ${SELECTED_SERVICES}
+docker compose ${COMPOSE_FILES} ${PROFILES} up -d 
 if [ ${TESTNET_ENV} != true ]
 then
     # Run npm run local:init
@@ -497,6 +504,38 @@ then
     ( cd backend && npm run local:init )
 fi
 
+if [ "$START_FRONTEND" = "y" ]
+then
 ${OUTPUT} << EOI
-🚀 You can access the Social App Template at http://localhost:${FRONTEND_PORT} 🚀
+🚀 You can access the Social App Template frontend at http://localhost:${FRONTEND_PORT} 🚀
+EOI
+fi
+
+${OUTPUT} << EOI
+The selected services are running.
+
+🚀 You can access the Gateway at the following local addresses: 🚀
+      * account-service:
+        - API:              http://localhost:${SERVICE_PORT_3}
+        - Queue management: http://localhost:${SERVICE_PORT_3}/queues
+        - Swagger UI:       http://localhost:${SERVICE_PORT_3}/docs/swagger
+
+      * content-publishing-service
+        - API:              http://localhost:${SERVICE_PORT_0}
+        - Queue management: http://localhost:${SERVICE_PORT_0}/queues
+        - Swagger UI:       http://localhost:${SERVICE_PORT_0}/docs/swagger
+
+      * content-watcher-service
+        - API:              http://localhost:${SERVICE_PORT_1}
+        - Queue management: http://localhost:${SERVICE_PORT_1}/queues
+        - Swagger UI:       http://localhost:${SERVICE_PORT_1}/docs/swagger
+
+      * graph-service
+        - API:              http://localhost:${SERVICE_PORT_2}
+        - Queue management: http://localhost:${SERVICE_PORT_2}/queues
+        - Swagger UI:       http://localhost:${SERVICE_PORT_2}/docs/swagger
+
+      * backend
+        - API:              http://localhost:${SERVICE_PORT_8}/docs/swagger 
+        - Swagger UI:       http://localhost:${SERVICE_PORT_8}/docs/swagger
 EOI
