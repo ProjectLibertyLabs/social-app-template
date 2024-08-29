@@ -223,8 +223,6 @@ services:
       - account-service-worker
       - graph-service-api
       - graph-service-worker
-    profiles:
-      - backend
 
   social-app-template-frontend:
     pull_policy: never
@@ -252,8 +250,6 @@ services:
       - graph-service-api
       - graph-service-worker
       - social-app-template-backend
-    profiles:
-      - frontend
 
 volumes:
   ipfs_data:

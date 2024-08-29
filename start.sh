@@ -147,6 +147,8 @@ ask_and_save() {
         fi
         value=${input:-$default_value}
     fi
+    # Make the variable available in the current shell, useful for subsequent commands
+    export ${var_name}="${value}"
     echo "${var_name}=\"${value}\"" >> ${ENV_FILE}
 }
 
@@ -237,6 +239,7 @@ if [ -f ${ENV_FILE} ]; then
     then
         ${OUTPUT} "Loading environment values from file..."
     else
+        clear
         ${OUTPUT} "Removing previous saved environment..."
 
         rm ${ENV_FILE}
@@ -278,6 +281,80 @@ EOI
     [[ "${REPLY}" =~ ^[Yy]$ ]] && TESTNET_ENV=true || TESTNET_ENV=false
     echo "TESTNET_ENV=$TESTNET_ENV" >> ${ENV_FILE}
 
+    # Ask the user which services they want to start
+    ${OUTPUT} << EOI
+Select the services you want to start.
+
+If you only want to start selected services, enter 'n' to exclude the service.
+Note: frontend and backend require all the gateway services to be running.
+
+Hit <ENTER> to accept the default value or enter new value and then hit <ENTER> 
+EOI
+    ask_and_save START_FRONTEND "Start the frontend service?" "y"
+    ask_and_save START_BACKEND "Start the backend service?" "y"
+    ask_and_save START_ACCOUNT "Start the account service?" "y"
+    ask_and_save START_GRAPH "Start the graph service?" "y"
+    ask_and_save START_CONTENT_PUBLISHING "Start the content-publishing service?" "y"
+    ask_and_save START_CONTENT_WATCHER "Start the content-watcher service?" "y"
+
+    # Define services and their corresponding components
+    SERVICES=(
+        "FRONTEND:social-app-template-frontend"
+        "BACKEND:social-app-template-backend"
+        "ACCOUNT:account-service-api account-service-worker"
+        "GRAPH:graph-service-api graph-service-worker"
+        "CONTENT_PUBLISHING:content-publishing-service-api content-publishing-service-worker"
+        "CONTENT_WATCHER:content-watcher-service"
+    )
+
+    SELECTED_SERVICES=""
+
+    # Iterate over the services and use a case statement to transform and select them
+    for service in "${SERVICES[@]}"; do
+        IFS=":" read -r service_name service_components <<< "$service"
+        case $service_name in
+            FRONTEND)
+                if [ "$START_FRONTEND" = "y" ]; then
+                    SELECTED_SERVICES="${SELECTED_SERVICES} ${service_components}"
+                fi
+                ;;
+            BACKEND)
+                if [ "$START_BACKEND" = "y" ]; then
+                    SELECTED_SERVICES="${SELECTED_SERVICES} ${service_components}"
+                fi
+                ;;
+            ACCOUNT)
+                if [ "$START_ACCOUNT" = "y" ]; then
+                    SELECTED_SERVICES="${SELECTED_SERVICES} ${service_components}"
+                fi
+                ;;
+            GRAPH)
+                if [ "$START_GRAPH" = "y" ]; then
+                    SELECTED_SERVICES="${SELECTED_SERVICES} ${service_components}"
+                fi
+                ;;
+            CONTENT_PUBLISHING)
+                if [ "$START_CONTENT_PUBLISHING" = "y" ]; then
+                    SELECTED_SERVICES="${SELECTED_SERVICES} ${service_components}"
+                fi
+                ;;
+            CONTENT_WATCHER)
+                if [ "$START_CONTENT_WATCHER" = "y" ]; then
+                    SELECTED_SERVICES="${SELECTED_SERVICES} ${service_components}"
+                fi
+                ;;
+            *)
+                echo "Unknown service: $service_name"
+                ;;
+        esac
+    done
+    echo
+    echo "Selected services to start:"
+    echo ${SELECTED_SERVICES}
+    echo
+
+    echo "SELECTED_SERVICES=\"${SELECTED_SERVICES}\"" >> ${ENV_FILE}
+
     if [ $TESTNET_ENV = true ]
     then
     ${OUTPUT} << EOI
@@ -304,20 +381,28 @@ EOI
     DEFAULT_IPFS_UA_GATEWAY_URL="http://localhost:8080"
     DEFAULT_CONTENT_DB_VOLUME="content_db"
 
-    # Allow different instances to have different banner titles
-    ask_and_save REACT_APP_TITLE "Enter the title of the application" "Social Web Demo"
+    # If the user has selected not to start the frontend then don't ask for the title or header color
+    if [ "$START_FRONTEND" = "y" ]
+    then
+        # Allow different instances to have different banner titles
+        ask_and_save REACT_APP_TITLE "Enter the title of the application" "Social Web Demo"
 
-    # Allow different instances to have different background colors in the header
-    echo
-${OUTPUT} << EOI
+        # Allow different instances to have different background colors in the header
+        echo
+        ${OUTPUT} << EOI
 Select the background color of the header:
 EOI
-    selected_color_hex=$(select_color)
-    echo "REACT_APP_HEADER_BG_COLOR=${selected_color_hex}" >> ${ENV_FILE}
+        selected_color_hex=$(select_color)
+        echo "REACT_APP_HEADER_BG_COLOR=${selected_color_hex}" >> ${ENV_FILE}
+    else 
+        echo "REACT_APP_TITLE=\"Social Web Demo\"" >> ${ENV_FILE}
+        echo "REACT_APP_HEADER_BG_COLOR=\"#FFFFFF\"" >> ${ENV_FILE}
+    fi
 
     ask_and_save FREQUENCY_URL "Enter the Frequency RPC URL" "$DEFAULT_FREQUENCY_URL"
     ask_and_save FREQUENCY_HTTP_URL "Enter the Frequency HTTP RPC URL" "$DEFAULT_FREQUENCY_HTTP_URL"
     echo
+
     if [ ${TESTNET_ENV} = true ]
     then
 ${OUTPUT} << EOI
@@ -380,7 +465,6 @@ fi
 set -a; source ${ENV_FILE}; set +a
 
 COMPOSE_FILES="-f docker-compose.yaml"
-PROFILES="--profile backend --profile frontend"
 if [ "${DEV_CONTAINERS}" = true ]
 then
     COMPOSE_FILES="${COMPOSE_FILES} -f docker-compose.dev-images.yaml"
@@ -393,19 +477,19 @@ fi
 if [ $TESTNET_ENV != true ]
 then
     COMPOSE_FILES="${COMPOSE_FILES} -f docker-compose.local-frequency.yaml"
-    PROFILES="${PROFILES} --profile local-node"
+    PROFILES="--profile local-node"
 fi
 
 if [ $DEV_CONTAINERS = true ]
 then
     # Start specific services in detached mode
-    echo -e "\nStarting services with local docker containers... [DEV_CONTAINERS==true]"
+    echo -e "\nStarting selected services with local docker containers... [DEV_CONTAINERS==true]"
 else
     # Start all services in detached mode
-    echo -e "\nStarting all services..."
+    echo -e "\nStarting selected services..."
 fi
 
-docker compose ${COMPOSE_FILES} ${PROFILES} up -d social-app-template-frontend
+docker compose ${COMPOSE_FILES} ${PROFILES} up -d ${SELECTED_SERVICES}
 if [ ${TESTNET_ENV} != true ]
 then
     # Run npm run local:init
