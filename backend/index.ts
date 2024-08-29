@@ -24,6 +24,7 @@ import { AnnouncementType } from './types/content-announcement';
 import { randomUUID } from 'crypto';
 import { ContentRepository } from './repositories/ContentRepository';
 import { GraphService } from './services/GraphService';
+import { sseManager } from './utils/sse';
 
 // Support BigInt JSON
 (BigInt.prototype as any).toJSON = function () {
@@ -54,9 +55,24 @@ const httpLogOptions: Options = {
   customSuccessMessage: (req, res) => `RESP: ${req.method} ${req.url} ${res.statusCode}`,
 };
 
+// Don't let middleware interfere with the SSE connection
 const publicApp = express();
-publicApp.use(express.json());
 publicApp.use(cors());
+publicApp.get('/content/events', (req, res) => {
+  res.setHeader('Content-Type', 'text/event-stream');
+  res.setHeader('Cache-Control', 'no-cache');
+  res.setHeader('Connection', 'keep-alive');
+
+  const clientId = Date.now().toString();
+  sseManager.addClient(clientId, res);
+
+  req.on('close', () => {
+    sseManager.removeClient(clientId);
+    res.end();
+  });
+});
+
+publicApp.use(express.json());
 publicApp.use(pinoHttp(httpLogOptions));
 
 const privateApp = express();

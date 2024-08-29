@@ -35,11 +35,12 @@ function toReply(entity: AnnouncementEntity): Reply {
   };
 }
 
-async function getPostsForBlockRange({ from, to }: BlockRange): Promise<Post[]> {
+async function getPostsForBlockRange({ from, to }: BlockRange, msaId?: string): Promise<Post[]> {
   const announcements = ContentRepository.getAnnouncementsWithContent({
     blockFrom: from,
     blockTo: to,
     announcementTypes: [AnnouncementType.Broadcast],
+    msaIds: msaId ? [msaId] : [],
   });
 
   const posts: Post[] = [];
@@ -65,7 +66,9 @@ async function getPostContent(msg: AnnouncementEntity): Promise<Post | undefined
         responseType: 'text',
         timeout: 10000,
       });
+
       rawContent = JSON.parse(postResp.data);
+      msg.content = rawContent;
       ContentRepository.addContent(msg.key, rawContent);
     }
     const replyMessages = ContentRepository.getAnnouncementsWithContent({
@@ -101,8 +104,12 @@ async function getPostContent(msg: AnnouncementEntity): Promise<Post | undefined
   }
 }
 
-export async function getPostsInRange(newestBlockNumber: number, oldestBlockNumber: number): Promise<Post[]> {
-  return getPostsForBlockRange({ from: oldestBlockNumber, to: newestBlockNumber });
+export async function getPostsInRange(
+  newestBlockNumber: number,
+  oldestBlockNumber: number,
+  msaId?: string
+): Promise<Post[]> {
+  return getPostsForBlockRange({ from: oldestBlockNumber, to: newestBlockNumber }, msaId);
 }
 
 export async function getSpecificContent(msaId: string, contentHash: string): Promise<Post | undefined> {

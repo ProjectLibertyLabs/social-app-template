@@ -1,10 +1,10 @@
-import React, { ReactElement, useEffect } from 'react';
+import React, { ReactElement, useEffect, useState } from 'react';
 import Post from './Post';
 import * as dsnpLink from '../../dsnpLink';
-import { BroadcastCardType, FeedTypes, Network, User } from '../../types';
+import { BroadcastCardType, FeedTypes, Network, User, UserAccount } from '../../types';
 import { getContext } from '../../service/AuthService';
 import styles from './PostList.module.css';
-import { Button, Flex, Space, Spin } from 'antd';
+import { Button, Flex, Space } from 'antd';
 import { useNavigate } from 'react-router-dom';
 import BroadcastCard from '../BroadcastCard/BroadcastCard';
 import Title from 'antd/es/typography/Title';
@@ -22,7 +22,9 @@ type PostListProps = {
   refreshTrigger: number;
   network: Network;
   isPosting: boolean;
+  handlePostPublished: () => void;
   showLoginModal?: () => void;
+  loggedInAccount: UserAccount;
 };
 
 type FeedItem = dsnpLink.BroadcastExtended;
@@ -34,14 +36,16 @@ const PostList = ({
   network,
   showLoginModal,
   isPosting,
+  handlePostPublished,
+  loggedInAccount,
 }: PostListProps): ReactElement => {
   const [priorTrigger, setPriorTrigger] = React.useState<number>(refreshTrigger);
   const [priorFeedType, setPriorFeedType] = React.useState<number>(feedType);
   const [priorFeed, setPriorFeed] = React.useState<FeedItem[]>([]);
   const [newestBlockNumber, setNewestBlockNumber] = React.useState<number | null>(null);
   const [oldestBlockNumber, setOldestBlockNumber] = React.useState<number | null>(null);
-  const [isLoading, setIsLoading] = React.useState(true);
   const [currentFeed, setCurrentFeed] = React.useState<FeedItem[]>([]);
+  const [isReplyingIndex, setIsReplyingIndex] = useState<number | null>();
 
   const navigate = useNavigate();
 
@@ -70,9 +74,6 @@ const PostList = ({
     ) {
       // Keep going back in time
       setPriorTrigger(priorTrigger - 1);
-    } else {
-      // Good for now
-      setIsLoading(false);
     }
   };
 
@@ -80,6 +81,25 @@ const PostList = ({
     const getOlder = refreshTrigger === priorTrigger;
     fetchData(getOlder);
   }, [feedType, profile, priorTrigger]);
+
+  useEffect(() => {
+    const eventSource = new EventSource(`${process.env.REACT_APP_BACKEND_URL}/content/events`);
+
+    eventSource.addEventListener(`announcement`, async function (e) {
+      // when the new post is published, update feed.
+      await fetchData(false);
+      handlePostPublished();
+      setIsReplyingIndex(null);
+    });
+
+    eventSource.onerror = () => {
+      eventSource.close();
+    };
+
+    return () => {
+      eventSource.close();
+    };
+  }, []);
 
   const fetchData = async (getOlder: boolean) => {
     const isAddingMore = priorFeedType === feedType;
@@ -97,7 +117,6 @@ const PostList = ({
     setPriorTrigger(refreshTrigger);
 
     setPriorFeedType(feedType);
-    setIsLoading(true);
     const appendOrPrepend = getOlder ? 'append' : 'prepend';
     switch (feedType) {
       case FeedTypes.MY_FEED:
@@ -128,7 +147,6 @@ const PostList = ({
 
   return (
     <div className={styles.root}>
-      <Spin size="large" spinning={isLoading} className={styles.spinner} />
       {oldestBlockNumber !== undefined && (
         <Flex gap={'middle'} vertical={true}>
           {isPosting && <BroadcastCard broadcastCardType={BroadcastCardType.POST_LOADING} isLoading={true} />}
@@ -138,6 +156,9 @@ const PostList = ({
               feedItem={feedItem}
               isProfile={feedType === FeedTypes.MY_PROFILE || feedType === FeedTypes.OTHER_PROFILE}
               showLoginModal={showLoginModal}
+              loggedInAccount={loggedInAccount}
+              handleIsReplying={() => setIsReplyingIndex(index)}
+              isReplying={isReplyingIndex === index}
             />
           ))}
           <Space />
