@@ -102,6 +102,8 @@ services:
       - social-app-backend
     volumes:
       - ${IPFS_VOLUME:-ipfs_data}:/data/ipfs
+    profiles:
+      - ipfs
     # labels:
     #   - 'portical.upnp.forward=4401:4401'
 

@@ -1,5 +1,8 @@
 #!/bin/bash
 # Stop all services and optionally remove specified volumes to remove all state and start fresh
+
+. ./bash_functions.sh
+
 BASE_DIR=${HOME}/.projectliberty
 BASE_NAME=social-app-template
 ENV_FILE="${BASE_DIR}/.env.${BASE_NAME}"
@@ -40,27 +43,25 @@ if [ -f ${ENV_FILE} ]; then
     set -a; source ${ENV_FILE}; set +a
 fi
 
+COMPOSE_CMD=$( prefix_postfix_values "${COMPOSE_FILES}" "-f ")
+PROFILE_CMD=$( prefix_postfix_values "${PROFILES}" "--profile ")
+
 # Shutting down any running services
 echo "Shutting down any running services..."
-docker compose --profile local-node --profile backend --profile frontend down
+docker compose ${COMPOSE_CMD} ${PROFILE_CMD} down
 
 # Ask the user if they want to remove specified volumes
-read -p "Do you want to remove specified volumes to remove all state and start fresh? [y/N]: " REMOVE_VOLUMES
-
-if [[ $REMOVE_VOLUMES =~ ^[Yy]$ ]]
+if yesno "Do you want to remove specified volumes to remove all state and start fresh" N
 then
     echo "Removing specified volumes..."
     # Docker volume names are lowercase versions of the directory name
     # In the root directory of the repository, we get from the system directory name
-    docker volume rm ${COMPOSE_PROJECT_NAME}_redis_data
-    docker volume rm ${COMPOSE_PROJECT_NAME}_ipfs_data
-    docker volume rm ${COMPOSE_PROJECT_NAME}_backend_node_cache
-    docker volume rm ${COMPOSE_PROJECT_NAME}_content_db
-    docker volume rm ${COMPOSE_PROJECT_NAME}_frontend_node_cache
-    if [[ ! $TESTNET_ENV =~ ^[Yy]$ ]]
-    then
-        docker volume rm ${COMPOSE_PROJECT_NAME}_chainstorage
-    fi
+    docker volume rm -f ${COMPOSE_PROJECT_NAME}_redis_data
+    docker volume rm -f ${COMPOSE_PROJECT_NAME}_ipfs_data
+    docker volume rm -f ${COMPOSE_PROJECT_NAME}_backend_node_cache
+    docker volume rm -f ${COMPOSE_PROJECT_NAME}_content_db
+    docker volume rm -f ${COMPOSE_PROJECT_NAME}_frontend_node_cache
+    docker volume rm -f ${COMPOSE_PROJECT_NAME}_chainstorage
 else
     echo "Leaving Docker volumes alone."
 fi
