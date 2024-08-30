@@ -1,0 +1,33 @@
+```mermaid
+sequenceDiagram
+    participant FE as Frontend
+    participant B as Backend
+    participant CP as Content Publishing Service
+    participant CW as Content Watcher Service
+    participant FB as Frequency Blockchain
+    participant I as IPFS
+
+    rect rgb(200, 200, 255)
+    note over FE,B: Social App Template
+    end
+
+    rect rgb(200, 200, 255)
+    note over CP,CW: Gateway Services
+    end
+
+    rect rgb(200, 200, 255)
+    note over I,FB: Decentralized Services
+    end
+
+    FE->>B: Create Post<br>REST API: /broadcasts
+    B->>CP: Forward Broadcast Message<br>REST API: /v1/content/{userDsnpId}/broadcast
+    CP->>I: Pin Parquet file (metadata) and assets<br>REST API: /v1/asset/upload
+    I->>CP: Return IPFS CIDs
+    CP->>FB: Store content announcement on-chain
+    FB->>CW: Broadcast Message Event<br>Read from Blockchain
+    CW->>B: Webhook Notification of New Content
+    B->>FE: Server Sent Event:<br>Refresh Feeds
+    FE->>B: Feeds Refreshed
+
+    note over B: Implements Rolled Up REST API<br>for all Gateway Services
+```
