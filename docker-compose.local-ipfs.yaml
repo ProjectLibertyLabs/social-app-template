@@ -1,7 +1,7 @@
 services:
   content-publishing-service-api:
     depends_on:
-      - redis
+      - ipfs
 
   content-publishing-service-worker:
     depends_on:
