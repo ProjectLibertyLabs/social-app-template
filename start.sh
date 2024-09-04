@@ -139,9 +139,6 @@ EOI
         PROFILES="${PROFILES} local-node"
     fi
 
-    # Save the PROFILES variable to the .env file
-    export_save_variable "PROFILES" "${PROFILES}"
-
     ${OUTPUT} << EOI
 Selected services to start:
 ${PROFILES}
@@ -230,6 +227,7 @@ EOI
         ask_and_save IPFS_UA_GATEWAY_URL "Enter the browser-resolveable IPFS UA Gateway URL" "$DEFAULT_IPFS_UA_GATEWAY_URL"
     else
         COMPOSE_FILES="${COMPOSE_FILES} docker-compose.local-ipfs.yaml"
+        PROFILES="${PROFILES} ipfs"
         # Add the IPFS settings to the .env-saved file so defaults work with local testing
         # Edit "IPFS_VOLUME" if you want to cache IPFS content in a local directory instead of the internal Docker volume
         cat >> ${ENV_FILE} << EOI
@@ -249,7 +247,9 @@ EOI
     # Edit `CONTENT_DB_VOLUME` to change the location of the content database, the default is a docker volume
     export_save_variable CONTENT_DB_VOLUME ${DEFAULT_CONTENT_DB_VOLUME}
 
-    export_save_variable COMPOSE_FILES ${COMPOSE_FILES}
+    export_save_variable COMPOSE_FILES "${COMPOSE_FILES}"
+
+    export_save_variable PROFILES "${PROFILES}"
 fi
 
 ###################################################################################
