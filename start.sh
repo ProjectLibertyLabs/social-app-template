@@ -1,206 +1,32 @@
 #!/bin/bash
 # Script to start all SAT services on the Frequency Paseo Testnet
 
-BASE_DIR=${HOME}/.projectliberty
-BASE_NAME=social-app-template
+. ./bash_functions.sh
 
-PCRE_GREP=
-if grep -q -P "foo" 2>/dev/null
-then
-    PCRE_GREP=grep
-else
-    # Grep is not PCRE compatible, check for other greps
-    if command -v ggrep >/dev/null # MacOS Homebrew might have ggrep
-    then
-        PCRE_GREP=ggrep
-    elif command -v prce2grep > /dev/null # MacOS Homebrew could also have pcre2grep
-    then
-        PCRE_GREP=pcre2grep
-    fi
-fi
+SKIP_CHAIN_SETUP=false
 
-if [ -z "${PCRE_GREP}" ]
-then
-    cat << EOI
-WARNING: No PCRE-capable 'grep' utility found; pretty terminal output disabled.
-
-If you're on a Mac, try installing GNU grep:
-    brew install grep
-
-EOI
-    OUTPUT=cat
-else
-    OUTPUT=box_text
-fi
-
-function box_text() {
-    local input
-    local min_width=0
-
-    # Parse the optional -w argument
-    while getopts ":w:" opt; do
-        case $opt in
-            w)
-                min_width=$OPTARG
-                ;;
-            \?)
-                echo "Invalid option: -$OPTARG" >&2
-                return 1
-                ;;
-            :)
-                echo "Option -$OPTARG requires an argument." >&2
-                return 1
-                ;;
-        esac
-    done
-    shift $((OPTIND - 1))
-
-
-    if [ -z "$1" ]; then
-        # Read input from stdin if no arguments are provided
-        input=$(cat)
-    else
-        # Use the provided argument as input
-        input="$1"
-    fi
-
-    local IFS=$'\n'
-    # local lines=($input)
-    local lines=()
-
-    # Read the string into the array, preserving empty lines
-    while IFS= read -r line || [[ -n $line ]]; do
-        lines+=("$line")
-    done <<< "${input}"
-
-    local max_length=0
-
-    # Function to calculate the display width of a string considering some common wide characters
-    function display_width() {
-        local str="$1"
-        local width=0
-        local char
-
-        for (( i=0; i<${#str}; i++ )); do
-            char="${str:i:1}"
-            if echo "$char" | ${PCRE_GREP} -P -q '[^\x{00}-\x{7F}]'; then
-                # Emoji or symbol, assume it takes two columns
-                width=$((width + 2))
-            else
-                # Regular character, assume it takes one column
-                width=$((width + 1))
-            fi
-        done
-
-        echo $width
-    }
-
-    # Find the maximum length of a line, accounting for Unicode width
-    for line in "${lines[@]}"; do
-        line_length=$(display_width "$line")
-        if [ $line_length -gt $max_length ]; then
-            max_length=$line_length
-        fi
-    done
-
-    # Ensure the box width is at least the specified minimum width
-    max_length=$(( max_length > min_width ? max_length : min_width ))
-
-    # Top border
-    echo "┌$(printf '─%.0s' $(seq 1 $((max_length + 2))))┐"
-
-    # Print each line with padding
-    for line in "${lines[@]}"; do
-        printf "│ %-${max_length}s │\n" "$line"
-    done
-
-    # Bottom border
-    echo "└$(printf '─%.0s' $(seq 1 $((max_length + 2))))┘"
-}
-
-# Function to ask for input with a default value and write to ${ENV_FILE}
-ask_and_save() {
-    local var_name=${1}
-    local prompt=${2}
-    local default_value=${3}
-    local hide_input=${4:-false}
-    local value=
-    local input=
-
-    if [ -z "${default_value}" ]
-    then
-        if [ "${hide_input}" = true ]
-        then
-            read -rsp $'\n'"${prompt} (INPUT HIDDEN): " input
-            echo
-        else
-            read -rp $'\n'"${prompt}: " input
-        fi
-        value=${input}
-    else
-        if [ "${hide_input}" = true ]
-        then
-            read -rsp $'\n'"${prompt} [${default_value}] (INPUT HIDDEN): " input
-            echo
-        else
-            read -rp $'\n'"${prompt} [${default_value}]: " input
-        fi
-        value=${input:-$default_value}
-    fi
-    echo "${var_name}=\"${value}\"" >> ${ENV_FILE}
-}
-
-# Usage: ./start.sh [options]
-# Options:
-#   -h, --help                 Show this help message and exit
-#   -n, --name                 Specify the project name
-
-# Function to display help message
-show_help() {
+###################################################################################
+# show_help
+#
+# Description: Simple function to display the correct usage & options of this script
+#
+###################################################################################
+function show_help() {
     echo "Usage: ./start.sh [options]"
     echo "Options:"
     echo "  -h, --help                 Show this help message and exit"
     echo "  -n, --name                 Specify the project name"
+    echo "  -s, --skip-setup           Skip running chain scenario setup (provider, capacity, etc)"
 }
 
-
-# Function to get user selection and return the hex value of the selected color
-select_color() {
-    # Define color options
-    declare -a color_names=("White" "Light Gray" "Light Yellow" "Light Blue" "Light Green" )
-    declare -a color_values=("#FFFFFF" "#D3D3D3" "#FFFFE0" "#ADD8E6" "#90EE90")
-
-    PS3=$'\nEnter the number of the color you want: '
-
-    select color in "${color_names[@]}"; do
-        if [[ -n "$color" ]]; then
-            for i in "${!color_names[@]}"; do
-                if [[ "${color_names[$i]}" = "${color}" ]]; then
-                    echo "${color_values[$i]}"
-                    return 0
-                fi
-            done
-        else
-            echo "Invalid selection. Please try again."
-        fi
-    done
-}
-
-# Function to redact sensitive values in the .env file
-redact_sensitive_values() {
-    local env_file="$1"
-    sed \
-        -e 's/^PROVIDER_ACCOUNT_SEED_PHRASE=.*/PROVIDER_ACCOUNT_SEED_PHRASE=[REDACTED]/' \
-        -e 's/^IPFS_BASIC_AUTH_USER=.*/IPFS_BASIC_AUTH_USER=[REDACTED]/' \
-        -e 's/^IPFS_BASIC_AUTH_SECRET=.*/IPFS_BASIC_AUTH_SECRET=[REDACTED]/' \
-        "$env_file"
-}
-
+###################################################################################
 # Parse command-line arguments
+###################################################################################
 while [[ "$#" -gt 0 ]]; do
     case $1 in
         -h|--help) show_help; exit 0 ;;
         -n|--name) BASE_NAME="$2"; shift ;;
+        -s|--skip-setup) SKIP_CHAIN_SETUP=true ;;
         *) echo "Unknown parameter passed: $1"; show_help; exit 1 ;;
     esac
     shift
@@ -218,25 +44,23 @@ if [[ -n $ENV_FILE ]]; then
     echo -e "Using environment file: $ENV_FILE\n"
 fi
 
-# Check for Docker and Docker Compose
+####### Check for Docker and Docker Compose
 if ! command -v docker &> /dev/null || ! command -v docker compose &> /dev/null; then
     printf "Docker and Docker Compose are required but not installed. Please install them and try again.\n"
     exit 1
 fi
 
-# Load existing ${ENV_FILE} file if it exists
+####### Check for existing ENV_FILE and ask user if they want to re-use it
 if [ -f ${ENV_FILE} ]; then
     echo -e "Found saved environment from a previous run:\n"
     redacted_content=$(redact_sensitive_values "${ENV_FILE}")
     echo "${redacted_content}"
-    echo
-    read -p  "Do you want to re-use the saved parameters? [Y/n]: " REUSE_SAVED
-    REUSE_SAVED=${REUSE_SAVED:-y}
 
-    if [[ ${REUSE_SAVED} =~ ^[Yy] ]]
+    if yesno "Do you want to re-use the saved parameters" Y
     then
         ${OUTPUT} "Loading environment values from file..."
     else
+        clear
         ${OUTPUT} "Removing previous saved environment..."
 
         rm ${ENV_FILE}
@@ -248,6 +72,9 @@ if [ -f ${ENV_FILE} ]; then
     fi
 fi
 
+######
+###### If no existing ENV_FILE, run through all prompts
+######
 if [ ! -f ${ENV_FILE} ]
 then
     ${OUTPUT} << EOI
@@ -257,26 +84,68 @@ EOI
     # Setup some variables for easy port management
     read -p "Enter starting port for local port mapping (reserves a 20-port range) [3000]: " portno
     FRONTEND_PORT=${portno:-3000}
-    echo "FRONTEND_PORT=${FRONTEND_PORT}" >> ${ENV_FILE}
+    export_save_variable FRONTEND_PORT ${FRONTEND_PORT}
     STARTING_PORT=$(( FRONTEND_PORT + 10 ))
     for i in {0..10}
     do
-    eval SERVICE_PORT_${i}=$(( STARTING_PORT + i ))
-    eval "export SERVICE_PORT_${i}=\${SERVICE_PORT_${i}}"
-    eval "echo SERVICE_PORT_${i}=\${SERVICE_PORT_${i}}" >> ${ENV_FILE}
+        export_save_variable SERVICE_PORT_${i} $(( STARTING_PORT + i ))
     done
 
-    echo "COMPOSE_PROJECT_NAME=${COMPOSE_PROJECT_NAME}" >> ${ENV_FILE}
+    export_save_variable COMPOSE_PROJECT_NAME ${COMPOSE_PROJECT_NAME}
     echo
     read -p "Enter a tag to use to pull the Gateway Docker images [latest]: " tag
-    echo "DOCKER_TAG=${tag:-latest}" >> ${ENV_FILE}
+    export_save_variable DOCKER_TAG ${tag:-latest}
 
     # Ask the user if they want to start on testnet or local
-    echo
-    read -p "Do you want to start on Frequency Paseo Testnet [y/N]: "
-    echo
-    [[ "${REPLY}" =~ ^[Yy]$ ]] && TESTNET_ENV=true || TESTNET_ENV=false
-    echo "TESTNET_ENV=$TESTNET_ENV" >> ${ENV_FILE}
+    if yesno "Do you want to start on Frequency Paseo Testnet" N; then
+        TESTNET_ENV=true
+        PROFILES="${PROFILES} local-node"
+    else
+        TESTNET_ENV=false
+        COMPOSE_FILES="${COMPOSE_FILES} docker-compose.local-frequency.yaml"
+    fi
+    export_save_variable TESTNET_ENV ${TESTNET_ENV}
+
+    # Ask the user which services they want to start
+    ${OUTPUT} << EOI
+Select the services you want to start.
+
+If you only want to start selected services, enter 'n' to exclude the service.
+Note: frontend and backend require all the gateway services to be running.
+
+Hit <ENTER> to accept the default value or enter new value and then hit <ENTER>
+EOI
+    # If the user has selected to start the frontend or the backend, then automatically start the rest of the services
+    if yesno "Start the frontend service" Y ; then
+        PROFILES=${ALL_PROFILES}
+    elif yesno "Start the backend service" Y ; then
+        PROFILES=${BACKEND_ONLY_PROFILES}
+    else
+        if yesno "Start the account service" Y ; then
+            PROFILES="${PROFILES} account"
+        fi
+        if yesno "Start the graph service" Y ; then
+            PROFILES="${PROFILES} graph"
+        fi
+        if yesno "Start the content-publishing service" Y ; then
+            PROFILES="${PROFILES} content_publishing"
+        fi
+        if yesno "Start the content-watcher service" Y ; then
+            PROFILES="${PROFILES} content_watcher"
+        fi
+    fi
+
+    if [ ${TESTNET_ENV} != true ]; then
+        PROFILES="${PROFILES} local-node"
+    fi
+
+    # Save the PROFILES variable to the .env file
+    export_save_variable "PROFILES" "${PROFILES}"
+
+    ${OUTPUT} << EOI
+Selected services to start:
+${PROFILES}
+EOI
 
     if [ $TESTNET_ENV = true ]
     then
@@ -304,20 +173,28 @@ EOI
     DEFAULT_IPFS_UA_GATEWAY_URL="http://localhost:8080"
     DEFAULT_CONTENT_DB_VOLUME="content_db"
 
-    # Allow different instances to have different banner titles
-    ask_and_save REACT_APP_TITLE "Enter the title of the application" "Social Web Demo"
+    # If the user has selected not to start the frontend then don't ask for the title or header color
+    if [[ "${PROFILES}" =~ frontend ]]
+    then
+        # Allow different instances to have different banner titles
+        ask_and_save REACT_APP_TITLE "Enter the title of the application" "Social Web Demo"
 
-    # Allow different instances to have different background colors in the header
-    echo
-${OUTPUT} << EOI
+        # Allow different instances to have different background colors in the header
+        echo
+        ${OUTPUT} << EOI
 Select the background color of the header:
 EOI
-    selected_color_hex=$(select_color)
-    echo "REACT_APP_HEADER_BG_COLOR=${selected_color_hex}" >> ${ENV_FILE}
+        selected_color_hex=$(select_color)
+        export_save_variable REACT_APP_HEADER_BG_COLOR "${selected_color_hex}"
+    else
+        export_save_variable REACT_APP_TITLE "Social Web Demo"
+        export_save_variable REACT_APP_HEADER_BG_COLOR "#FFFFFF"
+    fi
 
     ask_and_save FREQUENCY_URL "Enter the Frequency RPC URL" "$DEFAULT_FREQUENCY_URL"
     ask_and_save FREQUENCY_HTTP_URL "Enter the Frequency HTTP RPC URL" "$DEFAULT_FREQUENCY_HTTP_URL"
     echo
+
     if [ ${TESTNET_ENV} = true ]
     then
 ${OUTPUT} << EOI
@@ -332,8 +209,8 @@ EOI
         ask_and_save PROVIDER_ID "Enter Provider ID" "$DEFAULT_PROVIDER_ID"
         ask_and_save PROVIDER_ACCOUNT_SEED_PHRASE "Enter Provider Seed Phrase" "$DEFAULT_PROVIDER_ACCOUNT_SEED_PHRASE" true
     else
-        echo "PROVIDER_ID=1" >> ${ENV_FILE}
-        echo "PROVIDER_ACCOUNT_SEED_PHRASE=\"//Alice\"" >> ${ENV_FILE}
+        export_save_variable PROVIDER_ID 1
+        export_save_variable PROVIDER_ACCOUNT_SEED_PHRASE //Alice
     fi
     ${OUTPUT} << EOI
 The default configuration runs a local, containerized IPFS node.
@@ -344,20 +221,17 @@ If you want to test between multiple instances of Gateway operating on a public 
 (ie, Testnet or Mainnet), it is recommended to use an external IPFS pinning service.
 
 EOI
-    EXTERNAL_IPFS=0
-    read -p "Do you want to configure an external IPFS service [y/N]? " CHANGE_IPFS_SETTINGS
-
-    if [[ $CHANGE_IPFS_SETTINGS =~ ^[Yy]$ ]]
+    if yesno "Do you want to configure an external IPFS service" N
     then
-        EXTERNAL_IPFS=1
         ask_and_save IPFS_ENDPOINT "Enter the IPFS Endpoint" "$DEFAULT_IPFS_ENDPOINT"
         ask_and_save IPFS_GATEWAY_URL "Enter the IPFS Gateway URL" "$DEFAULT_IPFS_GATEWAY_URL"
         ask_and_save IPFS_BASIC_AUTH_USER "Enter the IPFS Basic Auth User" "$DEFAULT_IPFS_BASIC_AUTH_USER" true
         ask_and_save IPFS_BASIC_AUTH_SECRET "Enter the IPFS Basic Auth Secret" "$DEFAULT_IPFS_BASIC_AUTH_SECRET" true
         ask_and_save IPFS_UA_GATEWAY_URL "Enter the browser-resolveable IPFS UA Gateway URL" "$DEFAULT_IPFS_UA_GATEWAY_URL"
     else
-    # Add the IPFS settings to the .env-saved file so defaults work with local testing
-    # Edit "IPFS_VOLUME" if you want to cache IPFS content in a local directory instead of the internal Docker volume
+        COMPOSE_FILES="${COMPOSE_FILES} docker-compose.local-ipfs.yaml"
+        # Add the IPFS settings to the .env-saved file so defaults work with local testing
+        # Edit "IPFS_VOLUME" if you want to cache IPFS content in a local directory instead of the internal Docker volume
         cat >> ${ENV_FILE} << EOI
 IPFS_VOLUME="ipfs_data"
 IPFS_ENDPOINT="${DEFAULT_IPFS_ENDPOINT}"
@@ -368,51 +242,96 @@ IPFS_UA_GATEWAY_URL="${DEFAULT_IPFS_UA_GATEWAY_URL}"
 EOI
     fi
 
-    echo "EXTERNAL_IPFS=${EXTERNAL_IPFS}" >> ${ENV_FILE}
-
     # When testing with gateway services it may be useful to use docker containers that have been built locally
     # Setting `DEV_CONTAINERS` to `true` will use the local docker containers
-    echo "DEV_CONTAINERS=false" >> ${ENV_FILE}
+    export_save_variable DEV_CONTAINERS false
 
     # Edit `CONTENT_DB_VOLUME` to change the location of the content database, the default is a docker volume
-    echo "CONTENT_DB_VOLUME=\"$DEFAULT_CONTENT_DB_VOLUME\"" >> ${ENV_FILE}
+    export_save_variable CONTENT_DB_VOLUME ${DEFAULT_CONTENT_DB_VOLUME}
+
+    export_save_variable COMPOSE_FILES ${COMPOSE_FILES}
 fi
+
+###################################################################################
+# Finished with prompting (or skipped).
+#
+# Now read the resulting ENV_FILE and launch the services
+###################################################################################
+
 set -a; source ${ENV_FILE}; set +a
-
-COMPOSE_FILES="-f docker-compose.yaml"
-PROFILES="--profile backend --profile frontend"
-if [ "${DEV_CONTAINERS}" = true ]
-then
-    COMPOSE_FILES="${COMPOSE_FILES} -f docker-compose.dev-images.yaml"
-fi
-if [ ${EXTERNAL_IPFS} = 0 ]
-then
-    COMPOSE_FILES="${COMPOSE_FILES} -f docker-compose.local-ipfs.yaml"
-fi
-
-if [ $TESTNET_ENV != true ]
-then
-    COMPOSE_FILES="${COMPOSE_FILES} -f docker-compose.local-frequency.yaml"
-    PROFILES="${PROFILES} --profile local-node"
-fi
 
 if [ $DEV_CONTAINERS = true ]
 then
+    COMPOSE_FILES="${COMPOSE_FILES} docker-compose.dev-images.yaml"
     # Start specific services in detached mode
-    echo -e "\nStarting services with local docker containers... [DEV_CONTAINERS==true]"
+    echo -e "\nStarting selected services with local docker containers... [DEV_CONTAINERS==true]"
 else
     # Start all services in detached mode
-    echo -e "\nStarting all services..."
+    echo -e "\nStarting selected services..."
 fi
 
-docker compose ${COMPOSE_FILES} ${PROFILES} up -d social-app-template-frontend
-if [ ${TESTNET_ENV} != true ]
+COMPOSE_CMD=$( prefix_postfix_values "${COMPOSE_FILES}" "-f ")
+PROFILE_CMD=$( prefix_postfix_values "${PROFILES}" "--profile ")
+
+docker compose ${COMPOSE_CMD} ${PROFILE_CMD} up -d
+
+if [ ${SKIP_CHAIN_SETUP} != true -a ${TESTNET_ENV} != true ]
 then
     # Run npm run local:init
     echo "Running npm run local:init to provision Provider with capacity, etc..."
     ( cd backend && npm run local:init )
 fi
 
+if [[ ${PROFILES} =~ frontend ]]
+then
 ${OUTPUT} << EOI
-🚀 You can access the Social App Template at http://localhost:${FRONTEND_PORT} 🚀
+🚀 You can access the Social App Template frontend at http://localhost:${FRONTEND_PORT} 🚀
 EOI
+fi
+
+SERVICES_STR="\
+The selected services are running.
+
+🚀 You can access the Gateway at the following local addresses: 🚀
+"
+if [[ ${PROFILES} =~ account ]]; then
+SERVICES_STR="${SERVICES_STR}
+      * account-service:
+        - API:              http://localhost:${SERVICE_PORT_3}
+        - Queue management: http://localhost:${SERVICE_PORT_3}/queues
+        - Swagger UI:       http://localhost:${SERVICE_PORT_3}/docs/swagger
+"
+fi
+if [[ ${PROFILES} =~ content_publishing ]]; then
+SERVICES_STR="${SERVICES_STR}
+      * content-publishing-service
+        - API:              http://localhost:${SERVICE_PORT_0}
+        - Queue management: http://localhost:${SERVICE_PORT_0}/queues
+        - Swagger UI:       http://localhost:${SERVICE_PORT_0}/docs/swagger
+"
+fi
+if [[ ${PROFILES} =~ content_watcher ]]; then
+SERVICES_STR="${SERVICES_STR}
+      * content-watcher-service
+        - API:              http://localhost:${SERVICE_PORT_1}
+        - Queue management: http://localhost:${SERVICE_PORT_1}/queues
+        - Swagger UI:       http://localhost:${SERVICE_PORT_1}/docs/swagger
+"
+fi
+if [[ ${PROFILES} =~ graph ]]; then
+SERVICES_STR="${SERVICES_STR}
+      * graph-service
+        - API:              http://localhost:${SERVICE_PORT_2}
+        - Queue management: http://localhost:${SERVICE_PORT_2}/queues
+        - Swagger UI:       http://localhost:${SERVICE_PORT_2}/docs/swagger
+"
+fi
+if [[ ${PROFILES} =~ backend ]]; then
+SERVICES_STR="${SERVICES_STR}
+      * backend
+        - API:              http://localhost:${SERVICE_PORT_8}/docs/swagger
+        - Swagger UI:       http://localhost:${SERVICE_PORT_8}/docs/swagger
+"
+fi
+
+${OUTPUT} "${SERVICES_STR}"
