@@ -287,3 +287,19 @@ function prefix_postfix_values() {
 
     echo ${str}
 }
+
+###################################################################################
+# is_frequency_ready
+#
+# Description: Runs a command to check the health status of the 'frequency' service
+#
+###################################################################################
+function is_frequency_ready {
+    health=$( docker compose -p ${COMPOSE_PROJECT_NAME} ps --format '{{.Health}}' frequency )
+    if [ "${health}" = 'healthy' ]
+    then
+        return 0
+    fi
+
+    return 1
+}
