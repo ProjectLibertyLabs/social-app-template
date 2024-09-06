@@ -21,7 +21,7 @@ x-common-environment: &common-environment
   DEBUG: true
 
 x-content-publishing-env: &content-publishing-env
-  START_PROCESS: api
+  START_PROCESS: content-publishing-api
   FILE_UPLOAD_MAX_SIZE_IN_BYTES: 2000000000
   ASSET_EXPIRATION_INTERVAL_SECONDS: 300
   BATCH_INTERVAL_SECONDS: 12
@@ -128,7 +128,7 @@ services:
     pull_policy: always
     environment:
       <<: [*common-environment, *content-publishing-env]
-      START_PROCESS: worker
+      START_PROCESS: content-publishing-worker
     depends_on:
       - redis
     networks:
@@ -159,7 +159,7 @@ services:
       - ${SERVICE_PORT_2}:3000
     environment:
       <<: [*common-environment, *graph-service-env]
-      START_PROCESS: api
+      START_PROCESS: graph-api
     depends_on:
       - redis
     networks:
@@ -173,7 +173,7 @@ services:
     pull_policy: always
     environment:
       <<: [*common-environment, *graph-service-env]
-      START_PROCESS: worker
+      START_PROCESS: graph-worker
     depends_on:
       - redis
     networks:
@@ -187,7 +187,7 @@ services:
     pull_policy: always
     ports:
       - ${SERVICE_PORT_3}:3000
-    command: api
+    command: account-api
     environment:
       <<: [*common-environment, *account-service-env]
     depends_on:
@@ -201,7 +201,7 @@ services:
     image: projectlibertylabs/account-service:${DOCKER_TAG:-latest}
     platform: linux/amd64
     pull_policy: always
-    command: worker
+    command: account-worker
     environment:
       <<: [*common-environment, *account-service-env]
     depends_on:

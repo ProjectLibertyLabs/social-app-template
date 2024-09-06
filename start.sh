@@ -277,9 +277,23 @@ docker compose ${COMPOSE_CMD} ${PROFILE_CMD} up -d
 
 if [ ${SKIP_CHAIN_SETUP} != true -a ${TESTNET_ENV} != true ]
 then
-    # Run npm run local:init
-    echo "Running npm run local:init to provision Provider with capacity, etc..."
-    ( cd backend && npm run local:init )
+    # Wait 1 minute for Frequency node to be ready
+    health_attempts=0
+    while (( ${health_attempts} < 60 )) && ! is_frequency_ready
+    do
+        (( health_attempts += 1 ))
+        echo "Waiting for Frequency node to respond..."
+        sleep 1
+    done
+
+    if is_frequency_ready
+    then
+        # Run npm run local:init
+        echo "Running npm run local:init to provision Provider with capacity, etc..."
+        ( cd backend && npm run local:init )
+    else
+        echo "Timed out waiting for Frequency node to be ready" >&2
+    fi
 fi
 
 if [[ ${PROFILES} =~ frontend ]]
