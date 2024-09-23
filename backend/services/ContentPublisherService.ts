@@ -1,5 +1,5 @@
 import { Client as ContentPublisherClient, type Components } from '../types/openapi-content-publishing-service';
-import openapiJson from '../openapi-specs/content-publishing-service.json' with { type: 'json' };
+import openapiJson from '../openapi-specs/content-publishing.openapi.json' with { type: 'json' };
 import { OpenAPIClientAxios, type Document } from 'openapi-client-axios';
 import FormData from 'form-data';
 import * as Config from '../config/config';
@@ -49,7 +49,7 @@ export class ContentPublisherService {
 
   public async postBroadcast(msaId: string, data: BroadcastDto): Promise<AnnouncementResponseDto> {
     try {
-      const res = await this.client.ContentController_broadcast(msaId, data);
+      const res = await this.client.ContentControllerV1_broadcast(msaId, data);
       return res.data;
     } catch (err) {
       logger.error({ err }, 'Failed to post broadcast');
@@ -59,7 +59,7 @@ export class ContentPublisherService {
 
   public async postReply(msaId: string, data: ReplyDto): Promise<AnnouncementResponseDto> {
     try {
-      const res = await this.client.ContentController_reply(msaId, data);
+      const res = await this.client.ContentControllerV1_reply(msaId, data);
       return res.data;
     } catch (err) {
       logger.error({ err }, 'Failed to post broadcast reply');

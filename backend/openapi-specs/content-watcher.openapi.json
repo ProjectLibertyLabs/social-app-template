@@ -50,11 +50,11 @@
       },
       "post": {
         "operationId": "ScanControllerV1_setWatchOptions",
-        "summary": "Set watch options to filter the blockchain content scanner by schemas or MSA IDs",
+        "summary": "Set watch options to filter the blockchain content scanner by schemas or MSA Ids",
         "parameters": [],
         "requestBody": {
           "required": true,
-          "description": "watchOptions: Filter contents by schemaIds and/or dsnpIds",
+          "description": "watchOptions: Filter contents by schemaIds and/or msaIds",
           "content": {
             "application/json": {
               "schema": {
@@ -97,7 +97,7 @@
             "name": "immediate",
             "required": false,
             "in": "query",
-            "description": "immediate: whether to resume scan immediately (true), or wait until next scheduled scan (false)",
+            "description": "Immediate: whether to resume scan immediately (true), or wait until next scheduled scan (false)",
             "schema": {
               "type": "boolean"
             }
@@ -263,32 +263,22 @@
   "tags": [],
   "servers": [],
   "components": {
-    "securitySchemes": {
-      "bearer": {
-        "scheme": "bearer",
-        "bearerFormat": "JWT",
-        "type": "http",
-        "description": "Enter JWT token"
-      },
-      "cookie": {
-        "type": "apiKey",
-        "in": "cookie",
-        "name": "SESSION"
-      }
-    },
     "schemas": {
       "ResetScannerDto": {
         "type": "object",
         "properties": {
           "blockNumber": {
             "type": "number",
-            "minimum": 1,
+            "minimum": 0,
+            "maximum": 4294967296,
             "description": "The block number to reset the scanner to",
             "example": 0
           },
           "rewindOffset": {
             "type": "number",
-            "description": "Number of blocks to rewind the scanner to (from `blockNumber` if supplied; else from latest block",
+            "minimum": 0,
+            "maximum": 4294967296,
+            "description": "Number of blocks to rewind the scanner to (from `blockNumber` if supplied; else from latest block)",
             "example": 100
           },
           "immediate": {
@@ -303,6 +293,8 @@
         "properties": {
           "schemaIds": {
             "type": "array",
+            "minimum": 0,
+            "maximum": 65536,
             "items": {
               "type": "number"
             },
@@ -334,13 +326,15 @@
           },
           "startBlock": {
             "type": "number",
-            "minimum": 1,
+            "minimum": 0,
+            "maximum": 4294967296,
             "description": "The block number to search (backward) from",
             "example": 100
           },
           "blockCount": {
             "type": "number",
-            "minimum": 1,
+            "minimum": 0,
+            "maximum": 4294967296,
             "description": "The number of blocks to scan (backwards)",
             "example": 101
           },
@@ -354,12 +348,25 @@
           },
           "webhookUrl": {
             "type": "string",
-            "description": "A webhook URL to be notified of the results of this search"
+            "description": "A webhook URL to be notified of the results of this search",
+            "example": "https://example.com"
           }
         },
         "required": [
           "blockCount",
           "webhookUrl"
+        ]
+      },
+      "AnnouncementTypeName": {
+        "type": "string",
+        "description": "Announcement types to send to the webhook",
+        "enum": [
+          "tombstone",
+          "broadcast",
+          "reply",
+          "reaction",
+          "profile",
+          "update"
         ]
       },
       "WebhookRegistrationDto": {
@@ -371,17 +378,16 @@
             "example": "https://example.com/webhook"
           },
           "announcementTypes": {
-            "description": "Announcement types to send to the webhook",
-            "example": [
-              "Broadcast",
-              "Reaction",
-              "Tombstone",
-              "Reply",
-              "Update"
-            ],
             "type": "array",
+            "example": [
+              "broadcast",
+              "reaction",
+              "tombstone",
+              "reply",
+              "update"
+            ],
             "items": {
-              "type": "string"
+              "$ref": "#/components/schemas/AnnouncementTypeName"
             }
           }
         },

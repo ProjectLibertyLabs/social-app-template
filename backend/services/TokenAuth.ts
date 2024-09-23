@@ -2,7 +2,6 @@ import { randomUUID } from 'crypto';
 import { getApi } from './frequency.js';
 import { NextFunction, Request, Response } from 'express';
 import { HttpStatusCode } from 'axios';
-import { AccountService } from './AccountService.js';
 import logger from '../logger';
 
 export type RequestAccount = { publicKey: string; msaId?: string };
@@ -124,7 +123,7 @@ export async function validateAuthToken(req: Request, res: Response, next: NextF
  * @param res - The response object.
  * @param next - The next function to call in the middleware chain.
  */
-export function debugAuthToken(req: Request, res: Response, next: NextFunction) {
+export function debugAuthToken(req: Request, _res: Response, next: NextFunction) {
   Object.assign(req.headers, {
     publicKey: process.env.DEBUG_PUBKEY,
     msaId: process.env.DEBUG_MSA_ID,

@@ -10,7 +10,7 @@ declare namespace Components {
   namespace Schemas {
     export interface ConnectionDto {
       /**
-       * MSA ID representing the target of this connection
+       * MSA Id representing the target of this connection
        * example:
        * 3
        */
@@ -40,9 +40,9 @@ declare namespace Components {
        */
       data: ConnectionDto[];
     }
-    export interface DsnpGraphEdge {
+    export interface DsnpGraphEdgeDto {
       /**
-       * MSA ID of the user represented by this graph edge
+       * MSA Id of the user represented by this graph edge
        * example:
        * 3
        */
@@ -63,10 +63,14 @@ declare namespace Components {
     export interface GraphKeyPairDto {
       /**
        * Public graph encryption key as a hex string (prefixed with "0x")
+       * example:
+       * 0xd43593c715fdd31c61141abd04a99fd6822c8558854ccde39a5684e7a56da27d
        */
       publicKey: string;
       /**
        * Private graph encryption key as a hex string (prefixed with "0x")
+       * example:
+       * 0xd43593c715fdd31c61141abd04a99fd6822c8558854ccde39a5684e7a56da27d
        */
       privateKey: string;
       /**
@@ -78,7 +82,7 @@ declare namespace Components {
     }
     export interface GraphsQueryParamsDto {
       /**
-       * Array of MSA IDs for which to query graphs
+       * Array of MSA Ids for which to query graphs
        * example:
        * [
        *   "2",
@@ -101,7 +105,7 @@ declare namespace Components {
     }
     export interface ProviderGraphDto {
       /**
-       * MSA ID that owns the connections represented in this object
+       * MSA Id that owns the connections represented in this object
        * example:
        * 2
        */
@@ -121,12 +125,14 @@ declare namespace Components {
       graphKeyPairs?: GraphKeyPairDto[];
       /**
        * Optional URL of a webhook to invoke when the request is complete
+       * example:
+       * http://localhost/webhook
        */
       webhookUrl?: string;
     }
     export interface UserGraphDto {
       /**
-       * MSA ID that is the owner of the graph represented by the graph edges in this object
+       * MSA Id that is the owner of the graph represented by the graph edges in this object
        * example:
        * 2
        */
@@ -134,11 +140,11 @@ declare namespace Components {
       /**
        * Optional array of graph edges in the specific user graph represented by this object
        */
-      dsnpGraphEdges?: DsnpGraphEdge[];
+      dsnpGraphEdges?: DsnpGraphEdgeDto[];
     }
     export interface WatchGraphsDto {
       /**
-       * MSA IDs for which to watch for graph updates
+       * MSA Ids for which to watch for graph updates
        * example:
        * [
        *   "2",
@@ -253,7 +259,7 @@ declare namespace Paths {
 
 export interface OperationMethods {
   /**
-   * GraphControllerV1_getGraphs - Fetch graphs for specified dsnpIds and blockNumber
+   * GraphControllerV1_getGraphs - Fetch graphs for specified MSA Ids and Block Number
    */
   'GraphControllerV1_getGraphs'(
     parameters?: Parameters<UnknownParamsObject> | null,
@@ -261,7 +267,7 @@ export interface OperationMethods {
     config?: AxiosRequestConfig
   ): OperationResponse<Paths.GraphControllerV1GetGraphs.Responses.$200>;
   /**
-   * GraphControllerV1_updateGraph - Request an update to given users graph
+   * GraphControllerV1_updateGraph - Request an update to a given user's graph
    */
   'GraphControllerV1_updateGraph'(
     parameters?: Parameters<UnknownParamsObject> | null,
@@ -293,7 +299,7 @@ export interface OperationMethods {
     config?: AxiosRequestConfig
   ): OperationResponse<Paths.WebhooksControllerV1DeleteAllWebhooks.Responses.$200>;
   /**
-   * WebhooksControllerV1_getWebhooksForMsa - Get all registered webhooks for a specific MSA ID
+   * WebhooksControllerV1_getWebhooksForMsa - Get all registered webhooks for a specific MSA Id
    */
   'WebhooksControllerV1_getWebhooksForMsa'(
     parameters: Parameters<
@@ -356,7 +362,7 @@ export interface OperationMethods {
 export interface PathsDictionary {
   ['/v1/graphs/getGraphs']: {
     /**
-     * GraphControllerV1_getGraphs - Fetch graphs for specified dsnpIds and blockNumber
+     * GraphControllerV1_getGraphs - Fetch graphs for specified MSA Ids and Block Number
      */
     'post'(
       parameters?: Parameters<UnknownParamsObject> | null,
@@ -366,7 +372,7 @@ export interface PathsDictionary {
   };
   ['/v1/graphs']: {
     /**
-     * GraphControllerV1_updateGraph - Request an update to given users graph
+     * GraphControllerV1_updateGraph - Request an update to a given user's graph
      */
     'put'(
       parameters?: Parameters<UnknownParamsObject> | null,
@@ -402,7 +408,7 @@ export interface PathsDictionary {
   };
   ['/v1/webhooks/users/{msaId}']: {
     /**
-     * WebhooksControllerV1_getWebhooksForMsa - Get all registered webhooks for a specific MSA ID
+     * WebhooksControllerV1_getWebhooksForMsa - Get all registered webhooks for a specific MSA Id
      */
     'get'(
       parameters: Parameters<

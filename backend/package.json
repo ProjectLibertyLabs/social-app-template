@@ -18,13 +18,14 @@
     "docker-run:dev": "docker-compose up -d ; docker-compose logs",
     "docker-stop:dev": "docker-compose stop",
     "generate-types-backend": "npx openapi-client-axios-typegen openapi.json > types/api.d.ts",
-    "generate-types-account-service": "npx openapi-client-axios-typegen openapi-specs/account-service.json > types/openapi-account-service.d.ts",
-    "generate-types-graph-service": "npx openapi-client-axios-typegen openapi-specs/graph-service.json > types/openapi-graph-service.d.ts",
-    "generate-types-graph-webhook": "npx @hey-api/openapi-ts -i openapi-specs/graph-service-webhook.yaml -o types/graph-service-webhook",
+    "generate-types-account-service": "npx openapi-client-axios-typegen openapi-specs/account.openapi.json > types/openapi-account-service.d.ts",
+    "generate-types-account-webhook": "npx @hey-api/openapi-ts -i openapi-specs/account-webhooks.openapi.yaml -o types/account-service-webhook",
+    "generate-types-graph-service": "npx openapi-client-axios-typegen openapi-specs/graph.openapi.json > types/openapi-graph-service.d.ts",
+    "generate-types-graph-webhook": "npx @hey-api/openapi-ts -i openapi-specs/graph-webhooks.openapi.yaml -o types/graph-service-webhook",
     "generate-types-content-announcement": "npx @hey-api/openapi-ts -i openapi-specs/content-announcement.openapi.json -o types/content-announcement",
-    "generate-types-content-watcher": "npx openapi-client-axios-typegen openapi-specs/content-watcher-service.json > types/openapi-content-watcher-service.d.ts",
-    "generate-types-content-publisher": "npx openapi-client-axios-typegen openapi-specs/content-publishing-service.json > types/openapi-content-publishing-service.d.ts",
-    "generate-types": "npm run generate-types-account-service ; npm run generate-types-graph-service ; npm run generate-types-content-watcher ; npm run generate-types-content-publisher ; npm run generate-types-graph-webhook; npm run generate-types-content-announcement ; npm run generate-types-backend",
+    "generate-types-content-watcher": "npx openapi-client-axios-typegen openapi-specs/content-watcher.openapi.json > types/openapi-content-watcher-service.d.ts ; npx @hey-api/openapi-ts -i openapi-specs/content-watcher.openapi.json -o types/content-watcher",
+    "generate-types-content-publisher": "npx openapi-client-axios-typegen openapi-specs/content-publishing.openapi.json > types/openapi-content-publishing-service.d.ts",
+    "generate-types": "npm run generate-types-account-service ; npm run generate-types-account-webhook ; npm run generate-types-graph-service ; npm run generate-types-content-watcher ; npm run generate-types-content-publisher ; npm run generate-types-graph-webhook; npm run generate-types-content-announcement ; npm run generate-types-backend",
     "local:init": "node scripts/local-init.cjs",
     "env:init": "sh scripts/init-environment.sh"
   },
@@ -39,7 +40,6 @@
   },
   "homepage": "https://github.com/ProjectLibertyLabs/dsnp-gateway-prototype#readme",
   "dependencies": {
-    "@projectlibertylabs/siwf": "^1.0.0",
     "@azns/resolver-core": "file:azns-stub",
     "@dsnp/activity-content": "^1.1.0",
     "@dsnp/frequency-schemas": "^1.1.0",
@@ -48,6 +48,7 @@
     "@multiformats/blake2": "^2.0.2",
     "@polkadot/api": "^10.9.1",
     "@polkadot/util": "^12.6.2",
+    "@projectlibertylabs/siwf": "^1.0.0",
     "avro-js": "^1.11.3",
     "better-sqlite3": "^11.1.2",
     "busboy": "^1.6.0",
@@ -65,7 +66,8 @@
     "pino": "^9.0.0",
     "pino-http": "^10.1.0",
     "pino-pretty": "^11.0.0",
-    "swagger-ui-express": "^5.0.0"
+    "swagger-ui-express": "^5.0.0",
+    "yaml": "^2.5.1"
   },
   "devDependencies": {
     "@eslint/js": "^8.57.0",

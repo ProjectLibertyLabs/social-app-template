@@ -1,11 +1,11 @@
 import { Express, Request, Response } from 'express';
 import { BaseController } from './BaseController';
 import { HttpStatusCode } from 'axios';
-import { AccountServiceWebhook } from '../services/AccountWebhookService';
+import * as AccountServiceWebhook from '../services/AccountWebhookService';
 import { HttpError } from '../types/HttpError';
 import logger from '../logger';
 import { ContentRepository } from '../repositories/ContentRepository';
-import { GraphWebhookService } from '../services/GraphWebhookService';
+import * as GraphWebhookService from '../services/GraphWebhookService';
 import { sseManager } from '../utils/sse';
 
 export class WebhookController extends BaseController {
@@ -28,9 +28,7 @@ export class WebhookController extends BaseController {
    */
   public async accountServiceWebhook(req: Request, res: Response) {
     try {
-      const response = await AccountServiceWebhook.getInstance().then((service) =>
-        service.accountServiceWebhook(req.body)
-      );
+      const response = AccountServiceWebhook.accountServiceWebhook(req.body);
       res.send(response).end();
     } catch (err) {
       logger.error({ err }, 'Error handling account service webhook:');
@@ -45,9 +43,7 @@ export class WebhookController extends BaseController {
   public async graphServiceNotifications(req: Request, res: Response) {
     try {
       logger.debug({ body: req.body }, 'GraphServiceWebhook body');
-      const response = await GraphWebhookService.getInstance().then((service) =>
-        service.processGraphUpdateNotification(req.body)
-      );
+      const response = GraphWebhookService.processGraphUpdateNotification(req.body);
       res.send(response).end();
     } catch (err) {
       logger.error({ err }, 'Error handling graph service webhook');
@@ -62,7 +58,7 @@ export class WebhookController extends BaseController {
   public async graphServiceOperationStatus(req: Request, res: Response) {
     try {
       logger.debug({ body: req.body }, '/graph-service/operation-status body');
-      const response = await GraphWebhookService.getInstance().then((service) => service.requestRefIdWebhook(req.body));
+      const response = GraphWebhookService.requestRefIdWebhook(req.body);
       res.send(response).end();
     } catch (err) {
       logger.error({ err }, 'Error handling graph-service operation status webhook');

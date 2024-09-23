@@ -1,12 +1,7 @@
 import type * as T from '../types/openapi.js';
 import axios from 'axios';
 import { AnnouncementEntity, ContentRepository } from '../repositories/ContentRepository';
-import {
-  AnnouncementResponse,
-  AnnouncementType,
-  BroadcastAnnouncement,
-  ReplyAnnouncement,
-} from '../types/content-announcement';
+import { AnnouncementType, BroadcastAnnouncement, ReplyAnnouncement } from '../types/content-announcement';
 import logger from '../logger.js';
 import { translateContentUrl } from '../utils/url-transation.js';
 

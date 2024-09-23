@@ -1,0 +1,1180 @@
+{
+  "openapi": "3.0.0",
+  "paths": {
+    "/v1/accounts/siwf": {
+      "get": {
+        "operationId": "AccountsControllerV1_getSIWFConfig",
+        "summary": "Get the Sign In With Frequency configuration",
+        "parameters": [],
+        "responses": {
+          "200": {
+            "description": "Returned SIWF Configuration data",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/WalletLoginConfigResponseDto"
+                }
+              }
+            }
+          }
+        },
+        "tags": [
+          "v1/accounts"
+        ]
+      },
+      "post": {
+        "operationId": "AccountsControllerV1_postSignInWithFrequency",
+        "summary": "Request to Sign In With Frequency",
+        "parameters": [],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/WalletLoginRequestDto"
+              }
+            }
+          }
+        },
+        "responses": {
+          "201": {
+            "description": "Signed in successfully",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/WalletLoginResponseDto"
+                }
+              }
+            }
+          }
+        },
+        "tags": [
+          "v1/accounts"
+        ]
+      }
+    },
+    "/v1/accounts/{msaId}": {
+      "get": {
+        "operationId": "AccountsControllerV1_getAccountForMsa",
+        "summary": "Fetch an account given an MSA Id",
+        "parameters": [
+          {
+            "name": "msaId",
+            "required": true,
+            "in": "path",
+            "description": "Msa Id of requested account",
+            "example": "2",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Found account",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/AccountResponseDto"
+                }
+              }
+            }
+          }
+        },
+        "tags": [
+          "v1/accounts"
+        ]
+      }
+    },
+    "/v1/accounts/account/{accountId}": {
+      "get": {
+        "operationId": "AccountsControllerV1_getAccountForAccountId",
+        "summary": "Fetch an account given an Account Id",
+        "parameters": [
+          {
+            "name": "accountId",
+            "required": true,
+            "in": "path",
+            "description": "AccountId in hex or SS58 format",
+            "example": "1LSLqpLWXo7A7xuiRdu6AQPnBPNJHoQSu8DBsUYJgsNEJ4N",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Found account",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/AccountResponseDto"
+                }
+              }
+            }
+          }
+        },
+        "tags": [
+          "v1/accounts"
+        ]
+      }
+    },
+    "/v1/accounts/retireMsa/{accountId}": {
+      "get": {
+        "operationId": "AccountsControllerV1_getRetireMsaPayload",
+        "summary": "Get a retireMsa unsigned, encoded extrinsic payload.",
+        "parameters": [
+          {
+            "name": "accountId",
+            "required": true,
+            "in": "path",
+            "description": "AccountId in hex or SS58 format",
+            "example": "1LSLqpLWXo7A7xuiRdu6AQPnBPNJHoQSu8DBsUYJgsNEJ4N",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Created extrinsic",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/RetireMsaPayloadResponseDto"
+                }
+              }
+            }
+          }
+        },
+        "tags": [
+          "v1/accounts"
+        ]
+      }
+    },
+    "/v1/accounts/retireMsa": {
+      "post": {
+        "operationId": "AccountsControllerV1_postRetireMsa",
+        "summary": "Request to retire an MSA ID.",
+        "parameters": [],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/RetireMsaRequestDto"
+              }
+            }
+          }
+        },
+        "responses": {
+          "201": {
+            "description": "Created and queued request to retire an MSA ID",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/TransactionResponse"
+                }
+              }
+            }
+          }
+        },
+        "tags": [
+          "v1/accounts"
+        ]
+      }
+    },
+    "/v2/delegations/{msaId}": {
+      "get": {
+        "operationId": "DelegationsControllerV2_getDelegation",
+        "summary": "Get all delegation information associated with an MSA Id",
+        "parameters": [
+          {
+            "name": "msaId",
+            "required": true,
+            "in": "path",
+            "description": "MSA Id of the user requesting the delegation",
+            "example": "3",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Found delegation information",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/DelegationResponseV2"
+                }
+              }
+            }
+          }
+        },
+        "tags": [
+          "delegations"
+        ]
+      }
+    },
+    "/v2/delegations/{msaId}/{providerId}": {
+      "get": {
+        "operationId": "DelegationsControllerV2_getProviderDelegation",
+        "summary": "Get an MSA's delegation information for a specific provider",
+        "parameters": [
+          {
+            "name": "msaId",
+            "required": true,
+            "in": "path",
+            "description": "MSA Id of the user requesting the delegation",
+            "example": "3",
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "providerId",
+            "required": false,
+            "in": "path",
+            "description": "MSA Id of the provider to whom the requesting user wishes to delegate",
+            "example": "1",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Found delegation information",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/DelegationResponseV2"
+                }
+              }
+            }
+          }
+        },
+        "tags": [
+          "delegations"
+        ]
+      }
+    },
+    "/v1/delegation/{msaId}": {
+      "get": {
+        "operationId": "DelegationControllerV1_getDelegation",
+        "summary": "Get the delegation information associated with an MSA Id",
+        "parameters": [
+          {
+            "name": "msaId",
+            "required": true,
+            "in": "path",
+            "description": "Msa Id of requested account",
+            "example": "2",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Found delegation information",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/DelegationResponse"
+                }
+              }
+            }
+          }
+        },
+        "tags": [
+          "delegation"
+        ]
+      }
+    },
+    "/v1/delegation/revokeDelegation/{accountId}/{providerId}": {
+      "get": {
+        "operationId": "DelegationControllerV1_getRevokeDelegationPayload",
+        "summary": "Get a properly encoded RevokeDelegationPayload that can be signed",
+        "parameters": [
+          {
+            "name": "accountId",
+            "required": true,
+            "in": "path",
+            "description": "AccountId in hex or SS58 format",
+            "example": "1LSLqpLWXo7A7xuiRdu6AQPnBPNJHoQSu8DBsUYJgsNEJ4N",
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "providerId",
+            "required": true,
+            "in": "path",
+            "description": "Msa Id of provider",
+            "example": "1",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Returned an encoded RevokeDelegationPayload for signing",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/RevokeDelegationPayloadResponseDto"
+                }
+              }
+            }
+          }
+        },
+        "tags": [
+          "delegation"
+        ]
+      }
+    },
+    "/v1/delegation/revokeDelegation": {
+      "post": {
+        "operationId": "DelegationControllerV1_postRevokeDelegation",
+        "summary": "Request to revoke a delegation",
+        "parameters": [],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/RevokeDelegationPayloadRequestDto"
+              }
+            }
+          }
+        },
+        "responses": {
+          "201": {
+            "description": "Created and queued request to revoke a delegation",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/TransactionResponse"
+                }
+              }
+            }
+          }
+        },
+        "tags": [
+          "delegation"
+        ]
+      }
+    },
+    "/v1/handles": {
+      "post": {
+        "operationId": "HandlesControllerV1_createHandle",
+        "summary": "Request to create a new handle for an account",
+        "parameters": [],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/HandleRequestDto"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Handle creation request enqueued"
+          }
+        },
+        "tags": [
+          "v1/handles"
+        ]
+      }
+    },
+    "/v1/handles/change": {
+      "post": {
+        "operationId": "HandlesControllerV1_changeHandle",
+        "summary": "Request to change a handle",
+        "parameters": [],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/HandleRequestDto"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Handle change request enqueued"
+          }
+        },
+        "tags": [
+          "v1/handles"
+        ]
+      }
+    },
+    "/v1/handles/change/{newHandle}": {
+      "get": {
+        "operationId": "HandlesControllerV1_getChangeHandlePayload",
+        "summary": "Get a properly encoded ClaimHandlePayload that can be signed.",
+        "parameters": [
+          {
+            "name": "newHandle",
+            "required": true,
+            "in": "path",
+            "description": "newHandle in the request",
+            "example": "handle",
+            "schema": {
+              "minLength": 3,
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Returned an encoded ClaimHandlePayload for signing"
+          }
+        },
+        "tags": [
+          "v1/handles"
+        ]
+      }
+    },
+    "/v1/handles/{msaId}": {
+      "get": {
+        "operationId": "HandlesControllerV1_getHandle",
+        "summary": "Fetch a handle given an MSA Id",
+        "parameters": [
+          {
+            "name": "msaId",
+            "required": true,
+            "in": "path",
+            "description": "Msa Id of requested account",
+            "example": "2",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Found a handle"
+          }
+        },
+        "tags": [
+          "v1/handles"
+        ]
+      }
+    },
+    "/v1/keys/add": {
+      "post": {
+        "operationId": "KeysControllerV1_addKey",
+        "summary": "Add new control keys for an MSA Id",
+        "parameters": [],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/KeysRequestDto"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Found public keys"
+          }
+        },
+        "tags": [
+          "v1/keys"
+        ]
+      }
+    },
+    "/v1/keys/{msaId}": {
+      "get": {
+        "operationId": "KeysControllerV1_getKeys",
+        "summary": "Fetch public keys given an MSA Id",
+        "parameters": [
+          {
+            "name": "msaId",
+            "required": true,
+            "in": "path",
+            "description": "Msa Id of requested account",
+            "example": "2",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Found public keys"
+          }
+        },
+        "tags": [
+          "v1/keys"
+        ]
+      }
+    },
+    "/v1/keys/publicKeyAgreements/getAddKeyPayload": {
+      "get": {
+        "operationId": "KeysControllerV1_getPublicKeyAgreementsKeyPayload",
+        "summary": "Get a properly encoded StatefulStorageItemizedSignaturePayloadV2 that can be signed.",
+        "parameters": [
+          {
+            "name": "msaId",
+            "required": true,
+            "in": "query",
+            "description": "MSA Id representing the target of this request",
+            "example": "3",
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "newKey",
+            "required": true,
+            "in": "query",
+            "description": "New public key to be added to the account (32-byte value in hex format)",
+            "example": "0x0ed2f8c714efcac51ca2325cfe95637e5e0b898ae397aa365978b7348a717d0b",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Returned an encoded StatefulStorageItemizedSignaturePayloadV2 for signing"
+          }
+        },
+        "tags": [
+          "v1/keys"
+        ]
+      }
+    },
+    "/v1/keys/publicKeyAgreements": {
+      "post": {
+        "operationId": "KeysControllerV1_AddNewPublicKeyAgreements",
+        "summary": "Request to add a new public Key",
+        "parameters": [],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/AddNewPublicKeyAgreementRequestDto"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Add new key request enqueued"
+          }
+        },
+        "tags": [
+          "v1/keys"
+        ]
+      }
+    },
+    "/healthz": {
+      "get": {
+        "operationId": "HealthController_healthz",
+        "summary": "Check the health status of the service",
+        "parameters": [],
+        "responses": {
+          "200": {
+            "description": "Service is healthy"
+          }
+        },
+        "tags": [
+          "health"
+        ]
+      }
+    },
+    "/livez": {
+      "get": {
+        "operationId": "HealthController_livez",
+        "summary": "Check the live status of the service",
+        "parameters": [],
+        "responses": {
+          "200": {
+            "description": "Service is live"
+          }
+        },
+        "tags": [
+          "health"
+        ]
+      }
+    },
+    "/readyz": {
+      "get": {
+        "operationId": "HealthController_readyz",
+        "summary": "Check the ready status of the service",
+        "parameters": [],
+        "responses": {
+          "200": {
+            "description": "Service is ready"
+          }
+        },
+        "tags": [
+          "health"
+        ]
+      }
+    }
+  },
+  "info": {
+    "title": "Account Service",
+    "description": "Account Service API",
+    "version": "1.0",
+    "contact": {}
+  },
+  "tags": [],
+  "servers": [],
+  "components": {
+    "schemas": {
+      "WalletLoginConfigResponseDto": {
+        "type": "object",
+        "properties": {
+          "providerId": {
+            "type": "string"
+          },
+          "siwfUrl": {
+            "type": "string"
+          },
+          "frequencyRpcUrl": {
+            "type": "string"
+          }
+        },
+        "required": [
+          "providerId",
+          "siwfUrl",
+          "frequencyRpcUrl"
+        ]
+      },
+      "HandleResponseDto": {
+        "type": "object",
+        "properties": {
+          "base_handle": {
+            "type": "string"
+          },
+          "canonical_base": {
+            "type": "string"
+          },
+          "suffix": {
+            "type": "number"
+          }
+        },
+        "required": [
+          "base_handle",
+          "canonical_base",
+          "suffix"
+        ]
+      },
+      "AccountResponseDto": {
+        "type": "object",
+        "properties": {
+          "msaId": {
+            "type": "string"
+          },
+          "handle": {
+            "$ref": "#/components/schemas/HandleResponseDto"
+          }
+        },
+        "required": [
+          "msaId"
+        ]
+      },
+      "SiwsPayloadDto": {
+        "type": "object",
+        "properties": {
+          "message": {
+            "type": "string"
+          },
+          "signature": {
+            "type": "string",
+            "description": "Signature of the payload",
+            "example": "0x64f8dd8846ba72cbb1954761ec4b2e44b886abb4b4ef7455b869355f17b4ce4a601ad26eabc57a682244a97bc9a2001b59469ae76fea105b724e988967d4928d"
+          }
+        },
+        "required": [
+          "message",
+          "signature"
+        ]
+      },
+      "ErrorResponseDto": {
+        "type": "object",
+        "properties": {
+          "message": {
+            "type": "string",
+            "description": "Error message",
+            "example": "Some error"
+          }
+        },
+        "required": [
+          "message"
+        ]
+      },
+      "SignInResponseDto": {
+        "type": "object",
+        "properties": {
+          "siwsPayload": {
+            "$ref": "#/components/schemas/SiwsPayloadDto"
+          },
+          "error": {
+            "$ref": "#/components/schemas/ErrorResponseDto"
+          }
+        }
+      },
+      "EncodedExtrinsicDto": {
+        "type": "object",
+        "properties": {
+          "pallet": {
+            "type": "string",
+            "minLength": 1
+          },
+          "extrinsicName": {
+            "type": "string",
+            "minLength": 1
+          },
+          "encodedExtrinsic": {
+            "type": "string",
+            "description": "Hex-encoded representation of the extrinsic",
+            "example": "0x00112233"
+          }
+        },
+        "required": [
+          "pallet",
+          "extrinsicName",
+          "encodedExtrinsic"
+        ]
+      },
+      "SignUpResponseDto": {
+        "type": "object",
+        "properties": {
+          "extrinsics": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/EncodedExtrinsicDto"
+            }
+          },
+          "error": {
+            "$ref": "#/components/schemas/ErrorResponseDto"
+          }
+        }
+      },
+      "WalletLoginRequestDto": {
+        "type": "object",
+        "properties": {
+          "signIn": {
+            "description": "The wallet login request information",
+            "example": {
+              "siwsPayload": {
+                "message": "0x1234567890abcdef",
+                "signature": "0x64f8dd8846ba72cbb1954761ec4b2e44b886abb4b4ef7455b869355f17b4ce4a601ad26eabc57a682244a97bc9a2001b59469ae76fea105b724e988967d4928d"
+              },
+              "err": {
+                "message": "Error message"
+              }
+            },
+            "allOf": [
+              {
+                "$ref": "#/components/schemas/SignInResponseDto"
+              }
+            ]
+          },
+          "signUp": {
+            "$ref": "#/components/schemas/SignUpResponseDto"
+          }
+        }
+      },
+      "WalletLoginResponseDto": {
+        "type": "object",
+        "properties": {
+          "referenceId": {
+            "type": "string"
+          },
+          "msaId": {
+            "type": "string"
+          },
+          "publicKey": {
+            "type": "string"
+          }
+        },
+        "required": [
+          "referenceId"
+        ]
+      },
+      "RetireMsaPayloadResponseDto": {
+        "type": "object",
+        "properties": {
+          "encodedExtrinsic": {
+            "type": "string",
+            "description": "Hex-encoded representation of the \"RetireMsa\" extrinsic",
+            "example": "0x1234"
+          },
+          "payloadToSign": {
+            "type": "string",
+            "description": "payload to be signed",
+            "example": "0x1234"
+          },
+          "accountId": {
+            "type": "string",
+            "description": "AccountId in hex or SS58 format",
+            "example": "1LSLqpLWXo7A7xuiRdu6AQPnBPNJHoQSu8DBsUYJgsNEJ4N"
+          }
+        },
+        "required": [
+          "encodedExtrinsic",
+          "payloadToSign",
+          "accountId"
+        ]
+      },
+      "RetireMsaRequestDto": {
+        "type": "object",
+        "properties": {
+          "encodedExtrinsic": {
+            "type": "string",
+            "description": "Hex-encoded representation of the \"RetireMsa\" extrinsic",
+            "example": "0x1234"
+          },
+          "payloadToSign": {
+            "type": "string",
+            "description": "payload to be signed",
+            "example": "0x1234"
+          },
+          "accountId": {
+            "type": "string",
+            "description": "AccountId in hex or SS58 format",
+            "example": "1LSLqpLWXo7A7xuiRdu6AQPnBPNJHoQSu8DBsUYJgsNEJ4N"
+          },
+          "signature": {
+            "type": "string",
+            "description": "signature of the owner",
+            "example": "0x065d733ca151c9e65b78f2ba77348224d31647e6913c44ad2765c6e8ba06f834dc21d8182447d01c30f84a41d90a8f2e58001d825c6f0d61b0afe89f984eec85"
+          }
+        },
+        "required": [
+          "encodedExtrinsic",
+          "payloadToSign",
+          "accountId",
+          "signature"
+        ]
+      },
+      "TransactionResponse": {
+        "type": "object",
+        "properties": {
+          "referenceId": {
+            "type": "string"
+          }
+        },
+        "required": [
+          "referenceId"
+        ]
+      },
+      "SchemaDelegation": {
+        "type": "object",
+        "properties": {
+          "schemaId": {
+            "type": "number"
+          },
+          "revokedAtBlock": {
+            "type": "number"
+          }
+        },
+        "required": [
+          "schemaId"
+        ]
+      },
+      "Delegation": {
+        "type": "object",
+        "properties": {
+          "providerId": {
+            "type": "string"
+          },
+          "schemaDelegations": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/SchemaDelegation"
+            }
+          },
+          "revokedAtBlock": {
+            "type": "number"
+          }
+        },
+        "required": [
+          "providerId",
+          "schemaDelegations"
+        ]
+      },
+      "DelegationResponseV2": {
+        "type": "object",
+        "properties": {
+          "msaId": {
+            "type": "string"
+          },
+          "delegations": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/Delegation"
+            }
+          }
+        },
+        "required": [
+          "msaId",
+          "delegations"
+        ]
+      },
+      "DelegationResponse": {
+        "type": "object",
+        "properties": {
+          "providerId": {
+            "type": "string"
+          },
+          "schemaPermissions": {
+            "type": "object"
+          },
+          "revokedAt": {
+            "type": "object"
+          }
+        },
+        "required": [
+          "providerId",
+          "schemaPermissions",
+          "revokedAt"
+        ]
+      },
+      "RevokeDelegationPayloadResponseDto": {
+        "type": "object",
+        "properties": {
+          "accountId": {
+            "type": "string",
+            "description": "AccountId in hex or SS58 format",
+            "example": "1LSLqpLWXo7A7xuiRdu6AQPnBPNJHoQSu8DBsUYJgsNEJ4N"
+          },
+          "providerId": {
+            "type": "string",
+            "description": "MSA Id of the provider to whom the requesting user wishes to delegate",
+            "example": "3"
+          },
+          "encodedExtrinsic": {
+            "type": "string",
+            "description": "Hex-encoded representation of the \"revokeDelegation\" extrinsic",
+            "example": "0x1234"
+          },
+          "payloadToSign": {
+            "type": "string",
+            "description": "payload to be signed",
+            "example": "0x1234"
+          }
+        },
+        "required": [
+          "accountId",
+          "providerId",
+          "encodedExtrinsic",
+          "payloadToSign"
+        ]
+      },
+      "RevokeDelegationPayloadRequestDto": {
+        "type": "object",
+        "properties": {
+          "accountId": {
+            "type": "string",
+            "description": "AccountId in hex or SS58 format",
+            "example": "1LSLqpLWXo7A7xuiRdu6AQPnBPNJHoQSu8DBsUYJgsNEJ4N"
+          },
+          "providerId": {
+            "type": "string",
+            "description": "MSA Id of the provider to whom the requesting user wishes to delegate",
+            "example": "3"
+          },
+          "encodedExtrinsic": {
+            "type": "string",
+            "description": "Hex-encoded representation of the \"revokeDelegation\" extrinsic",
+            "example": "0x1234"
+          },
+          "payloadToSign": {
+            "type": "string",
+            "description": "payload to be signed",
+            "example": "0x1234"
+          },
+          "signature": {
+            "type": "string",
+            "description": "signature of the owner",
+            "example": "0x065d733ca151c9e65b78f2ba77348224d31647e6913c44ad2765c6e8ba06f834dc21d8182447d01c30f84a41d90a8f2e58001d825c6f0d61b0afe89f984eec85"
+          }
+        },
+        "required": [
+          "accountId",
+          "providerId",
+          "encodedExtrinsic",
+          "payloadToSign",
+          "signature"
+        ]
+      },
+      "HandlePayloadDto": {
+        "type": "object",
+        "properties": {
+          "baseHandle": {
+            "type": "string",
+            "description": "base handle in the request",
+            "example": "handle"
+          },
+          "expiration": {
+            "type": "number",
+            "description": "expiration block number for this payload",
+            "example": "1"
+          }
+        },
+        "required": [
+          "baseHandle",
+          "expiration"
+        ]
+      },
+      "HandleRequestDto": {
+        "type": "object",
+        "properties": {
+          "accountId": {
+            "type": "string",
+            "description": "AccountId in hex or SS58 format",
+            "example": "1LSLqpLWXo7A7xuiRdu6AQPnBPNJHoQSu8DBsUYJgsNEJ4N"
+          },
+          "payload": {
+            "$ref": "#/components/schemas/HandlePayloadDto"
+          },
+          "proof": {
+            "type": "string",
+            "description": "proof is the signature for the payload",
+            "example": "0x065d733ca151c9e65b78f2ba77348224d31647e6913c44ad2765c6e8ba06f834dc21d8182447d01c30f84a41d90a8f2e58001d825c6f0d61b0afe89f984eec85"
+          }
+        },
+        "required": [
+          "accountId",
+          "payload",
+          "proof"
+        ]
+      },
+      "KeysRequestPayloadDto": {
+        "type": "object",
+        "properties": {
+          "msaId": {
+            "type": "string",
+            "description": "MSA Id of the user requesting the new key",
+            "example": "3"
+          },
+          "expiration": {
+            "type": "number",
+            "description": "expiration block number for this payload",
+            "example": "1"
+          },
+          "newPublicKey": {
+            "type": "string",
+            "description": "newPublicKey in hex format",
+            "example": "0x0ed2f8c714efcac51ca2325cfe95637e5e0b898ae397aa365978b7348a717d0b"
+          }
+        },
+        "required": [
+          "msaId",
+          "expiration",
+          "newPublicKey"
+        ]
+      },
+      "KeysRequestDto": {
+        "type": "object",
+        "properties": {
+          "msaOwnerAddress": {
+            "type": "string",
+            "description": "msaOwnerAddress representing the target of this request",
+            "example": "1LSLqpLWXo7A7xuiRdu6AQPnBPNJHoQSu8DBsUYJgsNEJ4N"
+          },
+          "msaOwnerSignature": {
+            "type": "string",
+            "description": "msaOwnerSignature is the signature by msa owner",
+            "example": "0x065d733ca151c9e65b78f2ba77348224d31647e6913c44ad2765c6e8ba06f834dc21d8182447d01c30f84a41d90a8f2e58001d825c6f0d61b0afe89f984eec85"
+          },
+          "newKeyOwnerSignature": {
+            "type": "string",
+            "description": "newKeyOwnerSignature is the signature with new key",
+            "example": "0x065d733ca151c9e65b78f2ba77348224d31647e6913c44ad2765c6e8ba06f834dc21d8182447d01c30f84a41d90a8f2e58001d825c6f0d61b0afe89f984eec85"
+          },
+          "payload": {
+            "$ref": "#/components/schemas/KeysRequestPayloadDto"
+          }
+        },
+        "required": [
+          "msaOwnerAddress",
+          "msaOwnerSignature",
+          "newKeyOwnerSignature",
+          "payload"
+        ]
+      },
+      "ItemizedSignaturePayloadDto": {
+        "type": "object",
+        "properties": {
+          "schemaId": {
+            "type": "number",
+            "description": "schemaId related to the payload",
+            "example": "1"
+          },
+          "targetHash": {
+            "type": "number",
+            "description": "targetHash related to the stateful storage",
+            "example": "1234"
+          },
+          "expiration": {
+            "type": "number",
+            "description": "expiration block number for this payload",
+            "example": "1"
+          },
+          "actions": {
+            "example": [
+              {
+                "type": "ADD_ITEM",
+                "encodedPayload": "0x1122"
+              }
+            ],
+            "type": "array",
+            "items": {
+              "type": "string"
+            }
+          }
+        },
+        "required": [
+          "schemaId",
+          "targetHash",
+          "expiration",
+          "actions"
+        ]
+      },
+      "AddNewPublicKeyAgreementRequestDto": {
+        "type": "object",
+        "properties": {
+          "accountId": {
+            "type": "string",
+            "description": "AccountId in hex or SS58 format",
+            "example": "1LSLqpLWXo7A7xuiRdu6AQPnBPNJHoQSu8DBsUYJgsNEJ4N"
+          },
+          "payload": {
+            "$ref": "#/components/schemas/ItemizedSignaturePayloadDto"
+          },
+          "proof": {
+            "type": "string",
+            "description": "proof is the signature for the payload",
+            "example": "0x065d733ca151c9e65b78f2ba77348224d31647e6913c44ad2765c6e8ba06f834dc21d8182447d01c30f84a41d90a8f2e58001d825c6f0d61b0afe89f984eec85"
+          }
+        },
+        "required": [
+          "accountId",
+          "payload",
+          "proof"
+        ]
+      }
+    }
+  }
+}
