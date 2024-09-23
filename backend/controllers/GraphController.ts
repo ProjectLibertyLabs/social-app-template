@@ -5,7 +5,7 @@ import { GraphService } from '../services/GraphService';
 import { HttpError } from '../types/HttpError';
 import { validateAuthToken } from '../services/TokenAuth';
 import logger from '../logger';
-import { GraphWebhookService } from '../services/GraphWebhookService';
+import * as GraphWebhookService from '../services/GraphWebhookService';
 
 export class GraphController extends BaseController {
   constructor(app: Express) {

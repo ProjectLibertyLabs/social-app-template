@@ -20,11 +20,11 @@ import { MulterError } from 'multer';
 import logger from './logger';
 import { WebhookController } from './controllers/WebhookController';
 import { ContentWatcherService } from './services/ContentWatcherService';
-import { AnnouncementType } from './types/content-announcement';
 import { randomUUID } from 'crypto';
 import { ContentRepository } from './repositories/ContentRepository';
 import { GraphService } from './services/GraphService';
 import { sseManager } from './utils/sse';
+import { AnnouncementTypeName } from './types/content-watcher';
 
 // Support BigInt JSON
 (BigInt.prototype as any).toJSON = function () {
@@ -115,9 +115,7 @@ ContentWatcherService.getInstance().then(async (service) => {
 
   service.registerWebhook(
     `${Config.instance().webhookBaseUrl}/content-watcher/announcements`,
-    Object.values(AnnouncementType)
-      .filter((v) => typeof v !== 'string')
-      .map((v) => v as AnnouncementType)
+    Object.values(AnnouncementTypeName).map((v) => v as AnnouncementTypeName)
   );
 
   service.requestContent({
