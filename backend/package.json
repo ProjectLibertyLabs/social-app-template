@@ -46,7 +46,7 @@
     "@dsnp/parquetjs": "^1.6.2",
     "@frequency-chain/api-augment": "^1.13.2",
     "@multiformats/blake2": "^2.0.2",
-    "@polkadot/api": "^10.9.1",
+    "@polkadot/api": "^13.2.1",
     "@polkadot/util": "^12.6.2",
     "@projectlibertylabs/siwf": "^1.0.0",
     "avro-js": "^1.11.3",
