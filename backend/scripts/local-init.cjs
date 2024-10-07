@@ -1,7 +1,6 @@
 /* eslint @typescript-eslint/no-var-requires: "off" */
 const { options } = require('@frequency-chain/api-augment');
 const { WsProvider, ApiPromise, Keyring } = require('@polkadot/api');
-const { deploy } = require('@dsnp/frequency-schemas/cli/deploy');
 
 // Given a list of events, a section and a method,
 // returns the first event with matching section and method.
@@ -92,10 +91,6 @@ const main = async () => {
       }
     });
   });
-
-  // Deploy Schemas
-  // Uncomment if not using the 'dsnp/instant-seal-node-with-deployed-schemas' image
-  // await deploy();
 
   console.log('Setup Complete!');
 };
