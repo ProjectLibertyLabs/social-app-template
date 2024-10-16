@@ -182,8 +182,8 @@ This is best for Testnet interactions.
 
 Setup the Environment Variables:
 
-- `FREQUENCY_URL="wss://rpc.paseo.frequency.xyz"`
-- `FREQUENCY_HTTP_URL="https://rpc.paseo.frequency.xyz"`
+- `FREQUENCY_API_WS_URL="wss://rpc.paseo.frequency.xyz"`
+- `SIWF_NODE_RPC_URL="https://rpc.paseo.frequency.xyz"`
 
 #### Option 2: Local Network from Source
 
