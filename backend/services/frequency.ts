@@ -19,7 +19,7 @@ export const getApi = (): Promise<ApiPromise> => {
     return _singletonApi;
   }
 
-  const provider = new WsProvider(Config.instance().frequencyUrl.toString());
+  const provider = new WsProvider(Config.instance().frequencyApiWsUrl.toString());
   _singletonApi = ApiPromise.create({
     provider: provider,
     throwOnConnect: true,

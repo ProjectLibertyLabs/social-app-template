@@ -151,14 +151,14 @@ Setting defaults for testnet...
 Hit <ENTER> to accept the default value or enter new value and then hit <ENTER>
 
 EOI
-        DEFAULT_FREQUENCY_URL="wss://0.rpc.testnet.amplica.io"
-        DEFAULT_FREQUENCY_HTTP_URL="https://0.rpc.testnet.amplica.io"
+        DEFAULT_FREQUENCY_API_WS_URL="wss://0.rpc.testnet.amplica.io"
+        DEFAULT_SIWF_NODE_RPC_URL="https://0.rpc.testnet.amplica.io"
         DEFAULT_PROVIDER_ID=
         DEFAULT_PROVIDER_ACCOUNT_SEED_PHRASE=
     else
         echo -e "\nStarting on local..."
-        DEFAULT_FREQUENCY_URL="ws://frequency:9944"
-        DEFAULT_FREQUENCY_HTTP_URL="http://localhost:9944"
+        DEFAULT_FREQUENCY_API_WS_URL="ws://frequency:9944"
+        DEFAULT_SIWF_NODE_RPC_URL="http://localhost:9944"
         DEFAULT_PROVIDER_ID="1"
         DEFAULT_PROVIDER_ACCOUNT_SEED_PHRASE="//Alice"
     fi
@@ -188,8 +188,8 @@ EOI
         export_save_variable REACT_APP_HEADER_BG_COLOR "#FFFFFF"
     fi
 
-    ask_and_save FREQUENCY_URL "Enter the Frequency RPC URL" "$DEFAULT_FREQUENCY_URL"
-    ask_and_save FREQUENCY_HTTP_URL "Enter the Frequency HTTP RPC URL" "$DEFAULT_FREQUENCY_HTTP_URL"
+    ask_and_save FREQUENCY_API_WS_URL "Enter the Frequency API WS URL" "$DEFAULT_FREQUENCY_API_WS_URL"
+    ask_and_save SIWF_NODE_RPC_URL "Enter the SIWF Node RPC URL" "$DEFAULT_SIWF_NODE_RPC_URL"
     echo
 
     if [ ${TESTNET_ENV} = true ]

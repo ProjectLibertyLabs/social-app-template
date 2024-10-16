@@ -15,8 +15,8 @@ const ENV_SCHEMA = Joi.object({
   DEBUG: Joi.string(),
   IPFS_GATEWAY_URL: Joi.string().uri(),
   IPFS_UA_GATEWAY_URL: Joi.string().uri(),
-  FREQUENCY_URL: Joi.string().uri().required(),
-  FREQUENCY_HTTP_URL: Joi.string().uri().required(),
+  FREQUENCY_API_WS_URL: Joi.string().uri().required(),
+  SIWF_NODE_RPC_URL: Joi.string().uri().required(),
   PROVIDER_ID: Joi.number()
     .required()
     .positive()
@@ -91,8 +91,8 @@ export class Config {
     return this.configValues['IPFS_UA_GATEWAY_URL'] || this.ipfsGatewayUrl;
   }
 
-  public get frequencyUrl() {
-    return this.configValues['FREQUENCY_URL'];
+  public get frequencyApiWsUrl() {
+    return this.configValues['FREQUENCY_API_WS_URL'];
   }
 
   public get providerId(): string {
