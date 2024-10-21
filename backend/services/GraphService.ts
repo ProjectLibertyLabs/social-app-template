@@ -88,7 +88,7 @@ export class GraphService {
     const errorList: string[] = userGraphDto
       .map((userGraph) => userGraph.errorMessage)
       .filter((item): item is string => item !== undefined && item.length > 0);
-    if (errorList.length > 0){
+    if (errorList.length > 0) {
       logger.error({ errorList }, 'GraphService: getPublicFollows: processed errorList');
     }
     return followList;
