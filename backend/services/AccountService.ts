@@ -1,6 +1,6 @@
 import { Client as AccountServiceClient, type Components } from '../types/openapi-account-service';
 import { OpenAPIClientAxios, type Document } from 'openapi-client-axios';
-import openapiJson from '../openapi-specs/account-service.json' assert { type: 'json' };
+import openapiJson from '../openapi-specs/account.openapi.json' assert { type: 'json' };
 import { WalletProxyResponse, validateSignin, validateSignup } from '@projectlibertylabs/siwf';
 import { createAuthToken, getAuthToken, revokeAuthToken } from './TokenAuth';
 import { getApi } from './frequency';
@@ -9,13 +9,14 @@ import { HttpStatusCode } from 'axios';
 import { HttpError } from '../types/HttpError';
 import { Request } from 'express';
 import logger from '../logger';
-import { AccountServiceWebhook } from './AccountWebhookService';
+import * as AccountServiceWebhook from './AccountWebhookService';
 import { Components as BackendComponents } from '../types/api';
+import { SIWFWebhookRsp, TransactionType } from '../types/account-service-webhook';
 
 type AuthAccountResponse = BackendComponents.Schemas.AuthAccountResponse;
 type WalletLoginRequestDto = Components.Schemas.WalletLoginRequestDto;
-type WalletLoginConfigResponse = Components.Schemas.WalletLoginConfigResponse;
-type WalletLoginResponse = Components.Schemas.WalletLoginResponse;
+type WalletLoginConfigResponse = Components.Schemas.WalletLoginConfigResponseDto;
+type WalletLoginResponse = Components.Schemas.WalletLoginResponseDto;
 
 /**
  * The `AccountService` class provides methods for interacting with user accounts.
@@ -80,7 +81,7 @@ export class AccountService {
    */
   public async getAccount(msaId: string): Promise<Pick<AuthAccountResponse, 'msaId' | 'handle'>> {
     try {
-      const response = await this.client.AccountsControllerV1_getAccount(msaId);
+      const response = await this.client.AccountsControllerV1_getAccountForMsa(msaId);
       logger.debug(
         `AccountService: getAccount: Got account for msaID:(${msaId}), data:(${JSON.stringify(response.data)})`
       );
@@ -106,18 +107,24 @@ export class AccountService {
     logger.debug(`AccountService: getAccountByReferenceId: Looking for account for referenceId:(${referenceId})`);
     try {
       const accountData = AccountServiceWebhook.referenceIdsReceived.get(referenceId);
+      logger.debug(`Got reference payload for id ${referenceId}: ${JSON.stringify(accountData)}`);
       if (accountData) {
-        // REMOVE: When account service webhook is fixed to return the HandleResponse
-        const response = await this.client.AccountsControllerV1_getAccount(accountData.msaId);
-        // END REMOVE:
-        logger.debug(`Found account for referenceId:(${referenceId})`);
-        return {
-          accessToken: createAuthToken(accountData.accountId),
-          expires: Date.now() + 24 * 60 * 60 * 1_000,
-          referenceId: referenceId,
-          msaId: accountData.msaId,
-          handle: response.data.handle as AuthAccountResponse['handle'],
-        };
+        if (accountData.transactionType === TransactionType.SIWF_SIGNUP) {
+          const siwfData = accountData as SIWFWebhookRsp;
+          // REMOVE: When account service webhook is fixed to return the HandleResponse
+          const response = await this.client.AccountsControllerV1_getAccountForMsa(accountData.msaId);
+          // END REMOVE:
+          logger.debug(`Found account for referenceId:(${referenceId})`);
+          return {
+            accessToken: createAuthToken(siwfData.accountId),
+            expires: Date.now() + 24 * 60 * 60 * 1_000,
+            referenceId: referenceId,
+            msaId: siwfData.msaId,
+            handle: response.data.handle as AuthAccountResponse['handle'],
+          };
+        } else {
+          throw new Error(`Unable to get accountId associated with reference ${referenceId}`);
+        }
       }
     } catch (e) {
       logger.error(`Failed to get account for referenceId:(${referenceId}) error:${e}`);

@@ -1,12 +1,12 @@
 import { Client as ContentWatcherClient, Components } from '../types/openapi-content-watcher-service';
-import openapiJson from '../openapi-specs/content-watcher-service.json' with { type: 'json' };
+import openapiJson from '../openapi-specs/content-watcher.openapi.json' with { type: 'json' };
 import { OpenAPIClientAxios, type Document } from 'openapi-client-axios';
 import * as Config from '../config/config';
 import logger from '../logger';
-import { AnnouncementType } from '../types/content-announcement';
 
 export type ResetScannerDto = Components.Schemas.ResetScannerDto;
 export type ContentSearchRequestDto = Components.Schemas.ContentSearchRequestDto;
+export type AnnouncementTypeName = Components.Schemas.AnnouncementTypeName;
 
 export class ContentWatcherService {
   private static instance: ContentWatcherService;
@@ -50,13 +50,13 @@ export class ContentWatcherService {
    * @param url - The URL of the webhook.
    * @param announcementTypes - An array of announcement types.
    */
-  public async registerWebhook(url: string, announcementTypes: AnnouncementType[]) {
+  public async registerWebhook(url: string, announcementTypes: AnnouncementTypeName[]) {
     try {
       let registeredWebhooks = await this.client.WebhookControllerV1_getRegisteredWebhooks();
       logger.debug(registeredWebhooks.data, 'Currently registered webhooks for content-watcher-service:');
       await this.client.WebhookControllerV1_registerWebhook(null, {
         url,
-        announcementTypes: announcementTypes.map((prop) => AnnouncementType[prop].toLowerCase()),
+        announcementTypes,
       });
       registeredWebhooks = await this.client.WebhookControllerV1_getRegisteredWebhooks();
       logger.debug(registeredWebhooks.data, 'Updated registered webhooks for content-watcher-service:');

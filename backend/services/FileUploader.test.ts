@@ -1,3 +1,4 @@
+import 'multer';
 import FormData from 'form-data';
 import { AssetsService } from './AssetsService.js';
 import { describe, vi, expect, test, afterEach, MockedFunction } from 'vitest';
@@ -60,8 +61,6 @@ describe('FileUploader', () => {
         mimetype: 'text/plain',
       } as Express.Multer.File,
     ];
-
-    const uploadUrl = 'http://localhost:5010/api/asset/upload';
 
     const formData = new FormData();
     formData.append('file1', files[0].fieldname, {

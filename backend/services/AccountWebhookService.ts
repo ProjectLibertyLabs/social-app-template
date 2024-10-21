@@ -1,80 +1,63 @@
-import { Client as AccountServiceWebhookClient } from '../types/openapi-account-service';
-import { OpenAPIClientAxios, type Document } from 'openapi-client-axios';
-import openapiJson from '../openapi-specs/account-service.json' assert { type: 'json' };
-import * as Config from '../config/config';
 import { HttpStatusCode } from 'axios';
 import logger from '../logger';
 import { HttpError } from '../types/HttpError';
-import { HandleResponse } from '@frequency-chain/api-augment/interfaces';
+import { SIWFWebhookRsp, TransactionType, TxWebhookRsp } from '../types/account-service-webhook';
 
-type AccountServiceWebhookResponse = {
-  referenceId: string;
-  handle: HandleResponse;
-  msaId: string;
-  accountId: string;
-};
+// TODO: this should probably use a limited lifetime cache entry, as the current
+// implementation can grow unbounded
+export const referenceIdsReceived: Map<string, TxWebhookRsp> = new Map();
 
-type SIWFTransactionData = {
-  msaId: string;
-  handle: HandleResponse;
-  accountId: string;
-};
+/**
+ * Handles the webhook from the account service.
+ * @param _req - The request object, contains the on-chain data from the account-service for the referenceId.
+ * @param res - The response object.
+ */
+export function accountServiceWebhook(payload: TxWebhookRsp) {
+  const { referenceId, transactionType } = payload;
+  const requiredFields: string[] = ['referenceId', 'providerId', 'msaId', 'transactionType'];
+  logger.debug(`Received webhook response for refId "${referenceId}": ${JSON.stringify(payload)}`);
 
-export class AccountServiceWebhook {
-  private static instance: AccountServiceWebhook;
-  // TODO: this should probably use a limited lifetime cache entry, as the current
-  // implementation can grow unbounded
-  public static referenceIdsReceived: Map<string, SIWFTransactionData> = new Map();
-  private _client: AccountServiceWebhookClient;
+  switch (transactionType as unknown as TransactionType) {
+    case TransactionType.ADD_KEY:
+      requiredFields.push('newPublicKey');
+      break;
 
-  private constructor() {}
+    case TransactionType.ADD_PUBLIC_KEY_AGREEMENT:
+      requiredFields.push('schemaId');
+      break;
 
-  public static async getInstance(): Promise<AccountServiceWebhook> {
-    if (!AccountServiceWebhook.instance) {
-      AccountServiceWebhook.instance = new AccountServiceWebhook();
-      await AccountServiceWebhook.instance.connect();
+    case TransactionType.CHANGE_HANDLE:
+    case TransactionType.CREATE_HANDLE:
+      requiredFields.push('handle');
+      break;
+
+    case TransactionType.RETIRE_MSA:
+      break;
+
+    case TransactionType.REVOKE_DELEGATION:
+      break;
+
+    case TransactionType.SIWF_SIGNUP:
+      requiredFields.push('handle', 'accountId');
+      logger.debug(`Received account signup response for referenceId ${referenceId}`, payload as SIWFWebhookRsp);
+      break;
+
+    default:
+      throw new HttpError(HttpStatusCode.BadRequest, `Unknown transaction type ${transactionType}`);
+  }
+
+  const missingFields: string[] = [];
+  requiredFields.forEach((field) => {
+    if (!Object.keys(payload).some((key) => key === field)) {
+      missingFields.push(field);
     }
-    return AccountServiceWebhook.instance;
+  });
+
+  if (missingFields.length > 0) {
+    throw new HttpError(HttpStatusCode.BadRequest, `Missing required fields: ${missingFields}`);
   }
 
-  private async connect() {
-    if (this._client === undefined) {
-      const api = new OpenAPIClientAxios({
-        definition: openapiJson as Document,
-        withServer: { url: Config.instance().accountServiceUrl },
-      });
-      this._client = await api.init<AccountServiceWebhookClient>();
-    }
-  }
-
-  private set client(api: AccountServiceWebhookClient) {
-    this._client = api;
-  }
-
-  private get client() {
-    if (this._client === undefined) {
-      throw new Error(`${this.constructor.name} API not initialized`);
-    }
-    return this._client;
-  }
-
-  /**
-   * Handles the webhook from the account service.
-   * @param _req - The request object, contains the on-chain data from the account-service for the referenceId.
-   * @param res - The response object.
-   */
-  public accountServiceWebhook({ referenceId, handle, msaId, accountId }: AccountServiceWebhookResponse) {
-    // TODO: This may need to be updated when claim/change handle is implemented
-    if (referenceId && handle && msaId && accountId) {
-      AccountServiceWebhook.referenceIdsReceived.set(referenceId, {
-        msaId,
-        handle,
-        accountId,
-      });
-      logger.debug(`WebhookController:authServiceWebhook: received referenceId: ${referenceId}`);
-    } else {
-      throw new HttpError(HttpStatusCode.BadRequest, 'Missing required fields');
-    }
-    return HttpStatusCode.Created;
-  }
+  referenceIdsReceived.set(referenceId, payload);
+  logger.debug(`WebhookController:authServiceWebhook: received referenceId: ${referenceId}`);
+  return HttpStatusCode.Created;
 }

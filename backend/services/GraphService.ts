@@ -1,7 +1,7 @@
 import { Components, Client as GraphServiceClient } from '../types/openapi-graph-service';
-import { GraphWebhookService } from './GraphWebhookService';
+import * as GraphWebhookService from './GraphWebhookService';
 import { OpenAPIClientAxios, type Document } from 'openapi-client-axios';
-import openapiJson from '../openapi-specs/graph-service.json' assert { type: 'json' };
+import openapiJson from '../openapi-specs/graph.openapi.json' assert { type: 'json' };
 import * as Config from '../config/config';
 import logger from '../logger.js';
 

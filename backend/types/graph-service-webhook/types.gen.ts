@@ -2,7 +2,7 @@
 
 export type GraphChangeNotificationV1 = {
   /**
-   * MSA ID for which this notification is being sent
+   * MSA Id for which this notification is being sent
    */
   msaId: string;
   /**
