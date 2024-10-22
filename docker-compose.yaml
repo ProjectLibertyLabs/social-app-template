@@ -42,6 +42,7 @@ x-graph-service-env: &graph-service-env
   RECONNECTION_SERVICE_REQUIRED: false
   PROVIDER_BASE_URL: 'http://social-app-template-backend:3001/webhooks/graph-service'
   CACHE_KEY_PREFIX: 'graph:'
+  AT_REST_ENCRYPTION_KEY_SEED: 'This should get injected as a secret'
 
 x-account-service-env: &account-service-env
   BLOCKCHAIN_SCAN_INTERVAL_SECONDS: 1

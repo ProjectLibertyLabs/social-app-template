@@ -72,6 +72,7 @@ export class GraphService {
     const graphsQueryParamsDto: GraphsQueryParamsDto = {
       dsnpIds: [msaId],
       privacyType: 'public',
+      connectionType: 'follow',
       graphKeyPairs: [],
     };
     logger.debug({ msaId, graphsQueryParamsDto }, 'GraphService: getPublicFollows: data from API call');
@@ -82,6 +83,14 @@ export class GraphService {
       .filter((item): item is string[] => item !== undefined)
       .flat();
     logger.debug({ followList }, 'GraphService: getPublicFollows: processed followList');
+
+    // logging errors
+    const errorList: string[] = userGraphDto
+      .map((userGraph) => userGraph.errorMessage)
+      .filter((item): item is string => item !== undefined && item.length > 0);
+    if (errorList.length > 0) {
+      logger.error({ errorList }, 'GraphService: getPublicFollows: processed errorList');
+    }
     return followList;
   }
 

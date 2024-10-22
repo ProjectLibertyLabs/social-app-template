@@ -10,29 +10,26 @@ declare namespace Components {
   namespace Schemas {
     export interface ConnectionDto {
       /**
+       * example:
+       * public
+       */
+      privacyType: /* Indicator connection type (public or private) */ PrivacyType;
+      /**
+       * example:
+       * connectionTo
+       */
+      direction: /* Indicator of the direction of this connection */ Direction;
+      /**
+       * example:
+       * follow
+       */
+      connectionType: /* Indicator of the type of connection (follow or friendship) */ ConnectionType;
+      /**
        * MSA Id representing the target of this connection
        * example:
        * 3
        */
       dsnpId: string;
-      /**
-       * Indicator connection type (public or private)
-       * example:
-       * public
-       */
-      privacyType: 'private' | 'public';
-      /**
-       * Indicator of the direction of this connection
-       * example:
-       * connectionTo
-       */
-      direction: 'connectionTo' | 'connectionFrom' | 'bidirectional' | 'disconnect';
-      /**
-       * Indicator of the type of connection (follow or friendship)
-       * example:
-       * follow
-       */
-      connectionType: 'follow' | 'friendship';
     }
     export interface ConnectionDtoWrapper {
       /**
@@ -40,6 +37,14 @@ declare namespace Components {
        */
       data: ConnectionDto[];
     }
+    /**
+     * Indicator of the type of connection (follow or friendship)
+     */
+    export type ConnectionType = 'follow' | 'friendship';
+    /**
+     * Indicator of the direction of this connection
+     */
+    export type Direction = 'connectionTo' | 'connectionFrom' | 'bidirectional' | 'disconnect';
     export interface DsnpGraphEdgeDto {
       /**
        * MSA Id of the user represented by this graph edge
@@ -54,13 +59,20 @@ declare namespace Components {
        */
       since: number;
     }
-    export interface GraphChangeRepsonseDto {
+    export interface GraphChangeResponseDto {
       /**
        * Reference ID by which the results/status of a submitted GraphChangeRequest may be retrieved
+       * example:
+       * bee2d0d2f658126c563088217e106f2fa9e56ed4
        */
       referenceId: string;
     }
     export interface GraphKeyPairDto {
+      /**
+       * example:
+       * X25519
+       */
+      keyType: /* Key type of graph encryption keypair (currently only X25519 supported) */ KeyType;
       /**
        * Public graph encryption key as a hex string (prefixed with "0x")
        * example:
@@ -73,14 +85,18 @@ declare namespace Components {
        * 0xd43593c715fdd31c61141abd04a99fd6822c8558854ccde39a5684e7a56da27d
        */
       privateKey: string;
-      /**
-       * Key type of graph encryption keypair (currently only X25519 supported)
-       * example:
-       * X25519
-       */
-      keyType: 'X25519';
     }
     export interface GraphsQueryParamsDto {
+      /**
+       * example:
+       * public
+       */
+      privacyType: /* Indicator connection type (public or private) */ PrivacyType;
+      /**
+       * example:
+       * follow
+       */
+      connectionType: /* Indicator of the type of connection (follow or friendship) */ ConnectionType;
       /**
        * Array of MSA Ids for which to query graphs
        * example:
@@ -93,16 +109,18 @@ declare namespace Components {
        */
       dsnpIds: string[];
       /**
-       * Graph type to query (public or private)
-       * example:
-       * public
-       */
-      privacyType: 'private' | 'public';
-      /**
        * Graph encryption keypairs for the users requested in `dsnpIds`. (Only for `privacyType` === "private"
        */
       graphKeyPairs?: GraphKeyPairDto[];
     }
+    /**
+     * Key type of graph encryption keypair (currently only X25519 supported)
+     */
+    export type KeyType = 'X25519';
+    /**
+     * Indicator connection type (public or private)
+     */
+    export type PrivacyType = 'private' | 'public';
     export interface ProviderGraphDto {
       /**
        * MSA Id that owns the connections represented in this object
@@ -141,6 +159,10 @@ declare namespace Components {
        * Optional array of graph edges in the specific user graph represented by this object
        */
       dsnpGraphEdges?: DsnpGraphEdgeDto[];
+      /**
+       * Optional error message if the request failed
+       */
+      errorMessage?: string;
     }
     export interface WatchGraphsDto {
       /**
@@ -173,7 +195,7 @@ declare namespace Paths {
   namespace GraphControllerV1UpdateGraph {
     export type RequestBody = Components.Schemas.ProviderGraphDto;
     namespace Responses {
-      export type $201 = Components.Schemas.GraphChangeRepsonseDto;
+      export type $201 = Components.Schemas.GraphChangeResponseDto;
     }
   }
   namespace HealthControllerHealthz {
@@ -198,10 +220,18 @@ declare namespace Paths {
   }
   namespace WebhooksControllerV1DeleteAllWebhooksForUrl {
     namespace Parameters {
+      /**
+       * example:
+       * http://localhost/webhook
+       */
       export type Url = string;
     }
     export interface QueryParameters {
-      url: Parameters.Url;
+      url: /**
+       * example:
+       * http://localhost/webhook
+       */
+      Parameters.Url;
     }
     namespace Responses {
       export interface $200 {}
@@ -209,10 +239,18 @@ declare namespace Paths {
   }
   namespace WebhooksControllerV1DeleteWebhooksForMsa {
     namespace Parameters {
+      /**
+       * example:
+       * 2
+       */
       export type MsaId = string;
     }
     export interface PathParameters {
-      msaId: Parameters.MsaId;
+      msaId: /**
+       * example:
+       * 2
+       */
+      Parameters.MsaId;
     }
     namespace Responses {
       export interface $200 {}
@@ -225,28 +263,52 @@ declare namespace Paths {
   }
   namespace WebhooksControllerV1GetWebhooksForMsa {
     namespace Parameters {
+      /**
+       * example:
+       * true
+       */
       export type IncludeAll = boolean;
+      /**
+       * example:
+       * 2
+       */
       export type MsaId = string;
     }
     export interface PathParameters {
-      msaId: Parameters.MsaId;
+      msaId: /**
+       * example:
+       * 2
+       */
+      Parameters.MsaId;
     }
     export interface QueryParameters {
-      includeAll?: Parameters.IncludeAll;
+      includeAll?: /**
+       * example:
+       * true
+       */
+      Parameters.IncludeAll;
     }
     namespace Responses {
-      export interface $200 {}
+      export type $200 = string[];
     }
   }
   namespace WebhooksControllerV1GetWebhooksForUrl {
     namespace Parameters {
+      /**
+       * example:
+       * http://localhost/webhook
+       */
       export type Url = string;
     }
     export interface QueryParameters {
-      url: Parameters.Url;
+      url: /**
+       * example:
+       * http://localhost/webhook
+       */
+      Parameters.Url;
     }
     namespace Responses {
-      export interface $200 {}
+      export type $200 = string[];
     }
   }
   namespace WebhooksControllerV1WatchGraphs {
