@@ -305,8 +305,7 @@ fi
 
 SERVICES_STR="\
 The selected services are running.
-
-🚀 You can access the Gateway at the following local addresses: 🚀
+You can access the Gateway at the following local addresses:
 "
 if [[ ${PROFILES} =~ account ]]; then
 SERVICES_STR="${SERVICES_STR}
@@ -348,4 +347,4 @@ SERVICES_STR="${SERVICES_STR}
 "
 fi
 
-${OUTPUT} "${SERVICES_STR}"
+box_text_attention "${SERVICES_STR}"
