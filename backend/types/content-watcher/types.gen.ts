@@ -32,9 +32,9 @@ export type ContentSearchRequestDto = {
    */
   clientReferenceId?: string;
   /**
-   * The block number to search (backward) from
+   * The highest block number to start the backward search from
    */
-  startBlock?: number;
+  upperBoundBlock?: number;
   /**
    * The number of blocks to scan (backwards)
    */
@@ -50,6 +50,68 @@ export type ContentSearchRequestDto = {
 };
 
 /**
+ * Status of webhook registration response
+ */
+export enum HttpStatus {
+  '_100' = 100,
+  '_101' = 101,
+  '_102' = 102,
+  '_103' = 103,
+  '_200' = 200,
+  '_201' = 201,
+  '_202' = 202,
+  '_203' = 203,
+  '_204' = 204,
+  '_205' = 205,
+  '_206' = 206,
+  '_300' = 300,
+  '_301' = 301,
+  '_302' = 302,
+  '_303' = 303,
+  '_304' = 304,
+  '_307' = 307,
+  '_308' = 308,
+  '_400' = 400,
+  '_401' = 401,
+  '_402' = 402,
+  '_403' = 403,
+  '_404' = 404,
+  '_405' = 405,
+  '_406' = 406,
+  '_407' = 407,
+  '_408' = 408,
+  '_409' = 409,
+  '_410' = 410,
+  '_411' = 411,
+  '_412' = 412,
+  '_413' = 413,
+  '_414' = 414,
+  '_415' = 415,
+  '_416' = 416,
+  '_417' = 417,
+  '_418' = 418,
+  '_421' = 421,
+  '_422' = 422,
+  '_424' = 424,
+  '_428' = 428,
+  '_429' = 429,
+  '_500' = 500,
+  '_501' = 501,
+  '_502' = 502,
+  '_503' = 503,
+  '_504' = 504,
+  '_505' = 505,
+}
+
+export type SearchResponseDto = {
+  status: HttpStatus;
+  /**
+   * Job id of search job
+   */
+  jobId: string;
+};
+
+/**
  * Announcement types to send to the webhook
  */
 export enum AnnouncementTypeName {
@@ -62,9 +124,17 @@ export enum AnnouncementTypeName {
 }
 
 export type WebhookRegistrationDto = {
+  announcementTypes: Array<AnnouncementTypeName>;
   /**
    * Webhook URL
    */
   url: string;
-  announcementTypes: Array<AnnouncementTypeName>;
+};
+
+export type WebhookRegistrationResponseDto = {
+  status: HttpStatus;
+  /**
+   * List of registered webhooks
+   */
+  registeredWebhooks: Array<WebhookRegistrationDto>;
 };

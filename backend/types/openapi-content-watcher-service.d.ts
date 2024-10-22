@@ -38,11 +38,11 @@ declare namespace Components {
        */
       clientReferenceId?: string;
       /**
-       * The block number to search (backward) from
+       * The highest block number to start the backward search from
        * example:
        * 100
        */
-      startBlock?: number;
+      upperBoundBlock?: number;
       /**
        * The number of blocks to scan (backwards)
        * example:
@@ -79,6 +79,58 @@ declare namespace Components {
        */
       webhookUrl: string;
     }
+    /**
+     * Status of webhook registration response
+     */
+    export type HttpStatus =
+      | 100
+      | 101
+      | 102
+      | 103
+      | 200
+      | 201
+      | 202
+      | 203
+      | 204
+      | 205
+      | 206
+      | 300
+      | 301
+      | 302
+      | 303
+      | 304
+      | 307
+      | 308
+      | 400
+      | 401
+      | 402
+      | 403
+      | 404
+      | 405
+      | 406
+      | 407
+      | 408
+      | 409
+      | 410
+      | 411
+      | 412
+      | 413
+      | 414
+      | 415
+      | 416
+      | 417
+      | 418
+      | 421
+      | 422
+      | 424
+      | 428
+      | 429
+      | 500
+      | 501
+      | 502
+      | 503
+      | 504
+      | 505;
     export interface ResetScannerDto {
       /**
        * The block number to reset the scanner to
@@ -99,13 +151,20 @@ declare namespace Components {
        */
       immediate?: boolean;
     }
-    export interface WebhookRegistrationDto {
+    export interface SearchResponseDto {
       /**
-       * Webhook URL
        * example:
-       * https://example.com/webhook
+       * 200
        */
-      url: string;
+      status: /* Status of webhook registration response */ HttpStatus;
+      /**
+       * Job id of search job
+       * example:
+       * 7b02edd742a653a3cf63bb0c84e43d3678aa045f
+       */
+      jobId: string;
+    }
+    export interface WebhookRegistrationDto {
       /**
        * example:
        * [
@@ -117,6 +176,23 @@ declare namespace Components {
        * ]
        */
       announcementTypes: /* Announcement types to send to the webhook */ AnnouncementTypeName[];
+      /**
+       * Webhook URL
+       * example:
+       * https://example.com/webhook
+       */
+      url: string;
+    }
+    export interface WebhookRegistrationResponseDto {
+      /**
+       * example:
+       * 200
+       */
+      status: /* Status of webhook registration response */ HttpStatus;
+      /**
+       * List of registered webhooks
+       */
+      registeredWebhooks: WebhookRegistrationDto[];
     }
   }
 }
@@ -172,7 +248,7 @@ declare namespace Paths {
   namespace SearchControllerV1Search {
     export type RequestBody = Components.Schemas.ContentSearchRequestDto;
     namespace Responses {
-      export type $200 = string;
+      export type $200 = Components.Schemas.SearchResponseDto;
     }
   }
   namespace WebhookControllerV1ClearAllWebHooks {
@@ -182,13 +258,13 @@ declare namespace Paths {
   }
   namespace WebhookControllerV1GetRegisteredWebhooks {
     namespace Responses {
-      export type $200 = Components.Schemas.WebhookRegistrationDto[];
+      export type $200 = Components.Schemas.WebhookRegistrationResponseDto;
     }
   }
   namespace WebhookControllerV1RegisterWebhook {
     export type RequestBody = Components.Schemas.WebhookRegistrationDto;
     namespace Responses {
-      export interface $200 {}
+      export interface $201 {}
     }
   }
 }
@@ -235,7 +311,7 @@ export interface OperationMethods {
     config?: AxiosRequestConfig
   ): OperationResponse<Paths.ScanControllerV1StartScanner.Responses.$201>;
   /**
-   * SearchControllerV1_search - Search for DSNP content by id, start/end block, and filters
+   * SearchControllerV1_search - Search for DSNP content by id and filters, starting from `upperBound` block and going back for `blockCount` number of blocks
    */
   'SearchControllerV1_search'(
     parameters?: Parameters<UnknownParamsObject> | null,
@@ -257,7 +333,7 @@ export interface OperationMethods {
     parameters?: Parameters<UnknownParamsObject> | null,
     data?: Paths.WebhookControllerV1RegisterWebhook.RequestBody,
     config?: AxiosRequestConfig
-  ): OperationResponse<Paths.WebhookControllerV1RegisterWebhook.Responses.$200>;
+  ): OperationResponse<Paths.WebhookControllerV1RegisterWebhook.Responses.$201>;
   /**
    * WebhookControllerV1_clearAllWebHooks - Clear all previously registered webhooks
    */
@@ -343,7 +419,7 @@ export interface PathsDictionary {
   };
   ['/v1/search']: {
     /**
-     * SearchControllerV1_search - Search for DSNP content by id, start/end block, and filters
+     * SearchControllerV1_search - Search for DSNP content by id and filters, starting from `upperBound` block and going back for `blockCount` number of blocks
      */
     'post'(
       parameters?: Parameters<UnknownParamsObject> | null,
@@ -355,11 +431,11 @@ export interface PathsDictionary {
     /**
      * WebhookControllerV1_registerWebhook - Register a webhook to be called when new content is encountered on the chain
      */
-    'put'(
+    'post'(
       parameters?: Parameters<UnknownParamsObject> | null,
       data?: Paths.WebhookControllerV1RegisterWebhook.RequestBody,
       config?: AxiosRequestConfig
-    ): OperationResponse<Paths.WebhookControllerV1RegisterWebhook.Responses.$200>;
+    ): OperationResponse<Paths.WebhookControllerV1RegisterWebhook.Responses.$201>;
     /**
      * WebhookControllerV1_clearAllWebHooks - Clear all previously registered webhooks
      */
