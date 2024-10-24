@@ -7,28 +7,25 @@ ALL_PROFILES="account graph content_publishing content_watcher backend frontend"
 BACKEND_ONLY_PROFILES="account graph content_publishing content_watcher backend"
 COMPOSE_FILES="docker-compose.yaml"
 PROFILES=""
+BOX_WIDTH=96
 
 ###################################################################################
 #  Wrangle grep because MacOS doesn't come with a PCRE-enabled grep by default.
 #  If we don't find one, disable our "pretty" output function.
 ###################################################################################
 PCRE_GREP=
-if grep -q -P "foo" 2>/dev/null
-then
+if 2>/dev/null 1>/dev/null grep -q -P "foo"; then
     PCRE_GREP=grep
 else
     # Grep is not PCRE compatible, check for other greps
-    if command -v ggrep >/dev/null # MacOS Homebrew might have ggrep
-    then
+    if command -v ggrep >/dev/null; then # MacOS Homebrew might have ggrep
         PCRE_GREP=ggrep
-    elif command -v prce2grep > /dev/null # MacOS Homebrew could also have pcre2grep
-    then
+    elif command -v prce2grep > /dev/null; then # MacOS Homebrew could also have pcre2grep
         PCRE_GREP=pcre2grep
     fi
 fi
 
-if [ -z "${PCRE_GREP}" ]
-then
+if [ -z "${PCRE_GREP}" ]; then
     cat << EOI
 WARNING: No PCRE-capable 'grep' utility found; pretty terminal output disabled.
 
@@ -36,9 +33,11 @@ If you're on a Mac, try installing GNU grep:
     brew install grep
 
 EOI
-    OUTPUT=cat
+  read -p 'Press any key to continue... '
+
+  OUTPUT='echo -e'
 else
-    OUTPUT=box_text
+  OUTPUT="box_text -w ${BOX_WIDTH}"
 fi
 
 ###################################################################################
@@ -63,8 +62,7 @@ function yesno() {
     echo
     read -n 1 -p "${1}? [${DEFAULT_STR}]: "
     echo
-    if [[ ${REPLY} =~ ^[Yy]$ ]]
-    then
+    if [[ ${REPLY} =~ ^[Yy]$ ]] ; then
         return 0
     elif [ -z "${REPLY}" -a ${DEFAULT} = Y ]; then
         return 0
@@ -72,6 +70,32 @@ function yesno() {
 
     return 1
 }
+
+# Internal function to calculate the display width of a string considering some common wide characters
+function display_width() {
+    local str="$1"
+    local width=0
+    local char
+
+    for (( i=0; i<${#str}; i++ )); do
+        char="${str:i:1}"
+        if [ -z ${PCRE_GREP} ]; then
+          # Regular character, assume it takes one column
+          width=$((width + 1))
+        else
+          if echo "$char" | ${PCRE_GREP} -P -q '[^\x{00}-\x{7F}]' ; then
+            width=$((width + 2))
+          else
+            # Regular character, assume it takes one column
+            width=$((width + 1))
+          fi
+        fi
+    done
+
+    echo $width
+}
+
+
 
 ###################################################################################
 # box_text
@@ -84,7 +108,7 @@ function yesno() {
 #    min_width - Pad the output text box to a least min_width characters.
 #                Default: do not pad
 ###################################################################################
-function box_text() {
+box_text() {
     local input
     local min_width=0
 
@@ -126,26 +150,6 @@ function box_text() {
 
     local max_length=0
 
-    # Internal function to calculate the display width of a string considering some common wide characters
-    function display_width() {
-        local str="$1"
-        local width=0
-        local char
-
-        for (( i=0; i<${#str}; i++ )); do
-            char="${str:i:1}"
-            if echo "$char" | ${PCRE_GREP} -P -q '[^\x{00}-\x{7F}]'; then
-                # Emoji or symbol, assume it takes two columns
-                width=$((width + 2))
-            else
-                # Regular character, assume it takes one column
-                width=$((width + 1))
-            fi
-        done
-
-        echo $width
-    }
-
     # Find the maximum length of a line, accounting for Unicode width
     for line in "${lines[@]}"; do
         line_length=$(display_width "$line")
@@ -170,6 +174,81 @@ function box_text() {
 }
 
 ###################################################################################
+# box_text_attention
+#
+# Description: Like box texty, but output is surrounded by a box;
+# padded with blank lines and attention-getting characters.
+# ##################################################################################
+box_text_attention() {
+    local input
+    local min_width=0
+    local attention=false
+
+    # Parse the optional -w argument
+    while getopts ":w:" opt; do
+        case $opt in
+            w)
+                min_width=$OPTARG
+                ;;
+            \?)
+                echo "Invalid option: -$OPTARG" >&2
+                return 1
+                ;;
+            :)
+                echo "Option -$OPTARG requires an argument." >&2
+                return 1
+                ;;
+        esac
+    done
+    shift $((OPTIND - 1))
+
+
+    if [ -z "$1" ]; then
+        # Read input from stdin if no arguments are provided
+        input=$(cat)
+    else
+        # Use the provided argument as input
+        input="$1"
+    fi
+
+    local IFS=$'\n'
+    # local lines=($input)
+    local lines=()
+
+    # Read the string into the array, preserving empty lines
+    while IFS= read -r line || [[ -n $line ]]; do
+        lines+=("$line")
+    done <<< "${input}"
+
+    local max_length=0
+
+    # Find the maximum length of a line, accounting for Unicode width
+    for line in "${lines[@]}"; do
+        line_length=$(display_width "$line")
+        if [ $line_length -gt $max_length ]; then
+          max_length=$line_length
+        fi
+    done
+
+    # Ensure the box width is at least the specified minimum width
+    max_length=$(( max_length > min_width ? max_length : min_width ))
+
+    # Top border
+    echo "┌$(printf '─%.0s' $(seq 1 $((max_length + 10))))┐"
+    echo "│ 🔗💠📡$(printf ' %.0s' $(seq 1 $((max_length + 2)))) │"
+
+    # Print each line with padding
+    for line in "${lines[@]}"; do
+        real_length=$(( max_length ))
+        printf "│ 🔗💠📡  %-${real_length}s │\n" "$line"
+    done
+
+    # Bottom border
+    echo "│ 🔗💠📡$(printf ' %.0s' $(seq 1 $((max_length + 2)))) │"
+    echo "└$(printf '─%.0s' $(seq 1 $((max_length + 10))))┘"
+}
+
+###################################################################################
 # ask_and_save
 #
 # Description: Prompt the user with a string, and save the response to the environment file
@@ -187,10 +266,8 @@ ask_and_save() {
     local value=
     local input=
 
-    if [ -z "${default_value}" ]
-    then
-        if [ "${hide_input}" = true ]
-        then
+    if [ -z "${default_value}" ]; then
+        if [ "${hide_input}" = true ]; then
             read -rsp $'\n'"${prompt} (INPUT HIDDEN): " input
             echo
         else
@@ -198,8 +275,7 @@ ask_and_save() {
         fi
         value=${input}
     else
-        if [ "${hide_input}" = true ]
-        then
+        if [ "${hide_input}" = true ]; then
             read -rsp $'\n'"${prompt} [${default_value}] (INPUT HIDDEN): " input
             echo
         else
@@ -296,8 +372,7 @@ function prefix_postfix_values() {
 ###################################################################################
 function is_frequency_ready {
     health=$( docker compose -p ${COMPOSE_PROJECT_NAME} ps --format '{{.Health}}' frequency )
-    if [ "${health}" = 'healthy' ]
-    then
+    if [ "${health}" = 'healthy' ]; then
         return 0
     fi
 
