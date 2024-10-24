@@ -18,6 +18,8 @@ type WalletLoginRequestDto = Components.Schemas.WalletLoginRequestDto;
 type WalletLoginConfigResponse = Components.Schemas.WalletLoginConfigResponseDto;
 type WalletLoginResponse = Components.Schemas.WalletLoginResponseDto;
 type WalletV2RedirectResponseDto = Components.Schemas.WalletV2RedirectResponseDto;
+type VerifyAuthResponseDto = Components.Schemas.WalletV2LoginResponseDto;
+type VerfifyAuthRequestDto = Components.Schemas.WalletV2LoginRequestDto;
 
 /**
  * The `AccountService` class provides methods for interacting with user accounts.
@@ -153,6 +155,16 @@ export class AccountService {
       return response as WalletLoginResponse;
     } catch (e) {
       logger.error('Failed to sign in or sign up: ', e);
+      throw e;
+    }
+  }
+
+  async verifyFrequencyAccessAuth(params: VerfifyAuthRequestDto): Promise<VerifyAuthResponseDto> {
+    try {
+      const response = await this.client.AccountsControllerV2_postSignInWithFrequency(null, params);
+      return response.data;
+    } catch (e) {
+      logger.error('Failed to verify auth code: ', e);
       throw e;
     }
   }

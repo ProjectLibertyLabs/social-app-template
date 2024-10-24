@@ -204,6 +204,25 @@ declare namespace Components {
        */
       assetIds: string[];
     }
+    export interface VerifyAuthRequest {
+      /**
+       * Authorization code received from Frequency
+       */
+      authorizationCode: string;
+    }
+    /**
+     * Response will contain either msaId or controlKey, but not both
+     */
+    export interface VerifyAuthResponse {
+      /**
+       * Message Source Account ID
+       */
+      msaId?: string;
+      /**
+       * Control key for polling account status
+       */
+      controlKey?: string;
+    }
     export interface WalletLoginRequest {
       signIn?: {
         siwsPayload?: {
@@ -472,6 +491,15 @@ declare namespace Paths {
       export type $401 = Components.Responses.UnauthorizedError;
     }
   }
+  namespace VerifyFrequencyAccessAuth {
+    export type RequestBody = Components.Schemas.VerifyAuthRequest;
+    namespace Responses {
+      export type $200 =
+        /* Response will contain either msaId or controlKey, but not both */ Components.Schemas.VerifyAuthResponse;
+      export interface $400 {}
+      export interface $500 {}
+    }
+  }
 }
 
 export interface OperationMethods {
@@ -501,6 +529,16 @@ export interface OperationMethods {
     data?: any,
     config?: AxiosRequestConfig
   ): OperationResponse<Paths.AuthProvider.Responses.$200>;
+  /**
+   * verifyFrequencyAccessAuth - Verify authorization code
+   *
+   * Verifies the authorization code received from Frequency
+   */
+  'verifyFrequencyAccessAuth'(
+    parameters?: Parameters<UnknownParamsObject> | null,
+    data?: Paths.VerifyFrequencyAccessAuth.RequestBody,
+    config?: AxiosRequestConfig
+  ): OperationResponse<Paths.VerifyFrequencyAccessAuth.Responses.$200>;
   /**
    * authLogin - Use Sign In With Frequency to login
    */
@@ -655,6 +693,18 @@ export interface PathsDictionary {
       data?: any,
       config?: AxiosRequestConfig
     ): OperationResponse<Paths.AuthProvider.Responses.$200>;
+  };
+  ['/auth/login/frequency-access/verify']: {
+    /**
+     * verifyFrequencyAccessAuth - Verify authorization code
+     *
+     * Verifies the authorization code received from Frequency
+     */
+    'post'(
+      parameters?: Parameters<UnknownParamsObject> | null,
+      data?: Paths.VerifyFrequencyAccessAuth.RequestBody,
+      config?: AxiosRequestConfig
+    ): OperationResponse<Paths.VerifyFrequencyAccessAuth.Responses.$200>;
   };
   ['/auth/login/frequency-access']: {};
   ['/auth/login']: {
