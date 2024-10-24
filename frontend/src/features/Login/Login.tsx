@@ -1,4 +1,4 @@
-import React, { ReactElement, useEffect, useState } from 'react';
+import { ReactElement, useEffect, useState } from 'react';
 import { Spin } from 'antd';
 import * as dsnpLink from '../../dsnpLink';
 import { UserAccount } from '../../types';

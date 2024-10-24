@@ -106,6 +106,126 @@
         }
       }
     },
+    "/auth/login/v2/siwf/verify": {
+      "post": {
+        "summary": "Verify authorization code",
+        "description": "Verifies the authorization code received from Frequency",
+        "operationId": "verifyFrequencyAccessAuth",
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/VerifyAuthRequest"
+              },
+              "examples": {
+                "withCode": {
+                  "value": {
+                    "authorizationCode": "680a0a68-6d3b-4d6d-89b7-0b01a6f7e86f"
+                  },
+                  "summary": "Using authorization code"
+                },
+                "withPayload": {
+                  "value": {
+                    "authorizationPayload": "eyJhbGciOiJIUzI1NiJ9..."
+                  },
+                  "summary": "Using authorization payload"
+                }
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Successful verification",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/VerifyAuthResponse"
+                },
+                "examples": {
+                  "withMsaId": {
+                    "value": {
+                      "msaId": "12345"
+                    },
+                    "summary": "Direct success with MSA ID"
+                  },
+                  "withControlKey": {
+                    "value": {
+                      "controlKey": "abc123def456"
+                    },
+                    "summary": "Requires polling with control key"
+                  }
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Missing or invalid authorization code"
+          },
+          "500": {
+            "description": "Internal server error"
+          }
+        }
+      }
+    },
+    "/v1/accounts/account/{accountId}": {
+      "get": {
+        "operationId": "getAccountForAccountId",
+        "summary": "Fetch an account given an Account Id",
+        "parameters": [
+          {
+            "name": "accountId",
+            "required": true,
+            "in": "path",
+            "description": "AccountId in hex or SS58 format",
+            "schema": {
+              "example": "1LSLqpLWXo7A7xuiRdu6AQPnBPNJHoQSu8DBsUYJgsNEJ4N",
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Found account",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/AccountResponse"
+                }
+              }
+            }
+          }
+        },
+        "tags": ["v1/accounts"]
+      }
+    },
+    "/auth/login/v2/siwf": {
+      "get": {
+        "oprationId": "authFrequencyAccess",
+        "summary": "Initiates the authentication process with Frequency-Access and returns necessary credentials and redirect URL",
+        "responses": {
+          "200": {
+            "description": "Successful response with auth initiation data",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/FrequencyAccessAuthResponse"
+                },
+                "example": {
+                  "signedRequest": "eyJyZXF1ZXN0ZWRTaWduYXR1cmVzIjp7InB1YmxpY0tleSI6eyJlbmNvZGVkVmFsdWUiOiJmNmNMNHdxMUhVTngxMVRjdmRBQk5mOVVOWFhveUg0N21WVXdUNTl0elNGUlc4eURIIiwiZW5jb2RpbmciOiJiYXNlNTgiLCJmb3JtYXQiOiJzczU4IiwidHlwZSI6IlNyMjU1MTkifX19",
+                  "frequencyRpcUrl": "wss://1.rpc.frequency.xyz",
+                  "redirectUrl": "https://testnet.frequencyaccess.com/siwa/start?signedRequest=abc123"
+                }
+              }
+            }
+          }
+        },
+        "500": {
+          "description": "Internal server error"
+        }
+      }
+    },
     "/auth/login": {
       "post": {
         "operationId": "authLogin",
@@ -165,6 +285,16 @@
         "summary": "For polling to get the created account as authCreate can take time",
         "parameters": [
           {
+            "name": "accountId",
+            "required": false,
+            "in": "query",
+            "description": "AccountId in hex or SS58 format",
+            "schema": {
+              "example": "1LSLqpLWXo7A7xuiRdu6AQPnBPNJHoQSu8DBsUYJgsNEJ4N",
+              "type": "string"
+            }
+          },
+          {
             "name": "msaId",
             "in": "query",
             "description": "The user's Message Source Account ID",
@@ -184,6 +314,9 @@
           }
         ],
         "responses": {
+          "404": {
+            "description": "Content not found"
+          },
           "202": {
             "description": "Account still pending creation"
           },
@@ -552,19 +685,11 @@
                     },
                     "status": {
                       "title": "status",
-                      "enum": [
-                        "pending",
-                        "expired",
-                        "failed",
-                        "succeeded"
-                      ],
+                      "enum": ["pending", "expired", "failed", "succeeded"],
                       "type": "string"
                     }
                   },
-                  "required": [
-                    "referenceId",
-                    "status"
-                  ]
+                  "required": ["referenceId", "status"]
                 }
               }
             }
@@ -751,6 +876,96 @@
       }
     },
     "schemas": {
+      "HandleResponse": {
+        "type": "object",
+        "properties": {
+          "base_handle": {
+            "type": "string"
+          },
+          "canonical_base": {
+            "type": "string"
+          },
+          "suffix": {
+            "type": "number"
+          }
+        },
+        "required": ["base_handle", "canonical_base", "suffix"]
+      },
+      "AccountResponse": {
+        "type": "object",
+        "properties": {
+          "msaId": {
+            "type": "string"
+          },
+          "handle": {
+            "$ref": "#/components/schemas/HandleResponse"
+          }
+        },
+        "required": ["msaId"]
+      },
+      "VerifyAuthResponse": {
+        "type": "object",
+        "description": "Response will contain msaId and controlKey",
+        "properties": {
+          "msaId": {
+            "type": "string",
+            "description": "Message Source Account ID"
+          },
+          "controlKey": {
+            "type": "string",
+            "description": "Control key for polling account status"
+          },
+          "accessToken": {
+            "type": "string",
+            "description": "Access token for the user"
+          },
+          "expires": {
+            "type": "string",
+            "description": "Expiration time for the access token"
+          }
+        }
+      },
+      "VerifyAuthRequest": {
+        "type": "object",
+        "oneOf": [
+          {
+            "required": ["authorizationCode"]
+          },
+          {
+            "required": ["authorizationPayload"]
+          }
+        ],
+        "properties": {
+          "authorizationCode": {
+            "type": "string",
+            "description": "The code returned from the SIWF v2 Authentication service that can be exchanged for the payload."
+          },
+          "authorizationPayload": {
+            "type": "string",
+            "description": "The SIWF v2 Authentication payload as a JSON stringified and base64url encoded value."
+          }
+        }
+      },
+      "FrequencyAccessAuthResponse": {
+        "type": "object",
+        "required": ["signedRequest", "frequencyRpcUrl", "redirectUrl"],
+        "properties": {
+          "signedRequest": {
+            "type": "string",
+            "description": "Base64 encoded signed request containing authentication details"
+          },
+          "frequencyRpcUrl": {
+            "type": "string",
+            "format": "uri",
+            "description": "WebSocket URL for Frequency RPC connection"
+          },
+          "redirectUrl": {
+            "type": "string",
+            "format": "uri",
+            "description": "URL to redirect the user for authentication"
+          }
+        }
+      },
       "UploadAssetRequest": {
         "description": "Schema defining the request payload for uploading assets. Requires a list of files to upload.",
         "type": "object",
@@ -765,9 +980,7 @@
             "minItems": 1
           }
         },
-        "required": [
-          "files"
-        ]
+        "required": ["files"]
       },
       "UploadAssetResponse": {
         "description": "Schema defining the response for a successful asset upload operation. Contains identifiers for all uploaded assets.",
@@ -781,9 +994,7 @@
             }
           }
         },
-        "required": [
-          "assetIds"
-        ]
+        "required": ["assetIds"]
       },
       "ProviderResponse": {
         "type": "object",
@@ -809,35 +1020,21 @@
           },
           "network": {
             "type": "string",
-            "enum": [
-              "local",
-              "testnet",
-              "mainnet"
-            ]
+            "enum": ["local", "testnet", "mainnet"]
           }
         },
-        "required": [
-          "nodeUrl",
-          "siwfUrl",
-          "providerId",
-          "schemas",
-          "network"
-        ]
+        "required": ["nodeUrl", "siwfUrl", "providerId", "schemas", "network"]
       },
       "LoginRequest": {
         "type": "object",
         "properties": {
           "algo": {
             "type": "string",
-            "enum": [
-              "SR25519"
-            ]
+            "enum": ["SR25519"]
           },
           "encoding": {
             "type": "string",
-            "enum": [
-              "hex"
-            ]
+            "enum": ["hex"]
           },
           "encodedValue": {
             "type": "string"
@@ -846,12 +1043,7 @@
             "type": "string"
           }
         },
-        "required": [
-          "algo",
-          "encodedValue",
-          "encoding",
-          "publicKey"
-        ]
+        "required": ["algo", "encodedValue", "encoding", "publicKey"]
       },
       "WalletLoginResponse": {
         "type": "object",
@@ -878,16 +1070,10 @@
                 "type": "number"
               }
             },
-            "required": [
-              "base_handle",
-              "canonical_base",
-              "suffix"
-            ]
+            "required": ["base_handle", "canonical_base", "suffix"]
           }
         },
-        "required": [
-          "referenceId"
-        ]
+        "required": ["referenceId"]
       },
       "WalletLoginRequest": {
         "type": "object",
@@ -900,10 +1086,7 @@
             "properties": {
               "siwsPayload": {
                 "type": "object",
-                "required": [
-                  "message",
-                  "signature"
-                ],
+                "required": ["message", "signature"],
                 "properties": {
                   "message": {
                     "type": "string"
@@ -915,9 +1098,7 @@
               },
               "error": {
                 "type": "object",
-                "required": [
-                  "message"
-                ],
+                "required": ["message"],
                 "properties": {
                   "message": {
                     "type": "string"
@@ -933,11 +1114,7 @@
                 "type": "array",
                 "items": {
                   "type": "object",
-                  "required": [
-                    "pallet",
-                    "extrinsicName",
-                    "encodedExtrinsic"
-                  ],
+                  "required": ["pallet", "extrinsicName", "encodedExtrinsic"],
                   "properties": {
                     "pallet": {
                       "type": "string"
@@ -953,9 +1130,7 @@
               },
               "error": {
                 "type": "object",
-                "required": [
-                  "message"
-                ],
+                "required": ["message"],
                 "properties": {
                   "message": {
                     "type": "string"
@@ -979,11 +1154,7 @@
             "type": "string"
           }
         },
-        "required": [
-          "expires",
-          "accessToken",
-          "msaId"
-        ]
+        "required": ["expires", "accessToken", "msaId"]
       },
       "CreateIdentityRequest": {
         "type": "object",
@@ -993,18 +1164,14 @@
           },
           "algo": {
             "type": "string",
-            "enum": [
-              "SR25519"
-            ]
+            "enum": ["SR25519"]
           },
           "baseHandle": {
             "type": "string"
           },
           "encoding": {
             "type": "string",
-            "enum": [
-              "hex"
-            ]
+            "enum": ["hex"]
           },
           "expiration": {
             "type": "number"
@@ -1036,10 +1203,7 @@
             "type": "integer"
           }
         },
-        "required": [
-          "expires",
-          "accessToken"
-        ]
+        "required": ["expires", "accessToken"]
       },
       "AuthAccountResponse": {
         "type": "object",
@@ -1072,33 +1236,21 @@
                 "type": "number"
               }
             },
-            "required": [
-              "base_handle",
-              "canonical_base",
-              "suffix"
-            ]
+            "required": ["base_handle", "canonical_base", "suffix"]
           }
         },
-        "required": [
-          "msaId",
-          "accessToken",
-          "expires"
-        ]
+        "required": ["msaId", "accessToken", "expires"]
       },
       "DelegateRequest": {
         "type": "object",
         "properties": {
           "algo": {
             "type": "string",
-            "enum": [
-              "SR25519"
-            ]
+            "enum": ["SR25519"]
           },
           "encoding": {
             "type": "string",
-            "enum": [
-              "hex"
-            ]
+            "enum": ["hex"]
           },
           "encodedValue": {
             "type": "string"
@@ -1107,12 +1259,7 @@
             "type": "string"
           }
         },
-        "required": [
-          "algo",
-          "encodedValue",
-          "encoding",
-          "publicKey"
-        ]
+        "required": ["algo", "encodedValue", "encoding", "publicKey"]
       },
       "DelegateResponse": {
         "type": "object",
@@ -1124,10 +1271,7 @@
             "type": "integer"
           }
         },
-        "required": [
-          "expires",
-          "accessToken"
-        ]
+        "required": ["expires", "accessToken"]
       },
       "HandlesResponse": {
         "type": "object",
@@ -1151,17 +1295,10 @@
                 "type": "number"
               }
             },
-            "required": [
-              "base_handle",
-              "canonical_base",
-              "suffix"
-            ]
+            "required": ["base_handle", "canonical_base", "suffix"]
           }
         },
-        "required": [
-          "publicKey",
-          "handle"
-        ]
+        "required": ["publicKey", "handle"]
       },
       "PaginatedBroadcast": {
         "type": "object",
@@ -1179,11 +1316,7 @@
             }
           }
         },
-        "required": [
-          "newestBlockNumber",
-          "oldestBlockNumber",
-          "posts"
-        ]
+        "required": ["newestBlockNumber", "oldestBlockNumber", "posts"]
       },
       "Broadcast": {
         "type": "object",
@@ -1207,12 +1340,7 @@
             "description": "Array of ReplyExtended objects"
           }
         },
-        "required": [
-          "fromId",
-          "contentHash",
-          "content",
-          "timestamp"
-        ]
+        "required": ["fromId", "contentHash", "content", "timestamp"]
       },
       "PostBroadcastResponse": {
         "type": "object",
@@ -1226,10 +1354,7 @@
             "description": "Timestamp of the post"
           }
         },
-        "required": [
-          "content",
-          "published"
-        ]
+        "required": ["content", "published"]
       },
       "BroadcastExtended": {
         "type": "object",
@@ -1256,12 +1381,7 @@
             "description": "Array of ReplyExtended objects"
           }
         },
-        "required": [
-          "fromId",
-          "contentHash",
-          "content",
-          "timestamp"
-        ]
+        "required": ["fromId", "contentHash", "content", "timestamp"]
       },
       "ReplyExtended": {
         "type": "object",
@@ -1288,12 +1408,7 @@
             "description": "Array of ReplyExtended objects"
           }
         },
-        "required": [
-          "fromId",
-          "contentHash",
-          "content",
-          "timestamp"
-        ]
+        "required": ["fromId", "contentHash", "content", "timestamp"]
       },
       "PostBroadcastRequest": {
         "type": "object",
@@ -1311,9 +1426,7 @@
             }
           }
         },
-        "required": [
-          "content"
-        ]
+        "required": ["content"]
       },
       "CreatePostRequest": {
         "type": "object",
@@ -1332,9 +1445,7 @@
             }
           }
         },
-        "required": [
-          "content"
-        ]
+        "required": ["content"]
       },
       "EditPostRequest": {
         "type": "object",
@@ -1349,11 +1460,7 @@
             "type": "string"
           }
         },
-        "required": [
-          "content",
-          "targetAnnouncementType",
-          "targetContentHash"
-        ]
+        "required": ["content", "targetAnnouncementType", "targetContentHash"]
       },
       "Profile": {
         "type": "object",
@@ -1388,19 +1495,10 @@
                 "type": "number"
               }
             },
-            "required": [
-              "base_handle",
-              "canonical_base",
-              "suffix"
-            ]
+            "required": ["base_handle", "canonical_base", "suffix"]
           }
         },
-        "required": [
-          "fromId",
-          "contentHash",
-          "content",
-          "timestamp"
-        ]
+        "required": ["fromId", "contentHash", "content", "timestamp"]
       },
       "EditProfileRequest": {
         "type": "object",
@@ -1409,9 +1507,7 @@
             "type": "string"
           }
         },
-        "required": [
-          "content"
-        ]
+        "required": ["content"]
       }
     }
   }

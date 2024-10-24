@@ -17,6 +17,9 @@ type AuthAccountResponse = BackendComponents.Schemas.AuthAccountResponse;
 type WalletLoginRequestDto = Components.Schemas.WalletLoginRequestDto;
 type WalletLoginConfigResponse = Components.Schemas.WalletLoginConfigResponseDto;
 type WalletLoginResponse = Components.Schemas.WalletLoginResponseDto;
+type WalletV2RedirectResponseDto = Components.Schemas.WalletV2RedirectResponseDto;
+type VerfifyAuthRequestDto = Components.Schemas.WalletV2LoginRequestDto;
+type AccountResponse = Components.Schemas.AccountResponseDto;
 
 /**
  * The `AccountService` class provides methods for interacting with user accounts.
@@ -95,13 +98,32 @@ export class AccountService {
     }
   }
 
+  public async getAccountByAccountId(accountId: string): Promise<AccountResponse> {
+    try {
+      const {
+        data: { msaId, handle },
+      } = await this.client.AccountsControllerV1_getAccountForAccountId(accountId);
+
+      return {
+        msaId,
+        handle: handle as AuthAccountResponse['handle'],
+      };
+    } catch (e) {
+      throw new HttpError(HttpStatusCode.NotFound, `Account not found with referenceId:(${accountId})`, {
+        cause: e,
+      });
+    }
+  }
+
   /**
    * Retrieves an account based on the provided reference ID.
    * @param referenceId - The reference ID used to correlate the data from the blockchain transaction to the account.
    * @returns A Promise that resolves to an AuthAccountResponse object if the account is found, or undefined if not found.
    * @throws Throws an error if there was an issue retrieving the account.
    */
-  public async getAccountByReferenceId(referenceId: string): Promise<AuthAccountResponse | undefined> {
+  public async getAccountByReferenceId(
+    referenceId: string
+  ): Promise<Pick<AuthAccountResponse, 'msaId' | 'handle'> | undefined> {
     // In this case, we're using the referenceId to get the account
     // Check the webhook and see if the referenceId has been processed
     logger.debug(`AccountService: getAccountByReferenceId: Looking for account for referenceId:(${referenceId})`);
@@ -116,9 +138,6 @@ export class AccountService {
           // END REMOVE:
           logger.debug(`Found account for referenceId:(${referenceId})`);
           return {
-            accessToken: createAuthToken(siwfData.accountId),
-            expires: Date.now() + 24 * 60 * 60 * 1_000,
-            referenceId: referenceId,
             msaId: siwfData.msaId,
             handle: response.data.handle as AuthAccountResponse['handle'],
           };
@@ -152,6 +171,35 @@ export class AccountService {
       return response as WalletLoginResponse;
     } catch (e) {
       logger.error('Failed to sign in or sign up: ', e);
+      throw e;
+    }
+  }
+
+  async verifyFrequencyAccessAuth(params: VerfifyAuthRequestDto): Promise<any> {
+    try {
+      const response = await this.client.AccountsControllerV2_postSignInWithFrequency(null, params);
+
+      const { controlKey, msaId } = response.data;
+
+      return {
+        accessToken: createAuthToken(controlKey),
+        expires: Date.now() + 24 * 60 * 60 * 1_000,
+        msaId: msaId,
+        controlKey,
+      };
+    } catch (e) {
+      throw new HttpError(HttpStatusCode.Unauthorized, 'Failed to verify auth code:', {
+        cause: e,
+      });
+    }
+  }
+
+  async initiateSignInWithFrequencyAccess(params: any): Promise<WalletV2RedirectResponseDto> {
+    try {
+      const response = await this.client.AccountsControllerV2_getRedirectUrl(params, null);
+      return response.data;
+    } catch (e) {
+      logger.error('Failed to get redirect URL: ', e);
       throw e;
     }
   }

@@ -7,6 +7,12 @@ import { HttpStatusCode } from 'axios';
 import * as Config from '../config/config';
 import logger from '../logger';
 
+interface AccountQueryParams {
+  msaId?: string;
+  referenceId?: string;
+  accountId?: string;
+}
+
 /**
  * Controller class for handling authentication-related routes.
  */
@@ -19,7 +25,63 @@ export class AuthController extends BaseController {
     this.router.get('/siwf', this.getSiwf.bind(this));
     this.router.get('/account', this.getAccount.bind(this));
     this.router.post('/login', this.postLogin.bind(this));
+    this.router.get('/login/v2/siwf', this.getLoginV2Swif.bind(this));
+    this.router.post('/login/v2/siwf/verify', this.postLoginV2Swif.bind(this));
     this.router.post('/logout', validateAuthToken, this.postLogout.bind(this));
+  }
+
+  private validateQueryParams(params: AccountQueryParams): string | null {
+    const { msaId, referenceId, accountId } = params;
+    if (!msaId && !referenceId && !accountId) {
+      return 'msaId, referenceId, or accountId is required';
+    }
+    return null;
+  }
+
+  public async postLoginV2Swif(req: Request, res: Response) {
+    try {
+      const payload = await AccountService.getInstance().then((service) => service.verifyFrequencyAccessAuth(req.body));
+
+      console.log('payload', payload);
+      res.json(payload);
+    } catch (e) {
+      if (e instanceof HttpError) {
+        res.status(e.code).send(e.message).end();
+      } else {
+        res.status(HttpStatusCode.InternalServerError).send(e).end();
+      }
+    }
+  }
+
+  public async getLoginV2Swif(req: Request, res: Response) {
+    try {
+      const HOSTNAME = 'localhost';
+      const PORT = Config.instance().port;
+      const SIWF_CALLBACK = `http://${HOSTNAME}:${PORT}/login/callback`;
+
+      const params = {
+        callbackUrl: SIWF_CALLBACK,
+        credentials: ['VerifiedGraphKeyCredential', 'VerifiedEmailAddressCredential', 'VerifiedPhoneNumberCredential'],
+        permissions: [
+          'dsnp.profile@v1',
+          'dsnp.public-key-key-agreement@v1',
+          'dsnp.public-follows@v1',
+          'dsnp.private-follows@v1',
+          'dsnp.private-connections@v1',
+        ],
+      };
+
+      const payload = await AccountService.getInstance().then((service) =>
+        service.initiateSignInWithFrequencyAccess(params)
+      );
+      res.json(payload);
+    } catch (e) {
+      if (e instanceof HttpError) {
+        res.status(e.code).send(e.message).end();
+      } else {
+        res.status(HttpStatusCode.InternalServerError).send(e).end();
+      }
+    }
   }
 
   /**
@@ -53,30 +115,62 @@ export class AuthController extends BaseController {
    * @returns The account information: handle and msaId.
    */
   public async getAccount(req: Request, res: Response) {
-    // Check if msaId or referenceId is provided in the request headers
-    const msaId = req.query?.['msaId']?.toString() || '';
-    const referenceId = req.query?.['referenceId']?.toString() || '';
-    logger.debug(`AuthController:getAccount: msaId: ${msaId}, referenceId: ${referenceId}`);
+    try {
+      const queryParams = {
+        msaId: req.query?.['msaId']?.toString() || '',
+        referenceId: req.query?.['referenceId']?.toString() || '',
+        accountId: req.query?.['accountId']?.toString() || '',
+      };
 
-    if (!msaId && !referenceId) {
-      res = res.status(HttpStatusCode.BadRequest).send('msaId or referenceId is required');
-    }
+      logger.debug(
+        `AuthController:getAccount: msaId: ${queryParams.msaId}, referenceId: ${queryParams.referenceId}, accountId: ${queryParams.accountId}`
+      );
 
-    let data;
-    if (msaId) {
-      // Get the account information based on the msaId
-      data = await AccountService.getInstance().then((service) => service.getAccount(msaId));
-      res.status(HttpStatusCode.Ok).send(data);
-    } else {
+      const validationError = this.validateQueryParams(queryParams);
+
+      if (validationError) {
+        return res.status(HttpStatusCode.BadRequest).json({
+          error: validationError,
+        });
+      }
+
+      const accountService = await AccountService.getInstance();
+
+      const { msaId, referenceId, accountId } = queryParams;
+
+      if (msaId) {
+        const data = await accountService.getAccount(msaId);
+        return res.status(HttpStatusCode.Ok).send(data);
+      }
+
+      if (accountId) {
+        const data = await accountService.getAccountByAccountId(accountId);
+        return res.status(HttpStatusCode.Ok).send(data);
+      }
+
       // Get the account information based on the referenceId
       // The Front End is asking if we have finished a user login or registration
-      // We should return a 202 if we have not finished the registration
-      // If the transaction has been finalized, the webhook will have received the information, for the referenceId.
-      data = await AccountService.getInstance().then((service) => service.getAccountByReferenceId(referenceId));
+      const data = await accountService.getAccountByReferenceId(referenceId);
       logger.debug(`AuthController:getAccount: data: ${JSON.stringify(data)}`);
-      res = res.status(HttpStatusCode.Ok).send(data);
+
+      if (!data) {
+        return res.status(HttpStatusCode.Accepted).send({
+          message: 'Registration/login process is still in progress',
+        });
+      }
+
+      return res.status(HttpStatusCode.Ok).send(data);
+    } catch (error) {
+      logger.error(`AuthController:getAccount: Error: ${error}`);
+
+      if (error instanceof HttpError) {
+        return res.status(error.code).send(error.message);
+      }
+
+      return res.status(HttpStatusCode.InternalServerError).send({
+        message: 'An error occurred while retrieving the account',
+      });
     }
-    res.end();
   }
 
   /**

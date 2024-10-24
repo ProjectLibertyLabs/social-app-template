@@ -4,6 +4,7 @@ import ProfilePage from './Profile/ProfilePage';
 import React from 'react';
 import Discover from './Discover/Discover';
 import MyFeed from './MyFeed/MyFeed';
+import Callback from './Callback/Callback';
 
 interface PageRoutesProps {
   loggedInAccount: UserAccount;
@@ -12,6 +13,7 @@ interface PageRoutesProps {
   handlePostPublished: () => void;
   refreshTrigger: number;
   showLoginModal: () => void;
+  onLogin: (account: UserAccount, providerInfo: any) => void;
 }
 
 const PageRoutes = ({
@@ -21,6 +23,7 @@ const PageRoutes = ({
   isPosting,
   refreshTrigger,
   showLoginModal,
+  onLogin,
 }: PageRoutesProps) => {
   return (
     <>
@@ -38,6 +41,7 @@ const PageRoutes = ({
             />
           }
         />
+        <Route path="/login/callback" element={<Callback onLogin={onLogin} />} />
         {loggedInAccount && (
           <>
             <Route
