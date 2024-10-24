@@ -46,6 +46,18 @@ interface LoginProps {
 const LoginForm = ({ onLogin, providerId, nodeUrl, siwfUrl }: LoginProps): ReactElement => {
   const [isLoading, setIsLoading] = useState(false);
 
+  const handleLoginSiwaV2 = async () => {
+    try {
+      const context = getContext();
+      const { redirectUrl } = await dsnpLink.authLoginFrequencyAccessGet(context, {});
+      console.log("redirectUrl", redirectUrl);
+      window.location.href = redirectUrl;
+    } catch (error) {
+      console.error('Sign in failed:', error);
+    }
+  };
+
+
   const handleLogin = async () => {
     setIsLoading(true);
 
@@ -187,9 +199,16 @@ const LoginForm = ({ onLogin, providerId, nodeUrl, siwfUrl }: LoginProps): React
     <Form layout="vertical" size="large">
       <Spin tip="Loading" size="large" spinning={isLoading}>
         <Form.Item label="">
-          <Button type="primary" onClick={handleLogin}>
-            Signup / Login with Frequency
-          </Button>
+          <div>
+            <Button type="primary" onClick={handleLogin}>
+              Signup / Login with Frequency
+            </Button>
+          </div>
+          <div>
+            <Button type="primary" onClick={handleLoginSiwaV2}>
+              Signup / Login with Frequency
+            </Button>
+          </div>
         </Form.Item>
       </Spin>
     </Form>

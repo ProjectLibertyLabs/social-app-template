@@ -17,6 +17,7 @@ type AuthAccountResponse = BackendComponents.Schemas.AuthAccountResponse;
 type WalletLoginRequestDto = Components.Schemas.WalletLoginRequestDto;
 type WalletLoginConfigResponse = Components.Schemas.WalletLoginConfigResponseDto;
 type WalletLoginResponse = Components.Schemas.WalletLoginResponseDto;
+type WalletV2RedirectResponseDto = Components.Schemas.WalletV2RedirectResponseDto;
 
 /**
  * The `AccountService` class provides methods for interacting with user accounts.
@@ -152,6 +153,16 @@ export class AccountService {
       return response as WalletLoginResponse;
     } catch (e) {
       logger.error('Failed to sign in or sign up: ', e);
+      throw e;
+    }
+  }
+
+  async initiateSignInWithFrequencyAccess(params: any): Promise<WalletV2RedirectResponseDto> {
+    try {
+      const response = await this.client.AccountsControllerV2_getRedirectUrl(params, null);
+      return response.data;
+    } catch (e) {
+      logger.error('Failed to get redirect URL: ', e);
       throw e;
     }
   }

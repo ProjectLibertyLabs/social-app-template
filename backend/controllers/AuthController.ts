@@ -19,7 +19,41 @@ export class AuthController extends BaseController {
     this.router.get('/siwf', this.getSiwf.bind(this));
     this.router.get('/account', this.getAccount.bind(this));
     this.router.post('/login', this.postLogin.bind(this));
+    this.router.get("/login/frequency-access", this.getFrequencyAccessLogin.bind(this));
     this.router.post('/logout', validateAuthToken, this.postLogout.bind(this));
+  }
+
+  public async getFrequencyAccessLogin(req: Request, res: Response) {
+    try {
+      const HOSTNAME = 'localhost';
+      const PORT = Config.instance().port;
+      const SIWF_CALLBACK = `http://${HOSTNAME}:${PORT}/login/callback`;
+
+      const params = {
+        callbackUrl: SIWF_CALLBACK,
+        credentials: [
+          'VerifiedGraphKeyCredential',
+          'VerifiedEmailAddressCredential',
+          'VerifiedPhoneNumberCredential'
+        ],
+        permissions: [
+          'dsnp.profile@v1',
+          'dsnp.public-key-key-agreement@v1',
+          'dsnp.public-follows@v1',
+          'dsnp.private-follows@v1',
+          'dsnp.private-connections@v1'
+        ]
+      }
+
+      const payload = await AccountService.getInstance().then((service) => service.initiateSignInWithFrequencyAccess(params));
+      res.json(payload);
+    } catch (e) {
+      if (e instanceof HttpError) {
+        res.status(e.code).send(e.message).end();
+      } else {
+        res.status(HttpStatusCode.InternalServerError).send(e).end();
+      }
+    }
   }
 
   /**

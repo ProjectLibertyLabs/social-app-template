@@ -1,4 +1,18 @@
 import * as r from '@typoas/runtime';
+export type FrequencyAccessAuthResponse = {
+    /**
+     * Base64 encoded signed request containing authentication details
+     */
+    signedRequest: string;
+    /**
+     * WebSocket URL for Frequency RPC connection
+     */
+    frequencyRpcUrl: string;
+    /**
+     * URL to redirect the user for authentication
+     */
+    redirectUrl: string;
+};
 /**
  * Schema defining the request payload for uploading assets. Requires a list of files to upload.
  */
@@ -254,6 +268,18 @@ export async function postBroadcastHandler<FetcherData>(ctx: r.Context<AuthMetho
 export async function authProvider<FetcherData>(ctx: r.Context<AuthMethods, FetcherData>, params: {}, opts?: FetcherData): Promise<ProviderResponse> {
     const req = await ctx.createRequest({
         path: '/auth/siwf',
+        params,
+        method: r.HttpMethod.GET
+    });
+    const res = await ctx.sendRequest(req, opts);
+    return ctx.handleResponse(res, {});
+}
+/**
+ * Initiates the authentication process with Frequency-Access and returns necessary credentials and redirect URL
+ */
+export async function authLoginFrequencyAccessGet<FetcherData>(ctx: r.Context<AuthMethods, FetcherData>, params: {}, opts?: FetcherData): Promise<FrequencyAccessAuthResponse> {
+    const req = await ctx.createRequest({
+        path: '/auth/login/frequency-access',
         params,
         method: r.HttpMethod.GET
     });

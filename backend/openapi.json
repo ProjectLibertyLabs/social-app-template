@@ -106,6 +106,32 @@
         }
       }
     },
+    "/auth/login/frequency-access": {
+      "get": {
+        "oprationId": "authFrequencyAccess",
+        "summary": "Initiates the authentication process with Frequency-Access and returns necessary credentials and redirect URL",
+        "responses": {
+          "200": {
+            "description": "Successful response with auth initiation data",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/FrequencyAccessAuthResponse"
+                },
+                "example": {
+                  "signedRequest": "eyJyZXF1ZXN0ZWRTaWduYXR1cmVzIjp7InB1YmxpY0tleSI6eyJlbmNvZGVkVmFsdWUiOiJmNmNMNHdxMUhVTngxMVRjdmRBQk5mOVVOWFhveUg0N21WVXdUNTl0elNGUlc4eURIIiwiZW5jb2RpbmciOiJiYXNlNTgiLCJmb3JtYXQiOiJzczU4IiwidHlwZSI6IlNyMjU1MTkifX19",
+                  "frequencyRpcUrl": "wss://1.rpc.frequency.xyz",
+                  "redirectUrl": "https://testnet.frequencyaccess.com/siwa/start?signedRequest=abc123"
+                }
+              }
+            }
+          }
+        },
+        "500": {
+          "description": "Internal server error"
+        }
+      }
+    },
     "/auth/login": {
       "post": {
         "operationId": "authLogin",
@@ -751,6 +777,26 @@
       }
     },
     "schemas": {
+      "FrequencyAccessAuthResponse": {
+        "type": "object",
+        "required": ["signedRequest", "frequencyRpcUrl", "redirectUrl"],
+        "properties": {
+          "signedRequest": {
+            "type": "string",
+            "description": "Base64 encoded signed request containing authentication details"
+          },
+          "frequencyRpcUrl": {
+            "type": "string",
+            "format": "uri",
+            "description": "WebSocket URL for Frequency RPC connection"
+          },
+          "redirectUrl": {
+            "type": "string",
+            "format": "uri",
+            "description": "URL to redirect the user for authentication"
+          }
+        }
+      },
       "UploadAssetRequest": {
         "description": "Schema defining the request payload for uploading assets. Requires a list of files to upload.",
         "type": "object",

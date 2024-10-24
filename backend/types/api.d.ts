@@ -89,6 +89,20 @@ declare namespace Components {
     export interface EditProfileRequest {
       content: string;
     }
+    export interface FrequencyAccessAuthResponse {
+      /**
+       * Base64 encoded signed request containing authentication details
+       */
+      signedRequest: string;
+      /**
+       * WebSocket URL for Frequency RPC connection
+       */
+      frequencyRpcUrl: string; // uri
+      /**
+       * URL to redirect the user for authentication
+       */
+      redirectUrl: string; // uri
+    }
     export interface HandlesResponse {
       publicKey: string;
       handle: {
@@ -243,6 +257,13 @@ declare namespace Paths {
       export type $200 = Components.Schemas.WalletLoginResponse;
       export interface $202 {}
       export type $401 = Components.Responses.UnauthorizedError;
+    }
+  }
+  namespace AuthLoginFrequencyAccess {
+    namespace Get {
+      namespace Responses {
+        export type $200 = Components.Schemas.FrequencyAccessAuthResponse;
+      }
     }
   }
   namespace AuthLogout {
@@ -635,6 +656,7 @@ export interface PathsDictionary {
       config?: AxiosRequestConfig
     ): OperationResponse<Paths.AuthProvider.Responses.$200>;
   };
+  ['/auth/login/frequency-access']: {};
   ['/auth/login']: {
     /**
      * authLogin - Use Sign In With Frequency to login
