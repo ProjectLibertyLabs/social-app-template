@@ -147,7 +147,7 @@
       }
     },
     "/v1/webhooks": {
-      "put": {
+      "post": {
         "operationId": "WebhookControllerV1_registerWebhook",
         "summary": "Register a webhook to be called when new content is encountered on the chain",
         "parameters": [],

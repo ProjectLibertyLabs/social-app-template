@@ -25,8 +25,8 @@ export class AuthController extends BaseController {
     this.router.get('/siwf', this.getSiwf.bind(this));
     this.router.get('/account', this.getAccount.bind(this));
     this.router.post('/login', this.postLogin.bind(this));
-    this.router.get('/login/v2/siwf', this.getLoginV2Swif.bind(this));
-    this.router.post('/login/v2/siwf/verify', this.postLoginV2Swif.bind(this));
+    this.router.get('/login/v2/siwf', this.getLoginV2Siwf.bind(this));
+    this.router.post('/login/v2/siwf/verify', this.postLoginV2Siwf.bind(this));
     this.router.post('/logout', validateAuthToken, this.postLogout.bind(this));
   }
 
@@ -38,11 +38,10 @@ export class AuthController extends BaseController {
     return null;
   }
 
-  public async postLoginV2Swif(req: Request, res: Response) {
+  public async postLoginV2Siwf(req: Request, res: Response) {
     try {
       const payload = await AccountService.getInstance().then((service) => service.verifyFrequencyAccessAuth(req.body));
 
-      console.log('payload', payload);
       res.json(payload);
     } catch (e) {
       if (e instanceof HttpError) {
@@ -53,7 +52,7 @@ export class AuthController extends BaseController {
     }
   }
 
-  public async getLoginV2Swif(req: Request, res: Response) {
+  public async getLoginV2Siwf(req: Request, res: Response) {
     try {
       const HOSTNAME = 'localhost';
       const PORT = Config.instance().port;
