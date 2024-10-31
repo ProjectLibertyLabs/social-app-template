@@ -1,4 +1,49 @@
 import * as r from '@typoas/runtime';
+export type HandleResponse = {
+    base_handle: string;
+    canonical_base: string;
+    suffix: number;
+};
+export type AccountResponse = {
+    msaId: string;
+    handle?: HandleResponse;
+};
+/**
+ * Response will contain msaId and controlKey
+ */
+export type VerifyAuthResponse = {
+    /**
+     * Message Source Account ID
+     */
+    msaId?: string;
+    /**
+     * Control key for polling account status
+     */
+    controlKey?: string;
+    /**
+     * Access token for the user
+     */
+    accessToken?: string;
+    /**
+     * Expiration time for the access token
+     */
+    expires?: string;
+};
+export type VerifyAuthRequest = any | any;
+export type FrequencyAccessAuthResponse = {
+    /**
+     * Base64 encoded signed request containing authentication details
+     */
+    signedRequest: string;
+    /**
+     * WebSocket URL for Frequency RPC connection
+     */
+    frequencyRpcUrl: string;
+    /**
+     * URL to redirect the user for authentication
+     */
+    redirectUrl: string;
+};
 /**
  * Schema defining the request payload for uploading assets. Requires a list of files to upload.
  */
@@ -261,6 +306,47 @@ export async function authProvider<FetcherData>(ctx: r.Context<AuthMethods, Fetc
     return ctx.handleResponse(res, {});
 }
 /**
+ * Verify authorization code
+ * Verifies the authorization code received from Frequency
+ */
+export async function verifyFrequencyAccessAuth<FetcherData>(ctx: r.Context<AuthMethods, FetcherData>, params: {}, body: VerifyAuthRequest, opts?: FetcherData): Promise<VerifyAuthResponse> {
+    const req = await ctx.createRequest({
+        path: '/auth/login/v2/siwf/verify',
+        params,
+        method: r.HttpMethod.POST,
+        body
+    });
+    const res = await ctx.sendRequest(req, opts);
+    return ctx.handleResponse(res, {});
+}
+/**
+ * Fetch an account given an Account Id
+ * Tags: v1/accounts
+ */
+export async function getAccountForAccountId<FetcherData>(ctx: r.Context<AuthMethods, FetcherData>, params: {
+    accountId: string;
+}, opts?: FetcherData): Promise<AccountResponse> {
+    const req = await ctx.createRequest({
+        path: '/v1/accounts/account/{accountId}',
+        params,
+        method: r.HttpMethod.GET
+    });
+    const res = await ctx.sendRequest(req, opts);
+    return ctx.handleResponse(res, {});
+}
+/**
+ * Initiates the authentication process with Frequency-Access and returns necessary credentials and redirect URL
+ */
+export async function authLoginV2SiwfGet<FetcherData>(ctx: r.Context<AuthMethods, FetcherData>, params: {}, opts?: FetcherData): Promise<FrequencyAccessAuthResponse> {
+    const req = await ctx.createRequest({
+        path: '/auth/login/v2/siwf',
+        params,
+        method: r.HttpMethod.GET
+    });
+    const res = await ctx.sendRequest(req, opts);
+    return ctx.handleResponse(res, {});
+}
+/**
  * Use Sign In With Frequency to login
  */
 export async function authLogin<FetcherData>(ctx: r.Context<AuthMethods, FetcherData>, params: {}, body: WalletLoginRequest, opts?: FetcherData): Promise<WalletLoginResponse | any> {
@@ -290,6 +376,7 @@ export async function authLogout<FetcherData>(ctx: r.Context<AuthMethods, Fetche
  * For polling to get the created account as authCreate can take time
  */
 export async function authAccount<FetcherData>(ctx: r.Context<AuthMethods, FetcherData>, params: {
+    accountId?: string;
     msaId?: string;
     referenceId?: string;
 }, opts?: FetcherData): Promise<AuthAccountResponse | any> {
@@ -298,6 +385,7 @@ export async function authAccount<FetcherData>(ctx: r.Context<AuthMethods, Fetch
         params,
         method: r.HttpMethod.GET,
         queryParams: [
+            "accountId",
             "msaId",
             "referenceId"
         ]

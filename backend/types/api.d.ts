@@ -1,3 +1,4 @@
+/* eslint-disable */
 import type {
   OpenAPIClient,
   Parameters,
@@ -11,6 +12,10 @@ declare namespace Components {
     export interface UnauthorizedError {}
   }
   namespace Schemas {
+    export interface AccountResponse {
+      msaId: string;
+      handle?: HandleResponse;
+    }
     export interface AuthAccountResponse {
       accessToken: string;
       expires: number;
@@ -88,6 +93,25 @@ declare namespace Components {
     }
     export interface EditProfileRequest {
       content: string;
+    }
+    export interface FrequencyAccessAuthResponse {
+      /**
+       * Base64 encoded signed request containing authentication details
+       */
+      signedRequest: string;
+      /**
+       * WebSocket URL for Frequency RPC connection
+       */
+      frequencyRpcUrl: string; // uri
+      /**
+       * URL to redirect the user for authentication
+       */
+      redirectUrl: string; // uri
+    }
+    export interface HandleResponse {
+      base_handle: string;
+      canonical_base: string;
+      suffix: number;
     }
     export interface HandlesResponse {
       publicKey: string;
@@ -190,6 +214,48 @@ declare namespace Components {
        */
       assetIds: string[];
     }
+    export type VerifyAuthRequest =
+      | {
+          /**
+           * The code returned from the SIWF v2 Authentication service that can be exchanged for the payload.
+           */
+          authorizationCode: string;
+          /**
+           * The SIWF v2 Authentication payload as a JSON stringified and base64url encoded value.
+           */
+          authorizationPayload?: string;
+        }
+      | {
+          /**
+           * The code returned from the SIWF v2 Authentication service that can be exchanged for the payload.
+           */
+          authorizationCode?: string;
+          /**
+           * The SIWF v2 Authentication payload as a JSON stringified and base64url encoded value.
+           */
+          authorizationPayload: string;
+        };
+    /**
+     * Response will contain msaId and controlKey
+     */
+    export interface VerifyAuthResponse {
+      /**
+       * Message Source Account ID
+       */
+      msaId?: string;
+      /**
+       * Control key for polling account status
+       */
+      controlKey?: string;
+      /**
+       * Access token for the user
+       */
+      accessToken?: string;
+      /**
+       * Expiration time for the access token
+       */
+      expires?: string;
+    }
     export interface WalletLoginRequest {
       signIn?: {
         siwsPayload?: {
@@ -225,10 +291,20 @@ declare namespace Components {
 declare namespace Paths {
   namespace AuthAccount {
     namespace Parameters {
+      /**
+       * example:
+       * 1LSLqpLWXo7A7xuiRdu6AQPnBPNJHoQSu8DBsUYJgsNEJ4N
+       */
+      export type AccountId = string;
       export type MsaId = string;
       export type ReferenceId = string;
     }
     export interface QueryParameters {
+      accountId?: /**
+       * example:
+       * 1LSLqpLWXo7A7xuiRdu6AQPnBPNJHoQSu8DBsUYJgsNEJ4N
+       */
+      Parameters.AccountId;
       msaId?: Parameters.MsaId;
       referenceId?: Parameters.ReferenceId;
     }
@@ -243,6 +319,13 @@ declare namespace Paths {
       export type $200 = Components.Schemas.WalletLoginResponse;
       export interface $202 {}
       export type $401 = Components.Responses.UnauthorizedError;
+    }
+  }
+  namespace AuthLoginFrequencyAccess {
+    namespace Get {
+      namespace Responses {
+        export type $200 = Components.Schemas.FrequencyAccessAuthResponse;
+      }
     }
   }
   namespace AuthLogout {
@@ -289,6 +372,25 @@ declare namespace Paths {
     namespace Responses {
       export type $200 = Components.Schemas.BroadcastExtended;
       export type $401 = Components.Responses.UnauthorizedError;
+    }
+  }
+  namespace GetAccountForAccountId {
+    namespace Parameters {
+      /**
+       * example:
+       * 1LSLqpLWXo7A7xuiRdu6AQPnBPNJHoQSu8DBsUYJgsNEJ4N
+       */
+      export type AccountId = string;
+    }
+    export interface PathParameters {
+      accountId: /**
+       * example:
+       * 1LSLqpLWXo7A7xuiRdu6AQPnBPNJHoQSu8DBsUYJgsNEJ4N
+       */
+      Parameters.AccountId;
+    }
+    namespace Responses {
+      export type $200 = Components.Schemas.AccountResponse;
     }
   }
   namespace GetContent {
@@ -451,6 +553,14 @@ declare namespace Paths {
       export type $401 = Components.Responses.UnauthorizedError;
     }
   }
+  namespace VerifyFrequencyAccessAuth {
+    export type RequestBody = Components.Schemas.VerifyAuthRequest;
+    namespace Responses {
+      export type $200 = /* Response will contain msaId and controlKey */ Components.Schemas.VerifyAuthResponse;
+      export interface $400 {}
+      export interface $500 {}
+    }
+  }
 }
 
 export interface OperationMethods {
@@ -480,6 +590,24 @@ export interface OperationMethods {
     data?: any,
     config?: AxiosRequestConfig
   ): OperationResponse<Paths.AuthProvider.Responses.$200>;
+  /**
+   * verifyFrequencyAccessAuth - Verify authorization code
+   *
+   * Verifies the authorization code received from Frequency
+   */
+  'verifyFrequencyAccessAuth'(
+    parameters?: Parameters<UnknownParamsObject> | null,
+    data?: Paths.VerifyFrequencyAccessAuth.RequestBody,
+    config?: AxiosRequestConfig
+  ): OperationResponse<Paths.VerifyFrequencyAccessAuth.Responses.$200>;
+  /**
+   * getAccountForAccountId - Fetch an account given an Account Id
+   */
+  'getAccountForAccountId'(
+    parameters: Parameters<Paths.GetAccountForAccountId.PathParameters>,
+    data?: any,
+    config?: AxiosRequestConfig
+  ): OperationResponse<Paths.GetAccountForAccountId.Responses.$200>;
   /**
    * authLogin - Use Sign In With Frequency to login
    */
@@ -635,6 +763,29 @@ export interface PathsDictionary {
       config?: AxiosRequestConfig
     ): OperationResponse<Paths.AuthProvider.Responses.$200>;
   };
+  ['/auth/login/frequency-access/verify']: {
+    /**
+     * verifyFrequencyAccessAuth - Verify authorization code
+     *
+     * Verifies the authorization code received from Frequency
+     */
+    'post'(
+      parameters?: Parameters<UnknownParamsObject> | null,
+      data?: Paths.VerifyFrequencyAccessAuth.RequestBody,
+      config?: AxiosRequestConfig
+    ): OperationResponse<Paths.VerifyFrequencyAccessAuth.Responses.$200>;
+  };
+  ['/v1/accounts/account/{accountId}']: {
+    /**
+     * getAccountForAccountId - Fetch an account given an Account Id
+     */
+    'get'(
+      parameters: Parameters<Paths.GetAccountForAccountId.PathParameters>,
+      data?: any,
+      config?: AxiosRequestConfig
+    ): OperationResponse<Paths.GetAccountForAccountId.Responses.$200>;
+  };
+  ['/auth/login/frequency-access']: {};
   ['/auth/login']: {
     /**
      * authLogin - Use Sign In With Frequency to login

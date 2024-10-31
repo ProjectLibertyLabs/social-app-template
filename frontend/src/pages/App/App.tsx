@@ -86,6 +86,7 @@ const App = (): ReactElement => {
                         handlePostPublished={handlePostPublished}
                         refreshTrigger={refreshTrigger}
                         showLoginModal={() => setIsLoginModalOpen(true)}
+                        onLogin={handleLogin}
                       />
                     </AuthErrorBoundary>
                   </Col>
