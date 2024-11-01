@@ -117,7 +117,6 @@ services:
 
   content-publishing-service-api:
     image: projectlibertylabs/content-publishing-service:${DOCKER_TAG:-latest}
-    platform: linux/amd64
     pull_policy: always
     ports:
       - ${SERVICE_PORT_0}:3000
@@ -132,7 +131,6 @@ services:
 
   content-publishing-service-worker:
     image: projectlibertylabs/content-publishing-service:${DOCKER_TAG:-latest}
-    platform: linux/amd64
     pull_policy: always
     environment:
       <<: [*common-environment, *content-publishing-env]
@@ -146,7 +144,6 @@ services:
 
   content-watcher-service:
     image: projectlibertylabs/content-watcher-service:${DOCKER_TAG:-latest}
-    platform: linux/amd64
     pull_policy: always
     ports:
       - ${SERVICE_PORT_1}:3000
@@ -161,7 +158,6 @@ services:
 
   graph-service-api:
     image: projectlibertylabs/graph-service:${DOCKER_TAG:-latest}
-    platform: linux/amd64
     pull_policy: always
     ports:
       - ${SERVICE_PORT_2}:3000
@@ -177,7 +173,6 @@ services:
 
   graph-service-worker:
     image: projectlibertylabs/graph-service:${DOCKER_TAG:-latest}
-    platform: linux/amd64
     pull_policy: always
     environment:
       <<: [*common-environment, *graph-service-env]
@@ -191,7 +186,6 @@ services:
 
   account-service-api:
     image: projectlibertylabs/account-service:${DOCKER_TAG:-latest}
-    platform: linux/amd64
     pull_policy: always
     ports:
       - ${SERVICE_PORT_3}:3000
@@ -207,7 +201,6 @@ services:
 
   account-service-worker:
     image: projectlibertylabs/account-service:${DOCKER_TAG:-latest}
-    platform: linux/amd64
     pull_policy: always
     command: account-worker
     environment:
