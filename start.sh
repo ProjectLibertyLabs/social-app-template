@@ -347,4 +347,4 @@ SERVICES_STR="${SERVICES_STR}
 "
 fi
 
-box_text_attention "${SERVICES_STR}"
+box_text_attention -w 0 "${SERVICES_STR}"
