@@ -45,7 +45,7 @@ x-graph-service-env: &graph-service-env
   AT_REST_ENCRYPTION_KEY_SEED: 'This should get injected as a secret'
 
 x-account-service-env: &account-service-env
-  SIWF_V2_DOMAIN: 'localhost'
+  SIWF_V2_URI_VALIDATION: 'localhost'
   BLOCKCHAIN_SCAN_INTERVAL_SECONDS: 1
   TRUST_UNFINALIZED_BLOCKS: true
   GRAPH_ENVIRONMENT_TYPE: Mainnet
