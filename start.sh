@@ -270,10 +270,7 @@ else
     echo -e "\nStarting selected services..."
 fi
 
-COMPOSE_CMD=$( prefix_postfix_values "${COMPOSE_FILES}" "-f ")
-PROFILE_CMD=$( prefix_postfix_values "${PROFILES}" "--profile ")
-
-docker compose ${COMPOSE_CMD} ${PROFILE_CMD} up -d
+docker compose up -d frequency
 
 if [ ${SKIP_CHAIN_SETUP} != true -a ${TESTNET_ENV} != true ]
 then
@@ -295,6 +292,12 @@ then
         echo "Timed out waiting for Frequency node to be ready" >&2
     fi
 fi
+
+# The services need to be started after the local node is provisioned
+COMPOSE_CMD=$( prefix_postfix_values "${COMPOSE_FILES}" "-f ")
+PROFILE_CMD=$( prefix_postfix_values "${PROFILES}" "--profile ")
+
+docker compose ${COMPOSE_CMD} ${PROFILE_CMD} up -d
 
 if [[ ${PROFILES} =~ frontend ]]
 then
