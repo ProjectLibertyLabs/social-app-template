@@ -63,7 +63,7 @@ const App = (): ReactElement => {
           colorSuccess: '#29fd47',
           colorWarning: '#ff7f0e',
           colorInfo: '#5E69FF',
-          fontFamily: 'Poppins, Newake',
+          fontFamily: 'Poppins',
         },
       }}
     >
