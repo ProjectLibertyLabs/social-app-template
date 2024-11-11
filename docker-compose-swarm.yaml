@@ -18,10 +18,10 @@ x-common-environment: &common-environment
   IPFS_BASIC_AUTH_SECRET: ${IPFS_BASIC_AUTH_SECRET}
   QUEUE_HIGH_WATER: 1000
   CHAIN_ENVIRONMENT: dev
-  DEBUG: true
+  DEBUG: 'true'
 
 x-content-publishing-env: &content-publishing-env
-  START_PROCESS: content-publishing-api
+  START_PROCESS: 'content-publishing-api'
   FILE_UPLOAD_MAX_SIZE_IN_BYTES: 500000000
   FILE_UPLOAD_COUNT_LIMIT: 10
   ASSET_EXPIRATION_INTERVAL_SECONDS: 300
@@ -39,7 +39,7 @@ x-content-watcher-env: &content-watcher-env
 x-graph-service-env: &graph-service-env
   DEBOUNCE_SECONDS: 10
   GRAPH_ENVIRONMENT_TYPE: Mainnet
-  RECONNECTION_SERVICE_REQUIRED: false
+  RECONNECTION_SERVICE_REQUIRED: 'false'
   PROVIDER_BASE_URL: 'http://social-app-template-backend:3001/webhooks/graph-service'
   CACHE_KEY_PREFIX: 'graph:'
   AT_REST_ENCRYPTION_KEY_SEED: 'This should get injected as a secret'
@@ -47,8 +47,8 @@ x-graph-service-env: &graph-service-env
 x-account-service-env: &account-service-env
   SIWF_V2_URI_VALIDATION: 'localhost'
   BLOCKCHAIN_SCAN_INTERVAL_SECONDS: 1
-  TRUST_UNFINALIZED_BLOCKS: true
-  GRAPH_ENVIRONMENT_TYPE: Mainnet
+  TRUST_UNFINALIZED_BLOCKS: 'true'
+  GRAPH_ENVIRONMENT_TYPE: 'Mainnet'
   WEBHOOK_BASE_URL: 'http://social-app-template-backend:3001/webhooks/account-service'
   CACHE_KEY_PREFIX: 'account:'
 
@@ -58,7 +58,7 @@ x-social-app-template-backend: &social-app-template-backend
   CONTENT_WATCHER_URL: 'http://content-watcher-service:3000'
   GRAPH_SERVICE_URL: 'http://graph-service-api:3000'
   IPFS_UA_GATEWAY_URL: ${IPFS_UA_GATEWAY_URL}
-  NODE_ENV: development
+  NODE_ENV: 'development'
   WEBHOOK_BASE_URL: 'http://social-app-template-backend:3001/webhooks'
 
 x-social-app-template-frontend: &social-app-template-frontend
