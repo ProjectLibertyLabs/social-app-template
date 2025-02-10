@@ -149,7 +149,7 @@ Enter the following command to stop the services:
 
 ### Deployment
 
-You can deploy using containers. Check the [docker-compose.yaml](backend/docker-compose.yaml) file for more details.
+You can deploy using containers. Check the [docker-compose.yaml](docker-compose.yaml) file for more details.
 
 <p align="right">(<a href="#-table-of-contents">back to top</a>)</p>
 
