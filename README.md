@@ -1,6 +1,6 @@
 # Social App Template
 
-The Social Application Template (SAT) is an example client app that demonstrates how to use [Gateway Services](https://github.com/ProjectLibertyLabs/gateway).
+The Social Application Template (SAT) is an example client app that demonstrates how to use [Gateway Services](https://github.com/ProjectLibertyLabs/gateway) for integrating with [Frequency](https://github.com/frequency-chain/frequency) and [DSNP](https://dsnp.org/).
 
 <!-- TABLE OF CONTENTS -->
 
@@ -11,12 +11,12 @@ The Social Application Template (SAT) is an example client app that demonstrates
 - [🛠 Built With](#built-with)
   - [Tech Stack](#tech-stack)
   - [Key Features](#key-features)
-- [🚀 Live OpenAPI Docs](#-live-docs)
 - [💻 Getting Started](#-getting-started)
   - [Prerequisites](#prerequisites)
   - [Setup](#setup)
   - [Quick Start](#quick-start)
   - [Deployment](#deployment)
+- [🚀 Live OpenAPI Docs](#-live-docs)
 - [🤝 Contributing](#-contributing)
 - [❓FAQ](#faq)
 - [📝 License](#-license)
@@ -47,33 +47,40 @@ Key: * = coming soon
 
 ### Tech Stack <a name="tech-stack"></a>
 
+**Tech Stack Overview:**
+This project uses a modern JavaScript/TypeScript stack with React for the frontend and Node.js/Express for the backend. It integrates with Gateway Services to provide a seamless connection to the Frequency blockchain and DSNP protocols without requiring deep Web3 knowledge.
+
 <details>
   <summary>Frontend</summary>
   <ul>
-    <li>Framework: <a href="https://react.dev/">React</a></li>
-    <li>Language: <a href="https://www.typescriptlang.org/">Typescript</a></li>
+    <li>Framework: <a href="https://react.dev/">React</a> - A JavaScript library for building user interfaces</li>
+    <li>Language: <a href="https://www.typescriptlang.org/">TypeScript</a> - Adds static typing to JavaScript</li>
+    <li>State Management: React Context API and custom hooks</li>
     <li>Testing Library:
       <ul>
-        <li><a href="https://jestjs.io/">Jest</a></li>
-        <li><a href="https://testing-library.com/">Testing Library</a></li>
+        <li><a href="https://jestjs.io/">Jest</a> - JavaScript testing framework</li>
+        <li><a href="https://testing-library.com/">Testing Library</a> - Simple and complete testing utilities</li>
       </ul>
     </li>
-    <li>UI Library: <a href="https://ant.design/">Ant Design</a></li>
+    <li>UI Library: <a href="https://ant.design/">Ant Design</a> - A design system for enterprise-level products</li>
+    <li>Build Tool: Vite - Next generation frontend tooling</li>
   </ul>
 </details>
 
 <details>
 <summary>Backend</summary>
   <ul>
-    <li>Framework: <a href="https://....">Node.js</a> with <a href="https://expressjs.com/">Express</a></li>
-    <li>Language: <a href="https://www.typescriptlang.org/">Typescript</a></li>
-    <li>Testing Library:<a href="https://jestjs.io/">Vitest</a></li>
+    <li>Framework: <a href="https://nodejs.org/">Node.js</a> with <a href="https://expressjs.com/">Express</a> - Fast, unopinionated, minimalist web framework</li>
+    <li>Language: <a href="https://www.typescriptlang.org/">TypeScript</a> - Strongly typed programming language</li>
+    <li>Testing Library: <a href="https://vitest.dev/">Vitest</a> - Blazing fast unit test framework</li>
     <li>API Documentation:
       <ul>
-        <li><a href="https://swagger.io/">Swagger</a></li>
-        <li><a href="https://learn.openapis.org/">OpenAPI</a></li>
+        <li><a href="https://swagger.io/">Swagger</a> - API development tools</li>
+        <li><a href="https://learn.openapis.org/">OpenAPI</a> - API description format</li>
       </ul>
     </li>
+    <li>Gateway Integration: Integration with Gateway Services for DSNP/Frequency functionality</li>
+    <li>Containerization: Docker for consistent development and deployment environments</li>
   </ul>
 </details>
 
@@ -116,6 +123,7 @@ Key: * = coming soon
 In order to run this project you need to...
 
 - Become a provider. To do so, visit the [Provider Dashboard](https://provider.frequency.xyz/)!
+  - **Note**: If you're using localhost for the Frequency provider, you can complete this step after the installation process.
 - [Get Docker](https://docs.docker.com/get-docker/)
 
 ### Setup
@@ -125,7 +133,7 @@ Clone this repository to your desired folder:
 Example commands:
 
 ```sh
-  git clone git@github.com:ProjectLibertyLabs/social-app-template.git
+  git clone https://github.com/ProjectLibertyLabs/social-app-template.git
   cd social-app-template
 ```
 
