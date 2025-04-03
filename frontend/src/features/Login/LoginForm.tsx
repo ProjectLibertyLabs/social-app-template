@@ -157,7 +157,8 @@ const LoginForm = ({ onLogin, providerId, nodeUrl, siwfUrl }: LoginProps): React
               return;
             }
 
-            if (resp.size === 0) {
+            if (resp.message === "Registration/login process is still in progress") {
+              console.log("No account found, returning null"); 
               resolve(null);
             }
             resolve({
