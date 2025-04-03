@@ -14,13 +14,13 @@ BOX_WIDTH=96
 #  If we don't find one, disable our "pretty" output function.
 ###################################################################################
 PCRE_GREP=
-if 2>/dev/null 1>/dev/null grep -q -P "foo"; then
+if echo "foobar" | grep -q -P "foo(?=bar)" >/dev/null 2>&1; then
     PCRE_GREP=grep
 else
     # Grep is not PCRE compatible, check for other greps
     if command -v ggrep >/dev/null; then # MacOS Homebrew might have ggrep
         PCRE_GREP=ggrep
-    elif command -v prce2grep > /dev/null; then # MacOS Homebrew could also have pcre2grep
+    elif command -v pcre2grep > /dev/null; then # MacOS Homebrew could also have pcre2grep
         PCRE_GREP=pcre2grep
     fi
 fi
