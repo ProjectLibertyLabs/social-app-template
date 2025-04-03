@@ -6,7 +6,7 @@ import multer from 'multer';
 import { HttpError } from '../types/HttpError';
 import logger from '../logger';
 
-export class AssestsController extends BaseController {
+export class AssetsController extends BaseController {
   private upload: multer.Multer;
 
   constructor(app: Express) {
