@@ -14,7 +14,7 @@ import { AuthController } from './controllers/AuthController.js';
 import { ContentController } from './controllers/ContentController.js';
 import { GraphController } from './controllers/GraphController.js';
 import { ProfilesController } from './controllers/ProfilesController.js';
-import { AssestsController } from './controllers/AssetsController';
+import { AssetsController } from './controllers/AssetsController';
 import { BroadcastsController } from './controllers/BroadcastsController';
 import { MulterError } from 'multer';
 import logger from './logger';
@@ -82,7 +82,7 @@ privateApp.use(pinoHttp(httpLogOptions));
 
 const _controllers = [
   new AuthController(publicApp),
-  new AssestsController(publicApp),
+  new AssetsController(publicApp),
   new BroadcastsController(publicApp),
   new ContentController(publicApp),
   new GraphController(publicApp),
