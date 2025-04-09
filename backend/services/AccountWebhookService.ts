@@ -2,6 +2,7 @@ import { HttpStatusCode } from 'axios';
 import logger from '../logger';
 import { HttpError } from '../types/HttpError';
 import { SIWFWebhookRsp, TransactionType, TxWebhookRsp } from '../types/account-service-webhook';
+import { sseManager } from '../utils/sse';
 
 // TODO: this should probably use a limited lifetime cache entry, as the current
 // implementation can grow unbounded
@@ -40,6 +41,8 @@ export function accountServiceWebhook(payload: TxWebhookRsp) {
     case TransactionType.SIWF_SIGNUP:
       requiredFields.push('handle', 'accountId');
       logger.debug(`Received account signup response for referenceId ${referenceId}`, payload as SIWFWebhookRsp);
+    
+      sseManager.broadcast('account_created', payload);
       break;
 
     default:

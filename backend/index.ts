@@ -72,6 +72,20 @@ publicApp.get('/content/events', (req, res) => {
   });
 });
 
+publicApp.get('/auth/events', (req, res) => {
+  res.setHeader('Content-Type', 'text/event-stream');
+  res.setHeader('Cache-Control', 'no-cache');
+  res.setHeader('Connection', 'keep-alive');
+
+  const clientId = Date.now().toString();
+  sseManager.addClient(clientId, res);
+
+  req.on('close', () => {
+    sseManager.removeClient(clientId);
+    res.end();
+  });
+});
+
 publicApp.use(express.json());
 publicApp.use(pinoHttp(httpLogOptions));
 
