@@ -41,7 +41,7 @@ export function accountServiceWebhook(payload: TxWebhookRsp) {
     case TransactionType.SIWF_SIGNUP:
       requiredFields.push('handle', 'accountId');
       logger.debug(`Received account signup response for referenceId ${referenceId}`, payload as SIWFWebhookRsp);
-    
+
       sseManager.broadcast('account_created', payload);
       break;
 

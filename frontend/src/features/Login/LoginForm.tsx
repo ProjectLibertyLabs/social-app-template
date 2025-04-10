@@ -23,28 +23,24 @@ const LoginForm = ({ onLogin, providerId, nodeUrl, siwfUrl }: LoginProps): React
   const [isLoading, setIsLoading] = useState(false);
   const [accountData, setAccountData] = useState<AccountData>({});
 
-
   useEffect(() => {
     const sse = new EventSource(`${process.env.REACT_APP_BACKEND_URL}/auth/events`);
-    
-    const handleAccountCreated = (e: MessageEvent) => {
-      try {
-        const data = JSON.parse(e.data);
-        
-        if (!data.handle || !data.msaId) {
-          return;
-        }
 
-        setAccountData(prev => {
-          const newData = {
-            ...prev,
-            handle: data.handle,
-            msaId: data.msaId
-          };
-          return newData;
-        });
-      } catch (error) {
+    const handleAccountCreated = (e: MessageEvent) => {
+      const data = JSON.parse(e.data);
+
+      if (!data.handle || !data.msaId) {
+        return;
       }
+
+      setAccountData((prev) => {
+        const newData = {
+          ...prev,
+          handle: data.handle,
+          msaId: data.msaId,
+        };
+        return newData;
+      });
     };
 
     sse.addEventListener('account_created', handleAccountCreated);
@@ -57,13 +53,13 @@ const LoginForm = ({ onLogin, providerId, nodeUrl, siwfUrl }: LoginProps): React
 
   useEffect(() => {
     const { handle, expires, accessToken, msaId } = accountData;
-    
+
     if (handle && expires && accessToken && msaId) {
       onLogin({
         handle,
         expires,
         accessToken,
-        msaId
+        msaId,
       });
     }
   }, [accountData, onLogin]);
@@ -110,14 +106,14 @@ const LoginForm = ({ onLogin, providerId, nodeUrl, siwfUrl }: LoginProps): React
       );
 
       const { msaId, referenceId, accessToken, expires, handle } = loginResponse;
-      
-      setAccountData(prev => {
+
+      setAccountData((prev) => {
         const newData = {
           ...prev,
           handle,
           expires,
           accessToken,
-          msaId
+          msaId,
         };
         return newData;
       });
@@ -128,11 +124,11 @@ const LoginForm = ({ onLogin, providerId, nodeUrl, siwfUrl }: LoginProps): React
             referenceId,
             msaId,
           });
-          
-          setAccountData(prev => {
+
+          setAccountData((prev) => {
             const newData = {
               ...prev,
-              handle: resp.handle
+              handle: resp.handle,
             };
             return newData;
           });
