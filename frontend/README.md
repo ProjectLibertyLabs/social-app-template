@@ -144,8 +144,10 @@ Runs the app in the development mode.\
 Open [http://localhost:3000](http://localhost:3000) to view it in the browser.
 
 **NOTES**
-* Sign in with Frequency v1 requires installing a Polkadot-compatible browser extension. You will be prompted to install a compatible one. 
-* To use Sign in with Frequency v2, which uses Frequency Access, you _must_ be connected to Paseo Testnet or Mainnet. 
+
+- Sign in with Frequency v1 requires installing a Polkadot-compatible browser extension. You will be prompted to install
+  a compatible one.
+- To use Sign in with Frequency v2, which uses Frequency Access, you _must_ be connected to Paseo Testnet or Mainnet.
 
 The page will reload if you make edits.\
 You will also see any lint errors in the console.
