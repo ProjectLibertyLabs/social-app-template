@@ -39,7 +39,9 @@ const ProfilePage = ({
       if (msaId) {
         setIsLoading(true);
         const curProfile = await getUserProfile(msaId);
-        if (curProfile) setProfile(curProfile as UserAccount);
+        if (curProfile) {
+          setProfile(curProfile as UserAccount);
+        }
       }
     };
 

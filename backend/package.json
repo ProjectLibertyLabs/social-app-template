@@ -40,12 +40,11 @@
   },
   "homepage": "https://github.com/ProjectLibertyLabs/dsnp-gateway-prototype#readme",
   "dependencies": {
-    "@azns/resolver-core": "file:azns-stub",
     "@dsnp/activity-content": "^1.1.0",
     "@dsnp/parquetjs": "^1.8.6",
     "@frequency-chain/api-augment": "^1.16.1",
     "@multiformats/blake2": "^2.0.2",
-    "@polkadot/api": "^16.0.1",
+    "@polkadot/api": "^15.10.2",
     "@polkadot/util": "^13.5.1",
     "@projectlibertylabs/siwf": "^1.1.6",
     "avro-js": "^1.11.3",

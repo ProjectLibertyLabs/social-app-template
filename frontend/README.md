@@ -143,13 +143,14 @@ To run the project, execute the following command:
 Runs the app in the development mode.\
 Open [http://localhost:3000](http://localhost:3000) to view it in the browser.
 
-**NOTES**
+#### NOTES
 
-- Sign in with Frequency v1 requires installing a Polkadot-compatible browser extension. You will be prompted to install
-  a compatible one.
-- To use Sign in with Frequency v2, which uses Frequency Access, you _must_ be connected to Paseo Testnet or Mainnet.
+#### Sign in with Frequency
+"Sign in with Frequency" (SIWF) currently exists in two different flavors: "v1" and "v2".
+* SIWFv1 is web3-native and requires a Polkadot-compatible crypto wallet browser extension. It is currently the only way to test when running against a local development chain.
+* SIWFv2 is "web2-friendly" and utilizes an emailed "magic link" sent by Frequency Access. It can currently only be used when running against the Frequency Mainnet or Testnet chains, with the corresponding publicly-deployed instance of Frequency Access.
 
-The page will reload if you make edits.\
+* The page will reload if you make edits.\
 You will also see any lint errors in the console.
 
 ```sh
