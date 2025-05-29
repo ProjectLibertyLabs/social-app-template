@@ -42,7 +42,7 @@
   "dependencies": {
     "@dsnp/activity-content": "^1.1.0",
     "@dsnp/parquetjs": "^1.8.6",
-    "@frequency-chain/api-augment": "^1.16.1",
+    "@frequency-chain/api-augment": "^1.15.1",
     "@multiformats/blake2": "^2.0.2",
     "@polkadot/api": "^15.10.2",
     "@polkadot/util": "^13.5.1",
