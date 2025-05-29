@@ -32,7 +32,9 @@ const App = (): ReactElement => {
   const handleLogin = async (account: UserAccount, providerInfo: dsnpLink.ProviderResponse) => {
     setLoading(true);
     setAccessToken(account.accessToken, account.expires);
-    providerInfo.ipfsGateway && setIpfsGateway(providerInfo.ipfsGateway);
+    if (providerInfo.ipfsGateway) {
+      setIpfsGateway(providerInfo.ipfsGateway);
+    }
     setNetwork(providerInfo.network);
     setLoggedInAccount(account);
     setLoading(false);

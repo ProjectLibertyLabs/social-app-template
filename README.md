@@ -120,7 +120,7 @@ This project uses a modern JavaScript/TypeScript stack with React for the fronte
 
 ### Prerequisites
 
-In order to run this project you need to...
+In order to run this project on anything other than a local chain, you need to...
 
 - Become a provider. To do so, visit the [Provider Dashboard](https://provider.frequency.xyz/)!
   - **Note**: If you're using localhost for the Frequency provider, you can complete this step after the installation process.
@@ -145,7 +145,7 @@ Enter the following command and answer the prompts. Press <ENTER> to accept the 
   ./start.sh
 ```
 
-Note: When connecting to a local Frequency node, you will need to execute `cd backend && npm install` to install the necessary dependencies. See the [Backend Readme](./backend/README.md) for more details.
+#### Note: When connecting to a local Frequency node, you will need to execute `cd backend && npm install` to install the necessary dependencies. See the [Backend Readme](./backend/README.md) for more details.
 
 ### Shutting Down
 
@@ -168,7 +168,7 @@ You can deploy using containers. Check the [docker-compose.yaml](docker-compose.
 Contributions, issues, and feature requests are welcome!
 
 - [Contributing Guidelines](./CONTRIBUTING.md)
-- [Open Issues](https://github.com/ProjectLibertyLabs/social-app-template/issues)
+- [Open Issues](https://github.com/ProjectLibertyLabs/social-app-template/issues) - Please search open issues before filing a new one.
 
 <p align="right">(<a href="#-table-of-contents">back to top</a>)</p>
 

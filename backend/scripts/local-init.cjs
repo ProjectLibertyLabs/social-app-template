@@ -19,6 +19,7 @@ const main = async () => {
     throwOnConnect: true,
     ...options,
   });
+  await api.isReady;
   const keys = new Keyring().addFromUri('//Alice', {}, 'sr25519');
 
   // Create alice msa
