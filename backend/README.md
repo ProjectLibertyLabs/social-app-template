@@ -161,11 +161,14 @@ To quickly start up a set of preconfigured services, including this sample backe
 For more details on configuring and running the individual services, see [Usage](#usage).
 
 ### ⚡ Quick Start (Bare Metal)
+
 **NOTE** there is no bare-metal script
 
 This environment is the best for supporting local backend development.
+
 1. First start Frequency Node as documented below.
 2. Run:
+
 ```sh
 npm run start:dev
 ```
