@@ -162,8 +162,6 @@ For more details on configuring and running the individual services, see [Usage]
 
 ### ⚡ Quick Start (Bare Metal)
 
-**NOTE** there is no bare-metal script
-
 This environment is the best for supporting local backend development.
 
 1. First start Frequency Node as documented below.
@@ -192,7 +190,7 @@ Setup the Environment Variables:
 
 This is for simple local development work.
 
-**THIS FAILS** Run the provided Docker Compose script to launch a local Frequency node:
+Run the provided Docker Compose script to launch a local Frequency node:
 
 ```sh
 docker compose up -d frequency
