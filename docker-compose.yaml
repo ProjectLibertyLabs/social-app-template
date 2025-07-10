@@ -18,7 +18,8 @@ x-common-environment: &common-environment
   IPFS_BASIC_AUTH_SECRET: ${IPFS_BASIC_AUTH_SECRET}
   QUEUE_HIGH_WATER: 1000
   CHAIN_ENVIRONMENT: dev
-  DEBUG: true
+  LOG_LEVEL: debug
+  PRETTY: true
 
 x-content-publishing-env: &content-publishing-env
   START_PROCESS: content-publishing-api

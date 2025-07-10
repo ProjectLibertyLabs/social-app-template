@@ -18,7 +18,6 @@ This is a prototype for a DSNP Gateway to allow for simple provider setup.
   - [Install](#install)
   - [Environment Variables](#environment-variables)
   - [⚡ Quick Start (Dockerized)](#-quick-start-dockerized)
-  - [⚡ Quick Start (Bare Meta)](#-quick-start-bare-metal)
   - [Usage](#usage)
 - [📋 Testing & Development](#-testing--development)
   - [Run the tests](#run-the-tests)
@@ -162,11 +161,12 @@ To quickly start up a set of preconfigured services, including this sample backe
 For more details on configuring and running the individual services, see [Usage](#usage).
 
 ### ⚡ Quick Start (Bare Metal)
+**NOTE** there is no bare-metal script
 
 This environment is the best for supporting local backend development.
-
+1. First start Frequency Node as documented below.
+2. Run:
 ```sh
-./scripts/restart-chain-bare-metal.sh
 npm run start:dev
 ```
 
@@ -189,7 +189,7 @@ Setup the Environment Variables:
 
 This is for simple local development work.
 
-Run the provided Docker Compose script to launch a local Frequency node:
+**THIS FAILS** Run the provided Docker Compose script to launch a local Frequency node:
 
 ```sh
 docker compose up -d frequency
