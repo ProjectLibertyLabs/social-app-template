@@ -310,40 +310,54 @@ You can access the Gateway at the following local addresses:
 if [[ ${PROFILES} =~ account ]]; then
 SERVICES_STR="${SERVICES_STR}
       * account-service:
-        - API:              http://localhost:${SERVICE_PORT_3}
-        - Queue management: http://localhost:${SERVICE_PORT_3}/queues
-        - Swagger UI:       http://localhost:${SERVICE_PORT_3}/docs/swagger
+        - API:                              http://localhost:${SERVICE_PORT_3}
+        - Queue management:                 http://localhost:${SERVICE_PORT_3}/queues
+        - Swagger UI:                       http://localhost:${SERVICE_PORT_3}/docs/swagger
+        - Health check:                     http://localhost:${SERVICE_PORT_3}/healthz
+        - Worker health check:              http://localhost:${SERVICE_PORT_6}/healthz
+        - Prometheus metrics:               http://localhost:${SERVICE_PORT_3}/metrics
+        - Worker Prometheus metrics:        http://localhost:${SERVICE_PORT_6}/metrics
 "
 fi
 if [[ ${PROFILES} =~ content_publishing ]]; then
 SERVICES_STR="${SERVICES_STR}
       * content-publishing-service
-        - API:              http://localhost:${SERVICE_PORT_0}
-        - Queue management: http://localhost:${SERVICE_PORT_0}/queues
-        - Swagger UI:       http://localhost:${SERVICE_PORT_0}/docs/swagger
+        - API:                              http://localhost:${SERVICE_PORT_0}
+        - Queue management:                 http://localhost:${SERVICE_PORT_0}/queues
+        - Swagger UI:                       http://localhost:${SERVICE_PORT_0}/docs/swagger
+        - Health check:                     http://localhost:${SERVICE_PORT_0}/healthz
+        - Worker health check:              http://localhost:${SERVICE_PORT_4}/healthz
+        - Prometheus metrics:               http://localhost:${SERVICE_PORT_0}/metrics
+        - Worker Prometheus metrics:        http://localhost:${SERVICE_PORT_4}/metrics
 "
 fi
 if [[ ${PROFILES} =~ content_watcher ]]; then
 SERVICES_STR="${SERVICES_STR}
       * content-watcher-service
-        - API:              http://localhost:${SERVICE_PORT_1}
-        - Queue management: http://localhost:${SERVICE_PORT_1}/queues
-        - Swagger UI:       http://localhost:${SERVICE_PORT_1}/docs/swagger
+        - API:                              http://localhost:${SERVICE_PORT_1}
+        - Queue management:                 http://localhost:${SERVICE_PORT_1}/queues
+        - Swagger UI:                       http://localhost:${SERVICE_PORT_1}/docs/swagger
+        - Health check:                     http://localhost:${SERVICE_PORT_1}/healthz
+        - Prometheus metrics:               http://localhost:${SERVICE_PORT_1}/metrics
 "
 fi
 if [[ ${PROFILES} =~ graph ]]; then
 SERVICES_STR="${SERVICES_STR}
       * graph-service
-        - API:              http://localhost:${SERVICE_PORT_2}
-        - Queue management: http://localhost:${SERVICE_PORT_2}/queues
-        - Swagger UI:       http://localhost:${SERVICE_PORT_2}/docs/swagger
+        - API:                              http://localhost:${SERVICE_PORT_2}
+        - Queue management:                 http://localhost:${SERVICE_PORT_2}/queues
+        - Swagger UI:                       http://localhost:${SERVICE_PORT_2}/docs/swagger
+        - Health check:                     http://localhost:${SERVICE_PORT_2}/healthz
+        - Worker health check:              http://localhost:${SERVICE_PORT_5}/healthz
+        - Prometheus metrics:               http://localhost:${SERVICE_PORT_2}/metrics
+        - Worker Prometheus metrics:        http://localhost:${SERVICE_PORT_5}/metrics
 "
 fi
 if [[ ${PROFILES} =~ backend ]]; then
 SERVICES_STR="${SERVICES_STR}
       * backend
-        - API:              http://localhost:${SERVICE_PORT_8}/docs/swagger
-        - Swagger UI:       http://localhost:${SERVICE_PORT_8}/docs/swagger
+        - API:                              http://localhost:${SERVICE_PORT_8}/docs/swagger
+        - Swagger UI:                       http://localhost:${SERVICE_PORT_8}/docs/swagger
 "
 fi
 

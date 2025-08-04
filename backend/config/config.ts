@@ -6,9 +6,12 @@ const ENV_SCHEMA = Joi.object({
   WEBHOOK_PORT: Joi.number().min(1001).max(10_000),
   WEBHOOK_HOST: Joi.string().hostname(),
   ACCOUNT_SERVICE_URL: Joi.string().uri().required(),
+  ACCOUNT_WORKER_SERVICE_URL: Joi.string().uri().required(),
   CONTENT_PUBLISHER_URL: Joi.string().uri().required(),
+  CONTENT_PUBLISHER_WORKER_URL: Joi.string().uri().required(),
   CONTENT_WATCHER_URL: Joi.string().uri().required(),
   GRAPH_SERVICE_URL: Joi.string().uri().required(),
+  GRAPH_WORKER_SERVICE_URL: Joi.string().uri().required(),
   CHAIN_ENVIRONMENT: Joi.string()
     .valid(...['dev', 'rococo', 'testnet', 'mainnet'])
     .required(),
@@ -63,8 +66,16 @@ export class Config {
     return this.configValues['ACCOUNT_SERVICE_URL'];
   }
 
+  public get accountWorkerServiceUrl() {
+    return this.configValues['ACCOUNT_WORKER_SERVICE_URL'];
+  }
+
   public get contentPublisherUrl() {
     return this.configValues['CONTENT_PUBLISHER_URL'];
+  }
+
+  public get contentPublisherWorkerUrl() {
+    return this.configValues['CONTENT_PUBLISHER_WORKER_URL'];
   }
 
   public get contentWatcherUrl() {
@@ -73,6 +84,10 @@ export class Config {
 
   public get graphServiceUrl() {
     return this.configValues['GRAPH_SERVICE_URL'];
+  }
+
+  public get graphWorkerServiceUrl() {
+    return this.configValues['GRAPH_WORKER_SERVICE_URL'];
   }
 
   public get chainType() {

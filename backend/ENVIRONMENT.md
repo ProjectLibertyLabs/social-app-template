@@ -5,6 +5,7 @@ This application recognizes the following environment variables:
 | Name                   | Description                                                                                                                          |          Range/Type           | Required? | Default |
 | ---------------------- | ------------------------------------------------------------------------------------------------------------------------------------ | :---------------------------: | :-------: | :-----: |
 | `API_PORT`             | HTTP port that the application listens on                                                                                            |         1025 - 65535          |           |  3000   |
+| `WORKERAPI_PORT`       | HTTP port that the application listens on                                                                                            |         1025 - 65535          |           |  3000   |
 | `SIWF_NODE_RPC_URL`    | Blockchain node address for the SiwF UI (must be resolvable from a browser)                                                          |         http(s): URL          |     Y     |         |
 | `FREQUENCY_API_WS_URL` | Blockchain node address                                                                                                              |    http(s): or ws(s): URL     |     Y     |         |
 | `PROVIDER_ID`          | Provider MSA ID                                                                                                                      |            integer            |     Y     |         |
