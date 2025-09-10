@@ -29,9 +29,7 @@ const ReplyList = ({
       {(replies.length > 0 || isReplying) && (
         <Flex gap={'small'} vertical>
           {isReplying && <BroadcastCard broadcastCardType={BroadcastCardType.REPLY_LOADING} isLoading={true} />}
-          {replies?.map((reply, index) => (
-            <Reply feedItem={reply} showLoginModal={showLoginModal} key={index} />
-          ))}
+          {replies?.map((reply, index) => <Reply feedItem={reply} showLoginModal={showLoginModal} key={index} />)}
         </Flex>
       )}
 
