@@ -22,59 +22,86 @@ function show_help() {
 ###################################################################################
 # Parse command-line arguments
 ###################################################################################
-while [[ "$#" -gt 0 ]]; do
-    case $1 in
-        -h|--help) show_help; exit 0 ;;
-        -n|--name) BASE_NAME="$2"; shift ;;
-        -s|--skip-setup) SKIP_CHAIN_SETUP=true ;;
-        *) echo "Unknown parameter passed: $1"; show_help; exit 1 ;;
-    esac
-    shift
-done
+function parse_arguments() {
+    while [[ "$#" -gt 0 ]]; do
+        case $1 in
+            -h|--help) show_help; exit 0 ;;
+            -n|--name) BASE_NAME="$2"; shift ;;
+            -s|--skip-setup) SKIP_CHAIN_SETUP=true ;;
+            *) echo "Unknown parameter passed: $1"; show_help; exit 1 ;;
+        esac
+        shift
+    done
+}
 
-if [ ! -d ${BASE_DIR} ]
-then
-    mkdir -p ${BASE_DIR}
-fi
+###################################################################################
+# setup_environment
+#
+# Description: Set up environment variables and directories
+#
+###################################################################################
+function setup_environment() {
+    if [ ! -d "${BASE_DIR}" ]; then
+        mkdir -p "${BASE_DIR}"
+    fi
 
-ENV_FILE=${BASE_DIR}/.env.${BASE_NAME}
-COMPOSE_PROJECT_NAME=${BASE_NAME}
+    ENV_FILE=${BASE_DIR}/.env.${BASE_NAME}
+    COMPOSE_PROJECT_NAME=${BASE_NAME}
 
-if [[ -n $ENV_FILE ]]; then
-    echo -e "Using environment file: $ENV_FILE\n"
-fi
+    if [[ -n $ENV_FILE ]]; then
+        ${OUTPUT} "Using environment file: $ENV_FILE"
+    fi
+    return 0
+}
 
-####### Check for Docker and Docker Compose
-if ! command -v docker &> /dev/null || ! command -v docker compose &> /dev/null; then
-    printf "Docker and Docker Compose are required but not installed. Please install them and try again.\n"
-    exit 1
-fi
+###################################################################################
+# check_dependencies
+#
+# Description: Ensure Docker and Docker Compose are installed
+#
+###################################################################################
+function check_dependencies() {
+    if ! command -v docker &> /dev/null || ! command -v docker compose &> /dev/null; then
+        ${OUTPUT} "Docker and Docker Compose are required but not installed. Please install them and try again.\n"
+        exit 1
+    fi
+}
 
-####### Check for existing ENV_FILE and ask user if they want to re-use it
-if [ -f ${ENV_FILE} ]; then
-    echo -e "Found saved environment from a previous run:\n"
-    redacted_content=$(redact_sensitive_values "${ENV_FILE}")
-    echo "${redacted_content}"
+###################################################################################
+# handle_env_file
+#
+# Description: Manage existing environment files
+#
+###################################################################################
+function handle_env_file() {
+    if [ -f ${ENV_FILE} ]; then
+        echo -e "Found saved environment from a previous run:\n"
+        redacted_content=$(redact_sensitive_values "${ENV_FILE}")
+        echo "${redacted_content}"
 
-    if yesno "Do you want to re-use the saved parameters" Y
-    then
-        ${OUTPUT} "Loading environment values from file..."
-    else
-        clear
-        ${OUTPUT} "Removing previous saved environment..."
+        if yesno "Do you want to re-use the saved parameters" Y; then
+            ${OUTPUT} "Loading environment values from file..."
+        else
+            ${OUTPUT} "Removing previous saved environment..."
 
-        rm ${ENV_FILE}
-        # If the file fails to delete, exit the script
-        if [ -f ${ENV_FILE} ]
-        then
-            ${OUTPUT} "Failed to remove previous saved environment. Exiting..."
+            rm ${ENV_FILE}
+            # If the file fails to delete, exit the script
+            if [ -f ${ENV_FILE} ]; then
+                ${OUTPUT} "Failed to remove previous saved environment. Exiting..."
+                exit 1
+            fi
         fi
     fi
-fi
+    return 0
+}
 
-######
-###### If no existing ENV_FILE, run through all prompts
-######
+###################################################################################
+# prompt_for_configuration
+#
+# Description: Interactive prompts to gather necessary configuration
+#
+###################################################################################
+function prompt_for_configuration() {
 if [ ! -f ${ENV_FILE} ]
 then
     ${OUTPUT} << EOI
@@ -251,13 +278,17 @@ EOI
 
     export_save_variable PROFILES "${PROFILES}"
 fi
+}
 
 ###################################################################################
+# start_services
+#
+# Description: Start Docker Compose services based on selected profiles
 # Finished with prompting (or skipped).
 #
 # Now read the resulting ENV_FILE and launch the services
 ###################################################################################
-
+function start_services() {
 set -a; source ${ENV_FILE}; set +a
 
 if [ $DEV_CONTAINERS = true ]
@@ -302,7 +333,15 @@ ${OUTPUT} << EOI
 🚀 You can access the Social App Template frontend at http://localhost:${FRONTEND_PORT} 🚀
 EOI
 fi
+}
 
+###################################################################################
+# display_services_info
+#
+# Description: Display information about the running services
+#
+###################################################################################
+function display_services_info() {
 SERVICES_STR="\
 The selected services are running.
 You can access the Gateway at the following local addresses:
@@ -362,3 +401,33 @@ SERVICES_STR="${SERVICES_STR}
 fi
 
 box_text_attention -w 0 "${SERVICES_STR}"
+}
+
+###################################################################################
+# main
+#
+# Description: Main function to execute the script logic
+#
+###################################################################################
+function main() {
+    # Call the check_pcre_grep function to initialize PCRE_GREP and OUTPUT
+    check_pcre_grep
+    parse_arguments "$@"
+    setup_environment
+    check_dependencies
+    handle_env_file
+
+    if [ ! -f "${ENV_FILE}" ]; then
+        prompt_for_configuration
+    fi
+
+    start_services
+    display_services_info
+
+    exit 0
+}
+
+# Call main function if the script is executed directly
+if [[ "${BASH_SOURCE[0]}" == "${0}" ]]; then
+    main "$@"
+fi

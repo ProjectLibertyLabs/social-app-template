@@ -13,32 +13,34 @@ BOX_WIDTH=96
 #  Wrangle grep because MacOS doesn't come with a PCRE-enabled grep by default.
 #  If we don't find one, disable our "pretty" output function.
 ###################################################################################
-PCRE_GREP=
-if echo "foobar" | grep -q -P "foo(?=bar)" >/dev/null 2>&1; then
-    PCRE_GREP=grep
-else
-    # Grep is not PCRE compatible, check for other greps
-    if command -v ggrep >/dev/null; then # MacOS Homebrew might have ggrep
-        PCRE_GREP=ggrep
-    elif command -v pcre2grep > /dev/null; then # MacOS Homebrew could also have pcre2grep
-        PCRE_GREP=pcre2grep
+function check_pcre_grep() {
+    PCRE_GREP=
+    if echo "foobar" | grep -q -P "foo(?=bar)" >/dev/null 2>&1; then
+        PCRE_GREP=grep
+    else
+        # Grep is not PCRE compatible, check for other greps
+        if command -v ggrep >/dev/null; then # MacOS Homebrew might have ggrep
+            PCRE_GREP=ggrep
+        elif command -v pcre2grep > /dev/null; then # MacOS Homebrew could also have pcre2grep
+            PCRE_GREP=pcre2grep
+        fi
     fi
-fi
 
-if [ -z "${PCRE_GREP}" ]; then
-    cat << EOI
+    if [ -z "${PCRE_GREP}" ]; then
+        cat << EOI
 WARNING: No PCRE-capable 'grep' utility found; pretty terminal output disabled.
 
 If you're on a Mac, try installing GNU grep:
     brew install grep
 
 EOI
-  read -p 'Press any key to continue... '
+            read -p 'Press any key to continue... '
 
-  OUTPUT='echo -e'
-else
-  OUTPUT="box_text -w ${BOX_WIDTH}"
-fi
+        OUTPUT='echo -e'
+    else
+        OUTPUT="box_text -w ${BOX_WIDTH}"
+    fi
+}
 
 ###################################################################################
 # yesno
