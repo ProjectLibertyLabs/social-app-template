@@ -32,7 +32,7 @@ const main = async () => {
 
         // Check if the error is MsaAlreadyExists (Module index 60, error 0x00000000)
         if (errorDetails.Module && errorDetails.Module.index === '60' && errorDetails.Module.error === '0x00000000') {
-          console.log('INFO: MSA already exists for Alice, continuing...');
+          console.log('INFO: MSA already exists, continuing...');
           resolve();
         } else {
           console.error('ERROR: ', errorDetails);
@@ -45,7 +45,7 @@ const main = async () => {
           console.log('SUCCESS: MSA Created: ' + id);
           resolve();
         } else {
-          console.log('INFO: MSA transaction completed (possibly already exists)');
+          console.log('INFO: MSA transaction completed');
           resolve();
         }
       }
@@ -61,8 +61,8 @@ const main = async () => {
         console.log('Provider creation error details:', errorDetails);
 
         // Check if it's a known "already exists" type error and continue
-        if (errorDetails.Module && errorDetails.Module.index === '60') {
-          console.log('INFO: Provider may already exist for Alice, continuing...');
+        if (errorDetails.Module && errorDetails.Module.index === '60' && errorDetails.Module.error === '0x11000000') {
+          console.log('INFO: Provider may already exist, continuing...');
           resolve();
         } else {
           console.error('ERROR: ', errorDetails);
@@ -75,7 +75,7 @@ const main = async () => {
           console.log('SUCCESS: Provider Created: ' + id);
           resolve();
         } else {
-          console.log('INFO: Provider transaction completed (possibly already exists)');
+          console.log('INFO: Provider transaction completed');
           resolve();
         }
       }
