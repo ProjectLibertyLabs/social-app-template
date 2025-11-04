@@ -10,6 +10,7 @@
     "start:watch": "npx tsx --watch index.ts",
     "start:dev": "set -a ; . ./.env.social-app-backend ; npx tsx --watch index.ts",
     "test": "set -a ; . ./environment/env.social-app-backend.template ; vitest run",
+    "test:bats-start": "bats -t ../tools/bats/test_start.bats",
     "format": "eslint --fix . && prettier --write .",
     "lint": "eslint . && prettier --check .",
     "container-run:dev": "npm install && npm run start:watch",

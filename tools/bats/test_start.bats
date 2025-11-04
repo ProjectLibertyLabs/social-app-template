@@ -1,11 +1,41 @@
 #!/usr/bin/env bats
 
 # Load the functions from start.sh
-source './start.sh'
+# Try different possible locations based on working directory
+START_SH_DIR=""
+if [ -f "./start.sh" ]; then
+    START_SH_DIR="."
+elif [ -f "../start.sh" ]; then
+    START_SH_DIR=".."
+elif [ -f "../../start.sh" ]; then
+    START_SH_DIR="../.."
+else
+    echo "Error: Cannot find start.sh file in ., .., or ../.." >&2
+    echo "Current working directory: $(pwd)" >&2
+    echo "Looking for: ./start.sh, ../start.sh, ../../start.sh" >&2
+    exit 1
+fi
+
+# Source the files using the detected directory
+if ! source "${START_SH_DIR}/start.sh"; then
+    echo "Failed to source ${START_SH_DIR}/start.sh" >&2
+    exit 1
+fi
+
+if ! source "${START_SH_DIR}/bash_functions.sh"; then
+    echo "Failed to source ${START_SH_DIR}/bash_functions.sh" >&2
+    exit 1
+fi
+
+# Initialize the OUTPUT variable
+# Mock check_pcre_grep to avoid interactive prompt in tests
+function check_pcre_grep() {
+    OUTPUT="echo -e"
+}
 
 # Ensure BASE_NAME,BASE_DIR,ENV_FILE globals are set for tests
 BASE_NAME="test-dev"
-BASE_DIR="./test_dir"
+BASE_DIR="/tmp/bats_test_dir_$$"  # Use unique temp directory
 ENV_FILE="${BASE_DIR}/.env.${BASE_NAME}"
 
 # Mock functions and variables

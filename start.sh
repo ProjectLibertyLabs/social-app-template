@@ -1,7 +1,10 @@
 #!/bin/bash
 # Script to start all SAT services on the Frequency Paseo Testnet
 
-. ./bash_functions.sh
+# Get the directory where this script is located
+SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
+
+. "${SCRIPT_DIR}/bash_functions.sh"
 
 SKIP_CHAIN_SETUP=false
 
