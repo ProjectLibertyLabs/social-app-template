@@ -9,6 +9,33 @@ defaults:
   run:
     working-directory: "./backend"
 jobs:
+  test-start-sh:
+    name: 'Common Tests'
+    runs-on: ubuntu-latest
+    strategy:
+      fail-fast: false
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Install Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          cache: 'npm'
+          registry-url: 'https://registry.npmjs.org'
+          cache-dependency-path: ./package-lock.json
+
+      - name: Install dependencies
+        run: npm ci
+
+      - name: 'Bats start.sh Tests'
+        run: |
+          npm install -g bats
+          npm run test:bats-start
+        env:
+          GITHUB_WORKSPACE: ${{ github.workspace }}
+
   backend-build:
     runs-on: ubuntu-latest
     steps:
